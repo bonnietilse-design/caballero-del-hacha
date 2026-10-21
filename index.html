@@ -45,16 +45,12 @@
     font-size: calc(var(--ctl) * .5); margin-bottom: calc(var(--ctl) * .35);
   }
   .btn.on { background: rgba(255,255,255,.42); }
-  #bSound {
-    position: fixed; top: calc(8px + env(safe-area-inset-top)); right: calc(8px + env(safe-area-inset-right));
-    width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(0,0,0,.28); color: #fff;
-    font-size: 21px; padding: 0; touch-action: none; cursor: pointer;
+  .top {
+    position: fixed; top: calc(8px + env(safe-area-inset-top)); width: 44px; height: 44px; border-radius: 50%;
+    border: none; background: rgba(0,0,0,.28); color: #fff; font-size: 20px; padding: 0; touch-action: none; cursor: pointer;
   }
-  #bPause {
-    position: fixed; top: calc(8px + env(safe-area-inset-top)); right: calc(60px + env(safe-area-inset-right));
-    width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(0,0,0,.28); color: #fff;
-    font-size: 19px; padding: 0; touch-action: none; cursor: pointer;
-  }
+  #bSound { right: calc(8px + env(safe-area-inset-right)); }
+  #bPause { right: calc(60px + env(safe-area-inset-right)); font-size: 18px; }
   #rotate {
     display: none; position: fixed; left: 0; right: 0; top: calc(16vh + 56vw + 14px);
     color: rgba(255,255,255,.65); text-align: center; font-size: 15px; pointer-events: none;
@@ -69,57 +65,114 @@
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="dpad" class="ctl"><span>&#9664;&#xFE0E;</span><span>&#9654;&#xFE0E;</span></div>
 <div id="btns" class="ctl"><button class="btn" id="bJump">SALTA</button><button class="btn" id="bAxe">🪓</button></div>
-<button id="bSound" aria-label="Sonido">🔊</button>
-<button id="bPause" aria-label="Pausa">&#10074;&#10074;</button>
+<button class="top" id="bSound" aria-label="Sonido">🔊</button>
+<button class="top" id="bPause" aria-label="Pausa">&#10074;&#10074;</button>
 <div id="rotate">↻ Gira el móvil para verlo más grande</div>
 <script>
 "use strict";
-// El Caballero del Hacha - a small Mario-style platformer. Chop the toads, reach the flag!
+// El Caballero del Hacha - a small Mario-style platformer. Chop your way through three levels!
 
-// ------------------------------------------------------------------ level
-// #  ground   =  stone platform   C  breakable crate   o  coin   P  start   F  flag
-// t  toad (1 hit)   T  king toad (3 hits)   j  leaping toad
-const LEVEL_MAP = [
-  "..................................................................................................................................",
-  "..................................................................................................................................",
-  "..................................................................................................................................",
-  "..................................................................................................................................",
-  "...................................................................................j..............................................",
-  ".....................................................................................oooo.........................................",
-  ".................................j.................ooo...............................====......................j..................",
-  "..........................ooooo.............................ooooo.............ooooo..................................#............",
-  "......ooo.................=====...........oo........#.......=====.......oo....=====...................oo............##.oooo.......",
-  "....................................C.....==.......##...................==.................C..........==...........###............",
-  "..P...........t....................CC..t..........###.....T....t...t................t.....CC...T..t.........t.....####.......F....",
-  "####################..###################....##########################....##########################....#########################",
-  "####################..###################....##########################....##########################....#########################",
+// ------------------------------------------------------------------ levels
+// Map legend:  #  ground    =  stone platform   C  breakable crate   o  coin   ^  spikes
+//              P  start     F  flag            t  toad   T  king toad   j  leaping toad
+//              w  wasp      h  hedgehog        B  giant boss toad   [ ]  edges of the boss arena
+const LEVELS = [
+  { name: "La Pradera", theme: "meadow", speed: 1.0, map: [
+    "..................................................................................................................................",
+    "..................................................................................................................................",
+    "..................................................................................................................................",
+    "..................................................................................................................................",
+    "...................................................................................j..............................................",
+    ".....................................................................................oooo.........................................",
+    ".................................j.................ooo...............................====......................j..................",
+    "..........................ooooo.............................ooooo.............ooooo..................................#............",
+    "......ooo.................=====...........oo........#.......=====.......oo....=====...................oo............##.oooo.......",
+    "....................................C.....==.......##...................==.................C..........==...........###............",
+    "..P...........t....................CC..t..........###.....T....t...t................t.....CC...T..t.........t.....####.......F....",
+    "####################..###################....##########################....##########################....#########################",
+    "####################..###################....##########################....##########################....#########################"
+  ] },
+  { name: "El Bosque", theme: "forest", speed: 1.15, map: [
+    "......................................................................................................................................................",
+    "......................................................................................................................................................",
+    "......................................................................................................................................................",
+    "......................................................................................................................................................",
+    "......................................................................................................................................................",
+    "..............................w.................w.....................w...........................w.....................w...................w.........",
+    "...................................................ooo................................................................................................",
+    "............................ooooo...............................................ooooo.................................oooo............................",
+    ".....ooo....................=====........oo.........##.........oo...............=====......oo....................oo...====...................oooo.....",
+    ".........................................==...C....###.........==..........................==....................==...................................",
+    "..P.........t............h.........^^.t.......C...####...h................j...^^...t...h............^^..T...^^..............h...j...^^...t........F...",
+    "##################...###################....##################....########################....##################....##################################",
+    "##################...###################....##################....########################....##################....##################################"
+  ] },
+  { name: "El Castillo del Rey Sapo", theme: "castle", speed: 1.3, map: [
+    "...............................................................................................................................................................................",
+    "...............................................................................................................................................................................",
+    "...............................................................................................................................................................................",
+    "...............................................................................................................................................................................",
+    "...............................................................................................................................................................................",
+    "..............w......................................w..................w...............w......................................................................................",
+    "................................w...............................................................w.......................w......................................................",
+    "..................................................................ooooo........................................................................................................",
+    ".....ooo.........oo..................ooo...................ooo....=====..........ooo.................ooo........................oooo...........................................",
+    ".................==..................===...................===...................===.................===.......................................................................",
+    "..P......t..^^..........h....j.C..............T...^^....h.........j...h...^^..............T..^^...h.........t...j...^^.......h..............[..............B..........]...F....",
+    "################....################.....#################.....#################.....###############.....######################################################################",
+    "################....################.....#################.....#################.....###############.....######################################################################"
+  ] }
+];
+
+// Upgrades sold in the blacksmith's shop between levels (price in coins)
+const SHOP = [
+  { id: "quick", icon: "⚡", name: "Golpe rápido", desc: ["Hachazos", "más rápidos"], price: 10 },
+  { id: "long", icon: "📏", name: "Mango largo", desc: ["El hacha llega", "más lejos"], price: 12 },
+  { id: "sharp", icon: "✨", name: "Filo de oro", desc: ["Doble daño"], price: 15 },
+  { id: "heart", icon: "❤️", name: "Corazón extra", desc: ["4 corazones", "por nivel"], price: 15 },
+  { id: "boomerang", icon: "🪃", name: "Hacha voladora", desc: ["Lanza el hacha", "y vuelve"], price: 25 },
 ];
 
 // ------------------------------------------------------------------ settings
 const TILE = 40, W = 960, H = 520, STEP_MS = 1000 / 60;
 const GRAVITY = 0.65, MAX_FALL = 15, RUN_ACCEL = 0.7, RUN_FRICTION = 0.8, AIR_CONTROL = 0.55;
 const MAX_RUN = 4.6, JUMP_SPEED = 12.8, JUMP_CUT = 4.5, COYOTE_FRAMES = 6, JUMP_BUFFER_FRAMES = 7;
-const ATTACK_FRAMES = 22, ACT0 = 6, ACT1 = 14, ATTACK_COOLDOWN = 6, INVULN_FRAMES = 90;
-const START_LIVES = 3, MAX_HEARTS = 3, ARM_LEN = 16, AXE_HEAD = 48, AXE_LEN = 56;
+const INVULN_FRAMES = 90, START_LIVES = 3, MAX_HEARTS = 3, ARM_LEN = 16, AXE_HEAD = 48, AXE_LEN = 56;
+const KNIGHT_W = 30, KNIGHT_H = 56;
 const SOLID = "#=C";
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
 const WHITE = "#fff", BLACK = rgb(15, 15, 25);
-const HILL_FAR = rgb(150, 205, 160), HILL_NEAR = rgb(105, 180, 115);
-const DIRT = rgb(150, 98, 60), DIRT_DARK = rgb(118, 74, 44), DIRT_LIGHT = rgb(176, 124, 82);
-const GRASS = rgb(92, 190, 80), GRASS_DARK = rgb(60, 140, 55), GRASS_LIGHT = rgb(140, 220, 110);
 const STONE = rgb(150, 150, 165), STONE_DARK = rgb(95, 95, 115), STONE_LIGHT = rgb(190, 190, 205);
 const WOOD = rgb(196, 140, 72), WOOD_DARK = rgb(120, 80, 40);
 const ARMOR = rgb(52, 104, 214), ARMOR_MID = rgb(82, 136, 236), ARMOR_LIGHT = rgb(130, 178, 255), ARMOR_DARK = rgb(26, 52, 120);
-const STEEL = rgb(170, 180, 200), STEEL_DARK = rgb(40, 58, 110), BOOT = rgb(40, 34, 50), VISOR = rgb(18, 22, 40);
-const PLUME = rgb(230, 60, 60), SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82);
+const STEEL = rgb(170, 180, 200), STEEL_DARK = rgb(40, 58, 110), BOOT = rgb(40, 34, 50);
+const PLUME = rgb(230, 60, 60), CAPE = rgb(196, 32, 52), CAPE_DARK = rgb(120, 16, 34);
+const SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82), MOUSTACHE = rgb(84, 46, 20);
 const HANDLE = rgb(130, 86, 44), HANDLE_DARK = rgb(80, 50, 24), BLADE = rgb(210, 218, 232), BLADE_DARK = rgb(90, 98, 120);
+const GOLD_BLADE = rgb(255, 222, 110), GOLD_BLADE_DARK = rgb(176, 120, 20);
 const TOAD_EYE = rgb(250, 210, 60), GOLD = rgb(255, 205, 60), GOLD_DARK = rgb(190, 130, 20);
-const HEART = rgb(230, 50, 70), HEART_EMPTY = rgb(90, 60, 70);
-const TOAD_COLORS = {
+const HEART = rgb(230, 50, 70), HEART_EMPTY = rgb(90, 60, 70), GRASS_LIGHT = rgb(140, 220, 110);
+const ENEMY_COLORS = {
   t: [rgb(106, 160, 64), rgb(58, 100, 40), rgb(222, 216, 150)],
   T: [rgb(150, 112, 62), rgb(92, 64, 32), rgb(228, 200, 150)],
   j: [rgb(238, 122, 40), rgb(120, 50, 20), rgb(255, 214, 120)],
+  B: [rgb(96, 128, 70), rgb(52, 74, 36), rgb(214, 204, 140)],
+  w: [rgb(250, 200, 40), BLACK, rgb(220, 240, 255)],
+  h: [rgb(130, 90, 60), rgb(80, 55, 35), rgb(225, 190, 150)],
+};
+
+// Each level has its own landscape
+const THEMES = {
+  meadow: { sky: [[96, 160, 236], [196, 228, 255]], far: rgb(150, 205, 160), near: rgb(105, 180, 115), bg: "hills",
+            sun: rgb(255, 244, 180), clouds: true, top: [rgb(92, 190, 80), rgb(60, 140, 55), rgb(140, 220, 110)],
+            dirt: [rgb(150, 98, 60), rgb(118, 74, 44), rgb(176, 124, 82)] },
+  forest: { sky: [[70, 125, 150], [196, 222, 196]], far: rgb(70, 120, 90), near: rgb(36, 82, 56), bg: "trees",
+            sun: rgb(255, 236, 170), clouds: true, top: [rgb(66, 150, 70), rgb(36, 102, 48), rgb(110, 190, 96)],
+            dirt: [rgb(104, 76, 54), rgb(80, 58, 40), rgb(128, 96, 68)] },
+  castle: { sky: [[42, 30, 84], [236, 128, 92]], far: rgb(84, 58, 104), near: rgb(46, 32, 70), bg: "castle",
+            sun: rgb(250, 240, 214), clouds: false, bricks: true, top: [rgb(150, 144, 166), rgb(104, 98, 122), rgb(186, 180, 200)],
+            dirt: [rgb(110, 102, 126), rgb(82, 76, 98), rgb(132, 124, 148)] },
 };
 
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -127,6 +180,7 @@ const easeOut = t => 1 - Math.pow(1 - t, 3);
 const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 const collide = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+const inside = (x, y, r) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 const inflate = (r, dx, dy) => ({ x: r.x - Math.floor(dx / 2), y: r.y - Math.floor(dy / 2), w: r.w + dx, h: r.h + dy });
 function seeded(a) {   // small repeatable random number generator
   return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
@@ -136,7 +190,9 @@ function seeded(a) {   // small repeatable random number generator
 // ------------------------------------------------------------------ sound (generated, no files needed)
 const VOICE_LINES = {
   vamos: "¡Vamos, caballero!", toma: "¡Toma!", adios: "¡Adiós, sapito!", rey: "¡Adiós, rey sapo!",
-  ay: "¡Ay, ay, ay!", oro: "¡Más oro!", desastre: "¡Qué desastre!", fin: "Fin del juego.", ole: "¡Olé!",
+  jolin: "¡Jolín!", oro: "¡Más oro!", desastre: "¡Qué desastre!", fin: "Fin del juego.", ole: "¡Olé!",
+  nivel: "¡Nivel superado!", jefe: "¡Cuidado! ¡El rey sapo gigante!", victoria: "¡Victoria!",
+  tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
 };
 const AUDIO_RATE = 22050;
 let actx = null, master = null, soundOn = true;
@@ -219,7 +275,7 @@ function flamenco(rate) {   // Andalusian cadence Am-G-F-E, rasgueado and palmas
   return out;
 }
 function buildSounds(rate) {
-  const jingle = (notes, d) => concat(...notes.map(n => synth(rate, d, n, null, "tri", 0.35, 0, 0.004, 0.6)));
+  const jingle = (notes, d, curve = 0.6) => concat(...notes.map(n => synth(rate, d, n, null, "tri", 0.35, 0, 0.004, curve)));
   return {
     swing: whoosh(rate),
     hit: mixAll(synth(rate, 0.16, 150, 40, "sine", 0.9, 0, 0.004, 1.5), lowpass(synth(rate, 0.05, 1, null, "noise", 0.5), 0.3)),
@@ -227,17 +283,24 @@ function buildSounds(rate) {
                           synth(rate, 0.17, 180, 110, "square", 0.32, 30)), 0.35),
     croak_big: lowpass(concat(synth(rate, 0.18, 140, 100, "square", 0.4, 24), silence(rate, 0.05),
                               synth(rate, 0.32, 120, 65, "square", 0.45, 20)), 0.25),
+    buzz: lowpass(synth(rate, 0.35, 220, 260, "square", 0.12, 40, 0.02, 0.5), 0.4),
+    squeak: synth(rate, 0.16, 900, 1300, "tri", 0.25, 0, 0.004, 1),
+    stomp: mixAll(synth(rate, 0.35, 90, 28, "sine", 1, 0, 0.004, 1.2), lowpass(synth(rate, 0.2, 1, null, "noise", 0.6), 0.15)),
     jump: synth(rate, 0.13, 280, 640, "square", 0.16, 0, 0.004, 1),
     coin: concat(synth(rate, 0.06, 988, null, "square", 0.16, 0, 0.004, 0.3), synth(rate, 0.25, 1319, null, "square", 0.16, 0, 0.004, 1.5)),
     crate: mixAll(lowpass(synth(rate, 0.14, 1, null, "noise", 0.8), 0.5), synth(rate, 0.08, 110, 70, "square", 0.25)),
     hurt: synth(rate, 0.32, 520, 140, "square", 0.28, 18, 0.004, 1),
+    nope: concat(synth(rate, 0.1, 220, null, "square", 0.2, 0, 0.004, 0.5), synth(rate, 0.18, 160, null, "square", 0.2, 0, 0.004, 1)),
+    anvil: mixAll(synth(rate, 0.5, 1650, null, "sine", 0.3, 0, 0.002, 3), synth(rate, 0.4, 2480, null, "sine", 0.18, 0, 0.002, 4),
+                  lowpass(synth(rate, 0.04, 1, null, "noise", 0.6), 0.6)),
     die: jingle([523, 415, 330, 262], 0.14),
     gameover: jingle([392, 330, 262, 196], 0.26),
+    clear: jingle([523, 659, 784, 1047, 784, 1047], 0.12, 0.4),
     win: flamenco(rate),
   };
 }
 function initAudio() {   // browsers only allow sound after the first tap or key press
-  if (actx) { if (actx.state === "suspended") actx.resume(); return; }
+  if (actx) { if (actx.state === "suspended" && !game.paused) actx.resume(); return; }
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC) return;
   try { actx = new AC(); } catch (e) { return; }
@@ -296,22 +359,30 @@ function physicsMove(ent, level) {
     if (level.tilesNear(probe).some(t => collide(probe, t))) ent.onGround = true;
   }
 }
+function ledgeAhead(ent, level) {   // is there no ground just in front of a walker?
+  const r = ent.rect(), front = ent.dir > 0 ? r.x + r.w + 2 : r.x - 2;
+  return !level.solidAt(Math.floor(front / TILE), Math.floor((r.y + r.h + 2) / TILE));
+}
 
 // ------------------------------------------------------------------ player
 class Player {
-  constructor(x, y) {
-    this.x = x; this.y = y; this.w = 30; this.h = 42; this.vx = 0; this.vy = 0; this.facing = 1;
-    this.onGround = false; this.hitWall = false; this.hearts = MAX_HEARTS; this.invuln = 0; this.knockback = 0;
+  constructor(x, y, upg) {
+    this.x = x; this.y = y; this.w = KNIGHT_W; this.h = KNIGHT_H; this.vx = 0; this.vy = 0; this.facing = 1;
+    this.onGround = false; this.hitWall = false; this.invuln = 0; this.knockback = 0;
+    this.maxHearts = MAX_HEARTS + (upg.heart ? 1 : 0); this.hearts = this.maxHearts;
+    this.atkTotal = upg.quick ? 15 : 22; this.atkCooldown = upg.quick ? 3 : 6;
+    this.act0 = Math.round(this.atkTotal * 0.27); this.act1 = Math.round(this.atkTotal * 0.64);
+    this.reach = upg.long ? 1.3 : 1;
     this.attackTimer = 0; this.cooldown = 0; this.coyote = 0; this.jumpBuffer = 0; this.anim = 0;
     this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
   }
   rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
-  attackFrame() { return this.attackTimer ? ATTACK_FRAMES - this.attackTimer : 0; }
+  attackFrame() { return this.attackTimer ? this.atkTotal - this.attackTimer : 0; }
+  swingActive() { const f = this.attackFrame(); return f >= this.act0 && f <= this.act1; }
   attackBox() {   // the area the (long!) axe hurts this frame, or null
-    const f = this.attackFrame();
-    if (f < ACT0 || f > ACT1) return null;
-    const r = this.rect(), w = 92, cx = r.x + Math.floor(r.w / 2);
-    return { x: this.facing > 0 ? cx : cx - w, y: r.y - 48, w, h: 104 };
+    if (!this.swingActive()) return null;
+    const r = this.rect(), k = this.reach, w = Math.round(92 * k), cx = r.x + Math.floor(r.w / 2);
+    return { x: this.facing > 0 ? cx : cx - w, y: r.y - Math.round(44 * k), w, h: Math.round(56 + 56 * k) };
   }
   hurt(srcX) {
     if (this.invuln > 0 || this.dead) return false;
@@ -324,9 +395,9 @@ class Player {
     if (this.invuln > 0) this.invuln--;
     if (this.cooldown > 0) this.cooldown--;
     if (inp.attack && this.attackTimer === 0 && this.cooldown === 0) {
-      this.attackTimer = ATTACK_FRAMES; this.hitIds.clear(); this.justSwung = true;
+      this.attackTimer = this.atkTotal; this.hitIds.clear(); this.justSwung = true;
     }
-    if (this.attackTimer > 0) { this.attackTimer--; if (this.attackTimer === 0) this.cooldown = ATTACK_COOLDOWN; }
+    if (this.attackTimer > 0) { this.attackTimer--; if (this.attackTimer === 0) this.cooldown = this.atkCooldown; }
 
     let move = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
     if (this.knockback > 0) { this.knockback--; move = 0; }
@@ -353,28 +424,51 @@ class Player {
   }
 }
 
-// ------------------------------------------------------------------ toads
+class FlyingAxe {   // the "Hacha voladora" upgrade: thrown axe that comes back like a boomerang
+  constructor(x, y, dir) { this.x = x; this.y = y; this.vx = dir * 9.5; this.t = 0; this.hitIds = new Set(); this.alive = true; }
+  rect() { return { x: this.x - 15, y: this.y - 15, w: 30, h: 30 }; }
+  update(p) {
+    this.t++;
+    if (this.t < 30) { this.x += this.vx; this.vx *= 0.985; }
+    else {
+      const dx = p.x + p.w / 2 - this.x, dy = p.y + p.h / 2 - this.y, d = Math.hypot(dx, dy);
+      if (d < 26 || this.t > 240) { this.alive = false; return; }
+      this.x += dx / d * 10; this.y += dy / d * 10;
+      if (this.t === 30) this.hitIds.clear();   // can hit things again on the way back
+    }
+  }
+}
+
+// ------------------------------------------------------------------ enemies
+let nextId = 1;
+class Enemy {   // shared bits for every enemy
+  init(kind, w, h, hp, score) {
+    Object.assign(this, { kind, w, h, hp, maxHp: hp, score, id: nextId++, vx: 0, vy: 0, dir: -1,
+      onGround: false, hitWall: false, flash: 0, stun: 0, alive: true, t: Math.random() * 100 });
+  }
+  rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
+  colors() { return ENEMY_COLORS[this.kind]; }
+  hit(fromDir, dmg = 1) {
+    this.hp -= dmg; this.flash = 8; this.stun = 16; this.vx = fromDir * 6.5; this.vy = -4; this.dir = -fromDir;
+    if (this.hp <= 0) { this.alive = false; return true; }
+    return false;
+  }
+  harmful() { return this.stun === 0; }
+}
+
 const TOAD_STATS = {
   t: { w: 32, h: 24, hp: 1, hopVy: 6.5, hopVx: 2.2, wait: [25, 55], score: 100 },
   T: { w: 46, h: 40, hp: 3, hopVy: 7.0, hopVx: 1.6, wait: [50, 80], score: 500 },
   j: { w: 28, h: 22, hp: 1, hopVy: 11.5, hopVx: 2.6, wait: [35, 60], score: 150 },
 };
-let nextId = 1;
-class Toad {
-  constructor(kind, tx, ty) {
+class Toad extends Enemy {
+  constructor(kind, tx, ty, mul = 1) {
+    super();
     const s = TOAD_STATS[kind];
-    Object.assign(this, { kind, w: s.w, h: s.h, hp: s.hp, maxHp: s.hp, hopVy: s.hopVy, hopVx: s.hopVx,
-      waitRange: s.wait, score: s.score });
-    this.id = nextId++; this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
-    this.vx = 0; this.vy = 0; this.dir = -1; this.onGround = false; this.hitWall = false;
-    this.wait = randInt(10, 60); this.flash = 0; this.stun = 0; this.alive = true; this.t = Math.random() * 100;
-  }
-  rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
-  colors() { return TOAD_COLORS[this.kind]; }
-  hit(fromDir) {
-    this.hp--; this.flash = 8; this.stun = 16; this.vx = fromDir * 6.5; this.vy = -4; this.dir = -fromDir;
-    if (this.hp <= 0) { this.alive = false; return true; }
-    return false;
+    this.init(kind, s.w, s.h, s.hp, s.score);
+    this.hopVy = s.hopVy; this.hopVx = s.hopVx * mul;
+    this.waitRange = [Math.round(s.wait[0] / mul), Math.round(s.wait[1] / mul)];
+    this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h; this.wait = randInt(10, 60);
   }
   pathBlocked(level) {   // would the next hop hit a wall or go off a ledge?
     const r = this.rect(), dist = this.hopVx * 2 * this.hopVy / GRAVITY;
@@ -399,6 +493,119 @@ class Toad {
     if (this.hitWall && this.stun === 0) this.dir *= -1;
     if (this.y > level.pxH + 100) this.alive = false;
   }
+  draw(cam) { drawToad(this, cam); }
+}
+
+class Wasp extends Enemy {   // flies back and forth, then dives at the knight
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("w", 26, 20, 1, 150);
+    this.x = tx + 7; this.y = ty + 10; this.homeX = this.x; this.homeY = this.y;
+    this.speed = 1.3 * mul; this.diveSpeed = 3.2 * mul; this.mode = "patrol"; this.modeT = randInt(30, 90);
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.stun > 0) { this.stun--; this.x += this.vx; this.y += this.vy; this.vx *= 0.88; this.vy *= 0.88; return; }
+    const px = player.x + player.w / 2, py = player.y + player.h / 2, cx = this.x + this.w / 2, cy = this.y + this.h / 2;
+    if (this.mode === "patrol") {
+      this.x += this.dir * this.speed;
+      if (Math.abs(this.x - this.homeX) > 120) this.dir = this.x < this.homeX ? 1 : -1;
+      this.y = lerp(this.y, this.homeY + Math.sin(this.t * 0.06) * 14, 0.2);
+      if (--this.modeT <= 0 && Math.abs(px - cx) < 230 && py > cy && !player.dead) {
+        const d = Math.hypot(px - cx, py - cy) || 1;
+        this.vx = (px - cx) / d * this.diveSpeed; this.vy = (py - cy) / d * this.diveSpeed;
+        this.dir = this.vx > 0 ? 1 : -1; this.mode = "dive"; this.modeT = 70; game.sound("buzz");
+      }
+    } else if (this.mode === "dive") {
+      this.x += this.vx; this.y += this.vy;
+      if (--this.modeT <= 0 || level.solidAt(Math.floor(cx / TILE), Math.floor((cy + 12) / TILE))) this.mode = "return";
+    } else {
+      const dx = this.homeX - this.x, dy = this.homeY - this.y, d = Math.hypot(dx, dy);
+      if (d < 4) { this.mode = "patrol"; this.modeT = randInt(80, 140); }
+      else { this.x += dx / d * 2; this.y += dy / d * 2; this.dir = dx > 0 ? 1 : -1; }
+    }
+  }
+  hit(fromDir, dmg = 1) {
+    this.hp -= dmg; this.flash = 8; this.stun = 14; this.vx = fromDir * 6; this.vy = -2; this.mode = "return";
+    if (this.hp <= 0) { this.alive = false; return true; }
+    return false;
+  }
+  draw(cam) { drawWasp(this, cam); }
+}
+
+class Hedgehog extends Enemy {   // walks slowly, then curls up and rolls at you
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("h", 32, 26, 2, 250);
+    this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
+    this.speed = 0.7 * mul; this.rollSpeed = 4.6 * mul; this.mode = "walk"; this.modeT = 0;
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.9; }
+    else if (this.mode === "walk") {
+      this.vx = this.dir * this.speed;
+      const dx = player.x + player.w / 2 - (this.x + this.w / 2);
+      if (this.onGround && Math.abs(dx) < 210 && Math.abs(player.y + player.h - (this.y + this.h)) < 30 && !player.dead) {
+        this.mode = "curl"; this.modeT = 25; this.dir = dx > 0 ? 1 : -1; this.vx = 0; game.sound("squeak");
+      }
+    } else if (this.mode === "curl") { this.vx = 0; if (--this.modeT <= 0) { this.mode = "roll"; this.modeT = 100; } }
+    else if (this.mode === "roll") { this.vx = this.dir * this.rollSpeed; if (--this.modeT <= 0) { this.mode = "rest"; this.modeT = 50; } }
+    else { this.vx = 0; if (--this.modeT <= 0) this.mode = "walk"; }
+    physicsMove(this, level);
+    if (this.stun === 0 && (this.mode === "walk" || this.mode === "roll") && (this.hitWall || (this.onGround && ledgeAhead(this, level))))
+      this.dir *= -1;
+    if (this.y > level.pxH + 100) this.alive = false;
+  }
+  hit(fromDir, dmg = 1) { this.mode = "rest"; this.modeT = 40; return super.hit(fromDir, dmg); }
+  draw(cam) { drawHedgehog(this, cam); }
+}
+
+class Boss extends Enemy {   // the giant king toad: big hops, shakes the ground, calls little toads
+  constructor(tx, ty, level, mul = 1) {
+    super();
+    this.init("B", 88, 72, 10, 3000);
+    this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
+    this.minX = level.arena[0]; this.maxX = level.arena[1]; this.mul = mul;
+    this.wait = 90; this.hops = 0; this.invuln = 0; this.jumping = false;
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.invuln) this.invuln--;
+    const awake = player.x > this.minX - 120;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.9; }
+    else if (this.onGround && awake) {
+      this.vx = 0;
+      if (--this.wait <= 0) {
+        const anger = this.maxHp - this.hp;
+        this.dir = player.x + player.w / 2 > this.x + this.w / 2 ? 1 : -1;
+        this.vy = -(this.hops % 3 === 2 ? 14 : 10);
+        this.vx = this.dir * (2.4 + anger * 0.12) * this.mul;
+        this.wait = Math.max(28, randInt(45, 75) - anger * 3);
+        this.hops++; this.jumping = true;
+      }
+    }
+    physicsMove(this, level);
+    if (this.x < this.minX) { this.x = this.minX; this.vx = Math.abs(this.vx); }
+    if (this.x > this.maxX - this.w) { this.x = this.maxX - this.w; this.vx = -Math.abs(this.vx); }
+    if (this.onGround && this.jumping) {
+      this.jumping = false; game.shake = Math.max(game.shake, 10); game.sound("stomp");
+      if (this.hops % 3 === 0 && level.enemies.length < 6) {
+        level.enemies.push(new Toad("t", this.x + this.w / 2 - 20 + this.dir * 50, this.y + this.h - TILE, this.mul));
+        game.sound("croak");
+      }
+    }
+  }
+  hit(fromDir, dmg = 1) {
+    if (this.invuln > 0) return false;
+    this.hp -= dmg; this.flash = 10; this.invuln = 24; this.stun = 22; this.vx = fromDir * 5;
+    if (this.hp <= 0) { this.alive = false; return true; }
+    return false;
+  }
+  draw(cam) { drawToad(this, cam); }
 }
 
 // ------------------------------------------------------------------ level
@@ -407,20 +614,31 @@ class Coin {
   rect() { return { x: Math.round(this.x - 9), y: Math.round(this.y - 9 + Math.sin(this.t * 0.08) * 3), w: 18, h: 18 }; }
 }
 class Level {
-  constructor(rows) {
-    const width = Math.max(...rows.map(r => r.length));
+  constructor(def) {
+    const rows = def.map, width = Math.max(...rows.map(r => r.length)), mul = def.speed;
+    this.name = def.name; this.theme = THEMES[def.theme];
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
-    this.tiles = new Map(); this.coins = []; this.enemies = []; this.start = [TILE * 2, TILE * 9]; this.flag = null;
+    this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = [];
+    this.start = [TILE * 2, TILE * 9]; this.flag = null; this.boss = null; this.arena = [0, this.pxW];
+    const later = [];
     this.rows.forEach((row, cy) => [...row].forEach((ch, cx) => {
       const x = cx * TILE, y = cy * TILE;
       if (SOLID.includes(ch)) this.tiles.set(cx + "," + cy, ch);
+      else if (ch === "^") this.spikes.push({ x, y });
       else if (ch === "o") this.coins.push(new Coin(x + TILE / 2, y + TILE / 2));
-      else if (ch === "P") this.start = [x + (TILE - 30) / 2, y + TILE - 42];
-      else if (TOAD_STATS[ch]) this.enemies.push(new Toad(ch, x, y));
+      else if (ch === "P") this.start = [x + (TILE - KNIGHT_W) / 2, y + TILE - KNIGHT_H];
+      else if (TOAD_STATS[ch]) this.enemies.push(new Toad(ch, x, y, mul));
+      else if (ch === "w") this.enemies.push(new Wasp(x, y, mul));
+      else if (ch === "h") this.enemies.push(new Hedgehog(x, y, mul));
+      else if (ch === "B") later.push([x, y]);
+      else if (ch === "[") this.arena[0] = x;
+      else if (ch === "]") this.arena[1] = x + TILE;
       else if (ch === "F") this.flag = { x: x + TILE / 2 - 3, y: y + TILE - TILE * 7, w: 6, h: TILE * 7 };
     }));
+    for (const [x, y] of later) { this.boss = new Boss(x, y, this, mul); this.enemies.push(this.boss); }
   }
+  flagOpen() { return this.flag && (!this.boss || !this.boss.alive); }
   tile(cx, cy) { return this.tiles.get(cx + "," + cy); }
   solidAt(cx, cy) { return this.tiles.has(cx + "," + cy); }
   tilesNear(r) {
@@ -465,41 +683,59 @@ function T(msg, size, x, y, color = WHITE, align = "center", base = "middle") {
   ctx.fillStyle = BLACK; ctx.fillText(msg, x + 2, y + 2);
   ctx.fillStyle = color; ctx.fillText(msg, x, y);
 }
+function emoji(ch, size, x, y) {
+  ctx.font = `${size}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = WHITE; ctx.fillText(ch, x, y);
+}
+function flipAt(x, y, w, dir) {   // draw facing right, mirrored when facing left
+  ctx.save();
+  if (dir > 0) ctx.translate(x, y); else { ctx.translate(x + w, y); ctx.scale(-1, 1); }
+}
 
-function makeTiles() {
+function makeTiles(theme) {
   const rnd = seeded(7);
   const mk = draw => { const c = document.createElement("canvas"); c.width = c.height = TILE; draw(c.getContext("2d")); return c; };
+  const [d0, d1, d2] = theme.dirt, [t0, t1, t2] = theme.top;
+  const ln = (g, col, x1, y1, x2, y2, lw = 2) => { g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); };
   const dirt = g => {
-    g.fillStyle = DIRT; g.fillRect(0, 0, TILE, TILE);
-    g.fillStyle = DIRT_DARK; for (let i = 0; i < 10; i++) g.fillRect(Math.floor(rnd() * (TILE - 3)), Math.floor(rnd() * (TILE - 3)), 3, 3);
-    g.fillStyle = DIRT_LIGHT; for (let i = 0; i < 4; i++) g.fillRect(Math.floor(rnd() * (TILE - 2)), Math.floor(rnd() * (TILE - 2)), 2, 2);
+    g.fillStyle = d0; g.fillRect(0, 0, TILE, TILE);
+    if (theme.bricks) {   // castle walls: stone bricks
+      ln(g, d1, 0, 20, TILE, 20); ln(g, d1, 0, 39, TILE, 39); ln(g, d1, 20, 0, 20, 20); ln(g, d1, 6, 20, 6, 40); ln(g, d1, 32, 20, 32, 40);
+      ln(g, d2, 2, 2, 17, 2); ln(g, d2, 23, 2, 38, 2); ln(g, d2, 9, 22, 29, 22);
+      return;
+    }
+    g.fillStyle = d1; for (let i = 0; i < 10; i++) g.fillRect(Math.floor(rnd() * (TILE - 3)), Math.floor(rnd() * (TILE - 3)), 3, 3);
+    g.fillStyle = d2; for (let i = 0; i < 4; i++) g.fillRect(Math.floor(rnd() * (TILE - 2)), Math.floor(rnd() * (TILE - 2)), 2, 2);
   };
   const plain = mk(dirt);
-  const grass = mk(g => {
+  const top = mk(g => {
     dirt(g);
-    g.fillStyle = GRASS_DARK; g.fillRect(0, 0, TILE, 13);
-    g.fillStyle = GRASS; g.fillRect(0, 0, TILE, 10);
+    if (theme.bricks) {   // castle floor: pale slabs on top
+      g.fillStyle = t1; g.fillRect(0, 0, TILE, 12); g.fillStyle = t0; g.fillRect(0, 0, TILE, 9);
+      ln(g, t2, 0, 1, TILE, 1); ln(g, t1, 20, 0, 20, 9);
+      return;
+    }
+    g.fillStyle = t1; g.fillRect(0, 0, TILE, 13);
+    g.fillStyle = t0; g.fillRect(0, 0, TILE, 10);
     for (let x = 3; x < TILE; x += 7) {
-      g.strokeStyle = GRASS_LIGHT; g.lineWidth = 2; g.beginPath(); g.moveTo(x, 2); g.lineTo(x + 2, 6); g.stroke();
-      g.fillStyle = GRASS_DARK; g.beginPath(); g.arc(x + 2, 13, 3, 0, Math.PI * 2); g.fill();
+      ln(g, t2, x, 2, x + 2, 6);
+      g.fillStyle = t1; g.beginPath(); g.arc(x + 2, 13, 3, 0, Math.PI * 2); g.fill();
     }
   });
   const stone = mk(g => {
     g.fillStyle = STONE; g.fillRect(0, 0, TILE, TILE);
-    const ln = (col, x1, y1, x2, y2) => { g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); };
     const half = TILE / 2;
-    ln(STONE_DARK, 0, half, TILE, half); ln(STONE_DARK, half, 0, half, half); ln(STONE_DARK, TILE / 4, half, TILE / 4, TILE);
-    ln(STONE_LIGHT, 3, 3, half - 4, 3); ln(STONE_LIGHT, half + 3, 3, TILE - 4, 3);
+    ln(g, STONE_DARK, 0, half, TILE, half); ln(g, STONE_DARK, half, 0, half, half); ln(g, STONE_DARK, TILE / 4, half, TILE / 4, TILE);
+    ln(g, STONE_LIGHT, 3, 3, half - 4, 3); ln(g, STONE_LIGHT, half + 3, 3, TILE - 4, 3);
     g.strokeStyle = STONE_DARK; g.strokeRect(1, 1, TILE - 2, TILE - 2);
   });
   const crate = mk(g => {
     g.fillStyle = WOOD; g.fillRect(0, 0, TILE, TILE);
-    g.strokeStyle = WOOD_DARK; g.lineWidth = 2;
-    for (const y of [13, 26]) { g.beginPath(); g.moveTo(0, y); g.lineTo(TILE, y); g.stroke(); }
-    g.lineWidth = 4; g.beginPath(); g.moveTo(4, 4); g.lineTo(TILE - 5, TILE - 5); g.stroke();
-    g.strokeRect(2, 2, TILE - 4, TILE - 4);
+    for (const y of [13, 26]) ln(g, WOOD_DARK, 0, y, TILE, y);
+    ln(g, WOOD_DARK, 4, 4, TILE - 5, TILE - 5, 4);
+    g.lineWidth = 4; g.strokeRect(2, 2, TILE - 4, TILE - 4);
   });
-  return { grass, dirt: plain, "=": stone, C: crate };
+  return { grass: top, dirt: plain, "=": stone, C: crate };
 }
 
 function angleAt(prog) {   // axe angle in degrees: 0 = up, positive = towards the front
@@ -510,71 +746,92 @@ function angleAt(prog) {   // axe angle in degrees: 0 = up, positive = towards t
 }
 function axeAngle(p) {
   if (p.attackTimer === 0) return -30 + (p.onGround && Math.abs(p.vx) > 0.5 ? Math.sin(p.anim * 1.4) * 4 : 0);
-  return angleAt(p.attackFrame() / ATTACK_FRAMES);
+  return angleAt(p.attackFrame() / p.atkTotal);
 }
 
-function drawAxe(hand, d) {
-  const n = [-d[1], d[0]];
+function drawAxe(hand, d, k = 1, gold = false) {
+  const n = [-d[1], d[0]], len = AXE_LEN * k, head = AXE_HEAD * k;
   const pt = (c, a, b) => [c[0] + d[0] * a + n[0] * b, c[1] + d[1] * a + n[1] * b];
   const [hx, hy] = hand;
-  L(HANDLE_DARK, hx - d[0] * 13, hy - d[1] * 13, hx + d[0] * (AXE_LEN + 1), hy + d[1] * (AXE_LEN + 1), 7);
-  L(HANDLE, hx - d[0] * 12, hy - d[1] * 12, hx + d[0] * AXE_LEN, hy + d[1] * AXE_LEN, 4);
-  for (const k of [18, 24, 30]) { const a = pt(hand, k, -3), b = pt(hand, k, 3); L(HANDLE_DARK, a[0], a[1], b[0], b[1], 2); }
-  const c = [hx + d[0] * AXE_HEAD, hy + d[1] * AXE_HEAD];
+  L(HANDLE_DARK, hx - d[0] * 13, hy - d[1] * 13, hx + d[0] * (len + 1), hy + d[1] * (len + 1), 7);
+  L(HANDLE, hx - d[0] * 12, hy - d[1] * 12, hx + d[0] * len, hy + d[1] * len, 4);
+  for (const kk of [18, 24, 30]) { const a = pt(hand, kk, -3), b = pt(hand, kk, 3); L(HANDLE_DARK, a[0], a[1], b[0], b[1], 2); }
+  const c = [hx + d[0] * head, hy + d[1] * head];
+  if (gold) { ctx.globalAlpha = 0.35 + 0.15 * Math.sin(Date.now() / 120); C(GOLD, c[0], c[1], 30); ctx.globalAlpha = 1; }
   const blade = [[6, 3], [17, 21], [6, 26], [-6, 26], [-17, 21], [-6, 3]];
   for (const s of [1, -1]) {   // two blades -> double axe
     const pts = blade.map(([a, b]) => pt(c, a, b * s));
-    P(BLADE, pts); PS(BLADE_DARK, pts, 2);
+    P(gold ? GOLD_BLADE : BLADE, pts); PS(gold ? GOLD_BLADE_DARK : BLADE_DARK, pts, 2);
     const e1 = pt(c, 12, 21 * s), e2 = pt(c, -12, 21 * s); L(WHITE, e1[0], e1[1], e2[0], e2[1], 2);
   }
   P(BLADE_DARK, [pt(c, 5, -4), pt(c, 15, 0), pt(c, 5, 4)]);
-  C(BLADE_DARK, c[0], c[1], 5);
+  C(gold ? GOLD_DARK : BLADE_DARK, c[0], c[1], 5);
+}
+function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
+  ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.scale(0.62, 0.62);
+  drawAxe([0, 26], [0, -1], 0.55, gold);
+  ctx.restore();
 }
 
-function drawKnight(p, cam) {
-  const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving ? Math.sin(p.anim * 1.4) * 3 : 0;
-  ctx.save();
-  const px = Math.round(p.x) - cam, py = Math.round(p.y);
-  if (p.facing > 0) ctx.translate(px, py); else { ctx.translate(px + p.w, py); ctx.scale(-1, 1); }
-  const sh = [25, 18], rad = axeAngle(p) * Math.PI / 180, d = [Math.sin(rad), -Math.cos(rad)];
-  const hand = [sh[0] + d[0] * ARM_LEN, sh[1] + d[1] * ARM_LEN];
+function drawKnight(p, cam, upg, t) {
+  const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving ? Math.sin(p.anim * 1.4) * 4 : 0;
+  flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing);
+  const sh = [24, 19], k = p.reach, rad = axeAngle(p) * Math.PI / 180, d = [Math.sin(rad), -Math.cos(rad)];
+  // when swinging the arm follows the axe; otherwise he holds it upright in front, fist at his belt
+  const hand = p.attackTimer ? [sh[0] + d[0] * ARM_LEN, sh[1] + d[1] * ARM_LEN] : [30, 31 + step * 0.3];
+  const flap = Math.sin(t * 0.15) * 3 + (moving ? 6 : 0) + (p.onGround ? 0 : 5);
 
-  const f = p.attackFrame();   // swing trail
-  if (f >= ACT0 && f <= ACT1) {
-    const prog = f / ATTACK_FRAMES, reach = ARM_LEN + AXE_HEAD;
-    for (let k = 1; k < 7; k++) {
-      const a = angleAt(Math.max(0, prog - k * 0.025)) * Math.PI / 180;
-      ctx.globalAlpha = Math.max(0, 160 - k * 24) / 255;
-      C(WHITE, sh[0] + Math.sin(a) * reach, sh[1] - Math.cos(a) * reach, 16 - k * 2);
+  // flowing cape behind everything
+  P(CAPE_DARK, [[5, 15], [19, 15], [12, 50], [-4 - flap, 56], [-14 - flap, 47]]);
+  P(CAPE, [[7, 16], [17, 16], [9, 46], [-3 - flap, 51], [-10 - flap, 43]]);
+
+  if (p.swingActive()) {   // swing trail
+    const prog = p.attackFrame() / p.atkTotal, reach = ARM_LEN + AXE_HEAD * k;
+    for (let i = 1; i < 7; i++) {
+      const a = angleAt(Math.max(0, prog - i * 0.025)) * Math.PI / 180;
+      ctx.globalAlpha = Math.max(0, 160 - i * 24) / 255;
+      C(upg.sharp ? GOLD : WHITE, sh[0] + Math.sin(a) * reach, sh[1] - Math.cos(a) * reach, 16 - i * 2);
     }
     ctx.globalAlpha = 1;
   }
-  const sw = -step * 0.8;   // back arm: huge bicep, bracer, fist
-  E(SKIN_DARK, -12, 13, 16, 17); E(SKIN, -11, 14, 14, 15); C(SKIN_LIGHT, -6, 18, 2);
-  R(ARMOR_DARK, -10 + sw, 27, 11, 8, 3); C(STEEL_DARK, -5 + sw, 37, 5);
+  const sw = -step * 0.6;   // back arm: big bicep, bracer, fist
+  E(SKIN_DARK, -10, 15, 14, 16); E(SKIN, -9, 16, 12, 14); C(SKIN_LIGHT, -5, 20, 2);
+  R(ARMOR_DARK, -8 + sw, 29, 10, 9, 3); C(STEEL_DARK, -3 + sw, 41, 5);
 
-  const legs = p.onGround ? [[5 + step, 30], [16 - step, 30]] : [[3, 28], [18, 30]];
-  for (const [lx, ly] of legs) { R(STEEL_DARK, lx, ly, 10, 8, 3); R(BOOT, lx - 1, ly + 7, 13, 5, 2); }
-
-  const torso = [[-3, 13], [33, 13], [26, 31], [5, 31]];   // broad V-shaped chest
+  // long legs: thigh, knee guard, shin, boot
+  const legs = p.onGround ? [[7 + step, 35], [16 - step, 35]] : [[4, 32], [18, 35]];
+  for (const [lx, ly] of legs) {
+    R(STEEL_DARK, lx, ly, 9, 17, 3); R(ARMOR, lx - 1, ly + 7, 11, 5, 2); R(BOOT, lx - 1, ly + 16, 13, 5, 2);
+  }
+  const torso = [[-1, 15], [31, 15], [24, 34], [8, 34]];   // broad shoulders, slim waist
   P(ARMOR, torso); PS(ARMOR_DARK, torso, 2);
-  for (const x of [3, 15]) { E(ARMOR_MID, x, 14, 13, 9); ES(ARMOR_DARK, x, 14, 13, 9, 1); }
-  for (const ax of [10, 16]) for (const ay of [23, 26]) RS(ARMOR_DARK, ax, ay, 5, 3, 1);
-  R(HANDLE_DARK, 6, 29, 20, 4); R(GOLD, 17, 29, 5, 4);
+  for (const x of [3, 15]) { E(ARMOR_MID, x, 16, 12, 9); ES(ARMOR_DARK, x, 16, 12, 9, 1); }
+  for (const ax of [11, 16]) for (const ay of [26, 29]) RS(ARMOR_DARK, ax, ay, 5, 3, 1);
+  R(HANDLE_DARK, 8, 32, 17, 4); R(GOLD, 16, 32, 5, 4);
+  R(STEEL_DARK, 12, 11, 12, 5);   // neck
 
-  R(STEEL_DARK, 11, 10, 13, 5);   // neck, small helmet, plume
-  const pb = step * 0.6;
-  P(PLUME, [[13, -1], [7, -10 + pb], [-3, -6 + pb], [1, 0], [9, 2]]);
-  R(ARMOR, 10, -3, 16, 15, 6); RS(ARMOR_DARK, 10, -3, 16, 15, 2, 6);
-  L(ARMOR_LIGHT, 13, 0, 17, 0, 2); R(VISOR, 18, 2, 8, 3); R(rgb(255, 240, 150), 22, 3, 2, 2);
-  C(ARMOR_LIGHT, 1, 14, 6); CS(ARMOR_DARK, 1, 14, 6, 2);
+  // open-faced helmet: proud nose, twirled moustache, tall plume
+  const pb = step * 0.5;
+  P(PLUME, [[15, -4], [9, -16 + pb], [-4, -15 + pb], [-13 - flap * 0.4, -6 + pb], [1, -3], [11, -1]]);
+  P(rgb(255, 120, 110), [[13, -6], [6, -14 + pb], [-3, -12 + pb], [5, -6]]);
+  R(ARMOR, 9, -6, 18, 19, 7); RS(ARMOR_DARK, 9, -6, 18, 19, 2, 7);
+  R(SKIN, 18, -1, 10, 12, 3);
+  R(ARMOR_DARK, 17, -4, 11, 3, 1);                      // raised visor
+  L(BLACK, 21, 1.5, 25, 1, 1.5); C(BLACK, 23.5, 3.5, 1.4); // brow and eye
+  P(SKIN_DARK, [[26, 3], [29, 6.5], [26, 7]]);           // nose
+  P(MOUSTACHE, [[19, 8], [23, 7], [27, 8], [30, 6], [29, 9.5], [23, 9], [19, 10], [16, 8]]);
+  L(SKIN_DARK, 22, 11, 25, 10.5, 1);                     // confident grin
+  R(ARMOR, 9, 0, 10, 13, 3); C(ARMOR_LIGHT, 14, 5, 2);   // cheek guard
+  L(ARMOR_LIGHT, 12, -3, 17, -3, 2);
+  C(ARMOR_LIGHT, 1, 16, 6); CS(ARMOR_DARK, 1, 16, 6, 2);
 
-  drawAxe(hand, d);   // the axe, then the arm gripping it
-  L(SKIN_DARK, sh[0], sh[1], hand[0], hand[1], 13); L(SKIN, sh[0], sh[1], hand[0], hand[1], 10);
-  const bi = [sh[0] + d[0] * 8, sh[1] + d[1] * 8];
-  C(SKIN_DARK, bi[0], bi[1], 9); C(SKIN, bi[0], bi[1], 8); C(SKIN_LIGHT, bi[0] - 2, bi[1] - 2, 2);
+  const ad = p.attackTimer ? d : [Math.sin(0.2), -Math.cos(0.2)];
+  if (!game.flyingAxe) drawAxe(hand, ad, k, upg.sharp);   // the axe, then the arm gripping it
+  L(SKIN_DARK, sh[0], sh[1], hand[0], hand[1], 12); L(SKIN, sh[0], sh[1], hand[0], hand[1], 9);
+  const bi = [lerp(sh[0], hand[0], 0.4), lerp(sh[1], hand[1], 0.4)];
+  C(SKIN_DARK, bi[0], bi[1], 8); C(SKIN, bi[0], bi[1], 7); C(SKIN_LIGHT, bi[0] - 2, bi[1] - 2, 2);
   C(ARMOR_DARK, hand[0], hand[1], 6); C(STEEL, hand[0], hand[1], 3);
-  C(ARMOR_LIGHT, 27, 15, 6); CS(ARMOR_DARK, 27, 15, 6, 2); C(GOLD, 27, 15, 2);
+  C(ARMOR_LIGHT, 26, 17, 6); CS(ARMOR_DARK, 26, 17, 6, 2); C(GOLD, 26, 17, 2);
   ctx.restore();
 }
 
@@ -582,14 +839,15 @@ function drawToad(e, cam) {
   const w = e.w, h = e.h, r = e.rect();
   let [main, dark, belly] = e.colors();
   if (e.flash) { main = WHITE; dark = rgb(210, 210, 210); belly = WHITE; }
-  ctx.save();
-  if (e.dir > 0) ctx.translate(r.x - cam, r.y); else { ctx.translate(r.x - cam + w, r.y); ctx.scale(-1, 1); }
+  flipAt(r.x - cam, r.y, w, e.dir);
   if (e.onGround) { E(dark, -2, h * 0.5, w * 0.5, h * 0.5); E(dark, -5, h - 5, w * 0.45, 5); }
   else { L(dark, w * 0.3, h * 0.75, -w * 0.25, h + 4, Math.max(4, Math.floor(w / 7))); E(dark, -w * 0.4, h + 1, w * 0.3, 5); }
-  if (e.kind === "T") {   // the king toad wears a crown
-    const cx = w * 0.32, b = h * 0.22;
-    const crown = [[cx - 9, b + 2], [cx - 9, b - 8], [cx - 4, b - 4], [cx, b - 11], [cx + 4, b - 4], [cx + 9, b - 8], [cx + 9, b + 2]];
+  if (e.kind === "T" || e.kind === "B") {   // kings wear crowns
+    const s = e.kind === "B" ? 2 : 1, cx = w * 0.32, b = h * 0.22;
+    const crown = [[cx - 9 * s, b + 2], [cx - 9 * s, b - 8 * s], [cx - 4 * s, b - 4 * s], [cx, b - 11 * s],
+                   [cx + 4 * s, b - 4 * s], [cx + 9 * s, b - 8 * s], [cx + 9 * s, b + 2]];
     P(GOLD, crown); PS(GOLD_DARK, crown, 2);
+    if (s > 1) C(HEART, cx, b - 4 * s, 3);
   }
   const top = Math.floor(h * 0.2);
   E(main, 0, top, w, h - top); ES(dark, 0, top, w, h - top, 2);
@@ -599,15 +857,69 @@ function drawToad(e, cam) {
   const er = Math.max(4, Math.floor(w * 0.13));
   for (const fx of [0.55, 0.8]) {   // bulging eyes, horizontal pupils
     const cx = w * fx, cy = h * 0.24;
-    C(main, cx, cy, er + 2); C(TOAD_EYE, cx, cy, er); R(BLACK, cx - er * 0.7, cy - 1, er * 1.4, 3);
+    C(main, cx, cy, er + 2); C(e.kind === "B" ? rgb(255, 120, 60) : TOAD_EYE, cx, cy, er); R(BLACK, cx - er * 0.7, cy - 1, er * 1.4, 3);
   }
   L(dark, w * 0.6, h * 0.6, w - 1, h * 0.52, 2);
   if (e.onGround && Math.sin(e.t * 0.07) > 0.85) C(rgb(245, 200, 180), w * 0.8, h * 0.72, Math.max(4, w * 0.16));
   R(dark, w * 0.7, h * 0.82, Math.max(4, Math.floor(w / 8)), h * 0.2);
   ctx.restore();
-  if (e.maxHp > 1) for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 14 + i * 10, r.y - 22, 8, 5);
+  if (e.maxHp > 1 && e.kind !== "B")
+    for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 14 + i * 10, r.y - 22, 8, 5);
 }
 
+function drawWasp(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h, body = e.flash ? WHITE : rgb(250, 200, 40);
+  flipAt(r.x - cam, r.y, w, e.dir);
+  const flap = Math.sin(e.t * 0.9) * 5;
+  ctx.globalAlpha = 0.65;
+  E(rgb(220, 240, 255), w * 0.22, -7 - flap, 13, 10); E(rgb(220, 240, 255), w * 0.42, -5 + flap, 12, 9);
+  ctx.globalAlpha = 1;
+  P(BLACK, [[1, h / 2 - 3], [-7, h / 2], [1, h / 2 + 3]]);   // stinger
+  E(body, 0, 3, w * 0.78, h - 6);
+  R(BLACK, w * 0.2, 5, 3, h - 10); R(BLACK, w * 0.42, 4, 3, h - 8);
+  C(BLACK, w * 0.8, h / 2, 6); C(WHITE, w * 0.86, h / 2 - 2, 2);
+  L(BLACK, w * 0.84, h / 2 - 5, w + 2, -2, 1); L(BLACK, w * 0.78, h / 2 - 5, w * 0.82, -3, 1);
+  ctx.restore();
+}
+
+function drawHedgehog(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h;
+  const [brown, spike, face] = e.flash ? [WHITE, rgb(210, 210, 210), WHITE] : e.colors();
+  flipAt(r.x - cam, r.y, w, e.dir);
+  if (e.mode === "roll" || e.mode === "curl") {   // spiky ball
+    const rad = h / 2;
+    ctx.translate(w / 2, h / 2 + 1);
+    ctx.rotate(e.mode === "roll" ? e.t * 0.35 : 0);
+    for (let i = 0; i < 12; i++) {
+      const a = i / 12 * Math.PI * 2;
+      P(spike, [[Math.cos(a - 0.22) * rad * 0.8, Math.sin(a - 0.22) * rad * 0.8], [Math.cos(a) * (rad + 7), Math.sin(a) * (rad + 7)],
+                [Math.cos(a + 0.22) * rad * 0.8, Math.sin(a + 0.22) * rad * 0.8]]);
+    }
+    C(brown, 0, 0, rad); L(spike, -rad * 0.5, -rad * 0.2, rad * 0.4, rad * 0.3, 2);
+  } else {
+    for (let i = 0; i < 8; i++) {   // spikes along the back
+      const a = Math.PI + 0.15 + i / 7 * (Math.PI * 0.75), cx = w * 0.42, cy = h * 0.75;
+      P(spike, [[cx + Math.cos(a - 0.2) * 12, cy + Math.sin(a - 0.2) * 12], [cx + Math.cos(a) * (h * 0.85), cy + Math.sin(a) * (h * 0.85)],
+                [cx + Math.cos(a + 0.2) * 12, cy + Math.sin(a + 0.2) * 12]]);
+    }
+    E(brown, 0, 6, w * 0.85, h - 6);
+    E(face, w * 0.55, h * 0.38, w * 0.42, h * 0.55);
+    C(BLACK, w + 1, h * 0.62, 3); C(BLACK, w * 0.78, h * 0.52, 2);
+    const step = Math.sin(e.t * 0.3) * 2;
+    R(spike, w * 0.2 + step, h - 4, 6, 4); R(spike, w * 0.6 - step, h - 4, 6, 4);
+  }
+  ctx.restore();
+}
+
+function drawSpike(s, cam) {
+  const x = s.x - cam, base = s.y + TILE;
+  R(STONE_DARK, x + 2, base - 6, TILE - 4, 6);
+  for (let i = 0; i < 4; i++) {
+    const sx = x + 4 + i * 8;
+    P(STEEL, [[sx, base - 5], [sx + 4, base - 22], [sx + 8, base - 5]]);
+    L(WHITE, sx + 4, base - 20, sx + 4, base - 10, 1);
+  }
+}
 function drawCoin(c, cam) {
   const r = c.rect(), w = Math.floor(Math.abs(Math.cos(c.t * 0.08)) * 14) + 4, cx = r.x + 9 - cam, cy = r.y + 9;
   E(GOLD_DARK, cx - w / 2, cy - 9, w, 18); E(GOLD, cx - w / 2 + 2, cy - 7, w - 4, 14);
@@ -620,6 +932,79 @@ function drawHeart(x, y, full) {
 function drawCloud(x, y, s) {
   for (const [dx, dy, rad] of [[0, 0, 22], [25, -10, 28], [55, 0, 22], [28, 6, 22]]) C(WHITE, x + dx * s, y + dy * s, rad * s);
 }
+const wrapX = (x, period) => ((x % period) + period) % period;
+function drawBackground(theme, cam) {
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, rgb(...theme.sky[0])); sky.addColorStop(1, rgb(...theme.sky[1]));
+  ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
+  if (theme.bg === "castle") {   // moon and stars at sunset
+    for (let i = 0; i < 30; i++) C(WHITE, (i * 137) % W, (i * 53) % 180 + 10, (i % 3) * 0.5 + 0.6);
+    C(theme.sun, W - 150, 80, 34); C(rgb(...theme.sky[0]), W - 138, 72, 30);
+  } else C(theme.sun, W - 140, 90, 42);
+  if (theme.clouds) for (const [cx, cy, s] of game.clouds) drawCloud(wrapX(cx - cam * 0.15, W + 300) - 150, cy, s);
+
+  if (theme.bg === "hills") {
+    for (const [off, top, hgt, col, per] of [[cam * 0.25, 300, 220, theme.far, 420], [cam * 0.5, 370, 160, theme.near, 300]])
+      for (let x = -Math.floor(off % per) - per; x < W + per; x += per) E(col, x, top, per * 1.2, hgt * 2);
+  } else if (theme.bg === "trees") {   // two layers of pine forest
+    for (const [par, per, base, th, tw, col] of [[0.25, 70, 380, 190, 70, theme.far], [0.5, 95, 440, 210, 90, theme.near]])
+      for (let x = -wrapX(cam * par, per) - per; x < W + per; x += per) {
+        const hh = th * (0.8 + 0.2 * Math.sin((x + cam * par) * 0.05));
+        R(col, x + tw / 2 - 4, base - 20, 8, 40);
+        for (let k = 0; k < 3; k++) P(col, [[x + tw / 2, base - hh + k * hh * 0.25], [x - k * 4, base - hh * 0.45 + k * hh * 0.25], [x + tw + k * 4, base - hh * 0.45 + k * hh * 0.25]]);
+      }
+    ctx.fillStyle = theme.near; ctx.fillRect(-20, 440, W + 40, 100);
+  } else {   // castle towers far away, dark hills in front
+    const per = 340;
+    for (let x = -wrapX(cam * 0.2, per) - per; x < W + per; x += per) {
+      R(theme.far, x + 80, 300, 260, 240);
+      for (const [tx, ty, tw] of [[x, 200, 80], [x + 250, 230, 70]]) {
+        R(theme.far, tx, ty, tw, 340);
+        for (let k = 0; k < tw; k += 20) R(theme.far, tx + k, ty - 14, 12, 14);
+        R(rgb(255, 200, 110), tx + tw / 2 - 5, ty + 40, 10, 16, 5);
+      }
+    }
+    for (let x = -Math.floor((cam * 0.5) % 300) - 300; x < W + 300; x += 300) E(theme.near, x, 390, 360, 300);
+  }
+}
+
+// ------------------------------------------------------------------ the blacksmith's shop
+const CARD_W = 168, CARD_H = 230, CARD_GAP = 14, CARD_Y = 128;
+function shopLayout() {
+  const x0 = (W - (SHOP.length * CARD_W + (SHOP.length - 1) * CARD_GAP)) / 2;
+  return {
+    cards: SHOP.map((_, i) => ({ x: x0 + i * (CARD_W + CARD_GAP), y: CARD_Y, w: CARD_W, h: CARD_H })),
+    button: { x: W / 2 - 170, y: 392, w: 340, h: 62 },
+  };
+}
+function drawShop(g) {
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, rgb(74, 46, 30)); bg.addColorStop(1, rgb(30, 18, 12));
+  ctx.fillStyle = bg; ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (const y of [118, 372]) { R(rgb(110, 72, 42), 0, y, W, 8); R(rgb(60, 36, 22), 0, y + 8, W, 4); }
+  ctx.globalAlpha = 0.25 + 0.1 * Math.sin(g.t * 0.08);   // forge glow
+  C(rgb(255, 140, 40), 70, 470, 90); C(rgb(255, 140, 40), W - 70, 470, 90);
+  ctx.globalAlpha = 1;
+  T("TIENDA DEL HERRERO", 46, W / 2, 46, GOLD);
+  T(`Tus monedas: ${g.coins}`, 24, W / 2, 92, WHITE);
+  const lay = shopLayout();
+  SHOP.forEach((item, i) => {
+    const c = lay.cards[i], owned = g.upg[item.id], sel = g.shopSel === i, afford = g.coins >= item.price;
+    R(owned ? rgb(52, 92, 58) : rgb(96, 64, 40), c.x, c.y, c.w, c.h, 12);
+    RS(sel ? GOLD : rgb(150, 108, 66), c.x, c.y, c.w, c.h, sel ? 4 : 2, 12);
+    emoji(item.icon, 50, c.x + c.w / 2, c.y + 56);
+    T(item.name, 19, c.x + c.w / 2, c.y + 116, WHITE);
+    item.desc.forEach((line, k) => T(line, 15, c.x + c.w / 2, c.y + 146 + k * 20, rgb(236, 220, 196)));
+    T(owned ? "¡TUYO!" : `${item.price} monedas`, 19, c.x + c.w / 2, c.y + 206,
+      owned ? GRASS_LIGHT : afford ? GOLD : rgb(240, 120, 110));
+  });
+  const b = lay.button, bsel = g.shopSel === SHOP.length;
+  R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14);
+  RS(bsel ? GOLD : rgb(40, 80, 36), b.x, b.y, b.w, b.h, 3, 14);
+  T("¡Al siguiente nivel! ▶", 26, W / 2, b.y + b.h / 2, WHITE);
+  if (g.shopMsg && g.shopMsgT > 0) T(g.shopMsg, 22, W / 2, 480, g.shopMsgCol);
+  else T(isTouch ? "Toca una mejora para comprarla" : "← → elegir     ENTER comprar", 18, W / 2, 482, rgb(220, 200, 170));
+}
 
 // ------------------------------------------------------------------ game
 const inp = { left: false, right: false, jumpHeld: false, jumpPressed: false, attack: false };
@@ -628,24 +1013,55 @@ const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in win
 class Game {
   constructor() {
     this.t = 0; this.state = "title"; this.stateTimer = 0; this.paused = false;
-    this.lives = START_LIVES; this.score = 0; this.coins = 0;
-    this.tileImgs = makeTiles();
+    this.lives = START_LIVES; this.score = 0; this.coins = 0; this.levelIndex = 0; this.upg = {};
+    this.shopSel = 0; this.shopMsg = ""; this.shopMsgT = 0; this.shopMsgCol = WHITE;
+    this.tileSets = {};
     const rnd = seeded(3);
     this.clouds = Array.from({ length: 7 }, () => [rnd() * (W + 300), 40 + rnd() * 130, 0.7 + rnd() * 0.6]);
     this.resetLevel();
   }
-  newGame() {
-    this.paused = false;
-    this.lives = START_LIVES; this.score = 0; this.coins = 0;
+  sound(name) { play(name); }
+  tiles() {
+    const key = LEVELS[this.levelIndex].theme;
+    if (!this.tileSets[key]) this.tileSets[key] = makeTiles(THEMES[key]);
+    return this.tileSets[key];
+  }
+  newGame(levelIndex = 0) {   // from the title: fresh start; after game over: carry on in the same level
+    this.paused = false; this.levelIndex = levelIndex;
+    if (levelIndex === 0) { this.upg = {}; this.coins = 0; }
+    this.lives = START_LIVES; this.score = 0;
     this.resetLevel(); this.state = "play"; say("vamos", true);
   }
+  openShop() { this.state = "shop"; this.shopSel = 0; this.shopMsgT = 0; say("tienda", true); }
+  nextLevel() { this.levelIndex++; this.resetLevel(); this.state = "play"; say("vamos", true); }
+  buy(i) {
+    const item = SHOP[i];
+    if (this.upg[item.id]) { this.shopMessage("¡Ya lo tienes!", WHITE); return; }
+    if (this.coins < item.price) {
+      this.shopMessage(`¡No tienes bastante oro! Te faltan ${item.price - this.coins} monedas.`, rgb(255, 140, 120));
+      play("nope"); say("nooro", true); return;
+    }
+    this.coins -= item.price; this.upg[item.id] = true;
+    this.shopMessage(`¡${item.name} comprado!`, GRASS_LIGHT);
+    const c = shopLayout().cards[i];
+    this.burst(c.x + c.w / 2, c.y + 56, [GOLD, WHITE, rgb(255, 150, 60)], 26, 6);
+    play("anvil"); say("gracias", true);
+  }
+  shopMessage(msg, col) { this.shopMsg = msg; this.shopMsgCol = col; this.shopMsgT = 150; }
+  shopTap(x, y) {
+    const lay = shopLayout();
+    const i = lay.cards.findIndex(c => inside(x, y, c));
+    if (i >= 0) { this.shopSel = i; this.buy(i); }
+    else if (inside(x, y, lay.button)) this.nextLevel();
+  }
   resetLevel() {
-    this.level = new Level(LEVEL_MAP);
-    this.player = new Player(...this.level.start);
-    this.particles = []; this.popups = []; this.camX = 0; this.shake = 0;
+    this.level = new Level(LEVELS[this.levelIndex]);
+    this.player = new Player(...this.level.start, this.upg);
+    this.particles = []; this.popups = []; this.camX = 0; this.shake = 0; this.levelTimer = 0;
+    this.bossAnnounced = false; this.flyingAxe = null;
   }
   loseLife() {
-    this.lives--; this.state = "dying"; this.stateTimer = 110;
+    this.lives--; this.state = "dying"; this.stateTimer = 110; this.flyingAxe = null;
     const p = this.player; p.dead = true; p.vy = -11; p.attackTimer = 0; p.invuln = 0;
     play("die"); if (this.lives > 0) say("desastre", true);
   }
@@ -666,10 +1082,13 @@ class Game {
         if (this.lives > 0) { this.resetLevel(); this.state = "play"; }
         else { this.state = "gameover"; play("gameover"); say("fin", true); }
       }
-    } else if (this.state === "win") {
-      if (++this.stateTimer % 18 === 0)
+    } else if (this.state === "win" || this.state === "levelclear") {
+      this.stateTimer++;
+      if (this.stateTimer % (this.state === "win" ? 18 : 30) === 0)
         this.burst(this.camX + 100 + Math.random() * (W - 200), 60 + Math.random() * 160,
           pick([[GOLD, WHITE], [HEART, WHITE], [ARMOR_LIGHT, WHITE], [GRASS_LIGHT, WHITE]]), 30, 6);
+    } else if (this.state === "shop") {
+      if (this.shopMsgT > 0) this.shopMsgT--;
     }
     for (const c of this.level.coins) c.t++;
     for (const q of this.particles) { q.vy += 0.25; q.x += q.vx; q.y += q.vy; q.life--; }
@@ -680,59 +1099,76 @@ class Game {
     inp.jumpPressed = inp.attack = false;
   }
 
+  strike(e, fromDir, hitIds) {   // an axe (held or flying) hits an enemy
+    if (!e.alive || hitIds.has(e.id)) return;
+    hitIds.add(e.id);
+    const er = e.rect(), ex = er.x + er.w / 2, ey = er.y + er.h / 2;
+    this.burst(ex, ey, this.upg.sharp ? [GOLD, WHITE] : [WHITE, rgb(255, 230, 120)], 8);
+    this.shake = Math.max(this.shake, 5); play("hit");
+    if (e.hit(fromDir, this.upg.sharp ? 2 : 1)) this.defeated(e, ex, ey, er);
+  }
+  breakCrates(box) {
+    const lvl = this.level;
+    for (const t of lvl.tilesNear(box)) {
+      if (lvl.tile(t.cx, t.cy) !== "C" || !collide(box, t)) continue;
+      lvl.tiles.delete(t.cx + "," + t.cy);
+      this.burst(t.x + 20, t.y + 20, [WOOD, WOOD_DARK], 14);
+      lvl.coins.push(new Coin(t.x + 20, t.y + 20));
+      this.score += 10; this.shake = Math.max(this.shake, 3);
+      this.popup(t.x + 20, t.y, "¡Crac!", WHITE); play("crate");
+    }
+  }
+
   updatePlay() {
     const p = this.player, lvl = this.level;
+    this.levelTimer++;
     p.update(inp, lvl);
     if (p.justJumped) play("jump");
-    if (p.justSwung) play("swing");
-
-    const box = p.attackBox();   // the axe hits toads and crates
-    if (box) {
-      for (const e of lvl.enemies) {
-        if (!e.alive || p.hitIds.has(e.id) || !collide(box, e.rect())) continue;
-        p.hitIds.add(e.id);
-        const er = e.rect(), ex = er.x + er.w / 2, ey = er.y + er.h / 2;
-        this.burst(ex, ey, [WHITE, rgb(255, 230, 120)], 8);
-        this.shake = Math.max(this.shake, 5); play("hit");
-        if (e.hit(p.facing)) {
-          this.score += e.score;
-          const word = e.kind === "T" ? "¡Adiós, rey!" : pick(["¡Toma!", "¡Zas!", "¡Adiós!"]);
-          this.popup(ex, er.y - 10, `${word} +${e.score}`);
-          this.burst(ex, ey, e.colors(), 20, 5);
-          if (e.kind === "T") { play("croak_big"); say("rey", true); }
-          else { play("croak"); say(pick(["toma", "adios"])); }
-        }
-      }
-      for (const t of lvl.tilesNear(box)) {
-        if (lvl.tile(t.cx, t.cy) !== "C" || !collide(box, t)) continue;
-        lvl.tiles.delete(t.cx + "," + t.cy);
-        this.burst(t.x + 20, t.y + 20, [WOOD, WOOD_DARK], 14);
-        lvl.coins.push(new Coin(t.x + 20, t.y + 20));
-        this.score += 10; this.shake = Math.max(this.shake, 3);
-        this.popup(t.x + 20, t.y, "¡Crac!", WHITE); play("crate");
-      }
+    if (p.justSwung) {
+      play("swing");
+      if (this.upg.boomerang && !this.flyingAxe)
+        this.flyingAxe = new FlyingAxe(p.x + p.w / 2 + p.facing * 30, p.y + 14, p.facing);
     }
-    for (const e of lvl.enemies) e.update(lvl);
+    const box = p.attackBox();   // the held axe hits enemies and crates
+    if (box) { for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, p.facing, p.hitIds); this.breakCrates(box); }
+    const fa = this.flyingAxe;   // the flying axe too
+    if (fa) {
+      fa.update(p);
+      const r = fa.rect(), dir = fa.t < 30 ? Math.sign(fa.vx) : (p.x > fa.x ? 1 : -1);
+      for (const e of lvl.enemies) if (collide(r, e.rect())) this.strike(e, dir, fa.hitIds);
+      this.breakCrates(r);
+      if (!fa.alive) this.flyingAxe = null;
+    }
+    for (const e of lvl.enemies) e.update(lvl, p, this);
     lvl.enemies = lvl.enemies.filter(e => e.alive);
 
-    const pr = inflate(p.rect(), -6, -4);   // touching a toad hurts, even from above
-    for (const e of lvl.enemies) {
-      if (e.stun === 0 && collide(pr, e.rect()) && p.hurt(e.x + e.w / 2)) {
-        this.shake = 8; this.burst(pr.x + pr.w / 2, pr.y + pr.h / 2, [HEART, WHITE], 10);
-        this.popup(pr.x + pr.w / 2, pr.y - 10, "¡Ay!", HEART);
-        play("hurt"); say("ay", true);
-      }
+    if (lvl.boss && lvl.boss.alive && !this.bossAnnounced && p.x > lvl.arena[0] - 200) {
+      this.bossAnnounced = true; say("jefe", true); this.popup(p.x + p.w / 2, p.y - 30, "¡El Rey Sapo Gigante!", HEART);
     }
+
+    const pr = inflate(p.rect(), -6, -4);   // touching an enemy or spikes hurts, even from above
+    const ouch = srcX => {
+      if (!p.hurt(srcX)) return false;
+      this.shake = 8; this.burst(pr.x + pr.w / 2, pr.y + pr.h / 2, [HEART, WHITE], 10);
+      this.popup(pr.x + pr.w / 2, pr.y - 10, "¡Jolín!", HEART);
+      play("hurt"); say("jolin", true);
+      return true;
+    };
+    for (const e of lvl.enemies) if (e.harmful() && collide(pr, e.rect())) ouch(e.x + e.w / 2);
+    for (const s of lvl.spikes) if (collide(pr, { x: s.x + 4, y: s.y + 20, w: TILE - 8, h: 20 }) && ouch(s.x + TILE / 2)) p.vy = -10;
+
     for (const c of [...lvl.coins]) {
       if (!collide(pr, c.rect())) continue;
       lvl.coins.splice(lvl.coins.indexOf(c), 1);
       this.coins++; this.score += 50; this.burst(c.x, c.y, [GOLD, WHITE], 6, 3); play("coin");
       if (this.coins % 5 === 0) say("oro");
     }
-    if (lvl.flag && collide(p.rect(), inflate(lvl.flag, 20, 0))) {
+    if (lvl.flagOpen() && collide(p.rect(), inflate(lvl.flag, 20, 0))) {
       const bonus = 1000 + 250 * p.hearts;
       this.score += bonus; this.popup(p.x + p.w / 2, p.y - 10, `¡Olé! +${bonus}`);
-      this.state = "win"; this.stateTimer = 0; play("win"); say("ole", true);
+      this.stateTimer = 0; this.flyingAxe = null;
+      if (this.levelIndex < LEVELS.length - 1) { this.state = "levelclear"; play("clear"); say("nivel", true); }
+      else { this.state = "win"; play("win"); say("ole", true); }
       return;
     }
     if (p.hearts <= 0 || p.y > lvl.pxH + 60) { this.loseLife(); return; }
@@ -741,37 +1177,49 @@ class Game {
     this.camX = Math.max(0, Math.min(this.camX, lvl.pxW - W));
   }
 
-  drawHills(offset, top, height, color, period) {
-    for (let x = -Math.floor(offset % period) - period; x < W + period; x += period) E(color, x, top, period * 1.2, height * 2);
+  defeated(e, ex, ey, er) {
+    this.score += e.score;
+    this.burst(ex, ey, e.colors(), e.kind === "B" ? 60 : 20, e.kind === "B" ? 9 : 5);
+    if (e.kind === "B") {
+      this.popup(ex, er.y - 20, `¡Victoria! +${e.score}`); this.shake = 24;
+      play("croak_big"); say("victoria", true);
+      const f = this.level.flag; if (f) this.burst(f.x, f.y + 40, [GOLD, WHITE, ARMOR_LIGHT], 40, 6);
+      return;
+    }
+    const word = e.kind === "T" ? "¡Adiós, rey!" : pick(["¡Toma!", "¡Zas!", "¡Adiós!"]);
+    this.popup(ex, er.y - 10, `${word} +${e.score}`);
+    if (e.kind === "T") { play("croak_big"); say("rey", true); }
+    else { play(e.kind === "w" ? "squeak" : "croak"); say(e.kind === "t" || e.kind === "j" ? pick(["toma", "adios"]) : "toma"); }
   }
-  draw() {
-    const cam = Math.floor(this.camX);
-    if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
-    const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, rgb(96, 160, 236)); sky.addColorStop(1, rgb(196, 228, 255));
-    ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
-    C(rgb(255, 244, 180), W - 140, 90, 42);
-    for (const [cx, cy, s] of this.clouds) drawCloud((((cx - cam * 0.15) % (W + 300)) + (W + 300)) % (W + 300) - 150, cy, s);
-    this.drawHills(cam * 0.25, 300, 220, HILL_FAR, 420);
-    this.drawHills(cam * 0.5, 370, 160, HILL_NEAR, 300);
 
-    const lvl = this.level;
+  draw() {
+    if (this.state === "shop") {
+      if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
+      drawShop(this);
+      for (const q of this.particles) R(q.color, q.x - 2, q.y - 2, 4, 4);
+      return;
+    }
+    const cam = Math.floor(this.camX), lvl = this.level, theme = lvl.theme, tiles = this.tiles();
+    if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
+    drawBackground(theme, cam);
     for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) for (let cy = 0; cy < lvl.h; cy++) {
       const ch = lvl.tile(cx, cy); if (!ch) continue;
-      const img = ch === "#" ? this.tileImgs[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : this.tileImgs[ch];
+      const img = ch === "#" ? tiles[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : tiles[ch];
       ctx.drawImage(img, cx * TILE - cam, cy * TILE);
     }
+    for (const s of lvl.spikes) if (s.x > cam - TILE && s.x < cam + W) drawSpike(s, cam);
     const fl = lvl.flag;
-    if (fl) {
+    if (fl && lvl.flagOpen()) {
       const x = fl.x + 3 - cam, wave = Math.sin(this.t * 0.1) * 4;
       L(STONE_DARK, x, fl.y, x, fl.y + fl.h, 5); C(GOLD, x, fl.y, 7);
       const banner = [[x + 2, fl.y + 8], [x + 46, fl.y + 22 + wave], [x + 2, fl.y + 36]];
       P(ARMOR, banner); PS(ARMOR_DARK, banner, 2);
     }
     for (const c of lvl.coins) drawCoin(c, cam);
-    for (const e of lvl.enemies) drawToad(e, cam);
+    for (const e of lvl.enemies) if (e.x + e.w > cam - 60 && e.x < cam + W + 60) e.draw(cam);
     const p = this.player;
-    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawKnight(p, cam);
+    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawKnight(p, cam, this.upg, this.t);
+    if (this.flyingAxe) drawMiniAxe(this.flyingAxe.x - cam, this.flyingAxe.y, this.flyingAxe.t * 0.45, this.upg.sharp);
     for (const q of this.particles) {
       const s = Math.max(1, Math.floor(q.size * q.life / q.maxLife + 1));
       R(q.color, Math.floor(q.x - cam - s / 2), Math.floor(q.y - s / 2), s, s);
@@ -779,38 +1227,60 @@ class Game {
     for (const q of this.popups) T(q.text, 20, q.x - cam, q.y, q.color);
 
     if (this.state !== "title") {
-      for (let i = 0; i < MAX_HEARTS; i++) drawHeart(16 + i * 24, 14, i < p.hearts);
+      for (let i = 0; i < p.maxHearts; i++) drawHeart(16 + i * 24, 14, i < p.hearts);
       T(`VIDAS ${this.lives}`, 20, 16, 38, WHITE, "left", "top");
+      T(`NIVEL ${this.levelIndex + 1}`, 20, 16, 62, WHITE, "left", "top");
+      SHOP.filter(it => this.upg[it.id]).forEach((it, i) => emoji(it.icon, 18, 26 + i * 24, 98));
       T(`MONEDAS ${this.coins}`, 20, W / 2, 14, WHITE, "center", "top");
-      T(`PUNTOS ${String(this.score).padStart(6, "0")}`, 20, W - 70, 14, WHITE, "right", "top");
+      T(`PUNTOS ${String(this.score).padStart(6, "0")}`, 20, W - 120, 14, WHITE, "right", "top");
+      const b = lvl.boss;
+      if (b && b.alive && this.bossAnnounced) {   // boss health bar
+        T("REY SAPO GIGANTE", 18, W / 2, 46, GOLD, "center", "top");
+        R(BLACK, W / 2 - 152, 70, 304, 16, 4); R(HEART_EMPTY, W / 2 - 150, 72, 300, 12, 3);
+        R(HEART, W / 2 - 150, 72, 300 * b.hp / b.maxHp, 12, 3);
+      }
+    }
+    if (this.state === "play" && this.levelTimer < 150) {   // level title card
+      ctx.globalAlpha = Math.min(1, (150 - this.levelTimer) / 40);
+      T(`NIVEL ${this.levelIndex + 1}`, 52, W / 2, 170, GOLD);
+      T(lvl.name, 34, W / 2, 222, WHITE);
+      ctx.globalAlpha = 1;
     }
     const blink = Math.floor(this.t / 30) % 2 === 0;
     const shade = () => { ctx.fillStyle = "rgba(10,15,40,0.55)"; ctx.fillRect(-20, -20, W + 40, H + 40); };
+    const tap = (touchMsg, keyMsg, y) => { if (blink) T(isTouch ? touchMsg : keyMsg, 30, W / 2, y, GOLD); };
     if (this.state === "title") {
       shade();
-      T("EL CABALLERO DEL HACHA", 58, W / 2, 120, ARMOR_LIGHT);
-      T("¡Abre camino a hachazos hasta la bandera!", 28, W / 2, 190, WHITE);
+      T("EL CABALLERO DEL HACHA", 58, W / 2, 104, ARMOR_LIGHT);
+      T("¡Abre camino a hachazos por tres niveles!", 28, W / 2, 168, WHITE);
       if (isTouch) {
-        T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 258, WHITE);
+        T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 232, WHITE);
       } else {
-        T("Mover: Flechas / A D      Saltar: Espacio / W", 22, W / 2, 250, WHITE);
-        T("Hachazo: X / J      Sonido: M", 22, W / 2, 282, WHITE);
+        T("Mover: Flechas / A D      Saltar: Espacio / W", 22, W / 2, 226, WHITE);
+        T("Hachazo: X / J      Pausa: P      Sonido: M", 22, W / 2, 258, WHITE);
       }
-      T("¡Ojo! Saltar sobre los sapos duele.", 22, W / 2, 316, WHITE);
-      if (blink) T(isTouch ? "Toca la pantalla para empezar" : "Pulsa ENTER para empezar", 30, W / 2, 392, GOLD);
+      T("¡Ojo! Saltar sobre los enemigos duele.", 22, W / 2, 292, WHITE);
+      T("Gasta tus monedas en la tienda del herrero.", 22, W / 2, 324, WHITE);
+      tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 396);
     } else if (this.state === "dying" && this.lives > 0) {
-      T("¡Ay!", 72, W / 2, H / 2 - 40, HEART);
+      T("¡Jolín!", 72, W / 2, H / 2 - 40, HEART);
     } else if (this.state === "gameover") {
       shade();
-      T("FIN DEL JUEGO", 72, W / 2, 170, HEART);
-      T(`Puntos: ${this.score}`, 30, W / 2, 250, WHITE);
-      if (blink) T(isTouch ? "Toca para intentarlo otra vez" : "Pulsa ENTER para intentarlo otra vez", 30, W / 2, 340, GOLD);
+      T("FIN DEL JUEGO", 72, W / 2, 160, HEART);
+      T(`Puntos: ${this.score}`, 30, W / 2, 236, WHITE);
+      tap(`Toca para seguir en el nivel ${this.levelIndex + 1}`, `Pulsa ENTER para seguir en el nivel ${this.levelIndex + 1}`, 330);
+    } else if (this.state === "levelclear" && this.stateTimer > 30) {
+      shade();
+      T("¡NIVEL SUPERADO!", 70, W / 2, 140, GOLD);
+      T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 220, WHITE);
+      T(`Siguiente: ${LEVELS[this.levelIndex + 1].name}`, 30, W / 2, 268, WHITE);
+      if (this.stateTimer > 60) tap("Toca para ir a la tienda", "Pulsa ENTER para ir a la tienda", 350);
     } else if (this.state === "win" && this.stateTimer > 40) {
       shade();
-      T("¡OLÉ!", 80, W / 2, 140, GOLD);
-      T("¡Misión cumplida, caballero!", 30, W / 2, 210, WHITE);
-      T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 260, WHITE);
-      if (blink) T(isTouch ? "Toca para jugar otra vez" : "Pulsa ENTER para jugar otra vez", 30, W / 2, 350, GOLD);
+      T("¡OLÉ!", 80, W / 2, 130, GOLD);
+      T("¡Has vencido al Rey Sapo, caballero!", 30, W / 2, 200, WHITE);
+      T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 250, WHITE);
+      tap("Toca para jugar otra vez", "Pulsa ENTER para jugar otra vez", 340);
     }
     if (this.paused) {
       shade();
@@ -837,27 +1307,38 @@ resize();
 if (isTouch) document.body.classList.add("is-touch");
 
 let fsTried = false;
-function unlock() {   // first touch: allow sound, go fullscreen in landscape where the phone supports it
+function unlock() {   // first touch: allow sound, go fullscreen where the phone supports it
   initAudio();
   if (isTouch && !fsTried) {
     fsTried = true;
     const el = document.documentElement;
-    if (el.requestFullscreen) el.requestFullscreen({ navigationUI: "hide" })
-      .catch(() => {});
+    if (el.requestFullscreen) el.requestFullscreen({ navigationUI: "hide" }).catch(() => {});
   }
 }
 function tapStart() {
   if (game.paused) { setPaused(false); return true; }
-  if (["title", "gameover", "win"].includes(game.state) && !(game.state === "win" && game.stateTimer < 40)) {
-    game.newGame(); return true;
-  }
-  return false;
+  const s = game.state;
+  if (s === "title" || (s === "win" && game.stateTimer > 40)) { game.newGame(0); return true; }
+  if (s === "gameover") { game.newGame(game.levelIndex); return true; }
+  if (s === "levelclear") { if (game.stateTimer > 60) game.openShop(); return true; }
+  return s === "win" || s === "shop";
 }
 const keys = { left: false, right: false, jump: false };
 const touch = { left: false, right: false, jump: false };
 const KEYMAP = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "jump", ArrowUp: "jump", KeyW: "jump" };
 window.addEventListener("keydown", e => {
   unlock();
+  if (game.state === "shop") {   // keyboard shopping
+    const n = SHOP.length;
+    if (e.code === "ArrowLeft" || e.code === "KeyA") game.shopSel = (game.shopSel + n) % (n + 1);
+    else if (e.code === "ArrowRight" || e.code === "KeyD") game.shopSel = (game.shopSel + 1) % (n + 1);
+    else if (["Enter", "NumpadEnter", "Space", "KeyX", "KeyJ"].includes(e.code) && !e.repeat) {
+      if (game.shopSel < n) game.buy(game.shopSel); else game.nextLevel();
+    }
+    if (e.code === "KeyM") toggleSound();
+    e.preventDefault();
+    return;
+  }
   const k = KEYMAP[e.code];
   if (k) { e.preventDefault(); if (k === "jump" && !e.repeat) inp.jumpPressed = true; keys[k] = true; }
   if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code) && !e.repeat) inp.attack = true;
@@ -868,7 +1349,13 @@ window.addEventListener("keydown", e => {
 window.addEventListener("keyup", e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; });
 window.addEventListener("blur", () => { keys.left = keys.right = keys.jump = false; });
 window.addEventListener("contextmenu", e => e.preventDefault());
-canvas.addEventListener("pointerdown", e => { e.preventDefault(); unlock(); tapStart(); });
+canvas.addEventListener("pointerdown", e => {
+  e.preventDefault(); unlock();
+  if (game.state === "shop") {
+    const r = canvas.getBoundingClientRect();
+    game.shopTap((e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H);
+  } else tapStart();
+});
 
 const dpad = document.getElementById("dpad");
 let dpadId = null;
