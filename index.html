@@ -50,11 +50,19 @@
     width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(0,0,0,.28); color: #fff;
     font-size: 21px; padding: 0; touch-action: none; cursor: pointer;
   }
-  #rotate {
-    display: none; position: fixed; inset: 0; background: #0f0f19; color: #fff; z-index: 10;
-    align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 12px; font-size: 22px;
+  #bPause {
+    position: fixed; top: calc(8px + env(safe-area-inset-top)); right: calc(60px + env(safe-area-inset-right));
+    width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(0,0,0,.28); color: #fff;
+    font-size: 19px; padding: 0; touch-action: none; cursor: pointer;
   }
-  @media (orientation: portrait) { body.is-touch #rotate { display: flex; } }
+  #rotate {
+    display: none; position: fixed; left: 0; right: 0; top: calc(16vh + 56vw + 14px);
+    color: rgba(255,255,255,.65); text-align: center; font-size: 15px; pointer-events: none;
+  }
+  @media (orientation: portrait) {
+    body.is-touch #wrap { align-items: flex-start; padding-top: 16vh; }
+    body.is-touch #rotate { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -62,11 +70,8 @@
 <div id="dpad" class="ctl"><span>&#9664;&#xFE0E;</span><span>&#9654;&#xFE0E;</span></div>
 <div id="btns" class="ctl"><button class="btn" id="bJump">SALTA</button><button class="btn" id="bAxe">🪓</button></div>
 <button id="bSound" aria-label="Sonido">🔊</button>
-<div id="rotate">
-  <div style="font-size:64px">📱↻</div>
-  <div>Gira el móvil para jugar</div>
-  <div style="opacity:.7;font-size:16px">Turn your phone sideways to play</div>
-</div>
+<button id="bPause" aria-label="Pausa">&#10074;&#10074;</button>
+<div id="rotate">↻ Gira el móvil para verlo más grande</div>
 <script>
 "use strict";
 // El Caballero del Hacha - a small Mario-style platformer. Chop the toads, reach the flag!
@@ -622,7 +627,7 @@ const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in win
 
 class Game {
   constructor() {
-    this.t = 0; this.state = "title"; this.stateTimer = 0;
+    this.t = 0; this.state = "title"; this.stateTimer = 0; this.paused = false;
     this.lives = START_LIVES; this.score = 0; this.coins = 0;
     this.tileImgs = makeTiles();
     const rnd = seeded(3);
@@ -630,6 +635,7 @@ class Game {
     this.resetLevel();
   }
   newGame() {
+    this.paused = false;
     this.lives = START_LIVES; this.score = 0; this.coins = 0;
     this.resetLevel(); this.state = "play"; say("vamos", true);
   }
@@ -806,6 +812,11 @@ class Game {
       T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 260, WHITE);
       if (blink) T(isTouch ? "Toca para jugar otra vez" : "Pulsa ENTER para jugar otra vez", 30, W / 2, 350, GOLD);
     }
+    if (this.paused) {
+      shade();
+      T("PAUSA", 80, W / 2, 200, GOLD);
+      T(isTouch ? "Toca la pantalla para seguir" : "Pulsa P para seguir", 30, W / 2, 290, WHITE);
+    }
   }
 }
 
@@ -832,11 +843,11 @@ function unlock() {   // first touch: allow sound, go fullscreen in landscape wh
     fsTried = true;
     const el = document.documentElement;
     if (el.requestFullscreen) el.requestFullscreen({ navigationUI: "hide" })
-      .then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape"))
       .catch(() => {});
   }
 }
 function tapStart() {
+  if (game.paused) { setPaused(false); return true; }
   if (["title", "gameover", "win"].includes(game.state) && !(game.state === "win" && game.stateTimer < 40)) {
     game.newGame(); return true;
   }
@@ -851,6 +862,7 @@ window.addEventListener("keydown", e => {
   if (k) { e.preventDefault(); if (k === "jump" && !e.repeat) inp.jumpPressed = true; keys[k] = true; }
   if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code) && !e.repeat) inp.attack = true;
   if (e.code === "KeyM") toggleSound();
+  if (e.code === "KeyP" || e.code === "Escape") setPaused(!game.paused);
   if (e.code === "Enter" || e.code === "NumpadEnter") tapStart();
 });
 window.addEventListener("keyup", e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; });
@@ -896,9 +908,21 @@ function toggleSound() {
 }
 bSound.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); unlock(); toggleSound(); });
 
+const bPause = document.getElementById("bPause");
+function setPaused(on) {
+  if (on && game.state !== "play") return;   // only pause during play
+  game.paused = on;
+  bPause.innerHTML = on ? "&#9654;" : "&#10074;&#10074;";
+  if (on && hasSpeech) speechSynthesis.cancel();
+  if (actx) { if (on) actx.suspend(); else actx.resume(); }
+}
+bPause.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); unlock(); setPaused(!game.paused); });
+document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
+
 let last = performance.now(), acc = 0;
 function frame(now) {
   acc += Math.min(100, now - last); last = now;
+  if (game.paused) acc = 0;
   while (acc >= STEP_MS) {
     inp.left = keys.left || touch.left;
     inp.right = keys.right || touch.right;
