@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Caballero">
+<meta name="theme-color" content="#0f0f19">
+<title>El Caballero del Hacha</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪓</text></svg>">
+<style>
+  :root { --ctl: min(19vh, 84px); }
+  html, body {
+    margin: 0; height: 100%; background: #0f0f19; overflow: hidden; overscroll-behavior: none;
+    touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent; font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  }
+  #wrap { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; touch-action: none; }
+  .ctl { display: none; }
+  body.is-touch .ctl { display: flex; }
+  #dpad {
+    position: fixed; left: calc(12px + env(safe-area-inset-left)); bottom: calc(12px + env(safe-area-inset-bottom));
+    width: calc(var(--ctl) * 2.1); height: var(--ctl); border-radius: calc(var(--ctl) / 2);
+    background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.38); touch-action: none;
+  }
+  #dpad span {
+    flex: 1; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.9);
+    font-size: calc(var(--ctl) * .42); border-radius: calc(var(--ctl) / 2); pointer-events: none;
+  }
+  #dpad[data-dir="l"] span:first-child, #dpad[data-dir="r"] span:last-child { background: rgba(255,255,255,.3); }
+  #btns {
+    position: fixed; right: calc(12px + env(safe-area-inset-right)); bottom: calc(12px + env(safe-area-inset-bottom));
+    gap: 14px; align-items: flex-end;
+  }
+  .btn {
+    width: var(--ctl); height: var(--ctl); border-radius: 50%; border: 2px solid rgba(255,255,255,.42);
+    background: rgba(255,255,255,.16); color: #fff; font: 700 calc(var(--ctl) * .2) "Trebuchet MS", system-ui, sans-serif;
+    display: flex; align-items: center; justify-content: center; touch-action: none; padding: 0;
+  }
+  #bAxe {
+    width: calc(var(--ctl) * 1.15); height: calc(var(--ctl) * 1.15); background: rgba(230,60,60,.38);
+    font-size: calc(var(--ctl) * .5); margin-bottom: calc(var(--ctl) * .35);
+  }
+  .btn.on { background: rgba(255,255,255,.42); }
+  #bSound {
+    position: fixed; top: calc(8px + env(safe-area-inset-top)); right: calc(8px + env(safe-area-inset-right));
+    width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(0,0,0,.28); color: #fff;
+    font-size: 21px; padding: 0; touch-action: none; cursor: pointer;
+  }
+  #rotate {
+    display: none; position: fixed; inset: 0; background: #0f0f19; color: #fff; z-index: 10;
+    align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 12px; font-size: 22px;
+  }
+  @media (orientation: portrait) { body.is-touch #rotate { display: flex; } }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div id="dpad" class="ctl"><span>&#9664;&#xFE0E;</span><span>&#9654;&#xFE0E;</span></div>
+<div id="btns" class="ctl"><button class="btn" id="bJump">SALTA</button><button class="btn" id="bAxe">🪓</button></div>
+<button id="bSound" aria-label="Sonido">🔊</button>
+<div id="rotate">
+  <div style="font-size:64px">📱↻</div>
+  <div>Gira el móvil para jugar</div>
+  <div style="opacity:.7;font-size:16px">Turn your phone sideways to play</div>
+</div>
+<script>
+"use strict";
+// El Caballero del Hacha - a small Mario-style platformer. Chop the toads, reach the flag!
+
+// ------------------------------------------------------------------ level
+// #  ground   =  stone platform   C  breakable crate   o  coin   P  start   F  flag
+// t  toad (1 hit)   T  king toad (3 hits)   j  leaping toad
+const LEVEL_MAP = [
+  "..................................................................................................................................",
+  "..................................................................................................................................",
+  "..................................................................................................................................",
+  "..................................................................................................................................",
+  "...................................................................................j..............................................",
+  ".....................................................................................oooo.........................................",
+  ".................................j.................ooo...............................====......................j..................",
+  "..........................ooooo.............................ooooo.............ooooo..................................#............",
+  "......ooo.................=====...........oo........#.......=====.......oo....=====...................oo............##.oooo.......",
+  "....................................C.....==.......##...................==.................C..........==...........###............",
+  "..P...........t....................CC..t..........###.....T....t...t................t.....CC...T..t.........t.....####.......F....",
+  "####################..###################....##########################....##########################....#########################",
+  "####################..###################....##########################....##########################....#########################",
+];
+
+// ------------------------------------------------------------------ settings
+const TILE = 40, W = 960, H = 520, STEP_MS = 1000 / 60;
+const GRAVITY = 0.65, MAX_FALL = 15, RUN_ACCEL = 0.7, RUN_FRICTION = 0.8, AIR_CONTROL = 0.55;
+const MAX_RUN = 4.6, JUMP_SPEED = 12.8, JUMP_CUT = 4.5, COYOTE_FRAMES = 6, JUMP_BUFFER_FRAMES = 7;
+const ATTACK_FRAMES = 22, ACT0 = 6, ACT1 = 14, ATTACK_COOLDOWN = 6, INVULN_FRAMES = 90;
+const START_LIVES = 3, MAX_HEARTS = 3, ARM_LEN = 16, AXE_HEAD = 48, AXE_LEN = 56;
+const SOLID = "#=C";
+
+const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
+const WHITE = "#fff", BLACK = rgb(15, 15, 25);
+const HILL_FAR = rgb(150, 205, 160), HILL_NEAR = rgb(105, 180, 115);
+const DIRT = rgb(150, 98, 60), DIRT_DARK = rgb(118, 74, 44), DIRT_LIGHT = rgb(176, 124, 82);
+const GRASS = rgb(92, 190, 80), GRASS_DARK = rgb(60, 140, 55), GRASS_LIGHT = rgb(140, 220, 110);
+const STONE = rgb(150, 150, 165), STONE_DARK = rgb(95, 95, 115), STONE_LIGHT = rgb(190, 190, 205);
+const WOOD = rgb(196, 140, 72), WOOD_DARK = rgb(120, 80, 40);
+const ARMOR = rgb(52, 104, 214), ARMOR_MID = rgb(82, 136, 236), ARMOR_LIGHT = rgb(130, 178, 255), ARMOR_DARK = rgb(26, 52, 120);
+const STEEL = rgb(170, 180, 200), STEEL_DARK = rgb(40, 58, 110), BOOT = rgb(40, 34, 50), VISOR = rgb(18, 22, 40);
+const PLUME = rgb(230, 60, 60), SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82);
+const HANDLE = rgb(130, 86, 44), HANDLE_DARK = rgb(80, 50, 24), BLADE = rgb(210, 218, 232), BLADE_DARK = rgb(90, 98, 120);
+const TOAD_EYE = rgb(250, 210, 60), GOLD = rgb(255, 205, 60), GOLD_DARK = rgb(190, 130, 20);
+const HEART = rgb(230, 50, 70), HEART_EMPTY = rgb(90, 60, 70);
+const TOAD_COLORS = {
+  t: [rgb(106, 160, 64), rgb(58, 100, 40), rgb(222, 216, 150)],
+  T: [rgb(150, 112, 62), rgb(92, 64, 32), rgb(228, 200, 150)],
+  j: [rgb(238, 122, 40), rgb(120, 50, 20), rgb(255, 214, 120)],
+};
+
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const collide = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+const inflate = (r, dx, dy) => ({ x: r.x - Math.floor(dx / 2), y: r.y - Math.floor(dy / 2), w: r.w + dx, h: r.h + dy });
+function seeded(a) {   // small repeatable random number generator
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+
+// ------------------------------------------------------------------ sound (generated, no files needed)
+const VOICE_LINES = {
+  vamos: "¡Vamos, caballero!", toma: "¡Toma!", adios: "¡Adiós, sapito!", rey: "¡Adiós, rey sapo!",
+  ay: "¡Ay, ay, ay!", oro: "¡Más oro!", desastre: "¡Qué desastre!", fin: "Fin del juego.", ole: "¡Olé!",
+};
+const AUDIO_RATE = 22050;
+let actx = null, master = null, soundOn = true;
+const sfx = {};
+
+function synth(rate, dur, f1, f2 = null, wave = "square", vol = 0.4, tremolo = 0, attack = 0.004, curve = 2) {
+  if (f2 === null) f2 = f1;
+  const n = Math.floor(rate * dur), out = new Float32Array(n), an = Math.max(1, Math.floor(attack * rate));
+  const rnd = seeded(5);
+  let phase = 0;
+  for (let i = 0; i < n; i++) {
+    const t = i / n;
+    phase += (f1 + (f2 - f1) * t) / rate;
+    const p = phase % 1;
+    let v;
+    if (wave === "square") v = p < 0.5 ? 1 : -1;
+    else if (wave === "tri") v = 4 * Math.abs(p - 0.5) - 1;
+    else if (wave === "sine") v = Math.sin(2 * Math.PI * p);
+    else v = rnd() * 2 - 1;
+    let env = Math.min(1, i / an) * Math.pow(1 - t, curve);
+    if (tremolo) env *= 0.55 + 0.45 * Math.sin(2 * Math.PI * tremolo * i / rate);
+    out[i] = v * env * vol;
+  }
+  return out;
+}
+function concat(...parts) {
+  const out = new Float32Array(parts.reduce((s, p) => s + p.length, 0));
+  let o = 0; for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+function mixAll(...parts) {
+  const out = new Float32Array(Math.max(...parts.map(p => p.length)));
+  for (const p of parts) for (let i = 0; i < p.length; i++) out[i] += p[i];
+  return out;
+}
+function lowpass(a, amount) {
+  const out = new Float32Array(a.length); let y = 0;
+  for (let i = 0; i < a.length; i++) { y += amount * (a[i] - y); out[i] = y; }
+  return out;
+}
+const silence = (rate, d) => new Float32Array(Math.floor(rate * d));
+function whoosh(rate, dur = 0.22, vol = 0.9) {
+  const rnd = seeded(9), n = Math.floor(rate * dur), out = new Float32Array(n); let y = 0;
+  for (let i = 0; i < n; i++) {
+    const t = i / n;
+    y += (0.03 + 0.35 * Math.sin(Math.PI * t)) * (rnd() * 2 - 1 - y);
+    out[i] = y * vol * Math.pow(Math.sin(Math.PI * t), 1.5);
+  }
+  return out;
+}
+function pluck(rate, freq, dur, vol, rnd, damp = 0.996) {   // Karplus-Strong guitar string
+  const size = Math.max(2, Math.floor(rate / freq)), buf = new Float32Array(size);
+  for (let i = 0; i < size; i++) buf[i] = rnd() * 2 - 1;
+  const n = Math.floor(rate * dur), out = new Float32Array(n); let idx = 0;
+  for (let i = 0; i < n; i++) {
+    const nxt = idx + 1 < size ? idx + 1 : 0, a = buf[idx];
+    out[i] = a * vol; buf[idx] = damp * 0.5 * (a + buf[nxt]); idx = nxt;
+  }
+  const fade = Math.max(1, Math.floor(n / 8));
+  for (let i = 0; i < fade; i++) out[n - fade + i] *= 1 - i / fade;
+  return out;
+}
+function flamenco(rate) {   // Andalusian cadence Am-G-F-E, rasgueado and palmas
+  const rnd = seeded(11), out = new Float32Array(Math.floor(rate * 3.6));
+  const am = [110, 164.8, 220, 261.6, 329.6], g = [98, 123.5, 146.8, 196, 246.9, 392];
+  const f = [87.3, 130.8, 174.6, 220, 261.6, 349.2], e = [82.4, 123.5, 164.8, 207.7, 246.9, 329.6];
+  const add = (s, start) => { const o = Math.floor(start * rate);
+    for (let i = 0; i < s.length && o + i < out.length; i++) out[o + i] += s[i]; };
+  const strum = (chord, start, dur, down = true) =>
+    (down ? chord : [...chord].reverse()).forEach((fr, k) => add(pluck(rate, fr, dur, 0.22, rnd), start + k * 0.012));
+  const clap = start => { const n = Math.floor(0.05 * rate), s = new Float32Array(n); let prev = 0;
+    for (let i = 0; i < n; i++) { const x = rnd() * 2 - 1; s[i] = (x - prev) * 0.35 * Math.pow(1 - i / n, 3); prev = x; }
+    add(s, start); };
+  [[0, am], [0.36, g], [0.72, f], [1.08, e]].forEach(([s, c]) => { strum(c, s, 0.6); clap(s); });
+  [1.40, 1.50, 1.60].forEach((s, k) => strum(e, s, 0.3, k % 2 === 0));
+  strum(e, 1.75, 1.7);
+  [1.40, 1.60, 1.75].forEach(clap);
+  let peak = 0; for (const v of out) peak = Math.max(peak, Math.abs(v));
+  for (let i = 0; i < out.length; i++) out[i] *= 0.9 / (peak || 1);
+  return out;
+}
+function buildSounds(rate) {
+  const jingle = (notes, d) => concat(...notes.map(n => synth(rate, d, n, null, "tri", 0.35, 0, 0.004, 0.6)));
+  return {
+    swing: whoosh(rate),
+    hit: mixAll(synth(rate, 0.16, 150, 40, "sine", 0.9, 0, 0.004, 1.5), lowpass(synth(rate, 0.05, 1, null, "noise", 0.5), 0.3)),
+    croak: lowpass(concat(synth(rate, 0.11, 210, 160, "square", 0.3, 35), silence(rate, 0.035),
+                          synth(rate, 0.17, 180, 110, "square", 0.32, 30)), 0.35),
+    croak_big: lowpass(concat(synth(rate, 0.18, 140, 100, "square", 0.4, 24), silence(rate, 0.05),
+                              synth(rate, 0.32, 120, 65, "square", 0.45, 20)), 0.25),
+    jump: synth(rate, 0.13, 280, 640, "square", 0.16, 0, 0.004, 1),
+    coin: concat(synth(rate, 0.06, 988, null, "square", 0.16, 0, 0.004, 0.3), synth(rate, 0.25, 1319, null, "square", 0.16, 0, 0.004, 1.5)),
+    crate: mixAll(lowpass(synth(rate, 0.14, 1, null, "noise", 0.8), 0.5), synth(rate, 0.08, 110, 70, "square", 0.25)),
+    hurt: synth(rate, 0.32, 520, 140, "square", 0.28, 18, 0.004, 1),
+    die: jingle([523, 415, 330, 262], 0.14),
+    gameover: jingle([392, 330, 262, 196], 0.26),
+    win: flamenco(rate),
+  };
+}
+function initAudio() {   // browsers only allow sound after the first tap or key press
+  if (actx) { if (actx.state === "suspended") actx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  try { actx = new AC(); } catch (e) { return; }
+  master = actx.createGain(); master.gain.value = soundOn ? 0.8 : 0; master.connect(actx.destination);
+  setTimeout(() => {
+    try {
+      for (const [name, data] of Object.entries(buildSounds(AUDIO_RATE))) {
+        const buf = actx.createBuffer(1, data.length, AUDIO_RATE), ch = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) ch[i] = Math.max(-1, Math.min(1, data[i]));
+        sfx[name] = buf;
+      }
+    } catch (e) { /* stay silent */ }
+  }, 0);
+}
+function play(name) {
+  if (!soundOn || !actx || !sfx[name]) return;
+  const src = actx.createBufferSource(); src.buffer = sfx[name]; src.connect(master); src.start();
+}
+let esVoice = null;
+const hasSpeech = "speechSynthesis" in window;
+function pickVoice() {
+  const vs = speechSynthesis.getVoices();
+  esVoice = vs.find(v => v.lang === "es-ES") || vs.find(v => (v.lang || "").toLowerCase().startsWith("es")) || null;
+}
+if (hasSpeech) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(key, force = false) {   // Spanish voice, using the phone's own text-to-speech
+  if (!soundOn || !hasSpeech) return;
+  if (speechSynthesis.speaking && !force) return;
+  if (force) speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(VOICE_LINES[key]);
+  u.lang = "es-ES"; if (esVoice) u.voice = esVoice; u.rate = 1.05; u.pitch = 0.9;
+  speechSynthesis.speak(u);
+}
+
+// ------------------------------------------------------------------ physics
+function physicsMove(ent, level) {
+  ent.hitWall = false;
+  ent.x += ent.vx;
+  let r = ent.rect();
+  for (const t of level.tilesNear(r)) {
+    if (!collide(r, t)) continue;
+    if (ent.vx > 0) ent.x = t.x - ent.w; else if (ent.vx < 0) ent.x = t.x + TILE; else continue;
+    ent.hitWall = true; ent.vx = 0; r = ent.rect();
+  }
+  ent.vy = Math.min(ent.vy + GRAVITY, MAX_FALL);
+  ent.y += ent.vy;
+  r = ent.rect();
+  ent.onGround = false;
+  for (const t of level.tilesNear(r)) {
+    if (!collide(r, t)) continue;
+    if (ent.vy > 0) { ent.y = t.y - ent.h; ent.onGround = true; } else if (ent.vy < 0) ent.y = t.y + TILE;
+    ent.vy = 0; r = ent.rect();
+  }
+  if (!ent.onGround && ent.vy >= 0) {
+    const probe = { x: r.x, y: r.y + 1, w: r.w, h: r.h };
+    if (level.tilesNear(probe).some(t => collide(probe, t))) ent.onGround = true;
+  }
+}
+
+// ------------------------------------------------------------------ player
+class Player {
+  constructor(x, y) {
+    this.x = x; this.y = y; this.w = 30; this.h = 42; this.vx = 0; this.vy = 0; this.facing = 1;
+    this.onGround = false; this.hitWall = false; this.hearts = MAX_HEARTS; this.invuln = 0; this.knockback = 0;
+    this.attackTimer = 0; this.cooldown = 0; this.coyote = 0; this.jumpBuffer = 0; this.anim = 0;
+    this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
+  }
+  rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
+  attackFrame() { return this.attackTimer ? ATTACK_FRAMES - this.attackTimer : 0; }
+  attackBox() {   // the area the (long!) axe hurts this frame, or null
+    const f = this.attackFrame();
+    if (f < ACT0 || f > ACT1) return null;
+    const r = this.rect(), w = 92, cx = r.x + Math.floor(r.w / 2);
+    return { x: this.facing > 0 ? cx : cx - w, y: r.y - 48, w, h: 104 };
+  }
+  hurt(srcX) {
+    if (this.invuln > 0 || this.dead) return false;
+    this.hearts--; this.invuln = INVULN_FRAMES; this.knockback = 12;
+    this.vx = srcX > this.x + this.w / 2 ? -6 : 6; this.vy = -6;
+    return true;
+  }
+  update(inp, level) {
+    this.justJumped = this.justSwung = false;
+    if (this.invuln > 0) this.invuln--;
+    if (this.cooldown > 0) this.cooldown--;
+    if (inp.attack && this.attackTimer === 0 && this.cooldown === 0) {
+      this.attackTimer = ATTACK_FRAMES; this.hitIds.clear(); this.justSwung = true;
+    }
+    if (this.attackTimer > 0) { this.attackTimer--; if (this.attackTimer === 0) this.cooldown = ATTACK_COOLDOWN; }
+
+    let move = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    if (this.knockback > 0) { this.knockback--; move = 0; }
+    const accel = this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL;
+    const top = MAX_RUN * (this.attackTimer && this.onGround ? 0.6 : 1);
+    if (move) {
+      this.vx = Math.max(-top, Math.min(top, this.vx + move * accel));
+      if (this.attackTimer === 0) this.facing = move;
+    } else if (this.onGround && this.knockback === 0) {
+      this.vx *= RUN_FRICTION; if (Math.abs(this.vx) < 0.1) this.vx = 0;
+    }
+
+    this.coyote = this.onGround ? COYOTE_FRAMES : Math.max(0, this.coyote - 1);
+    this.jumpBuffer = inp.jumpPressed ? JUMP_BUFFER_FRAMES : Math.max(0, this.jumpBuffer - 1);
+    if (this.jumpBuffer && this.coyote) {
+      this.vy = -JUMP_SPEED; this.jumpBuffer = this.coyote = 0; this.onGround = false; this.justJumped = true;
+    }
+    if (!inp.jumpHeld && this.vy < -JUMP_CUT) this.vy = -JUMP_CUT;
+
+    physicsMove(this, level);
+    if (this.x < 0) { this.x = 0; this.vx = 0; }
+    this.x = Math.min(this.x, level.pxW - this.w);
+    this.anim += this.onGround && Math.abs(this.vx) > 0.5 ? Math.abs(this.vx) * 0.25 : 0.05;
+  }
+}
+
+// ------------------------------------------------------------------ toads
+const TOAD_STATS = {
+  t: { w: 32, h: 24, hp: 1, hopVy: 6.5, hopVx: 2.2, wait: [25, 55], score: 100 },
+  T: { w: 46, h: 40, hp: 3, hopVy: 7.0, hopVx: 1.6, wait: [50, 80], score: 500 },
+  j: { w: 28, h: 22, hp: 1, hopVy: 11.5, hopVx: 2.6, wait: [35, 60], score: 150 },
+};
+let nextId = 1;
+class Toad {
+  constructor(kind, tx, ty) {
+    const s = TOAD_STATS[kind];
+    Object.assign(this, { kind, w: s.w, h: s.h, hp: s.hp, maxHp: s.hp, hopVy: s.hopVy, hopVx: s.hopVx,
+      waitRange: s.wait, score: s.score });
+    this.id = nextId++; this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
+    this.vx = 0; this.vy = 0; this.dir = -1; this.onGround = false; this.hitWall = false;
+    this.wait = randInt(10, 60); this.flash = 0; this.stun = 0; this.alive = true; this.t = Math.random() * 100;
+  }
+  rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
+  colors() { return TOAD_COLORS[this.kind]; }
+  hit(fromDir) {
+    this.hp--; this.flash = 8; this.stun = 16; this.vx = fromDir * 6.5; this.vy = -4; this.dir = -fromDir;
+    if (this.hp <= 0) { this.alive = false; return true; }
+    return false;
+  }
+  pathBlocked(level) {   // would the next hop hit a wall or go off a ledge?
+    const r = this.rect(), dist = this.hopVx * 2 * this.hopVy / GRAVITY;
+    const front = this.dir > 0 ? r.x + r.w : r.x;
+    const near = Math.floor((front + this.dir * 4) / TILE), land = Math.floor((front + this.dir * dist) / TILE);
+    const below = Math.floor((r.y + r.h + 2) / TILE);
+    if (level.solidAt(near, Math.floor((r.y + r.h - 4) / TILE))) return true;
+    return !(level.solidAt(near, below) && level.solidAt(land, below));
+  }
+  update(level) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.9; }
+    else if (this.onGround) {
+      this.vx = 0;
+      if (--this.wait <= 0) {
+        if (this.pathBlocked(level)) { this.dir *= -1; this.wait = 12; }
+        else { this.vy = -this.hopVy; this.vx = this.dir * this.hopVx; this.wait = randInt(...this.waitRange); }
+      }
+    }
+    physicsMove(this, level);
+    if (this.hitWall && this.stun === 0) this.dir *= -1;
+    if (this.y > level.pxH + 100) this.alive = false;
+  }
+}
+
+// ------------------------------------------------------------------ level
+class Coin {
+  constructor(x, y) { this.x = x; this.y = y; this.t = Math.random() * 100; }
+  rect() { return { x: Math.round(this.x - 9), y: Math.round(this.y - 9 + Math.sin(this.t * 0.08) * 3), w: 18, h: 18 }; }
+}
+class Level {
+  constructor(rows) {
+    const width = Math.max(...rows.map(r => r.length));
+    this.rows = rows.map(r => r.padEnd(width, "."));
+    this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
+    this.tiles = new Map(); this.coins = []; this.enemies = []; this.start = [TILE * 2, TILE * 9]; this.flag = null;
+    this.rows.forEach((row, cy) => [...row].forEach((ch, cx) => {
+      const x = cx * TILE, y = cy * TILE;
+      if (SOLID.includes(ch)) this.tiles.set(cx + "," + cy, ch);
+      else if (ch === "o") this.coins.push(new Coin(x + TILE / 2, y + TILE / 2));
+      else if (ch === "P") this.start = [x + (TILE - 30) / 2, y + TILE - 42];
+      else if (TOAD_STATS[ch]) this.enemies.push(new Toad(ch, x, y));
+      else if (ch === "F") this.flag = { x: x + TILE / 2 - 3, y: y + TILE - TILE * 7, w: 6, h: TILE * 7 };
+    }));
+  }
+  tile(cx, cy) { return this.tiles.get(cx + "," + cy); }
+  solidAt(cx, cy) { return this.tiles.has(cx + "," + cy); }
+  tilesNear(r) {
+    const out = [];
+    const x0 = Math.max(Math.floor(r.x / TILE) - 1, 0), x1 = Math.min(Math.floor((r.x + r.w) / TILE) + 1, this.w - 1);
+    const y0 = Math.max(Math.floor(r.y / TILE) - 1, 0), y1 = Math.min(Math.floor((r.y + r.h) / TILE) + 1, this.h - 1);
+    for (let cy = y0; cy <= y1; cy++) for (let cx = x0; cx <= x1; cx++)
+      if (this.solidAt(cx, cy)) out.push({ cx, cy, x: cx * TILE, y: cy * TILE, w: TILE, h: TILE });
+    return out;
+  }
+}
+
+// ------------------------------------------------------------------ drawing helpers
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+function R(col, x, y, w, h, r = 0) {
+  ctx.fillStyle = col;
+  if (r && ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); } else ctx.fillRect(x, y, w, h);
+}
+function RS(col, x, y, w, h, lw, r = 0) {
+  ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
+  if (r && ctx.roundRect) ctx.roundRect(x + lw / 2, y + lw / 2, w - lw, h - lw, r); else ctx.rect(x + lw / 2, y + lw / 2, w - lw, h - lw);
+  ctx.stroke();
+}
+function C(col, x, y, r) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); ctx.fill(); }
+function CS(col, x, y, r, lw) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r - lw / 2), 0, Math.PI * 2); ctx.stroke(); }
+function E(col, x, y, w, h) { ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(x + w / 2, y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2); ctx.fill(); }
+function ES(col, x, y, w, h, lw) {
+  ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
+  ctx.ellipse(x + w / 2, y + h / 2, Math.max(0, Math.abs(w / 2) - lw / 2), Math.max(0, Math.abs(h / 2) - lw / 2), 0, 0, Math.PI * 2); ctx.stroke();
+}
+function path(pts) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); }
+function P(col, pts) { ctx.fillStyle = col; path(pts); ctx.fill(); }
+function PS(col, pts, lw) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = "round"; path(pts); ctx.stroke(); }
+function L(col, x1, y1, x2, y2, lw) {
+  ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+}
+const FONT = '"Trebuchet MS", "Segoe UI", system-ui, sans-serif';
+function T(msg, size, x, y, color = WHITE, align = "center", base = "middle") {
+  ctx.font = `bold ${size}px ${FONT}`; ctx.textAlign = align; ctx.textBaseline = base;
+  ctx.fillStyle = BLACK; ctx.fillText(msg, x + 2, y + 2);
+  ctx.fillStyle = color; ctx.fillText(msg, x, y);
+}
+
+function makeTiles() {
+  const rnd = seeded(7);
+  const mk = draw => { const c = document.createElement("canvas"); c.width = c.height = TILE; draw(c.getContext("2d")); return c; };
+  const dirt = g => {
+    g.fillStyle = DIRT; g.fillRect(0, 0, TILE, TILE);
+    g.fillStyle = DIRT_DARK; for (let i = 0; i < 10; i++) g.fillRect(Math.floor(rnd() * (TILE - 3)), Math.floor(rnd() * (TILE - 3)), 3, 3);
+    g.fillStyle = DIRT_LIGHT; for (let i = 0; i < 4; i++) g.fillRect(Math.floor(rnd() * (TILE - 2)), Math.floor(rnd() * (TILE - 2)), 2, 2);
+  };
+  const plain = mk(dirt);
+  const grass = mk(g => {
+    dirt(g);
+    g.fillStyle = GRASS_DARK; g.fillRect(0, 0, TILE, 13);
+    g.fillStyle = GRASS; g.fillRect(0, 0, TILE, 10);
+    for (let x = 3; x < TILE; x += 7) {
+      g.strokeStyle = GRASS_LIGHT; g.lineWidth = 2; g.beginPath(); g.moveTo(x, 2); g.lineTo(x + 2, 6); g.stroke();
+      g.fillStyle = GRASS_DARK; g.beginPath(); g.arc(x + 2, 13, 3, 0, Math.PI * 2); g.fill();
+    }
+  });
+  const stone = mk(g => {
+    g.fillStyle = STONE; g.fillRect(0, 0, TILE, TILE);
+    const ln = (col, x1, y1, x2, y2) => { g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); };
+    const half = TILE / 2;
+    ln(STONE_DARK, 0, half, TILE, half); ln(STONE_DARK, half, 0, half, half); ln(STONE_DARK, TILE / 4, half, TILE / 4, TILE);
+    ln(STONE_LIGHT, 3, 3, half - 4, 3); ln(STONE_LIGHT, half + 3, 3, TILE - 4, 3);
+    g.strokeStyle = STONE_DARK; g.strokeRect(1, 1, TILE - 2, TILE - 2);
+  });
+  const crate = mk(g => {
+    g.fillStyle = WOOD; g.fillRect(0, 0, TILE, TILE);
+    g.strokeStyle = WOOD_DARK; g.lineWidth = 2;
+    for (const y of [13, 26]) { g.beginPath(); g.moveTo(0, y); g.lineTo(TILE, y); g.stroke(); }
+    g.lineWidth = 4; g.beginPath(); g.moveTo(4, 4); g.lineTo(TILE - 5, TILE - 5); g.stroke();
+    g.strokeRect(2, 2, TILE - 4, TILE - 4);
+  });
+  return { grass, dirt: plain, "=": stone, C: crate };
+}
+
+function angleAt(prog) {   // axe angle in degrees: 0 = up, positive = towards the front
+  const idle = -30;
+  if (prog < 0.25) return lerp(idle, -80, prog / 0.25);
+  if (prog < 0.6) return lerp(-80, 150, easeOut((prog - 0.25) / 0.35));
+  return lerp(150, idle, (prog - 0.6) / 0.4);
+}
+function axeAngle(p) {
+  if (p.attackTimer === 0) return -30 + (p.onGround && Math.abs(p.vx) > 0.5 ? Math.sin(p.anim * 1.4) * 4 : 0);
+  return angleAt(p.attackFrame() / ATTACK_FRAMES);
+}
+
+function drawAxe(hand, d) {
+  const n = [-d[1], d[0]];
+  const pt = (c, a, b) => [c[0] + d[0] * a + n[0] * b, c[1] + d[1] * a + n[1] * b];
+  const [hx, hy] = hand;
+  L(HANDLE_DARK, hx - d[0] * 13, hy - d[1] * 13, hx + d[0] * (AXE_LEN + 1), hy + d[1] * (AXE_LEN + 1), 7);
+  L(HANDLE, hx - d[0] * 12, hy - d[1] * 12, hx + d[0] * AXE_LEN, hy + d[1] * AXE_LEN, 4);
+  for (const k of [18, 24, 30]) { const a = pt(hand, k, -3), b = pt(hand, k, 3); L(HANDLE_DARK, a[0], a[1], b[0], b[1], 2); }
+  const c = [hx + d[0] * AXE_HEAD, hy + d[1] * AXE_HEAD];
+  const blade = [[6, 3], [17, 21], [6, 26], [-6, 26], [-17, 21], [-6, 3]];
+  for (const s of [1, -1]) {   // two blades -> double axe
+    const pts = blade.map(([a, b]) => pt(c, a, b * s));
+    P(BLADE, pts); PS(BLADE_DARK, pts, 2);
+    const e1 = pt(c, 12, 21 * s), e2 = pt(c, -12, 21 * s); L(WHITE, e1[0], e1[1], e2[0], e2[1], 2);
+  }
+  P(BLADE_DARK, [pt(c, 5, -4), pt(c, 15, 0), pt(c, 5, 4)]);
+  C(BLADE_DARK, c[0], c[1], 5);
+}
+
+function drawKnight(p, cam) {
+  const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving ? Math.sin(p.anim * 1.4) * 3 : 0;
+  ctx.save();
+  const px = Math.round(p.x) - cam, py = Math.round(p.y);
+  if (p.facing > 0) ctx.translate(px, py); else { ctx.translate(px + p.w, py); ctx.scale(-1, 1); }
+  const sh = [25, 18], rad = axeAngle(p) * Math.PI / 180, d = [Math.sin(rad), -Math.cos(rad)];
+  const hand = [sh[0] + d[0] * ARM_LEN, sh[1] + d[1] * ARM_LEN];
+
+  const f = p.attackFrame();   // swing trail
+  if (f >= ACT0 && f <= ACT1) {
+    const prog = f / ATTACK_FRAMES, reach = ARM_LEN + AXE_HEAD;
+    for (let k = 1; k < 7; k++) {
+      const a = angleAt(Math.max(0, prog - k * 0.025)) * Math.PI / 180;
+      ctx.globalAlpha = Math.max(0, 160 - k * 24) / 255;
+      C(WHITE, sh[0] + Math.sin(a) * reach, sh[1] - Math.cos(a) * reach, 16 - k * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+  const sw = -step * 0.8;   // back arm: huge bicep, bracer, fist
+  E(SKIN_DARK, -12, 13, 16, 17); E(SKIN, -11, 14, 14, 15); C(SKIN_LIGHT, -6, 18, 2);
+  R(ARMOR_DARK, -10 + sw, 27, 11, 8, 3); C(STEEL_DARK, -5 + sw, 37, 5);
+
+  const legs = p.onGround ? [[5 + step, 30], [16 - step, 30]] : [[3, 28], [18, 30]];
+  for (const [lx, ly] of legs) { R(STEEL_DARK, lx, ly, 10, 8, 3); R(BOOT, lx - 1, ly + 7, 13, 5, 2); }
+
+  const torso = [[-3, 13], [33, 13], [26, 31], [5, 31]];   // broad V-shaped chest
+  P(ARMOR, torso); PS(ARMOR_DARK, torso, 2);
+  for (const x of [3, 15]) { E(ARMOR_MID, x, 14, 13, 9); ES(ARMOR_DARK, x, 14, 13, 9, 1); }
+  for (const ax of [10, 16]) for (const ay of [23, 26]) RS(ARMOR_DARK, ax, ay, 5, 3, 1);
+  R(HANDLE_DARK, 6, 29, 20, 4); R(GOLD, 17, 29, 5, 4);
+
+  R(STEEL_DARK, 11, 10, 13, 5);   // neck, small helmet, plume
+  const pb = step * 0.6;
+  P(PLUME, [[13, -1], [7, -10 + pb], [-3, -6 + pb], [1, 0], [9, 2]]);
+  R(ARMOR, 10, -3, 16, 15, 6); RS(ARMOR_DARK, 10, -3, 16, 15, 2, 6);
+  L(ARMOR_LIGHT, 13, 0, 17, 0, 2); R(VISOR, 18, 2, 8, 3); R(rgb(255, 240, 150), 22, 3, 2, 2);
+  C(ARMOR_LIGHT, 1, 14, 6); CS(ARMOR_DARK, 1, 14, 6, 2);
+
+  drawAxe(hand, d);   // the axe, then the arm gripping it
+  L(SKIN_DARK, sh[0], sh[1], hand[0], hand[1], 13); L(SKIN, sh[0], sh[1], hand[0], hand[1], 10);
+  const bi = [sh[0] + d[0] * 8, sh[1] + d[1] * 8];
+  C(SKIN_DARK, bi[0], bi[1], 9); C(SKIN, bi[0], bi[1], 8); C(SKIN_LIGHT, bi[0] - 2, bi[1] - 2, 2);
+  C(ARMOR_DARK, hand[0], hand[1], 6); C(STEEL, hand[0], hand[1], 3);
+  C(ARMOR_LIGHT, 27, 15, 6); CS(ARMOR_DARK, 27, 15, 6, 2); C(GOLD, 27, 15, 2);
+  ctx.restore();
+}
+
+function drawToad(e, cam) {
+  const w = e.w, h = e.h, r = e.rect();
+  let [main, dark, belly] = e.colors();
+  if (e.flash) { main = WHITE; dark = rgb(210, 210, 210); belly = WHITE; }
+  ctx.save();
+  if (e.dir > 0) ctx.translate(r.x - cam, r.y); else { ctx.translate(r.x - cam + w, r.y); ctx.scale(-1, 1); }
+  if (e.onGround) { E(dark, -2, h * 0.5, w * 0.5, h * 0.5); E(dark, -5, h - 5, w * 0.45, 5); }
+  else { L(dark, w * 0.3, h * 0.75, -w * 0.25, h + 4, Math.max(4, Math.floor(w / 7))); E(dark, -w * 0.4, h + 1, w * 0.3, 5); }
+  if (e.kind === "T") {   // the king toad wears a crown
+    const cx = w * 0.32, b = h * 0.22;
+    const crown = [[cx - 9, b + 2], [cx - 9, b - 8], [cx - 4, b - 4], [cx, b - 11], [cx + 4, b - 4], [cx + 9, b - 8], [cx + 9, b + 2]];
+    P(GOLD, crown); PS(GOLD_DARK, crown, 2);
+  }
+  const top = Math.floor(h * 0.2);
+  E(main, 0, top, w, h - top); ES(dark, 0, top, w, h - top, 2);
+  E(belly, w * 0.38, h * 0.55, w * 0.58, h * 0.42);
+  const wart = Math.max(2, Math.floor(w / 14));
+  for (const [fx, fy] of [[0.16, 0.48], [0.34, 0.36], [0.26, 0.64], [0.5, 0.44]]) C(e.kind === "j" ? BLACK : dark, w * fx, h * fy, wart);
+  const er = Math.max(4, Math.floor(w * 0.13));
+  for (const fx of [0.55, 0.8]) {   // bulging eyes, horizontal pupils
+    const cx = w * fx, cy = h * 0.24;
+    C(main, cx, cy, er + 2); C(TOAD_EYE, cx, cy, er); R(BLACK, cx - er * 0.7, cy - 1, er * 1.4, 3);
+  }
+  L(dark, w * 0.6, h * 0.6, w - 1, h * 0.52, 2);
+  if (e.onGround && Math.sin(e.t * 0.07) > 0.85) C(rgb(245, 200, 180), w * 0.8, h * 0.72, Math.max(4, w * 0.16));
+  R(dark, w * 0.7, h * 0.82, Math.max(4, Math.floor(w / 8)), h * 0.2);
+  ctx.restore();
+  if (e.maxHp > 1) for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 14 + i * 10, r.y - 22, 8, 5);
+}
+
+function drawCoin(c, cam) {
+  const r = c.rect(), w = Math.floor(Math.abs(Math.cos(c.t * 0.08)) * 14) + 4, cx = r.x + 9 - cam, cy = r.y + 9;
+  E(GOLD_DARK, cx - w / 2, cy - 9, w, 18); E(GOLD, cx - w / 2 + 2, cy - 7, w - 4, 14);
+  if (w > 8) L(WHITE, cx - 1, cy - 4, cx - 1, cy + 3, 2);
+}
+function drawHeart(x, y, full) {
+  const col = full ? HEART : HEART_EMPTY;
+  C(col, x + 5, y + 5, 5); C(col, x + 13, y + 5, 5); P(col, [[x, y + 7], [x + 18, y + 7], [x + 9, y + 17]]);
+}
+function drawCloud(x, y, s) {
+  for (const [dx, dy, rad] of [[0, 0, 22], [25, -10, 28], [55, 0, 22], [28, 6, 22]]) C(WHITE, x + dx * s, y + dy * s, rad * s);
+}
+
+// ------------------------------------------------------------------ game
+const inp = { left: false, right: false, jumpHeld: false, jumpPressed: false, attack: false };
+const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+
+class Game {
+  constructor() {
+    this.t = 0; this.state = "title"; this.stateTimer = 0;
+    this.lives = START_LIVES; this.score = 0; this.coins = 0;
+    this.tileImgs = makeTiles();
+    const rnd = seeded(3);
+    this.clouds = Array.from({ length: 7 }, () => [rnd() * (W + 300), 40 + rnd() * 130, 0.7 + rnd() * 0.6]);
+    this.resetLevel();
+  }
+  newGame() {
+    this.lives = START_LIVES; this.score = 0; this.coins = 0;
+    this.resetLevel(); this.state = "play"; say("vamos", true);
+  }
+  resetLevel() {
+    this.level = new Level(LEVEL_MAP);
+    this.player = new Player(...this.level.start);
+    this.particles = []; this.popups = []; this.camX = 0; this.shake = 0;
+  }
+  loseLife() {
+    this.lives--; this.state = "dying"; this.stateTimer = 110;
+    const p = this.player; p.dead = true; p.vy = -11; p.attackTimer = 0; p.invuln = 0;
+    play("die"); if (this.lives > 0) say("desastre", true);
+  }
+  burst(x, y, colors, n, speed = 4) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, v = 1 + Math.random() * (speed - 1), life = randInt(20, 40);
+      this.particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2, color: pick(colors), life, maxLife: life, size: randInt(3, 6) });
+    }
+  }
+  popup(x, y, text, color = GOLD) { this.popups.push({ x, y, text, color, life: 55 }); }
+
+  step() {
+    this.t++;
+    if (this.state === "play") this.updatePlay();
+    else if (this.state === "dying") {
+      const p = this.player; p.vy = Math.min(p.vy + GRAVITY * 0.8, MAX_FALL); p.y += p.vy;
+      if (--this.stateTimer <= 0) {
+        if (this.lives > 0) { this.resetLevel(); this.state = "play"; }
+        else { this.state = "gameover"; play("gameover"); say("fin", true); }
+      }
+    } else if (this.state === "win") {
+      if (++this.stateTimer % 18 === 0)
+        this.burst(this.camX + 100 + Math.random() * (W - 200), 60 + Math.random() * 160,
+          pick([[GOLD, WHITE], [HEART, WHITE], [ARMOR_LIGHT, WHITE], [GRASS_LIGHT, WHITE]]), 30, 6);
+    }
+    for (const c of this.level.coins) c.t++;
+    for (const q of this.particles) { q.vy += 0.25; q.x += q.vx; q.y += q.vy; q.life--; }
+    this.particles = this.particles.filter(q => q.life > 0);
+    for (const q of this.popups) { q.y -= 0.8; q.life--; }
+    this.popups = this.popups.filter(q => q.life > 0);
+    if (this.shake > 0) this.shake--;
+    inp.jumpPressed = inp.attack = false;
+  }
+
+  updatePlay() {
+    const p = this.player, lvl = this.level;
+    p.update(inp, lvl);
+    if (p.justJumped) play("jump");
+    if (p.justSwung) play("swing");
+
+    const box = p.attackBox();   // the axe hits toads and crates
+    if (box) {
+      for (const e of lvl.enemies) {
+        if (!e.alive || p.hitIds.has(e.id) || !collide(box, e.rect())) continue;
+        p.hitIds.add(e.id);
+        const er = e.rect(), ex = er.x + er.w / 2, ey = er.y + er.h / 2;
+        this.burst(ex, ey, [WHITE, rgb(255, 230, 120)], 8);
+        this.shake = Math.max(this.shake, 5); play("hit");
+        if (e.hit(p.facing)) {
+          this.score += e.score;
+          const word = e.kind === "T" ? "¡Adiós, rey!" : pick(["¡Toma!", "¡Zas!", "¡Adiós!"]);
+          this.popup(ex, er.y - 10, `${word} +${e.score}`);
+          this.burst(ex, ey, e.colors(), 20, 5);
+          if (e.kind === "T") { play("croak_big"); say("rey", true); }
+          else { play("croak"); say(pick(["toma", "adios"])); }
+        }
+      }
+      for (const t of lvl.tilesNear(box)) {
+        if (lvl.tile(t.cx, t.cy) !== "C" || !collide(box, t)) continue;
+        lvl.tiles.delete(t.cx + "," + t.cy);
+        this.burst(t.x + 20, t.y + 20, [WOOD, WOOD_DARK], 14);
+        lvl.coins.push(new Coin(t.x + 20, t.y + 20));
+        this.score += 10; this.shake = Math.max(this.shake, 3);
+        this.popup(t.x + 20, t.y, "¡Crac!", WHITE); play("crate");
+      }
+    }
+    for (const e of lvl.enemies) e.update(lvl);
+    lvl.enemies = lvl.enemies.filter(e => e.alive);
+
+    const pr = inflate(p.rect(), -6, -4);   // touching a toad hurts, even from above
+    for (const e of lvl.enemies) {
+      if (e.stun === 0 && collide(pr, e.rect()) && p.hurt(e.x + e.w / 2)) {
+        this.shake = 8; this.burst(pr.x + pr.w / 2, pr.y + pr.h / 2, [HEART, WHITE], 10);
+        this.popup(pr.x + pr.w / 2, pr.y - 10, "¡Ay!", HEART);
+        play("hurt"); say("ay", true);
+      }
+    }
+    for (const c of [...lvl.coins]) {
+      if (!collide(pr, c.rect())) continue;
+      lvl.coins.splice(lvl.coins.indexOf(c), 1);
+      this.coins++; this.score += 50; this.burst(c.x, c.y, [GOLD, WHITE], 6, 3); play("coin");
+      if (this.coins % 5 === 0) say("oro");
+    }
+    if (lvl.flag && collide(p.rect(), inflate(lvl.flag, 20, 0))) {
+      const bonus = 1000 + 250 * p.hearts;
+      this.score += bonus; this.popup(p.x + p.w / 2, p.y - 10, `¡Olé! +${bonus}`);
+      this.state = "win"; this.stateTimer = 0; play("win"); say("ole", true);
+      return;
+    }
+    if (p.hearts <= 0 || p.y > lvl.pxH + 60) { this.loseLife(); return; }
+    const target = p.x + p.w / 2 - W * 0.42;
+    this.camX += (target - this.camX) * 0.12;
+    this.camX = Math.max(0, Math.min(this.camX, lvl.pxW - W));
+  }
+
+  drawHills(offset, top, height, color, period) {
+    for (let x = -Math.floor(offset % period) - period; x < W + period; x += period) E(color, x, top, period * 1.2, height * 2);
+  }
+  draw() {
+    const cam = Math.floor(this.camX);
+    if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, rgb(96, 160, 236)); sky.addColorStop(1, rgb(196, 228, 255));
+    ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
+    C(rgb(255, 244, 180), W - 140, 90, 42);
+    for (const [cx, cy, s] of this.clouds) drawCloud((((cx - cam * 0.15) % (W + 300)) + (W + 300)) % (W + 300) - 150, cy, s);
+    this.drawHills(cam * 0.25, 300, 220, HILL_FAR, 420);
+    this.drawHills(cam * 0.5, 370, 160, HILL_NEAR, 300);
+
+    const lvl = this.level;
+    for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) for (let cy = 0; cy < lvl.h; cy++) {
+      const ch = lvl.tile(cx, cy); if (!ch) continue;
+      const img = ch === "#" ? this.tileImgs[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : this.tileImgs[ch];
+      ctx.drawImage(img, cx * TILE - cam, cy * TILE);
+    }
+    const fl = lvl.flag;
+    if (fl) {
+      const x = fl.x + 3 - cam, wave = Math.sin(this.t * 0.1) * 4;
+      L(STONE_DARK, x, fl.y, x, fl.y + fl.h, 5); C(GOLD, x, fl.y, 7);
+      const banner = [[x + 2, fl.y + 8], [x + 46, fl.y + 22 + wave], [x + 2, fl.y + 36]];
+      P(ARMOR, banner); PS(ARMOR_DARK, banner, 2);
+    }
+    for (const c of lvl.coins) drawCoin(c, cam);
+    for (const e of lvl.enemies) drawToad(e, cam);
+    const p = this.player;
+    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawKnight(p, cam);
+    for (const q of this.particles) {
+      const s = Math.max(1, Math.floor(q.size * q.life / q.maxLife + 1));
+      R(q.color, Math.floor(q.x - cam - s / 2), Math.floor(q.y - s / 2), s, s);
+    }
+    for (const q of this.popups) T(q.text, 20, q.x - cam, q.y, q.color);
+
+    if (this.state !== "title") {
+      for (let i = 0; i < MAX_HEARTS; i++) drawHeart(16 + i * 24, 14, i < p.hearts);
+      T(`VIDAS ${this.lives}`, 20, 16, 38, WHITE, "left", "top");
+      T(`MONEDAS ${this.coins}`, 20, W / 2, 14, WHITE, "center", "top");
+      T(`PUNTOS ${String(this.score).padStart(6, "0")}`, 20, W - 70, 14, WHITE, "right", "top");
+    }
+    const blink = Math.floor(this.t / 30) % 2 === 0;
+    const shade = () => { ctx.fillStyle = "rgba(10,15,40,0.55)"; ctx.fillRect(-20, -20, W + 40, H + 40); };
+    if (this.state === "title") {
+      shade();
+      T("EL CABALLERO DEL HACHA", 58, W / 2, 120, ARMOR_LIGHT);
+      T("¡Abre camino a hachazos hasta la bandera!", 28, W / 2, 190, WHITE);
+      if (isTouch) {
+        T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 258, WHITE);
+      } else {
+        T("Mover: Flechas / A D      Saltar: Espacio / W", 22, W / 2, 250, WHITE);
+        T("Hachazo: X / J      Sonido: M", 22, W / 2, 282, WHITE);
+      }
+      T("¡Ojo! Saltar sobre los sapos duele.", 22, W / 2, 316, WHITE);
+      if (blink) T(isTouch ? "Toca la pantalla para empezar" : "Pulsa ENTER para empezar", 30, W / 2, 392, GOLD);
+    } else if (this.state === "dying" && this.lives > 0) {
+      T("¡Ay!", 72, W / 2, H / 2 - 40, HEART);
+    } else if (this.state === "gameover") {
+      shade();
+      T("FIN DEL JUEGO", 72, W / 2, 170, HEART);
+      T(`Puntos: ${this.score}`, 30, W / 2, 250, WHITE);
+      if (blink) T(isTouch ? "Toca para intentarlo otra vez" : "Pulsa ENTER para intentarlo otra vez", 30, W / 2, 340, GOLD);
+    } else if (this.state === "win" && this.stateTimer > 40) {
+      shade();
+      T("¡OLÉ!", 80, W / 2, 140, GOLD);
+      T("¡Misión cumplida, caballero!", 30, W / 2, 210, WHITE);
+      T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 260, WHITE);
+      if (blink) T(isTouch ? "Toca para jugar otra vez" : "Pulsa ENTER para jugar otra vez", 30, W / 2, 350, GOLD);
+    }
+  }
+}
+
+// ------------------------------------------------------------------ screen, input, loop
+const game = new Game();
+window.__game = game;
+let scale = 1, dpr = 1;
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+  canvas.style.width = Math.floor(W * scale) + "px";
+  canvas.style.height = Math.floor(H * scale) + "px";
+  canvas.width = Math.floor(W * scale * dpr);
+  canvas.height = Math.floor(H * scale * dpr);
+}
+window.addEventListener("resize", resize);
+resize();
+if (isTouch) document.body.classList.add("is-touch");
+
+let fsTried = false;
+function unlock() {   // first touch: allow sound, go fullscreen in landscape where the phone supports it
+  initAudio();
+  if (isTouch && !fsTried) {
+    fsTried = true;
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen({ navigationUI: "hide" })
+      .then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape"))
+      .catch(() => {});
+  }
+}
+function tapStart() {
+  if (["title", "gameover", "win"].includes(game.state) && !(game.state === "win" && game.stateTimer < 40)) {
+    game.newGame(); return true;
+  }
+  return false;
+}
+const keys = { left: false, right: false, jump: false };
+const touch = { left: false, right: false, jump: false };
+const KEYMAP = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "jump", ArrowUp: "jump", KeyW: "jump" };
+window.addEventListener("keydown", e => {
+  unlock();
+  const k = KEYMAP[e.code];
+  if (k) { e.preventDefault(); if (k === "jump" && !e.repeat) inp.jumpPressed = true; keys[k] = true; }
+  if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code) && !e.repeat) inp.attack = true;
+  if (e.code === "KeyM") toggleSound();
+  if (e.code === "Enter" || e.code === "NumpadEnter") tapStart();
+});
+window.addEventListener("keyup", e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; });
+window.addEventListener("blur", () => { keys.left = keys.right = keys.jump = false; });
+window.addEventListener("contextmenu", e => e.preventDefault());
+canvas.addEventListener("pointerdown", e => { e.preventDefault(); unlock(); tapStart(); });
+
+const dpad = document.getElementById("dpad");
+let dpadId = null;
+function dpadSet(e) {
+  const r = dpad.getBoundingClientRect(), left = e.clientX < r.left + r.width / 2;
+  touch.left = left; touch.right = !left; dpad.dataset.dir = left ? "l" : "r";
+}
+dpad.addEventListener("pointerdown", e => {
+  e.preventDefault(); unlock(); dpadId = e.pointerId;
+  try { dpad.setPointerCapture(e.pointerId); } catch (_) {}
+  dpadSet(e);
+});
+dpad.addEventListener("pointermove", e => { if (e.pointerId === dpadId) dpadSet(e); });
+const dpadEnd = e => { if (e.pointerId === dpadId) { dpadId = null; touch.left = touch.right = false; dpad.dataset.dir = ""; } };
+dpad.addEventListener("pointerup", dpadEnd);
+dpad.addEventListener("pointercancel", dpadEnd);
+
+function holdButton(el, down, up) {
+  el.addEventListener("pointerdown", e => {
+    e.preventDefault(); unlock();
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    el.classList.add("on"); down();
+  });
+  const end = () => { el.classList.remove("on"); if (up) up(); };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+}
+holdButton(document.getElementById("bJump"), () => { if (!tapStart()) { inp.jumpPressed = true; touch.jump = true; } }, () => { touch.jump = false; });
+holdButton(document.getElementById("bAxe"), () => { if (!tapStart()) inp.attack = true; });
+
+const bSound = document.getElementById("bSound");
+function toggleSound() {
+  soundOn = !soundOn;
+  bSound.textContent = soundOn ? "🔊" : "🔇";
+  if (!soundOn && hasSpeech) speechSynthesis.cancel();
+  if (master) master.gain.value = soundOn ? 0.8 : 0;
+}
+bSound.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); unlock(); toggleSound(); });
+
+let last = performance.now(), acc = 0;
+function frame(now) {
+  acc += Math.min(100, now - last); last = now;
+  while (acc >= STEP_MS) {
+    inp.left = keys.left || touch.left;
+    inp.right = keys.right || touch.right;
+    inp.jumpHeld = keys.jump || touch.jump;
+    game.step();
+    acc -= STEP_MS;
+  }
+  ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+  game.draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
