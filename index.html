@@ -74,8 +74,9 @@
 
 // ------------------------------------------------------------------ levels
 // Map legend:  #  ground    =  stone platform   C  breakable crate   o  coin   ^  spikes
-//              P  start     F  flag            t  toad   T  king toad   j  leaping toad
-//              w  wasp      h  hedgehog        B  giant boss toad   [ ]  edges of the boss arena
+//              P  start     F  flag            t  kangaroo   T  boxing kangaroo (3 hits)   j  fast red kangaroo
+//              w  wasp      h  hedgehog        c  saltwater crocodile
+//              B  Rey Canguro (boss)   [ ]  edges of the boss arena
 const LEVELS = [
   { name: "La Pradera", theme: "meadow", speed: 1.0, map: [
     "..................................................................................................................................",
@@ -88,7 +89,7 @@ const LEVELS = [
     "..........................ooooo.............................ooooo.............ooooo..................................#............",
     "......ooo.................=====...........oo........#.......=====.......oo....=====...................oo............##.oooo.......",
     "....................................C.....==.......##...................==.................C..........==...........###............",
-    "..P...........t....................CC..t..........###.....T....t...t................t.....CC...T..t.........t.....####.......F....",
+    "..P...........t....................CC..t..........###.....T....t...t............c...t.....CC...T..t.........t.....####.......F....",
     "####################..###################....##########################....##########################....#########################",
     "####################..###################....##########################....##########################....#########################"
   ] },
@@ -103,22 +104,22 @@ const LEVELS = [
     "............................ooooo...............................................ooooo.................................oooo............................",
     ".....ooo....................=====........oo.........##.........oo...............=====......oo....................oo...====...................oooo.....",
     ".........................................==...C....###.........==..........................==....................==...................................",
-    "..P.........t............h.........^^.t.......C...####...h................j...^^...t...h............^^..T...^^..............h...j...^^...t........F...",
+    "..P.........t............h.....c...^^.t.......C...####...h................j...^^...t...h........c...^^..T...^^..............h...j...^^...t...c....F...",
     "##################...###################....##################....########################....##################....##################################",
     "##################...###################....##################....########################....##################....##################################"
   ] },
-  { name: "El Castillo del Rey Sapo", theme: "castle", speed: 1.3, map: [
+  { name: "El Castillo del Rey Canguro", theme: "castle", speed: 1.2, map: [
     "...............................................................................................................................................................................",
     "...............................................................................................................................................................................",
     "...............................................................................................................................................................................",
     "...............................................................................................................................................................................",
     "...............................................................................................................................................................................",
-    "..............w......................................w..................w...............w......................................................................................",
-    "................................w...............................................................w.......................w......................................................",
+    "..............w......................................w..................w...............w......................................w...............................................",
+    "................................w...............................................................w..............................................................................",
     "..................................................................ooooo........................................................................................................",
     ".....ooo.........oo..................ooo...................ooo....=====..........ooo.................ooo........................oooo...........................................",
     ".................==..................===...................===...................===.................===.......................................................................",
-    "..P......t..^^..........h....j.C..............T...^^....h.........j...h...^^..............T..^^...h.........t...j...^^.......h..............[..............B..........]...F....",
+    "..P......t..^^..........h.c..j.C..............T...^^....h.........j...h...^^..............T..^^...c............tj...^^.......h....c.........[..............B..........]...F....",
     "################....################.....#################.....#################.....###############.....######################################################################",
     "################....################.....#################.....#################.....###############.....######################################################################"
   ] }
@@ -151,14 +152,15 @@ const PLUME = rgb(230, 60, 60), CAPE = rgb(196, 32, 52), CAPE_DARK = rgb(120, 16
 const SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82), MOUSTACHE = rgb(84, 46, 20);
 const HANDLE = rgb(130, 86, 44), HANDLE_DARK = rgb(80, 50, 24), BLADE = rgb(210, 218, 232), BLADE_DARK = rgb(90, 98, 120);
 const GOLD_BLADE = rgb(255, 222, 110), GOLD_BLADE_DARK = rgb(176, 120, 20);
-const TOAD_EYE = rgb(250, 210, 60), GOLD = rgb(255, 205, 60), GOLD_DARK = rgb(190, 130, 20);
+const GOLD = rgb(255, 205, 60), GOLD_DARK = rgb(190, 130, 20);
 const HEART = rgb(230, 50, 70), HEART_EMPTY = rgb(90, 60, 70), GRASS_LIGHT = rgb(140, 220, 110);
 const ENEMY_COLORS = {
-  t: [rgb(106, 160, 64), rgb(58, 100, 40), rgb(222, 216, 150)],
-  T: [rgb(150, 112, 62), rgb(92, 64, 32), rgb(228, 200, 150)],
-  j: [rgb(238, 122, 40), rgb(120, 50, 20), rgb(255, 214, 120)],
-  B: [rgb(96, 128, 70), rgb(52, 74, 36), rgb(214, 204, 140)],
+  t: [rgb(196, 132, 76), rgb(130, 80, 40), rgb(238, 206, 160)],    // kangaroo with a joey
+  T: [rgb(150, 142, 136), rgb(92, 86, 82), rgb(222, 214, 204)],     // grey boxing kangaroo
+  j: [rgb(206, 92, 52), rgb(130, 50, 26), rgb(246, 196, 160)],      // fast red kangaroo
+  B: [rgb(168, 106, 58), rgb(98, 58, 28), rgb(236, 204, 160)],      // Rey Canguro
   w: [rgb(250, 200, 40), BLACK, rgb(220, 240, 255)],
+  c: [rgb(96, 112, 62), rgb(54, 66, 36), rgb(216, 208, 160)],    // saltwater crocodile
   h: [rgb(130, 90, 60), rgb(80, 55, 35), rgb(225, 190, 150)],
 };
 
@@ -189,9 +191,10 @@ function seeded(a) {   // small repeatable random number generator
 
 // ------------------------------------------------------------------ sound (generated, no files needed)
 const VOICE_LINES = {
-  vamos: "¡Vamos, caballero!", toma: "¡Toma!", adios: "¡Adiós, sapito!", rey: "¡Adiós, rey sapo!",
+  vamos: "¡Vamos, caballero!", toma: "¡Toma!", adios: "¡Adiós, canguro!", rey: "¡Fuera de combate!",
   jolin: "¡Jolín!", oro: "¡Más oro!", desastre: "¡Qué desastre!", fin: "Fin del juego.", ole: "¡Olé!",
-  nivel: "¡Nivel superado!", jefe: "¡Cuidado! ¡El rey sapo gigante!", victoria: "¡Victoria!",
+  nivel: "¡Nivel superado!", jefe: "¡Cuidado! ¡El Rey Canguro!", victoria: "¡Victoria!",
+  coco: "¡Hasta luego, cocodrilo!",
   tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
 };
 const AUDIO_RATE = 22050;
@@ -279,12 +282,13 @@ function buildSounds(rate) {
   return {
     swing: whoosh(rate),
     hit: mixAll(synth(rate, 0.16, 150, 40, "sine", 0.9, 0, 0.004, 1.5), lowpass(synth(rate, 0.05, 1, null, "noise", 0.5), 0.3)),
-    croak: lowpass(concat(synth(rate, 0.11, 210, 160, "square", 0.3, 35), silence(rate, 0.035),
-                          synth(rate, 0.17, 180, 110, "square", 0.32, 30)), 0.35),
-    croak_big: lowpass(concat(synth(rate, 0.18, 140, 100, "square", 0.4, 24), silence(rate, 0.05),
-                              synth(rate, 0.32, 120, 65, "square", 0.45, 20)), 0.25),
+    boing: concat(synth(rate, 0.05, 300, 520, "tri", 0.3, 0, 0.004, 0.2), synth(rate, 0.3, 520, 160, "tri", 0.3, 22, 0.004, 1.2)),
+    boing_big: mixAll(concat(synth(rate, 0.08, 180, 340, "tri", 0.4, 0, 0.004, 0.2), synth(rate, 0.5, 340, 90, "tri", 0.4, 16, 0.004, 1.2)),
+                      synth(rate, 0.25, 90, 30, "sine", 0.7, 0, 0.004, 1.5)),
     buzz: lowpass(synth(rate, 0.35, 220, 260, "square", 0.12, 40, 0.02, 0.5), 0.4),
     squeak: synth(rate, 0.16, 900, 1300, "tri", 0.25, 0, 0.004, 1),
+    hiss: lowpass(synth(rate, 0.45, 1, null, "noise", 0.35, 0, 0.08, 1.5), 0.6),
+    snap: mixAll(lowpass(synth(rate, 0.03, 1, null, "noise", 0.9, 0, 0.001, 3), 0.8), synth(rate, 0.12, 160, 60, "sine", 0.7, 0, 0.002, 2)),
     stomp: mixAll(synth(rate, 0.35, 90, 28, "sine", 1, 0, 0.004, 1.2), lowpass(synth(rate, 0.2, 1, null, "noise", 0.6), 0.15)),
     jump: synth(rate, 0.13, 280, 640, "square", 0.16, 0, 0.004, 1),
     coin: concat(synth(rate, 0.06, 988, null, "square", 0.16, 0, 0.004, 0.3), synth(rate, 0.25, 1319, null, "square", 0.16, 0, 0.004, 1.5)),
@@ -456,15 +460,15 @@ class Enemy {   // shared bits for every enemy
   harmful() { return this.stun === 0; }
 }
 
-const TOAD_STATS = {
-  t: { w: 32, h: 24, hp: 1, hopVy: 6.5, hopVx: 2.2, wait: [25, 55], score: 100 },
-  T: { w: 46, h: 40, hp: 3, hopVy: 7.0, hopVx: 1.6, wait: [50, 80], score: 500 },
-  j: { w: 28, h: 22, hp: 1, hopVy: 11.5, hopVx: 2.6, wait: [35, 60], score: 150 },
+const ROO_STATS = {   // size, hit points, hop strength, pause between hops, points
+  t: { w: 30, h: 42, hp: 1, hopVy: 7.0, hopVx: 2.2, wait: [25, 55], score: 100 },
+  T: { w: 38, h: 56, hp: 3, hopVy: 6.5, hopVx: 1.6, wait: [50, 80], score: 500 },
+  j: { w: 26, h: 36, hp: 1, hopVy: 12.0, hopVx: 2.8, wait: [35, 60], score: 150 },
 };
-class Toad extends Enemy {
+class Kangaroo extends Enemy {   // hops along, turning round at walls and ledges
   constructor(kind, tx, ty, mul = 1) {
     super();
-    const s = TOAD_STATS[kind];
+    const s = ROO_STATS[kind];
     this.init(kind, s.w, s.h, s.hp, s.score);
     this.hopVy = s.hopVy; this.hopVx = s.hopVx * mul;
     this.waitRange = [Math.round(s.wait[0] / mul), Math.round(s.wait[1] / mul)];
@@ -493,7 +497,7 @@ class Toad extends Enemy {
     if (this.hitWall && this.stun === 0) this.dir *= -1;
     if (this.y > level.pxH + 100) this.alive = false;
   }
-  draw(cam) { drawToad(this, cam); }
+  draw(cam) { drawKangaroo(this, cam); }
 }
 
 class Wasp extends Enemy {   // flies back and forth, then dives at the knight
@@ -534,6 +538,42 @@ class Wasp extends Enemy {   // flies back and forth, then dives at the knight
   draw(cam) { drawWasp(this, cam); }
 }
 
+class Croc extends Enemy {   // saltwater crocodile: creeps along, opens its jaws, then lunges with a snap
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("c", 70, 22, 2, 300);
+    this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
+    this.speed = 0.5 * mul; this.lungeSpeed = 5.5 * mul; this.mode = "walk"; this.modeT = 0; this.jaw = 0;
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.85; }
+    else if (this.mode === "walk") {
+      this.vx = this.dir * this.speed;
+      const dx = player.x + player.w / 2 - (this.x + this.w / 2);
+      if (this.onGround && !player.dead && Math.abs(dx) < 190 && Math.abs(player.y + player.h - (this.y + this.h)) < 40) {
+        this.mode = "open"; this.modeT = 30; this.dir = dx > 0 ? 1 : -1; this.vx = 0; game.sound("hiss");
+      }
+    } else if (this.mode === "open") { this.vx = 0; if (--this.modeT <= 0) { this.mode = "lunge"; this.modeT = 22; } }
+    else if (this.mode === "lunge") {
+      this.vx = this.dir * this.lungeSpeed;
+      if (--this.modeT <= 0) { this.mode = "rest"; this.modeT = 60; game.sound("snap"); }
+    } else { this.vx = 0; if (--this.modeT <= 0) this.mode = "walk"; }
+    const target = this.mode === "open" || this.mode === "lunge" ? 1 : 0;   // jaws open while it threatens and lunges
+    this.jaw += (target - this.jaw) * 0.3;
+    physicsMove(this, level);
+    const blocked = this.hitWall || (this.onGround && ledgeAhead(this, level));
+    if (this.stun === 0 && blocked) {
+      if (this.mode === "lunge") { this.mode = "rest"; this.modeT = 60; game.sound("snap"); }
+      else if (this.mode === "walk") this.dir *= -1;
+    }
+    if (this.y > level.pxH + 100) this.alive = false;
+  }
+  hit(fromDir, dmg = 1) { this.mode = "rest"; this.modeT = 50; return super.hit(fromDir, dmg); }
+  draw(cam) { drawCroc(this, cam); }
+}
+
 class Hedgehog extends Enemy {   // walks slowly, then curls up and rolls at you
   constructor(tx, ty, mul = 1) {
     super();
@@ -563,10 +603,10 @@ class Hedgehog extends Enemy {   // walks slowly, then curls up and rolls at you
   draw(cam) { drawHedgehog(this, cam); }
 }
 
-class Boss extends Enemy {   // the giant king toad: big hops, shakes the ground, calls little toads
+class Boss extends Enemy {   // the Rey Canguro: big hops, shakes the ground, calls little kangaroos
   constructor(tx, ty, level, mul = 1) {
     super();
-    this.init("B", 88, 72, 10, 3000);
+    this.init("B", 76, 100, 8, 3000);
     this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
     this.minX = level.arena[0]; this.maxX = level.arena[1]; this.mul = mul;
     this.wait = 90; this.hops = 0; this.invuln = 0; this.jumping = false;
@@ -594,8 +634,8 @@ class Boss extends Enemy {   // the giant king toad: big hops, shakes the ground
     if (this.onGround && this.jumping) {
       this.jumping = false; game.shake = Math.max(game.shake, 10); game.sound("stomp");
       if (this.hops % 3 === 0 && level.enemies.length < 6) {
-        level.enemies.push(new Toad("t", this.x + this.w / 2 - 20 + this.dir * 50, this.y + this.h - TILE, this.mul));
-        game.sound("croak");
+        level.enemies.push(new Kangaroo("t", this.x + this.w / 2 - 20 + this.dir * 50, this.y + this.h - TILE, this.mul));
+        game.sound("boing");
       }
     }
   }
@@ -605,7 +645,7 @@ class Boss extends Enemy {   // the giant king toad: big hops, shakes the ground
     if (this.hp <= 0) { this.alive = false; return true; }
     return false;
   }
-  draw(cam) { drawToad(this, cam); }
+  draw(cam) { drawKangaroo(this, cam); }
 }
 
 // ------------------------------------------------------------------ level
@@ -628,9 +668,10 @@ class Level {
       else if (ch === "^") this.spikes.push({ x, y });
       else if (ch === "o") this.coins.push(new Coin(x + TILE / 2, y + TILE / 2));
       else if (ch === "P") this.start = [x + (TILE - KNIGHT_W) / 2, y + TILE - KNIGHT_H];
-      else if (TOAD_STATS[ch]) this.enemies.push(new Toad(ch, x, y, mul));
+      else if (ROO_STATS[ch]) this.enemies.push(new Kangaroo(ch, x, y, mul));
       else if (ch === "w") this.enemies.push(new Wasp(x, y, mul));
       else if (ch === "h") this.enemies.push(new Hedgehog(x, y, mul));
+      else if (ch === "c") this.enemies.push(new Croc(x, y, mul));
       else if (ch === "B") later.push([x, y]);
       else if (ch === "[") this.arena[0] = x;
       else if (ch === "]") this.arena[1] = x + TILE;
@@ -835,36 +876,50 @@ function drawKnight(p, cam, upg, t) {
   ctx.restore();
 }
 
-function drawToad(e, cam) {
-  const w = e.w, h = e.h, r = e.rect();
-  let [main, dark, belly] = e.colors();
-  if (e.flash) { main = WHITE; dark = rgb(210, 210, 210); belly = WHITE; }
+function drawKangaroo(e, cam) {
+  const w = e.w, h = e.h, r = e.rect(), boxer = e.kind === "T" || e.kind === "B";
+  let [fur, dark, belly] = e.colors();
+  if (e.flash) { fur = WHITE; dark = rgb(210, 210, 210); belly = WHITE; }
   flipAt(r.x - cam, r.y, w, e.dir);
-  if (e.onGround) { E(dark, -2, h * 0.5, w * 0.5, h * 0.5); E(dark, -5, h - 5, w * 0.45, 5); }
-  else { L(dark, w * 0.3, h * 0.75, -w * 0.25, h + 4, Math.max(4, Math.floor(w / 7))); E(dark, -w * 0.4, h + 1, w * 0.3, 5); }
-  if (e.kind === "T" || e.kind === "B") {   // kings wear crowns
-    const s = e.kind === "B" ? 2 : 1, cx = w * 0.32, b = h * 0.22;
+  P(fur, [[w * 0.3, h * 0.66], [-w * 0.55, h * 0.97], [w * 0.32, h * 0.86]]);             // long tail
+  if (e.onGround) {   // crouched: big thigh, long flat foot
+    E(dark, w * 0.12, h * 0.58, w * 0.5, h * 0.36); E(fur, w * 0.14, h * 0.6, w * 0.46, h * 0.32);
+    R(dark, w * 0.18, h * 0.92, w * 0.62, h * 0.08, 2);
+  } else {            // mid-hop: legs stretched out behind
+    E(fur, w * 0.12, h * 0.55, w * 0.4, h * 0.3);
+    L(dark, w * 0.3, h * 0.75, -w * 0.15, h * 1.02, w / 6); L(dark, -w * 0.15, h * 1.02, -w * 0.45, h * 1.02, w / 8);
+  }
+  E(fur, w * 0.15, h * 0.28, w * 0.62, h * 0.58); ES(dark, w * 0.15, h * 0.28, w * 0.62, h * 0.58, 1.5);   // body
+  E(belly, w * 0.42, h * 0.38, w * 0.3, h * 0.44);
+  if (e.kind === "t") {   // a joey peeking out of the pouch
+    C(fur, w * 0.6, h * 0.6, w * 0.1); P(fur, [[w * 0.55, h * 0.56], [w * 0.52, h * 0.47], [w * 0.6, h * 0.53]]);
+    C(BLACK, w * 0.64, h * 0.59, 1.3); L(dark, w * 0.42, h * 0.66, w * 0.72, h * 0.66, 1.5);
+  }
+  P(dark, [[w * 0.44, h * 0.1], [w * 0.38, -h * 0.14], [w * 0.54, h * 0.06]]);            // far ear
+  E(fur, w * 0.5, h * 0.12, w * 0.3, h * 0.3);                                           // neck
+  E(fur, w * 0.5, h * 0.02, w * 0.4, h * 0.22);                                          // head
+  E(fur, w * 0.75, h * 0.08, w * 0.34, h * 0.13);                                        // snout
+  C(BLACK, w * 1.07, h * 0.13, Math.max(1.5, w * 0.05));                                 // nose
+  P(fur, [[w * 0.52, h * 0.08], [w * 0.46, -h * 0.2], [w * 0.64, h * 0.05]]);            // ear
+  P(rgb(240, 170, 160), [[w * 0.53, h * 0.06], [w * 0.49, -h * 0.12], [w * 0.6, h * 0.05]]);
+  C(BLACK, w * 0.74, h * 0.09, Math.max(1.5, w * 0.06)); C(WHITE, w * 0.75, h * 0.08, Math.max(0.6, w * 0.02));
+  if (e.kind === "B") L(BLACK, w * 0.66, h * 0.03, w * 0.8, h * 0.06, Math.max(1.5, w / 30));   // angry brow
+  if (e.kind === "T") R(rgb(220, 40, 40), w * 0.5, h * 0.03, w * 0.4, h * 0.04);          // boxer's headband
+  if (boxer) {   // boxing gloves, jabbing now and then
+    const punch = (e.onGround ? Math.pow(Math.max(0, Math.sin(e.t * 0.12)), 2) : 0.4) * w * 0.35;
+    L(fur, w * 0.62, h * 0.38, w * 0.86 + punch, h * 0.42, w / 9);
+    C(rgb(220, 40, 40), w * 0.9 + punch, h * 0.42, w * 0.13); C(rgb(255, 120, 110), w * 0.87 + punch, h * 0.39, w * 0.04);
+  } else L(dark, w * 0.62, h * 0.38, w * 0.84, h * 0.5, w / 9);                          // little paws
+  if (e.kind === "B") {
+    R(GOLD, w * 0.2, h * 0.62, w * 0.55, h * 0.06, 3);                                   // champion's belt
+    const cx = w * 0.68, b = h * 0.02, s = 2;
     const crown = [[cx - 9 * s, b + 2], [cx - 9 * s, b - 8 * s], [cx - 4 * s, b - 4 * s], [cx, b - 11 * s],
                    [cx + 4 * s, b - 4 * s], [cx + 9 * s, b - 8 * s], [cx + 9 * s, b + 2]];
-    P(GOLD, crown); PS(GOLD_DARK, crown, 2);
-    if (s > 1) C(HEART, cx, b - 4 * s, 3);
+    P(GOLD, crown); PS(GOLD_DARK, crown, 2); C(HEART, cx, b - 4 * s, 3);
   }
-  const top = Math.floor(h * 0.2);
-  E(main, 0, top, w, h - top); ES(dark, 0, top, w, h - top, 2);
-  E(belly, w * 0.38, h * 0.55, w * 0.58, h * 0.42);
-  const wart = Math.max(2, Math.floor(w / 14));
-  for (const [fx, fy] of [[0.16, 0.48], [0.34, 0.36], [0.26, 0.64], [0.5, 0.44]]) C(e.kind === "j" ? BLACK : dark, w * fx, h * fy, wart);
-  const er = Math.max(4, Math.floor(w * 0.13));
-  for (const fx of [0.55, 0.8]) {   // bulging eyes, horizontal pupils
-    const cx = w * fx, cy = h * 0.24;
-    C(main, cx, cy, er + 2); C(e.kind === "B" ? rgb(255, 120, 60) : TOAD_EYE, cx, cy, er); R(BLACK, cx - er * 0.7, cy - 1, er * 1.4, 3);
-  }
-  L(dark, w * 0.6, h * 0.6, w - 1, h * 0.52, 2);
-  if (e.onGround && Math.sin(e.t * 0.07) > 0.85) C(rgb(245, 200, 180), w * 0.8, h * 0.72, Math.max(4, w * 0.16));
-  R(dark, w * 0.7, h * 0.82, Math.max(4, Math.floor(w / 8)), h * 0.2);
   ctx.restore();
   if (e.maxHp > 1 && e.kind !== "B")
-    for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 14 + i * 10, r.y - 22, 8, 5);
+    for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 14 + i * 10, r.y - 24, 8, 5);
 }
 
 function drawWasp(e, cam) {
@@ -880,6 +935,39 @@ function drawWasp(e, cam) {
   C(BLACK, w * 0.8, h / 2, 6); C(WHITE, w * 0.86, h / 2 - 2, 2);
   L(BLACK, w * 0.84, h / 2 - 5, w + 2, -2, 1); L(BLACK, w * 0.78, h / 2 - 5, w * 0.82, -3, 1);
   ctx.restore();
+}
+
+function drawCroc(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h;
+  let [scale, dark, belly] = e.colors();
+  if (e.flash) { scale = WHITE; dark = rgb(210, 210, 210); belly = WHITE; }
+  flipAt(r.x - cam, r.y, w, e.dir);
+  const moving = Math.abs(e.vx) > 0.2, step = moving ? Math.sin(e.t * (e.mode === "lunge" ? 0.8 : 0.3)) * 3 : 0;
+  const sway = Math.sin(e.t * 0.12) * 2;
+  P(scale, [[w * 0.12, h * 0.3], [-w * 0.32, h * 0.62 + sway], [-w * 0.34, h * 0.72 + sway], [w * 0.12, h * 0.95]]);   // long tail
+  for (let i = 0; i < 4; i++) {   // ridges along the tail
+    const tx = w * 0.06 - i * w * 0.09, ty = h * (0.36 + i * 0.07) + sway * i / 4;
+    P(dark, [[tx - 4, ty], [tx, ty - 5], [tx + 4, ty]]);
+  }
+  for (const [lx, s] of [[0.14, step], [0.5, -step]]) R(dark, w * lx + s, h * 0.72, 7, h * 0.28, 2);   // far legs
+  E(scale, w * 0.06, h * 0.22, w * 0.6, h * 0.74);                                        // body
+  E(belly, w * 0.14, h * 0.7, w * 0.46, h * 0.26);
+  for (let i = 0; i < 6; i++) C(dark, w * (0.14 + i * 0.08), h * 0.3, 2.6);                 // bumpy armoured back
+  for (const [lx, s] of [[0.2, -step], [0.56, step]]) { R(scale, w * lx + s, h * 0.72, 8, h * 0.28, 2); R(dark, w * lx + s - 1, h - 3, 11, 3, 1); }
+
+  const hinge = [w * 0.62, h * 0.62], open = e.jaw * 0.7;
+  P(dark, [[w * 0.62, h * 0.62], [w * 1.02, h * 0.66], [w * 1.0, h * 0.8], [w * 0.62, h * 0.92]]);   // lower jaw
+  for (let i = 0; i < 5; i++) P(WHITE, [[w * (0.68 + i * 0.065), h * 0.66], [w * (0.71 + i * 0.065), h * 0.5], [w * (0.74 + i * 0.065), h * 0.67]]);
+  if (open > 0.05) E(rgb(220, 110, 120), w * 0.64, h * 0.5, w * 0.3, h * 0.2);           // pink mouth
+  ctx.save(); ctx.translate(hinge[0], hinge[1]); ctx.rotate(-open);                         // upper jaw swings open
+  P(scale, [[0, -h * 0.42], [w * 0.4, -h * 0.12], [w * 0.42, h * 0.02], [0, h * 0.02]]);
+  for (let i = 0; i < 5; i++) P(WHITE, [[w * (0.06 + i * 0.065), 0], [w * (0.09 + i * 0.065), h * 0.16], [w * (0.12 + i * 0.065), 0]]);
+  C(dark, w * 0.38, -h * 0.12, 2);                                                          // nostril
+  ctx.restore();
+  C(scale, w * 0.66, h * 0.2, h * 0.2);                                                     // eye bump
+  C(rgb(236, 200, 60), w * 0.67, h * 0.17, h * 0.12); R(BLACK, w * 0.67 - 1, h * 0.06, 2.5, h * 0.22);   // reptile eye
+  ctx.restore();
+  for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 9 + i * 10, r.y - 24, 8, 5);
 }
 
 function drawHedgehog(e, cam) {
@@ -1143,7 +1231,7 @@ class Game {
     lvl.enemies = lvl.enemies.filter(e => e.alive);
 
     if (lvl.boss && lvl.boss.alive && !this.bossAnnounced && p.x > lvl.arena[0] - 200) {
-      this.bossAnnounced = true; say("jefe", true); this.popup(p.x + p.w / 2, p.y - 30, "¡El Rey Sapo Gigante!", HEART);
+      this.bossAnnounced = true; say("jefe", true); this.popup(p.x + p.w / 2, p.y - 30, "¡El Rey Canguro!", HEART);
     }
 
     const pr = inflate(p.rect(), -6, -4);   // touching an enemy or spikes hurts, even from above
@@ -1182,14 +1270,15 @@ class Game {
     this.burst(ex, ey, e.colors(), e.kind === "B" ? 60 : 20, e.kind === "B" ? 9 : 5);
     if (e.kind === "B") {
       this.popup(ex, er.y - 20, `¡Victoria! +${e.score}`); this.shake = 24;
-      play("croak_big"); say("victoria", true);
+      play("boing_big"); say("victoria", true);
       const f = this.level.flag; if (f) this.burst(f.x, f.y + 40, [GOLD, WHITE, ARMOR_LIGHT], 40, 6);
       return;
     }
-    const word = e.kind === "T" ? "¡Adiós, rey!" : pick(["¡Toma!", "¡Zas!", "¡Adiós!"]);
+    const word = e.kind === "T" ? "¡K.O.!" : e.kind === "c" ? "¡Hasta luego, cocodrilo!" : pick(["¡Toma!", "¡Zas!", "¡Adiós!"]);
     this.popup(ex, er.y - 10, `${word} +${e.score}`);
-    if (e.kind === "T") { play("croak_big"); say("rey", true); }
-    else { play(e.kind === "w" ? "squeak" : "croak"); say(e.kind === "t" || e.kind === "j" ? pick(["toma", "adios"]) : "toma"); }
+    if (e.kind === "T") { play("boing_big"); say("rey", true); }
+    else if (e.kind === "c") { play("snap"); say("coco", true); }
+    else { play(e.kind === "w" ? "squeak" : "boing"); say(e.kind === "t" || e.kind === "j" ? pick(["toma", "adios"]) : "toma"); }
   }
 
   draw() {
@@ -1235,7 +1324,7 @@ class Game {
       T(`PUNTOS ${String(this.score).padStart(6, "0")}`, 20, W - 120, 14, WHITE, "right", "top");
       const b = lvl.boss;
       if (b && b.alive && this.bossAnnounced) {   // boss health bar
-        T("REY SAPO GIGANTE", 18, W / 2, 46, GOLD, "center", "top");
+        T("REY CANGURO", 18, W / 2, 46, GOLD, "center", "top");
         R(BLACK, W / 2 - 152, 70, 304, 16, 4); R(HEART_EMPTY, W / 2 - 150, 72, 300, 12, 3);
         R(HEART, W / 2 - 150, 72, 300 * b.hp / b.maxHp, 12, 3);
       }
@@ -1278,7 +1367,7 @@ class Game {
     } else if (this.state === "win" && this.stateTimer > 40) {
       shade();
       T("¡OLÉ!", 80, W / 2, 130, GOLD);
-      T("¡Has vencido al Rey Sapo, caballero!", 30, W / 2, 200, WHITE);
+      T("¡Has vencido al Rey Canguro, caballero!", 30, W / 2, 200, WHITE);
       T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 250, WHITE);
       tap("Toca para jugar otra vez", "Pulsa ENTER para jugar otra vez", 340);
     }
