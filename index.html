@@ -75,7 +75,8 @@
 // ------------------------------------------------------------------ levels
 // Map legend:  #  ground    =  stone platform   C  breakable crate   o  coin   ^  spikes
 //              P  start     F  flag            t  kangaroo   T  boxing kangaroo (3 hits)   j  fast red kangaroo
-//              w  wasp      h  hedgehog        c  saltwater crocodile
+//              w  wasp      b  bat   g  seagull   v  vulture   c  saltwater crocodile   n  taipan   k  scorpion
+//              m  mole      s  shark (put it in a gap above the water)   M  the motorbike
 //              B  Rey Canguro (boss)   [ ]  edges of the boss arena
 const LEVELS = [
   { name: "La Pradera", theme: "meadow", speed: 1.0, map: [
@@ -93,7 +94,7 @@ const LEVELS = [
     "####################..###################....##########################....##########################....#########################",
     "####################..###################....##########################....##########################....#########################"
   ] },
-  { name: "El Bosque", theme: "forest", speed: 1.15, map: [
+  { name: "El Bosque", theme: "forest", speed: 1.1, hint: "¡Ojo con las serpientes taipán!", map: [
     "......................................................................................................................................................",
     "......................................................................................................................................................",
     "......................................................................................................................................................",
@@ -104,9 +105,54 @@ const LEVELS = [
     "............................ooooo...............................................ooooo.................................oooo............................",
     ".....ooo....................=====........oo.........##.........oo...............=====......oo....................oo...====...................oooo.....",
     ".........................................==...C....###.........==..........................==....................==...................................",
-    "..P.........t............h.....c...^^.t.......C...####...h................j...^^...t...h........c...^^..T...^^..............h...j...^^...t...c....F...",
+    "..P.........t............n.....c...^^.t.......C...####...n................j.^^.....t...n........c...^^..T...^^..............n...j...^^...t...c....F...",
     "##################...###################....##################....########################....##################....##################################",
     "##################...###################....##################....########################....##################....##################################"
+  ] },
+  { name: "La Mina", theme: "mine", speed: 1.15, hint: "¡Cuidado con los topos!", map: [
+    "################################################################################################################################################################",
+    "################################################################################################################################################################",
+    "............##..............................................##...................................................##.........................##..................",
+    "............##..............................................##...................................................##.........................##..................",
+    "................................................................................................................................................................",
+    "..........................b..................................................b...........................b.....................................b................",
+    "................................................................................................................................................................",
+    ".................................ooooo..............................................ooooo...............................................oooo....................",
+    ".................................=====.................................oo...........=====.....................................oo........====....................",
+    ".....ooo........oo.......oo.......................oo...................==....oo.............C............oo...................==...oo.................ooo.......",
+    "..P......m..................C..m........m...........^^...m........m.............m...........C...m..........^^..m........m..............m........m...^.......F...",
+    "####################...######################...######################....##########################...######################....###############################",
+    "####################...######################...######################....##########################...######################....###############################"
+  ] },
+  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, hint: "¡No te caigas al agua!", map: [
+    "............................................................................................................................................................................",
+    "............................................................................................................................................................................",
+    "............................................................................................................................................................................",
+    "............................................................................................................................................................................",
+    "............................................................................................................................................................................",
+    "............................................g.........................................g.................................g...............................g...................",
+    "............................................................................................................................................................................",
+    "................oooo....oooo......oooo..............................oooo....oooo..........oooo..................oooo........oooo................................oooo........",
+    "........................====........................oo......................====..........................oo....====..........................oo................====........",
+    "....................................................==....................................................==..................................==............................",
+    "..P.......................c....C...s...........................c.....s.............................^.....s...........c.......s...............s........^.....c...........F...",
+    "################....##############....############.....#############....##################....##########.....###############....############.....###########################",
+    "################....##############....############.....#############....##################....##########.....###############....############.....###########################"
+  ] },
+  { name: "El Páramo", theme: "desert", speed: 1.2, hint: "¡Súbete a la moto y salta los cañones!", map: [
+    "........................................................................................................................................................................................................................................",
+    "........................................................................................................................................................................................................................................",
+    "........................................................................................................................................................................................................................................",
+    "........................................................................................................................................................................................................................................",
+    ".............................................v..................................v...................................v..........................v......................................v.................................................",
+    "........................................................................................................................................................................................................................................",
+    "..........ooooo.........................................................................ooooo.........................................................ooooo.......................................................oooo..................",
+    "..........=====................ooooo.........................ooooo......................=====...ooooo..........................ooooo..................=====......ooooo...................................oooo.....====..................",
+    "........................................................................................................................................................................................................................................",
+    "........................................................................................................................................................................................................................................",
+    "..P..M............^.....k...................k.....^.........................k.......^.........................k....^........................k......^...........................k.........^......k.....................k...^.........F...",
+    "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################",
+    "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################"
   ] },
   { name: "El Castillo del Rey Canguro", theme: "castle", speed: 1.2, map: [
     "...............................................................................................................................................................................",
@@ -119,7 +165,7 @@ const LEVELS = [
     "..................................................................ooooo........................................................................................................",
     ".....ooo.........oo..................ooo...................ooo....=====..........ooo.................ooo........................oooo...........................................",
     ".................==..................===...................===...................===.................===.......................................................................",
-    "..P......t..^^..........h.c..j.C..............T...^^....h.........j...h...^^..............T..^^...c............tj...^^.......h....c.........[..............B..........]...F....",
+    "..P......t..^^..........t.c..j.C..............T...^^....t.........j...t...^^..............T..^^...c............tj...^^.......t....c.........[..............B..........]...F....",
     "################....################.....#################.....#################.....###############.....######################################################################",
     "################....################.....#################.....#################.....###############.....######################################################################"
   ] }
@@ -139,7 +185,8 @@ const TILE = 40, W = 960, H = 520, STEP_MS = 1000 / 60;
 const GRAVITY = 0.65, MAX_FALL = 15, RUN_ACCEL = 0.7, RUN_FRICTION = 0.8, AIR_CONTROL = 0.55;
 const MAX_RUN = 4.6, JUMP_SPEED = 12.8, JUMP_CUT = 4.5, COYOTE_FRAMES = 6, JUMP_BUFFER_FRAMES = 7;
 const INVULN_FRAMES = 90, START_LIVES = 3, MAX_HEARTS = 3, ARM_LEN = 16, AXE_HEAD = 48, AXE_LEN = 56;
-const KNIGHT_W = 30, KNIGHT_H = 56;
+const KNIGHT_W = 30, KNIGHT_H = 56, BIKE_W = 44;
+const WATER_Y = 11 * TILE + 14;   // surface of the sea in water levels
 const SOLID = "#=C";
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
@@ -161,7 +208,13 @@ const ENEMY_COLORS = {
   B: [rgb(168, 106, 58), rgb(98, 58, 28), rgb(236, 204, 160)],      // Rey Canguro
   w: [rgb(250, 200, 40), BLACK, rgb(220, 240, 255)],
   c: [rgb(96, 112, 62), rgb(54, 66, 36), rgb(216, 208, 160)],    // saltwater crocodile
-  h: [rgb(130, 90, 60), rgb(80, 55, 35), rgb(225, 190, 150)],
+  b: [rgb(84, 60, 110), rgb(50, 34, 70), rgb(240, 60, 60)],       // bat
+  g: [rgb(246, 246, 246), rgb(150, 160, 170), rgb(250, 190, 40)],   // seagull
+  v: [rgb(92, 62, 44), rgb(52, 34, 24), rgb(232, 150, 140)],        // vulture
+  n: [rgb(150, 104, 58), rgb(96, 64, 34), rgb(226, 204, 160)],      // taipan
+  k: [rgb(206, 160, 90), rgb(130, 90, 44), rgb(70, 44, 30)],        // scorpion
+  m: [rgb(84, 74, 80), rgb(46, 40, 44), rgb(242, 160, 170)],        // mole
+  s: [rgb(120, 136, 152), rgb(76, 90, 106), rgb(236, 240, 244)],    // shark
 };
 
 // Each level has its own landscape
@@ -175,6 +228,15 @@ const THEMES = {
   castle: { sky: [[42, 30, 84], [236, 128, 92]], far: rgb(84, 58, 104), near: rgb(46, 32, 70), bg: "castle",
             sun: rgb(250, 240, 214), clouds: false, bricks: true, top: [rgb(150, 144, 166), rgb(104, 98, 122), rgb(186, 180, 200)],
             dirt: [rgb(110, 102, 126), rgb(82, 76, 98), rgb(132, 124, 148)] },
+  mine:   { sky: [[34, 24, 18], [70, 50, 36]], far: rgb(58, 42, 30), near: rgb(84, 62, 42), bg: "mine", dark: true,
+            clouds: false, flat: true, plat: "wood", spikes: "rock",
+            top: [rgb(118, 98, 78), rgb(84, 66, 50), rgb(150, 128, 104)], dirt: [rgb(86, 66, 50), rgb(64, 48, 36), rgb(108, 86, 66)] },
+  sea:    { sky: [[90, 180, 240], [214, 240, 252]], far: rgb(52, 140, 196), near: rgb(36, 112, 172), bg: "sea", water: true,
+            sun: rgb(255, 246, 190), clouds: true, flat: true, plat: "wood", spikes: "urchin",
+            top: [rgb(240, 214, 140), rgb(214, 184, 110), rgb(252, 234, 180)], dirt: [rgb(218, 186, 120), rgb(196, 160, 96), rgb(236, 208, 150)] },
+  desert: { sky: [[232, 120, 60], [255, 214, 140]], far: rgb(196, 104, 66), near: rgb(222, 150, 90), bg: "desert",
+            sun: rgb(255, 240, 200), clouds: false, flat: true, plat: "rust", spikes: "cactus",
+            top: [rgb(234, 176, 104), rgb(204, 140, 76), rgb(250, 206, 140)], dirt: [rgb(170, 96, 56), rgb(140, 74, 42), rgb(196, 120, 72)] },
 };
 
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -194,7 +256,8 @@ const VOICE_LINES = {
   vamos: "¡Vamos, caballero!", toma: "¡Toma!", adios: "¡Adiós, canguro!", rey: "¡Fuera de combate!",
   jolin: "¡Jolín!", oro: "¡Más oro!", desastre: "¡Qué desastre!", fin: "Fin del juego.", ole: "¡Olé!",
   nivel: "¡Nivel superado!", jefe: "¡Cuidado! ¡El Rey Canguro!", victoria: "¡Victoria!",
-  coco: "¡Hasta luego, cocodrilo!",
+  coco: "¡Hasta luego, cocodrilo!", topo: "¡Toma, topo!", tiburon: "¡Adiós, tiburón!", serpiente: "¡Adiós, serpiente!",
+  moto: "¡Una moto! ¡A toda velocidad!", glu: "¡Glu, glu!",
   tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
 };
 const AUDIO_RATE = 22050;
@@ -287,6 +350,11 @@ function buildSounds(rate) {
                       synth(rate, 0.25, 90, 30, "sine", 0.7, 0, 0.004, 1.5)),
     buzz: lowpass(synth(rate, 0.35, 220, 260, "square", 0.12, 40, 0.02, 0.5), 0.4),
     squeak: synth(rate, 0.16, 900, 1300, "tri", 0.25, 0, 0.004, 1),
+    splash: mixAll(lowpass(synth(rate, 0.45, 1, null, "noise", 0.7, 0, 0.005, 1.6), 0.25), synth(rate, 0.2, 300, 90, "sine", 0.3, 0, 0.004, 1.5)),
+    pop: synth(rate, 0.1, 300, 900, "sine", 0.45, 0, 0.004, 1),
+    screech: lowpass(synth(rate, 0.28, 1500, 900, "square", 0.12, 28, 0.004, 1), 0.5),
+    click: lowpass(concat(synth(rate, 0.02, 1, null, "noise", 0.6, 0, 0.001, 3), silence(rate, 0.05), synth(rate, 0.02, 1, null, "noise", 0.6, 0, 0.001, 3)), 0.8),
+    vroom: lowpass(concat(synth(rate, 0.18, 55, 80, "square", 0.32, 25, 0.01, 0.2), synth(rate, 0.6, 80, 170, "square", 0.32, 32, 0.004, 1.1)), 0.3),
     hiss: lowpass(synth(rate, 0.45, 1, null, "noise", 0.35, 0, 0.08, 1.5), 0.6),
     snap: mixAll(lowpass(synth(rate, 0.03, 1, null, "noise", 0.9, 0, 0.001, 3), 0.8), synth(rate, 0.12, 160, 60, "sine", 0.7, 0, 0.002, 2)),
     stomp: mixAll(synth(rate, 0.35, 90, 28, "sine", 1, 0, 0.004, 1.2), lowpass(synth(rate, 0.2, 1, null, "noise", 0.6), 0.15)),
@@ -379,8 +447,10 @@ class Player {
     this.reach = upg.long ? 1.3 : 1;
     this.attackTimer = 0; this.cooldown = 0; this.coyote = 0; this.jumpBuffer = 0; this.anim = 0;
     this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
+    this.bike = false; this.rideHits = new Set();
   }
   rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
+  mountBike() { const cx = this.x + this.w / 2; this.bike = true; this.w = BIKE_W; this.x = cx - this.w / 2; }
   attackFrame() { return this.attackTimer ? this.atkTotal - this.attackTimer : 0; }
   swingActive() { const f = this.attackFrame(); return f >= this.act0 && f <= this.act1; }
   attackBox() {   // the area the (long!) axe hurts this frame, or null
@@ -405,19 +475,21 @@ class Player {
 
     let move = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
     if (this.knockback > 0) { this.knockback--; move = 0; }
-    const accel = this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL;
-    const top = MAX_RUN * (this.attackTimer && this.onGround ? 0.6 : 1);
+    const bike = this.bike;   // on the motorbike: much faster, slower to speed up, rolls on, jumps further
+    let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (bike ? 0.65 : 1);
+    if (bike && this.onGround && move && Math.sign(this.vx) === -move) accel = 0.9;   // brakes
+    const top = (bike ? 8.5 : MAX_RUN) * (!bike && this.attackTimer && this.onGround ? 0.6 : 1);
     if (move) {
       this.vx = Math.max(-top, Math.min(top, this.vx + move * accel));
       if (this.attackTimer === 0) this.facing = move;
     } else if (this.onGround && this.knockback === 0) {
-      this.vx *= RUN_FRICTION; if (Math.abs(this.vx) < 0.1) this.vx = 0;
+      this.vx *= bike ? 0.97 : RUN_FRICTION; if (Math.abs(this.vx) < 0.1) this.vx = 0;
     }
 
     this.coyote = this.onGround ? COYOTE_FRAMES : Math.max(0, this.coyote - 1);
     this.jumpBuffer = inp.jumpPressed ? JUMP_BUFFER_FRAMES : Math.max(0, this.jumpBuffer - 1);
     if (this.jumpBuffer && this.coyote) {
-      this.vy = -JUMP_SPEED; this.jumpBuffer = this.coyote = 0; this.onGround = false; this.justJumped = true;
+      this.vy = -(bike ? 13.5 : JUMP_SPEED); this.jumpBuffer = this.coyote = 0; this.onGround = false; this.justJumped = true;
     }
     if (!inp.jumpHeld && this.vy < -JUMP_CUT) this.vy = -JUMP_CUT;
 
@@ -458,6 +530,7 @@ class Enemy {   // shared bits for every enemy
     return false;
   }
   harmful() { return this.stun === 0; }
+  hittable() { return true; }
 }
 
 const ROO_STATS = {   // size, hit points, hop strength, pause between hops, points
@@ -500,12 +573,19 @@ class Kangaroo extends Enemy {   // hops along, turning round at walls and ledge
   draw(cam) { drawKangaroo(this, cam); }
 }
 
-class Wasp extends Enemy {   // flies back and forth, then dives at the knight
-  constructor(tx, ty, mul = 1) {
+const FLYER_STATS = {   // wasp, bat, seagull, vulture: all fly to and fro, then dive at the knight
+  w: { w: 26, h: 20, hp: 1, speed: 1.3, dive: 3.2, score: 150, sound: "buzz" },
+  b: { w: 28, h: 18, hp: 1, speed: 1.6, dive: 3.5, score: 150, sound: "squeak" },
+  g: { w: 34, h: 18, hp: 1, speed: 1.5, dive: 3.4, score: 150, sound: "screech" },
+  v: { w: 40, h: 26, hp: 2, speed: 1.2, dive: 3.8, score: 300, sound: "screech" },
+};
+class Flyer extends Enemy {
+  constructor(kind, tx, ty, mul = 1) {
     super();
-    this.init("w", 26, 20, 1, 150);
+    const s = FLYER_STATS[kind];
+    this.init(kind, s.w, s.h, s.hp, s.score); this.cry = s.sound;
     this.x = tx + 7; this.y = ty + 10; this.homeX = this.x; this.homeY = this.y;
-    this.speed = 1.3 * mul; this.diveSpeed = 3.2 * mul; this.mode = "patrol"; this.modeT = randInt(30, 90);
+    this.speed = s.speed * mul; this.diveSpeed = s.dive * mul; this.mode = "patrol"; this.modeT = randInt(30, 90);
   }
   update(level, player, game) {
     this.t++;
@@ -519,7 +599,7 @@ class Wasp extends Enemy {   // flies back and forth, then dives at the knight
       if (--this.modeT <= 0 && Math.abs(px - cx) < 230 && py > cy && !player.dead) {
         const d = Math.hypot(px - cx, py - cy) || 1;
         this.vx = (px - cx) / d * this.diveSpeed; this.vy = (py - cy) / d * this.diveSpeed;
-        this.dir = this.vx > 0 ? 1 : -1; this.mode = "dive"; this.modeT = 70; game.sound("buzz");
+        this.dir = this.vx > 0 ? 1 : -1; this.mode = "dive"; this.modeT = 70; game.sound(this.cry);
       }
     } else if (this.mode === "dive") {
       this.x += this.vx; this.y += this.vy;
@@ -535,15 +615,21 @@ class Wasp extends Enemy {   // flies back and forth, then dives at the knight
     if (this.hp <= 0) { this.alive = false; return true; }
     return false;
   }
-  draw(cam) { drawWasp(this, cam); }
+  draw(cam) { if (this.kind === "w") drawWasp(this, cam); else drawBird(this, cam); }
 }
 
-class Croc extends Enemy {   // saltwater crocodile: creeps along, opens its jaws, then lunges with a snap
-  constructor(tx, ty, mul = 1) {
+const LUNGER_STATS = {   // creep along, give a warning (open jaws, raised head or tail), then lunge
+  c: { w: 70, h: 22, hp: 2, score: 300, speed: 0.5, lunge: 5.5, sight: 190, warn: 30, time: 22, sound: "hiss" },   // saltwater crocodile
+  n: { w: 58, h: 18, hp: 1, score: 200, speed: 0.5, lunge: 6.5, sight: 150, warn: 26, time: 12, sound: "hiss" },   // taipan snake
+  k: { w: 44, h: 26, hp: 1, score: 150, speed: 0.8, lunge: 6.0, sight: 170, warn: 26, time: 16, sound: "click" },  // scorpion
+};
+class Lunger extends Enemy {
+  constructor(kind, tx, ty, mul = 1) {
     super();
-    this.init("c", 70, 22, 2, 300);
+    const s = LUNGER_STATS[kind]; this.s = s;
+    this.init(kind, s.w, s.h, s.hp, s.score);
     this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
-    this.speed = 0.5 * mul; this.lungeSpeed = 5.5 * mul; this.mode = "walk"; this.modeT = 0; this.jaw = 0;
+    this.speed = s.speed * mul; this.lungeSpeed = s.lunge * mul; this.mode = "walk"; this.modeT = 0; this.jaw = 0;
   }
   update(level, player, game) {
     this.t++;
@@ -552,10 +638,10 @@ class Croc extends Enemy {   // saltwater crocodile: creeps along, opens its jaw
     else if (this.mode === "walk") {
       this.vx = this.dir * this.speed;
       const dx = player.x + player.w / 2 - (this.x + this.w / 2);
-      if (this.onGround && !player.dead && Math.abs(dx) < 190 && Math.abs(player.y + player.h - (this.y + this.h)) < 40) {
-        this.mode = "open"; this.modeT = 30; this.dir = dx > 0 ? 1 : -1; this.vx = 0; game.sound("hiss");
+      if (this.onGround && !player.dead && Math.abs(dx) < this.s.sight && Math.abs(player.y + player.h - (this.y + this.h)) < 40) {
+        this.mode = "open"; this.modeT = this.s.warn; this.dir = dx > 0 ? 1 : -1; this.vx = 0; game.sound(this.s.sound);
       }
-    } else if (this.mode === "open") { this.vx = 0; if (--this.modeT <= 0) { this.mode = "lunge"; this.modeT = 22; } }
+    } else if (this.mode === "open") { this.vx = 0; if (--this.modeT <= 0) { this.mode = "lunge"; this.modeT = this.s.time; } }
     else if (this.mode === "lunge") {
       this.vx = this.dir * this.lungeSpeed;
       if (--this.modeT <= 0) { this.mode = "rest"; this.modeT = 60; game.sound("snap"); }
@@ -571,36 +657,89 @@ class Croc extends Enemy {   // saltwater crocodile: creeps along, opens its jaw
     if (this.y > level.pxH + 100) this.alive = false;
   }
   hit(fromDir, dmg = 1) { this.mode = "rest"; this.modeT = 50; return super.hit(fromDir, dmg); }
-  draw(cam) { drawCroc(this, cam); }
+  draw(cam) { if (this.kind === "c") drawCroc(this, cam); else if (this.kind === "n") drawTaipan(this, cam); else drawScorpion(this, cam); }
 }
 
-class Hedgehog extends Enemy {   // walks slowly, then curls up and rolls at you
+class Mole extends Enemy {   // digs towards the knight underground (watch the moving mound!) and pops up beside him
   constructor(tx, ty, mul = 1) {
     super();
-    this.init("h", 32, 26, 2, 250);
+    this.init("m", 30, 32, 1, 200);
     this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
-    this.speed = 0.7 * mul; this.rollSpeed = 4.6 * mul; this.mode = "walk"; this.modeT = 0;
+    this.speed = 1.1 * mul; this.mode = "dig"; this.modeT = randInt(0, 60); this.up = 0;
   }
+  harmful() { return this.up > 0.7 && this.stun === 0; }
+  hittable() { return this.up > 0.4; }
   update(level, player, game) {
     this.t++;
     if (this.flash) this.flash--;
-    if (this.stun > 0) { this.stun--; this.vx *= 0.9; }
-    else if (this.mode === "walk") {
-      this.vx = this.dir * this.speed;
-      const dx = player.x + player.w / 2 - (this.x + this.w / 2);
-      if (this.onGround && Math.abs(dx) < 210 && Math.abs(player.y + player.h - (this.y + this.h)) < 30 && !player.dead) {
-        this.mode = "curl"; this.modeT = 25; this.dir = dx > 0 ? 1 : -1; this.vx = 0; game.sound("squeak");
-      }
-    } else if (this.mode === "curl") { this.vx = 0; if (--this.modeT <= 0) { this.mode = "roll"; this.modeT = 100; } }
-    else if (this.mode === "roll") { this.vx = this.dir * this.rollSpeed; if (--this.modeT <= 0) { this.mode = "rest"; this.modeT = 50; } }
-    else { this.vx = 0; if (--this.modeT <= 0) this.mode = "walk"; }
+    const dx = player.x + player.w / 2 - (this.x + this.w / 2), dy = player.y + player.h - (this.y + this.h);
+    if (this.stun > 0) { this.stun--; this.vx = 0; }
+    else if (this.mode === "dig") {
+      this.up = Math.max(0, this.up - 0.1);
+      if (this.modeT > 0) { this.modeT--; this.vx = this.dir * this.speed; }   // digging away after popping up
+      else if (Math.abs(dx) < 300 && Math.abs(dy) < 50 && !player.dead && player.onGround) {
+        this.dir = dx > 0 ? 1 : -1; this.vx = this.dir * this.speed;
+        if (Math.abs(dx) < 90) { this.mode = "pop"; this.vx = 0; game.sound("pop"); game.dust(this.x + this.w / 2, this.y + this.h); }
+      } else this.vx = this.dir * this.speed * 0.4;
+    } else if (this.mode === "pop") {
+      this.vx = 0; this.up = Math.min(1, this.up + 0.08);
+      if (this.up >= 1) { this.mode = "up"; this.modeT = 75; }
+    } else if (this.mode === "up") {
+      this.vx = 0; this.dir = dx > 0 ? 1 : -1;
+      if (--this.modeT <= 0) { this.mode = "dig"; this.dir = dx > 0 ? -1 : 1; this.modeT = 70; }
+    }
     physicsMove(this, level);
-    if (this.stun === 0 && (this.mode === "walk" || this.mode === "roll") && (this.hitWall || (this.onGround && ledgeAhead(this, level))))
-      this.dir *= -1;
+    if (this.vx && (this.hitWall || (this.onGround && ledgeAhead(this, level)))) { this.dir *= -1; this.vx = 0; }
     if (this.y > level.pxH + 100) this.alive = false;
   }
-  hit(fromDir, dmg = 1) { this.mode = "rest"; this.modeT = 40; return super.hit(fromDir, dmg); }
-  draw(cam) { drawHedgehog(this, cam); }
+  hit(fromDir, dmg = 1) {
+    if (!this.hittable()) return false;
+    const dead = super.hit(fromDir, dmg); this.vy = 0; this.vx = 0; this.mode = "dig"; this.dir = fromDir; this.modeT = 70;
+    return dead;
+  }
+  draw(cam) { drawMole(this, cam); }
+}
+
+class Shark extends Enemy {   // swims in the water under a gap (only its fin shows) and leaps out when the knight comes near
+  constructor(tx, ty, level, mul = 1) {
+    super();
+    this.init("s", 56, 26, 1, 200);
+    let a = Math.floor(tx / TILE), b = a;
+    while (a > 0 && !level.solidAt(a - 1, 11)) a--;
+    while (b < level.w - 1 && !level.solidAt(b + 1, 11)) b++;
+    this.minX = a * TILE - 8; this.maxX = (b + 1) * TILE + 8;
+    this.x = tx; this.y = WATER_Y; this.mul = mul; this.speed = 1.2 * mul; this.leapV = 12.5 * Math.sqrt(mul);
+    this.mode = "swim"; this.modeT = randInt(40, 120); this.dir = 1;
+  }
+  harmful() { return this.mode === "leap"; }
+  hittable() { return this.mode === "leap"; }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.mode === "swim") {
+      this.x += this.dir * this.speed; this.y = WATER_Y;
+      if (this.x < this.minX) { this.x = this.minX; this.dir = 1; }
+      if (this.x > this.maxX - this.w) { this.x = this.maxX - this.w; this.dir = -1; }
+      const dx = player.x + player.w / 2 - (this.x + this.w / 2);
+      if (--this.modeT <= 0 && Math.abs(dx) < 220 && !player.dead) {
+        this.mode = "leap"; this.vy = -this.leapV - Math.random() * 1.5; this.dir = dx > 0 ? 1 : -1; this.vx = this.dir * 1.4 * this.mul;
+        game.sound("splash"); game.splashAt(this.x + this.w / 2);
+      }
+    } else {
+      this.vy += 0.42; this.x += this.vx; this.y += this.vy;
+      this.x = Math.max(this.minX, Math.min(this.x, this.maxX - this.w));
+      if (this.y >= WATER_Y && this.vy > 0) {
+        this.mode = "swim"; this.y = WATER_Y; this.modeT = Math.round(randInt(80, 140) / this.mul);
+        game.sound("splash"); game.splashAt(this.x + this.w / 2);
+      }
+    }
+  }
+  hit(fromDir, dmg = 1) {
+    this.hp -= dmg; this.flash = 8; this.vx = fromDir * 4;
+    if (this.hp <= 0) { this.alive = false; return true; }
+    return false;
+  }
+  draw(cam) { drawShark(this, cam); }
 }
 
 class Boss extends Enemy {   // the Rey Canguro: big hops, shakes the ground, calls little kangaroos
@@ -656,7 +795,7 @@ class Coin {
 class Level {
   constructor(def) {
     const rows = def.map, width = Math.max(...rows.map(r => r.length)), mul = def.speed;
-    this.name = def.name; this.theme = THEMES[def.theme];
+    this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null;
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
     this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = [];
@@ -669,15 +808,20 @@ class Level {
       else if (ch === "o") this.coins.push(new Coin(x + TILE / 2, y + TILE / 2));
       else if (ch === "P") this.start = [x + (TILE - KNIGHT_W) / 2, y + TILE - KNIGHT_H];
       else if (ROO_STATS[ch]) this.enemies.push(new Kangaroo(ch, x, y, mul));
-      else if (ch === "w") this.enemies.push(new Wasp(x, y, mul));
-      else if (ch === "h") this.enemies.push(new Hedgehog(x, y, mul));
-      else if (ch === "c") this.enemies.push(new Croc(x, y, mul));
-      else if (ch === "B") later.push([x, y]);
+      else if (FLYER_STATS[ch]) this.enemies.push(new Flyer(ch, x, y, mul));
+      else if (LUNGER_STATS[ch]) this.enemies.push(new Lunger(ch, x, y, mul));
+      else if (ch === "m") this.enemies.push(new Mole(x, y, mul));
+      else if (ch === "s") later.push(["s", x, y]);
+      else if (ch === "M") this.bike = { x: x - 4, y: y + TILE - 34, w: 48, h: 34, taken: false };
+      else if (ch === "B") later.push(["B", x, y]);
       else if (ch === "[") this.arena[0] = x;
       else if (ch === "]") this.arena[1] = x + TILE;
       else if (ch === "F") this.flag = { x: x + TILE / 2 - 3, y: y + TILE - TILE * 7, w: 6, h: TILE * 7 };
     }));
-    for (const [x, y] of later) { this.boss = new Boss(x, y, this, mul); this.enemies.push(this.boss); }
+    for (const [k, x, y] of later) {   // these need the finished map
+      if (k === "s") this.enemies.push(new Shark(x, y, this, mul));
+      else { this.boss = new Boss(x, y, this, mul); this.enemies.push(this.boss); }
+    }
   }
   flagOpen() { return this.flag && (!this.boss || !this.boss.alive); }
   tile(cx, cy) { return this.tiles.get(cx + "," + cy); }
@@ -756,6 +900,11 @@ function makeTiles(theme) {
       ln(g, t2, 0, 1, TILE, 1); ln(g, t1, 20, 0, 20, 9);
       return;
     }
+    if (theme.flat) {   // sand or rock: a smooth top layer with grit
+      g.fillStyle = t1; g.fillRect(0, 0, TILE, 12); g.fillStyle = t0; g.fillRect(0, 0, TILE, 9);
+      g.fillStyle = t2; for (let i = 0; i < 8; i++) g.fillRect(Math.floor(rnd() * (TILE - 2)), Math.floor(rnd() * 8), 2, 2);
+      return;
+    }
     g.fillStyle = t1; g.fillRect(0, 0, TILE, 13);
     g.fillStyle = t0; g.fillRect(0, 0, TILE, 10);
     for (let x = 3; x < TILE; x += 7) {
@@ -764,6 +913,22 @@ function makeTiles(theme) {
     }
   });
   const stone = mk(g => {
+    if (theme.plat === "wood") {   // wooden planks
+      g.fillStyle = WOOD; g.fillRect(0, 0, TILE, TILE);
+      for (const y of [13, 26]) ln(g, WOOD_DARK, 0, y, TILE, y);
+      ln(g, WOOD_DARK, 20, 0, 20, 13); ln(g, WOOD_DARK, 8, 13, 8, 26); ln(g, WOOD_DARK, 30, 26, 30, 40);
+      g.fillStyle = WOOD_DARK; for (const [x, y] of [[4, 5], [36, 5], [4, 33], [36, 33]]) g.fillRect(x, y, 2, 2);
+      g.strokeStyle = WOOD_DARK; g.lineWidth = 2; g.strokeRect(1, 1, TILE - 2, TILE - 2);
+      return;
+    }
+    if (theme.plat === "rust") {   // rusty metal sheet with rivets
+      g.fillStyle = rgb(150, 84, 48); g.fillRect(0, 0, TILE, TILE);
+      g.fillStyle = rgb(110, 56, 30); for (let i = 0; i < 6; i++) g.fillRect(Math.floor(rnd() * 32), Math.floor(rnd() * 32), 8, 5);
+      g.fillStyle = rgb(196, 120, 70); g.fillRect(0, 0, TILE, 3);
+      g.fillStyle = rgb(70, 40, 24); for (const [x, y] of [[4, 6], [34, 6], [4, 34], [34, 34]]) g.fillRect(x, y, 3, 3);
+      g.strokeStyle = rgb(70, 40, 24); g.lineWidth = 2; g.strokeRect(1, 1, TILE - 2, TILE - 2);
+      return;
+    }
     g.fillStyle = STONE; g.fillRect(0, 0, TILE, TILE);
     const half = TILE / 2;
     ln(g, STONE_DARK, 0, half, TILE, half); ln(g, STONE_DARK, half, 0, half, half); ln(g, STONE_DARK, TILE / 4, half, TILE / 4, TILE);
@@ -817,6 +982,7 @@ function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
 function drawKnight(p, cam, upg, t) {
   const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving ? Math.sin(p.anim * 1.4) * 4 : 0;
   flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing);
+  if (p.bike) ctx.translate(7, 0);   // the knight sits in the middle of the wider bike
   const sh = [24, 19], k = p.reach, rad = axeAngle(p) * Math.PI / 180, d = [Math.sin(rad), -Math.cos(rad)];
   // when swinging the arm follows the axe; otherwise he holds it upright in front, fist at his belt
   const hand = p.attackTimer ? [sh[0] + d[0] * ARM_LEN, sh[1] + d[1] * ARM_LEN] : [30, 31 + step * 0.3];
@@ -839,10 +1005,14 @@ function drawKnight(p, cam, upg, t) {
   E(SKIN_DARK, -10, 15, 14, 16); E(SKIN, -9, 16, 12, 14); C(SKIN_LIGHT, -5, 20, 2);
   R(ARMOR_DARK, -8 + sw, 29, 10, 9, 3); C(STEEL_DARK, -3 + sw, 41, 5);
 
-  // long legs: thigh, knee guard, shin, boot
-  const legs = p.onGround ? [[7 + step, 35], [16 - step, 35]] : [[4, 32], [18, 35]];
-  for (const [lx, ly] of legs) {
-    R(STEEL_DARK, lx, ly, 9, 17, 3); R(ARMOR, lx - 1, ly + 7, 11, 5, 2); R(BOOT, lx - 1, ly + 16, 13, 5, 2);
+  if (p.bike) {   // the motorbike, then the knight's legs bent onto the footpegs
+    ctx.save(); ctx.translate(-7, 0); drawBike(p.x / 11, Math.abs(p.vx) > 6); ctx.restore();
+    L(STEEL_DARK, 12, 36, 24, 38, 9); C(ARMOR, 24, 38, 5); L(STEEL_DARK, 24, 38, 26, 47, 8); R(BOOT, 21, 45, 13, 5, 2);
+  } else {        // long legs: thigh, knee guard, shin, boot
+    const legs = p.onGround ? [[7 + step, 35], [16 - step, 35]] : [[4, 32], [18, 35]];
+    for (const [lx, ly] of legs) {
+      R(STEEL_DARK, lx, ly, 9, 17, 3); R(ARMOR, lx - 1, ly + 7, 11, 5, 2); R(BOOT, lx - 1, ly + 16, 13, 5, 2);
+    }
   }
   const torso = [[-1, 15], [31, 15], [24, 34], [8, 34]];   // broad shoulders, slim waist
   P(ARMOR, torso); PS(ARMOR_DARK, torso, 2);
@@ -970,42 +1140,203 @@ function drawCroc(e, cam) {
   for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(w / 2) - cam - 9 + i * 10, r.y - 24, 8, 5);
 }
 
-function drawHedgehog(e, cam) {
+function drawBike(spin, flames) {   // spiky, rusty wasteland motorbike (44 wide, wheels touch the ground at y 56)
+  const RUST = rgb(132, 74, 40), RUST_DARK = rgb(86, 46, 26), TANK = rgb(206, 104, 44);
+  const wheel = (cx, cy) => {
+    C(BLACK, cx, cy, 11); C(rgb(64, 64, 72), cx, cy, 7.5);
+    for (let i = 0; i < 4; i++) {
+      const a = spin + i * Math.PI / 4;
+      L(rgb(150, 150, 160), cx - Math.cos(a) * 7, cy - Math.sin(a) * 7, cx + Math.cos(a) * 7, cy + Math.sin(a) * 7, 1.2);
+    }
+    C(STEEL, cx, cy, 2.5);
+    for (let i = 0; i < 8; i++) { const a = spin + i * Math.PI / 4; C(rgb(30, 30, 34), cx + Math.cos(a) * 11, cy + Math.sin(a) * 11, 1.6); }
+  };
+  L(rgb(150, 150, 160), 14, 42, -6, 36, 4);   // exhaust pipe, with flames at full speed
+  if (flames) {
+    const f = 8 + Math.random() * 10;
+    P(rgb(255, 150, 40), [[-6, 33], [-6 - f, 36], [-6, 39]]); P(rgb(255, 230, 120), [[-6, 34.5], [-6 - f * 0.5, 36], [-6, 37.5]]);
+  }
+  wheel(4, 45); wheel(42, 45);
+  P(RUST, [[-4, 36], [8, 34], [8, 38], [-4, 40]]);                                   // rear fender
+  P(RUST_DARK, [[4, 45], [12, 33], [33, 31], [42, 45], [36, 47], [14, 43]]);           // frame
+  R(rgb(84, 84, 94), 14, 35, 15, 10, 2);                                               // engine
+  for (let i = 0; i < 3; i++) L(rgb(124, 124, 134), 16 + i * 4, 36, 16 + i * 4, 44, 1);
+  E(TANK, 17, 26, 18, 10); L(rgb(255, 210, 120), 20, 29, 31, 28, 2);                   // fuel tank
+  R(BLACK, 4, 29, 15, 5, 2);                                                           // seat
+  L(STEEL, 34, 24, 42, 45, 3); L(BLACK, 30, 22, 37, 21, 3);                            // fork, handlebar
+  P(RUST, [[36, 34], [50, 36], [48, 40], [36, 39]]);                                   // front fender with spikes
+  for (let i = 0; i < 3; i++) P(STEEL, [[40 + i * 4, 34.5], [42 + i * 4, 29], [44 + i * 4, 35]]);
+  C(rgb(255, 240, 180), 39, 28, 3.5); CS(STEEL_DARK, 39, 28, 3.5, 1);                 // headlight
+}
+
+function drawMole(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h, groundY = r.y + h, x = r.x - cam;
+  const [mound, soil] = [game.level.theme.top[1], game.level.theme.dirt[1]];
+  let [fur, dark, pink] = e.colors();
+  if (e.flash) { fur = WHITE; dark = rgb(210, 210, 210); }
+  if (e.up > 0.02) {
+    ctx.save(); ctx.beginPath(); ctx.rect(x - 30, groundY - h - 40, w + 60, h + 36); ctx.clip();   // only what is above ground shows
+    flipAt(x, groundY - h * e.up, w, e.dir);
+    E(fur, 0, h * 0.15, w, h);                                        // round velvet body
+    C(fur, w * 0.7, h * 0.36, h * 0.3);                                // head
+    C(pink, w * 0.99, h * 0.4, 3.5);                                   // pink nose
+    L(BLACK, w * 0.68, h * 0.3, w * 0.8, h * 0.29, 1.5);              // squinting eyes
+    for (const s of [0, 1]) {                                          // big digging claws
+      E(pink, w * (0.5 + s * 0.22), h * 0.62, 11, 8);
+      for (let c = 0; c < 3; c++) L(rgb(250, 240, 230), w * (0.5 + s * 0.22) + 9, h * 0.62 + 1 + c * 2.5, w * (0.5 + s * 0.22) + 13, h * 0.62 + c * 3, 1.2);
+    }
+    E(rgb(240, 200, 40), w * 0.4, h * 0.02, w * 0.52, h * 0.36); R(rgb(214, 170, 30), w * 0.34, h * 0.17, w * 0.64, 4, 2);   // miner's helmet
+    C(rgb(255, 250, 210), w * 0.86, h * 0.13, 3.5);                    // helmet lamp
+    ctx.restore(); ctx.restore();
+  }
+  E(soil, x - 6, groundY - 10, w + 12, 16); E(mound, x - 2, groundY - 12, w + 4, 12);   // dirt mound: it moves while the mole digs
+  if (e.mode === "dig" && Math.abs(e.vx) > 0.1) for (let i = 0; i < 3; i++) C(mound, x + ((e.t * 3 + i * 11) % w), groundY - 14 - (i % 2) * 3, 2.5);
+}
+
+function drawShark(e, cam) {
+  let [grey, dark, belly] = e.colors();
+  if (e.flash) { grey = WHITE; dark = rgb(210, 210, 210); }
+  const x = e.x - cam, w = e.w, h = e.h;
+  if (e.mode !== "leap") {   // only the fin cuts through the water
+    const fx = x + w * 0.5, bob = Math.sin(e.t * 0.15) * 2;
+    P(grey, [[fx - 10 * e.dir, WATER_Y + 3], [fx + 3 * e.dir, WATER_Y - 18 + bob], [fx + 10 * e.dir, WATER_Y + 3]]);
+    L("rgba(255,255,255,0.7)", fx - 20, WATER_Y + 4, fx + 20, WATER_Y + 4, 2);
+    return;
+  }
+  ctx.save(); ctx.translate(x + w / 2, e.y + h / 2); if (e.dir < 0) ctx.scale(-1, 1);
+  ctx.rotate(Math.atan2(e.vy, 6) * 0.9);
+  P(grey, [[-w * 0.42, 0], [-w * 0.75, -h * 0.65], [-w * 0.6, 0], [-w * 0.75, h * 0.55]]);   // tail
+  E(grey, -w * 0.5, -h * 0.5, w, h); E(belly, -w * 0.38, -h * 0.02, w * 0.82, h * 0.48);     // body, white belly
+  P(grey, [[-w * 0.1, -h * 0.4], [w * 0.04, -h * 1.1], [w * 0.16, -h * 0.4]]);               // dorsal fin
+  P(dark, [[0, h * 0.2], [-w * 0.16, h * 0.72], [w * 0.1, h * 0.3]]);                        // side fin
+  for (let i = 0; i < 3; i++) L(dark, -w * 0.02 - i * 4, -h * 0.22, -w * 0.04 - i * 4, h * 0.08, 1.5);   // gills
+  C(BLACK, w * 0.3, -h * 0.13, 2.4); C(WHITE, w * 0.31, -h * 0.16, 0.8);
+  L(dark, w * 0.16, h * 0.16, w * 0.46, h * 0.06, 2);                                       // toothy grin
+  for (let i = 0; i < 4; i++) P(WHITE, [[w * (0.19 + i * 0.065), h * 0.15], [w * (0.22 + i * 0.065), h * 0.3], [w * (0.25 + i * 0.065), h * 0.13]]);
+  ctx.restore();
+}
+
+function drawCreatureHp(e, cam) {
+  const r = e.rect();
+  if (e.maxHp > 1) for (let i = 0; i < e.maxHp; i++) R(i < e.hp ? HEART : HEART_EMPTY, r.x + Math.floor(e.w / 2) - cam - 9 + i * 10, r.y - 24, 8, 5);
+}
+
+function drawBird(e, cam) {   // bat, seagull or vulture
   const r = e.rect(), w = e.w, h = e.h;
-  const [brown, spike, face] = e.flash ? [WHITE, rgb(210, 210, 210), WHITE] : e.colors();
+  let [body, wing, accent] = e.colors();
+  if (e.flash) { body = WHITE; wing = rgb(210, 210, 210); }
   flipAt(r.x - cam, r.y, w, e.dir);
-  if (e.mode === "roll" || e.mode === "curl") {   // spiky ball
-    const rad = h / 2;
-    ctx.translate(w / 2, h / 2 + 1);
-    ctx.rotate(e.mode === "roll" ? e.t * 0.35 : 0);
-    for (let i = 0; i < 12; i++) {
-      const a = i / 12 * Math.PI * 2;
-      P(spike, [[Math.cos(a - 0.22) * rad * 0.8, Math.sin(a - 0.22) * rad * 0.8], [Math.cos(a) * (rad + 7), Math.sin(a) * (rad + 7)],
-                [Math.cos(a + 0.22) * rad * 0.8, Math.sin(a + 0.22) * rad * 0.8]]);
-    }
-    C(brown, 0, 0, rad); L(spike, -rad * 0.5, -rad * 0.2, rad * 0.4, rad * 0.3, 2);
-  } else {
-    for (let i = 0; i < 8; i++) {   // spikes along the back
-      const a = Math.PI + 0.15 + i / 7 * (Math.PI * 0.75), cx = w * 0.42, cy = h * 0.75;
-      P(spike, [[cx + Math.cos(a - 0.2) * 12, cy + Math.sin(a - 0.2) * 12], [cx + Math.cos(a) * (h * 0.85), cy + Math.sin(a) * (h * 0.85)],
-                [cx + Math.cos(a + 0.2) * 12, cy + Math.sin(a + 0.2) * 12]]);
-    }
-    E(brown, 0, 6, w * 0.85, h - 6);
-    E(face, w * 0.55, h * 0.38, w * 0.42, h * 0.55);
-    C(BLACK, w + 1, h * 0.62, 3); C(BLACK, w * 0.78, h * 0.52, 2);
-    const step = Math.sin(e.t * 0.3) * 2;
-    R(spike, w * 0.2 + step, h - 4, 6, 4); R(spike, w * 0.6 - step, h - 4, 6, 4);
+  const diving = e.mode === "dive", flap = Math.sin(e.t * (e.kind === "b" ? 0.8 : 0.32));
+  const sx = w * 0.45, sy = h * 0.45, span = w * (e.kind === "v" ? 0.85 : 0.65);
+  const wingPts = f => e.kind === "b"
+    ? [[sx - 4, sy], [sx - span * 0.35, sy - f * span * 0.8], [sx - span * 0.1, sy - f * span * 0.45], [sx + span * 0.15, sy - f * span * 0.75], [sx + 6, sy]]
+    : [[sx - 6, sy], [sx - span * 0.6, sy - f * span * 0.75], [sx + 6, sy - f * span * 0.2], [sx + 8, sy]];
+  const far = diving ? 0.25 : flap * 0.7 + 0.3, near = diving ? -0.15 : flap;
+  P(e.kind === "g" ? rgb(190, 198, 206) : wing, wingPts(far));             // far wing
+  if (e.kind === "g") {                                                     // seagull
+    E(body, 0, h * 0.25, w * 0.85, h * 0.55); P(body, [[w * 0.05, h * 0.45], [-w * 0.2, h * 0.3], [-w * 0.18, h * 0.62]]);
+    C(body, w * 0.8, h * 0.32, h * 0.3); P(accent, [[w * 0.96, h * 0.28], [w * 1.2, h * 0.38], [w * 0.96, h * 0.45]]);
+    C(BLACK, w * 0.85, h * 0.25, 1.6);
+  } else if (e.kind === "v") {                                              // vulture: bald pink head, white ruff
+    E(body, 0, h * 0.25, w * 0.75, h * 0.6); P(body, [[w * 0.05, h * 0.5], [-w * 0.22, h * 0.38], [-w * 0.2, h * 0.78]]);
+    E(rgb(232, 222, 204), w * 0.56, h * 0.18, w * 0.24, h * 0.34);
+    L(accent, w * 0.7, h * 0.3, w * 0.88, h * 0.1, 4); C(accent, w * 0.92, h * 0.08, h * 0.2);
+    P(rgb(90, 90, 90), [[w * 1.0, h * 0.0], [w * 1.15, h * 0.14], [w * 1.0, h * 0.18]]); C(BLACK, w * 0.94, h * 0.03, 1.6);
+  } else {                                                                  // bat: pointy ears, red eyes, little fangs
+    C(body, w * 0.5, h * 0.5, h * 0.42);
+    P(body, [[w * 0.6, h * 0.22], [w * 0.68, -h * 0.18], [w * 0.76, h * 0.24]]); P(body, [[w * 0.42, h * 0.22], [w * 0.47, -h * 0.14], [w * 0.56, h * 0.2]]);
+    C(accent, w * 0.64, h * 0.42, 1.8); C(accent, w * 0.52, h * 0.42, 1.8);
+    P(WHITE, [[w * 0.55, h * 0.66], [w * 0.575, h * 0.84], [w * 0.6, h * 0.66]]);
+  }
+  P(wing, wingPts(near));                                                   // near wing
+  if (e.kind === "g") P(BLACK, [[sx - span * 0.6, sy - near * span * 0.75], [sx - span * 0.42, sy - near * span * 0.55], [sx - span * 0.36, sy - near * span * 0.62]]);
+  ctx.restore();
+  drawCreatureHp(e, cam);
+}
+
+function drawTaipan(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h;
+  let [scale, dark, head] = e.colors();
+  if (e.flash) { scale = WHITE; dark = rgb(210, 210, 210); head = WHITE; }
+  flipAt(r.x - cam, r.y, w, e.dir);
+  const moving = Math.abs(e.vx) > 0.2, a = e.jaw, N = 14, pts = [];
+  for (let i = 0; i <= N; i++) {   // a slithering S-shaped body; the front rears up before it strikes
+    const u = i / N, wave = Math.sin(u * 9 - e.t * (moving ? 0.35 : 0.08)) * h * 0.22 * (1 - a * u);
+    let y = h * 0.72 + wave, x = u * w * 0.82;
+    if (u > 0.55) { const k = (u - 0.55) / 0.45; y -= k * k * h * 2.2 * a; x -= k * w * 0.12 * a; }
+    pts.push([x, y]);
+  }
+  for (const [x, y] of pts) C(dark, x, y, h * 0.3);
+  pts.forEach(([x, y], i) => C(scale, x, y, h * (i < 3 ? 0.12 + i * 0.05 : 0.24)));
+  const [hx, hy] = pts[N];
+  E(head, hx - 2, hy - h * 0.32, h * 0.95, h * 0.62);                         // pale head
+  C(BLACK, hx + h * 0.42, hy - h * 0.12, 1.6);
+  if (a > 0.5) {   // mouth wide open, fangs out
+    P(rgb(220, 110, 120), [[hx + h * 0.3, hy], [hx + h * 1.15, hy - h * 0.25], [hx + h * 1.15, hy + h * 0.3]]);
+    P(WHITE, [[hx + h * 0.85, hy - h * 0.17], [hx + h * 0.92, hy + h * 0.08], [hx + h * 0.98, hy - h * 0.2]]);
+  } else if (e.t % 50 < 8) {   // flicking forked tongue
+    L(rgb(220, 40, 60), hx + h * 0.85, hy - h * 0.02, hx + h * 1.35, hy, 1.2);
+    L(rgb(220, 40, 60), hx + h * 1.35, hy, hx + h * 1.5, hy - 2, 1); L(rgb(220, 40, 60), hx + h * 1.35, hy, hx + h * 1.5, hy + 2, 1);
   }
   ctx.restore();
 }
 
-function drawSpike(s, cam) {
+function drawScorpion(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h;
+  let [shell, dark, sting] = e.colors();
+  if (e.flash) { shell = WHITE; dark = rgb(210, 210, 210); }
+  flipAt(r.x - cam, r.y, w, e.dir);
+  const step = Math.abs(e.vx) > 0.2 ? Math.sin(e.t * 0.6) * 2 : 0, a = e.jaw;
+  for (let i = 0; i < 4; i++) { const lx = w * (0.32 + i * 0.1); L(dark, lx, h * 0.72, lx - 4 + (i % 2 ? step : -step), h, 2); }   // legs
+  E(shell, w * 0.16, h * 0.5, w * 0.58, h * 0.36); ES(dark, w * 0.16, h * 0.5, w * 0.58, h * 0.36, 1);   // body
+  const pts = [];   // tail curls over the back; raised high just before it strikes
+  for (let i = 0; i <= 5; i++) {
+    const u = i / 5;
+    pts.push([w * 0.2 - Math.sin(u * Math.PI) * w * 0.22 + u * u * (w * 0.3 + a * w * 0.25), h * 0.62 - u * (h * 0.95 + a * h * 0.35)]);
+  }
+  pts.forEach(([x, y], i) => { C(dark, x, y, h * (0.17 - i * 0.012)); C(shell, x, y, h * (0.13 - i * 0.012)); });
+  const [tx, ty] = pts[5];
+  P(sting, [[tx - 3, ty], [tx + 7, ty + 6], [tx + 1, ty + 3]]);
+  E(shell, w * 0.64, h * 0.46, w * 0.2, h * 0.32); C(BLACK, w * 0.76, h * 0.52, 1.5); C(BLACK, w * 0.71, h * 0.5, 1.5);   // head
+  L(shell, w * 0.76, h * 0.66, w * 0.96, h * 0.56, 3);                                    // pincers, opening wide to strike
+  const open = 0.25 + a * 0.5;
+  P(shell, [[w * 0.93, h * 0.56], [w * 1.16, h * 0.46 - open * h * 0.3], [w * 1.04, h * 0.6]]);
+  P(dark, [[w * 0.93, h * 0.6], [w * 1.14, h * 0.68 + open * h * 0.3], [w * 1.02, h * 0.58]]);
+  ctx.restore();
+}
+
+function drawSpike(s, cam, theme) {
   const x = s.x - cam, base = s.y + TILE;
-  R(STONE_DARK, x + 2, base - 6, TILE - 4, 6);
+  if (theme.spikes === "cactus") {   // desert cactus
+    const G = rgb(70, 150, 76), GD = rgb(40, 104, 52);
+    R(G, x + 15, base - 32, 10, 32, 5); R(G, x + 5, base - 24, 6, 13, 3); R(G, x + 5, base - 14, 12, 5, 2);
+    R(G, x + 29, base - 28, 6, 12, 3); R(G, x + 23, base - 19, 12, 5, 2); L(GD, x + 20, base - 28, x + 20, base - 4, 1.5);
+    for (const [dx, dy] of [[14, 24], [26, 18], [14, 12], [26, 6], [4, 20], [36, 24]]) L(rgb(250, 240, 200), x + dx, base - dy, x + dx - 2, base - dy - 2, 1);
+    return;
+  }
+  if (theme.spikes === "urchin") {   // spiky sea urchins on the sand
+    for (const cx of [x + 12, x + 28]) {
+      for (let i = 0; i < 10; i++) { const a = Math.PI + i / 9 * Math.PI; L(rgb(60, 30, 80), cx, base - 8, cx + Math.cos(a) * 14, base - 8 + Math.sin(a) * 14, 1.5); }
+      E(rgb(90, 50, 110), cx - 9, base - 16, 18, 16);
+    }
+    return;
+  }
+  const rock = theme.spikes === "rock";   // stalagmites in the mine, steel spikes elsewhere
+  R(rock ? rgb(70, 54, 40) : STONE_DARK, x + 2, base - 6, TILE - 4, 6);
   for (let i = 0; i < 4; i++) {
     const sx = x + 4 + i * 8;
-    P(STEEL, [[sx, base - 5], [sx + 4, base - 22], [sx + 8, base - 5]]);
-    L(WHITE, sx + 4, base - 20, sx + 4, base - 10, 1);
+    P(rock ? rgb(140, 112, 86) : STEEL, [[sx, base - 5], [sx + 4, base - (rock ? 20 + (i % 2) * 6 : 22)], [sx + 8, base - 5]]);
+    L(rock ? rgb(180, 150, 120) : WHITE, sx + 4, base - 18, sx + 4, base - 10, 1);
+  }
+}
+
+function drawWater(t) {   // the sea in water levels: falling in means a swim with the sharks
+  const g = ctx.createLinearGradient(0, WATER_Y, 0, H);
+  g.addColorStop(0, rgb(40, 130, 196)); g.addColorStop(1, rgb(16, 60, 120));
+  ctx.fillStyle = g; ctx.fillRect(-20, WATER_Y, W + 40, H - WATER_Y + 20);
+  for (let x = -40 + ((t * 0.8) % 40); x < W + 40; x += 40) {
+    ctx.strokeStyle = "rgba(255,255,255,0.75)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x + 20, WATER_Y + 6, 14, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
   }
 }
 function drawCoin(c, cam) {
@@ -1028,7 +1359,7 @@ function drawBackground(theme, cam) {
   if (theme.bg === "castle") {   // moon and stars at sunset
     for (let i = 0; i < 30; i++) C(WHITE, (i * 137) % W, (i * 53) % 180 + 10, (i % 3) * 0.5 + 0.6);
     C(theme.sun, W - 150, 80, 34); C(rgb(...theme.sky[0]), W - 138, 72, 30);
-  } else C(theme.sun, W - 140, 90, 42);
+  } else if (theme.sun) C(theme.sun, W - 140, 90, 42);
   if (theme.clouds) for (const [cx, cy, s] of game.clouds) drawCloud(wrapX(cx - cam * 0.15, W + 300) - 150, cy, s);
 
   if (theme.bg === "hills") {
@@ -1042,6 +1373,44 @@ function drawBackground(theme, cam) {
         for (let k = 0; k < 3; k++) P(col, [[x + tw / 2, base - hh + k * hh * 0.25], [x - k * 4, base - hh * 0.45 + k * hh * 0.25], [x + tw + k * 4, base - hh * 0.45 + k * hh * 0.25]]);
       }
     ctx.fillStyle = theme.near; ctx.fillRect(-20, 440, W + 40, 100);
+  } else if (theme.bg === "mine") {   // rock walls, wooden supports and lanterns
+    for (let i = 0; i < 40; i++) E(theme.far, wrapX(i * 233 - cam * 0.2, 1400) - 200, (i * 97) % 400 + 60, 90 + (i % 5) * 30, 50 + (i % 3) * 25);
+    game.mineLights = [];
+    const per = 320;
+    for (let x = -wrapX(cam * 0.5, per) - per; x < W + per; x += per) {
+      R(rgb(92, 64, 40), x, 90, 16, 360); R(rgb(92, 64, 40), x + 200, 90, 16, 360); R(rgb(110, 76, 46), x - 10, 84, 236, 18);
+      L(rgb(60, 44, 30), x + 108, 102, x + 108, 128, 2); R(rgb(60, 50, 40), x + 100, 128, 16, 20, 3); C(rgb(255, 200, 110), x + 108, 138, 5);
+      game.mineLights.push([x + 108, 138]);
+    }
+  } else if (theme.bg === "sea") {   // open sea with little palm islands
+    const hz = 300;
+    R(theme.far, -20, hz, W + 40, H);
+    for (let i = 0; i < 18; i++) {
+      const x = wrapX(i * 173 - cam * 0.3, W + 200) - 100, y = hz + 18 + (i * 37) % 120;
+      L("rgba(255,255,255,0.35)", x, y, x + 34, y, 2);
+    }
+    const per = 900;
+    for (let x = -wrapX(cam * 0.15, per) - per; x < W + per; x += per) {
+      E(rgb(222, 204, 140), x + 300, hz - 18, 220, 44); E(rgb(70, 146, 84), x + 330, hz - 36, 150, 40);
+      L(rgb(120, 84, 50), x + 400, hz - 20, x + 412, hz - 110, 6);
+      for (const a of [-2.6, -2.0, -1.2, -0.5]) P(rgb(50, 130, 70), [[x + 412, hz - 110], [x + 412 + Math.cos(a) * 60, hz - 110 + Math.sin(a) * 30 + 26], [x + 412 + Math.cos(a) * 30, hz - 104 + Math.sin(a) * 10]]);
+    }
+  } else if (theme.bg === "desert") {   // wasteland: mesas, dunes, rusty wrecks and broken power poles
+    const per = 600;
+    for (let x = -wrapX(cam * 0.15, per) - per; x < W + per; x += per) {
+      P(theme.far, [[x, 380], [x + 40, 250], [x + 200, 250], [x + 240, 380]]);
+      P(theme.far, [[x + 330, 380], [x + 360, 300], [x + 450, 300], [x + 480, 380]]);
+    }
+    for (let x = -Math.floor((cam * 0.35) % 380) - 380; x < W + 380; x += 380) E(theme.near, x, 360, 460, 220);
+    const per2 = 760;
+    for (let x = -wrapX(cam * 0.45, per2) - per2; x < W + per2; x += per2) {
+      ctx.save(); ctx.translate(x + 200, 392); ctx.rotate(-0.12);
+      R(rgb(110, 60, 36), 0, 0, 110, 26, 6); R(rgb(110, 60, 36), 22, -18, 56, 20, 6);
+      R(rgb(60, 34, 22), 30, -14, 18, 12, 2); R(rgb(60, 34, 22), 54, -14, 18, 12, 2);
+      C(rgb(40, 30, 24), 22, 28, 12); C(rgb(40, 30, 24), 88, 28, 12);
+      ctx.restore();
+      L(rgb(90, 56, 36), x + 520, 420, x + 540, 250, 5); L(rgb(90, 56, 36), x + 515, 270, x + 565, 262, 4);
+    }
   } else {   // castle towers far away, dark hills in front
     const per = 340;
     for (let x = -wrapX(cam * 0.2, per) - per; x < W + per; x += per) {
@@ -1160,6 +1529,8 @@ class Game {
     }
   }
   popup(x, y, text, color = GOLD) { this.popups.push({ x, y, text, color, life: 55 }); }
+  dust(x, y) { this.burst(x, y, [rgb(196, 176, 140), rgb(160, 140, 110)], 3, 2); }
+  splashAt(x) { this.burst(x, WATER_Y, [WHITE, rgb(160, 210, 250), rgb(90, 170, 230)], 14, 5); }
 
   step() {
     this.t++;
@@ -1188,7 +1559,7 @@ class Game {
   }
 
   strike(e, fromDir, hitIds) {   // an axe (held or flying) hits an enemy
-    if (!e.alive || hitIds.has(e.id)) return;
+    if (!e.alive || hitIds.has(e.id) || !e.hittable()) return;
     hitIds.add(e.id);
     const er = e.rect(), ex = er.x + er.w / 2, ey = er.y + er.h / 2;
     this.burst(ex, ey, this.upg.sharp ? [GOLD, WHITE] : [WHITE, rgb(255, 230, 120)], 8);
@@ -1230,6 +1601,16 @@ class Game {
     for (const e of lvl.enemies) e.update(lvl, p, this);
     lvl.enemies = lvl.enemies.filter(e => e.alive);
 
+    const bk = lvl.bike;   // hop on the motorbike!
+    if (bk && !bk.taken && !p.bike && collide(p.rect(), bk)) {
+      bk.taken = true; p.mountBike(); play("vroom"); say("moto", true);
+      this.popup(p.x + p.w / 2, p.y - 20, "¡Una moto!", GOLD); this.burst(p.x + p.w / 2, p.y + p.h, [rgb(196, 176, 140), WHITE], 16, 4);
+    }
+    if (p.bike) {
+      if (p.onGround && Math.abs(p.vx) > 4 && this.t % 3 === 0) this.dust(p.x + (p.vx > 0 ? 0 : p.w), p.y + p.h);
+      if (this.t % 24 === 0) p.rideHits.clear();
+    }
+
     if (lvl.boss && lvl.boss.alive && !this.bossAnnounced && p.x > lvl.arena[0] - 200) {
       this.bossAnnounced = true; say("jefe", true); this.popup(p.x + p.w / 2, p.y - 30, "¡El Rey Canguro!", HEART);
     }
@@ -1242,8 +1623,19 @@ class Game {
       play("hurt"); say("jolin", true);
       return true;
     };
-    for (const e of lvl.enemies) if (e.harmful() && collide(pr, e.rect())) ouch(e.x + e.w / 2);
+    for (const e of lvl.enemies) {
+      if (!e.harmful() || !collide(pr, e.rect())) continue;
+      const dx = e.x + e.w / 2 - (p.x + p.w / 2);
+      if (p.bike && Math.abs(p.vx) > 5 && Math.sign(dx) === Math.sign(p.vx) && !FLYER_STATS[e.kind] && e.kind !== "B") {
+        this.strike(e, Math.sign(p.vx), p.rideHits); continue;   // rammed by the motorbike!
+      }
+      ouch(e.x + e.w / 2);
+    }
     for (const s of lvl.spikes) if (collide(pr, { x: s.x + 4, y: s.y + 20, w: TILE - 8, h: 20 }) && ouch(s.x + TILE / 2)) p.vy = -10;
+    if (lvl.theme.water && p.y + p.h > WATER_Y + 20) {   // fell in the sea
+      this.splashAt(p.x + p.w / 2); play("splash"); this.popup(p.x + p.w / 2, WATER_Y - 40, "¡Glu, glu!", WHITE);
+      say("glu", true); this.loseLife(); return;
+    }
 
     for (const c of [...lvl.coins]) {
       if (!collide(pr, c.rect())) continue;
@@ -1260,7 +1652,7 @@ class Game {
       return;
     }
     if (p.hearts <= 0 || p.y > lvl.pxH + 60) { this.loseLife(); return; }
-    const target = p.x + p.w / 2 - W * 0.42;
+    const target = p.x + p.w / 2 - W * 0.42 + (p.bike ? p.vx * 18 : 0);   // look further ahead at bike speed
     this.camX += (target - this.camX) * 0.12;
     this.camX = Math.max(0, Math.min(this.camX, lvl.pxW - W));
   }
@@ -1274,11 +1666,14 @@ class Game {
       const f = this.level.flag; if (f) this.burst(f.x, f.y + 40, [GOLD, WHITE, ARMOR_LIGHT], 40, 6);
       return;
     }
-    const word = e.kind === "T" ? "¡K.O.!" : e.kind === "c" ? "¡Hasta luego, cocodrilo!" : pick(["¡Toma!", "¡Zas!", "¡Adiós!"]);
-    this.popup(ex, er.y - 10, `${word} +${e.score}`);
-    if (e.kind === "T") { play("boing_big"); say("rey", true); }
-    else if (e.kind === "c") { play("snap"); say("coco", true); }
-    else { play(e.kind === "w" ? "squeak" : "boing"); say(e.kind === "t" || e.kind === "j" ? pick(["toma", "adios"]) : "toma"); }
+    const WORDS = {   // what pops up, which sound, which voice line
+      T: ["¡K.O.!", "boing_big", "rey"], c: ["¡Hasta luego, cocodrilo!", "snap", "coco"], m: ["¡Toma, topo!", "pop", "topo"],
+      s: ["¡Adiós, tiburón!", "splash", "tiburon"], n: ["¡Adiós, serpiente!", "hiss", "serpiente"], k: [null, "click", "toma"],
+      w: [null, "squeak", "toma"], b: [null, "squeak", "toma"], g: [null, "screech", "toma"], v: [null, "screech", "toma"],
+    };
+    const [word, snd, line] = WORDS[e.kind] || [null, "boing", pick(["toma", "adios"])];
+    this.popup(ex, er.y - 10, `${word || pick(["¡Toma!", "¡Zas!", "¡Adiós!"])} +${e.score}`);
+    play(snd); say(line, word !== null);
   }
 
   draw() {
@@ -1291,12 +1686,18 @@ class Game {
     const cam = Math.floor(this.camX), lvl = this.level, theme = lvl.theme, tiles = this.tiles();
     if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
     drawBackground(theme, cam);
+    if (theme.water) drawWater(this.t);
     for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) for (let cy = 0; cy < lvl.h; cy++) {
       const ch = lvl.tile(cx, cy); if (!ch) continue;
       const img = ch === "#" ? tiles[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : tiles[ch];
       ctx.drawImage(img, cx * TILE - cam, cy * TILE);
     }
-    for (const s of lvl.spikes) if (s.x > cam - TILE && s.x < cam + W) drawSpike(s, cam);
+    for (const s of lvl.spikes) if (s.x > cam - TILE && s.x < cam + W) drawSpike(s, cam, theme);
+    const bk = lvl.bike;
+    if (bk && !bk.taken) {   // the parked motorbike, waiting for the knight
+      ctx.save(); ctx.translate(bk.x + 2 - cam, bk.y + bk.h - 56); drawBike(0, false); ctx.restore();
+      if (Math.floor(this.t / 20) % 2 === 0) T("¡Súbete!", 18, bk.x + bk.w / 2 - cam, bk.y - 40, GOLD);
+    }
     const fl = lvl.flag;
     if (fl && lvl.flagOpen()) {
       const x = fl.x + 3 - cam, wave = Math.sin(this.t * 0.1) * 4;
@@ -1312,6 +1713,17 @@ class Game {
     for (const q of this.particles) {
       const s = Math.max(1, Math.floor(q.size * q.life / q.maxLife + 1));
       R(q.color, Math.floor(q.x - cam - s / 2), Math.floor(q.y - s / 2), s, s);
+    }
+    if (theme.dark) {   // the mine is dark: only the knight's surroundings and the lanterns are lit
+      const lx = p.x + p.w / 2 - cam, ly = p.y + p.h / 2;
+      const g = ctx.createRadialGradient(lx, ly, 70, lx, ly, 430);
+      g.addColorStop(0, "rgba(8,5,3,0)"); g.addColorStop(1, "rgba(8,5,3,0.86)");
+      ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, H + 40);
+      for (const [x, y] of this.mineLights || []) {   // soft lantern glow
+        const lg = ctx.createRadialGradient(x, y, 2, x, y, 70);
+        lg.addColorStop(0, "rgba(255,200,110,0.55)"); lg.addColorStop(1, "rgba(255,200,110,0)");
+        ctx.fillStyle = lg; ctx.fillRect(x - 70, y - 70, 140, 140); C(rgb(255, 224, 150), x, y, 5);
+      }
     }
     for (const q of this.popups) T(q.text, 20, q.x - cam, q.y, q.color);
 
@@ -1333,6 +1745,7 @@ class Game {
       ctx.globalAlpha = Math.min(1, (150 - this.levelTimer) / 40);
       T(`NIVEL ${this.levelIndex + 1}`, 52, W / 2, 170, GOLD);
       T(lvl.name, 34, W / 2, 222, WHITE);
+      if (lvl.hint) T(lvl.hint, 22, W / 2, 262, GOLD);
       ctx.globalAlpha = 1;
     }
     const blink = Math.floor(this.t / 30) % 2 === 0;
@@ -1341,7 +1754,7 @@ class Game {
     if (this.state === "title") {
       shade();
       T("EL CABALLERO DEL HACHA", 58, W / 2, 104, ARMOR_LIGHT);
-      T("¡Abre camino a hachazos por tres niveles!", 28, W / 2, 168, WHITE);
+      T("¡Abre camino a hachazos por seis niveles!", 28, W / 2, 168, WHITE);
       if (isTouch) {
         T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 232, WHITE);
       } else {
