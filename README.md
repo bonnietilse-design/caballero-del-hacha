@@ -1,1 +1,1 @@
-A game
+A game. Play it!
