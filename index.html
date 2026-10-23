@@ -77,6 +77,7 @@
 //              P  start     F  flag            t  kangaroo   T  boxing kangaroo (3 hits)   j  fast red kangaroo
 //              w  wasp      b  bat   g  seagull   v  vulture   c  saltwater crocodile   n  taipan   k  scorpion
 //              m  mole      s  shark (put it in a gap above the water)   M  the motorbike
+//              d  flamenco dancer   K  the tank
 //              B  Rey Canguro (boss)   [ ]  edges of the boss arena
 const LEVELS = [
   { name: "La Pradera", theme: "meadow", speed: 1.0, map: [
@@ -154,6 +155,21 @@ const LEVELS = [
     "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################",
     "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################"
   ] },
+  { name: "La Plaza de Noche", theme: "night", speed: 1.2, hint: "¡Súbete al tanque! Pulsa el hacha para disparar", map: [
+    "......................................................................................................................................................................................",
+    "......................................................................................................................................................................................",
+    "......................................................................................................................................................................................",
+    "......................................................................................................................................................................................",
+    "......................................................................................................................................................................................",
+    "......................................................b..........................................................b..............................................b.....................",
+    "......................................................................................................................................................................................",
+    "......................................................................................................................................................................................",
+    "....................ooooo...................................ooooo...................................ooooo.............................................ooooo...........................",
+    "............ooo.....=====....................ooo............=====.........................ooo.......=====..............................ooo............=====...............oo..........",
+    "..P...K............d..........C....d..............d.......d...........d.....C.....d............d............d.......d....C......d.............d...............d.......d...........F...",
+    "########################################.#############################################.############################################.##################################################",
+    "########################################.#############################################.############################################.##################################################"
+  ] },
   { name: "El Castillo del Rey Canguro", theme: "castle", speed: 1.2, map: [
     "...............................................................................................................................................................................",
     "...............................................................................................................................................................................",
@@ -178,6 +194,7 @@ const SHOP = [
   { id: "sharp", icon: "✨", name: "Filo de oro", desc: ["Doble daño"], price: 15 },
   { id: "heart", icon: "❤️", name: "Corazón extra", desc: ["4 corazones", "por nivel"], price: 15 },
   { id: "boomerang", icon: "🪃", name: "Hacha voladora", desc: ["Lanza el hacha", "y vuelve"], price: 25 },
+  { id: "knives", icon: "🗡️", name: "Cuchillos ninja", desc: ["Lanzas un cuchillo", "con cada hachazo"], price: 20 },
 ];
 
 // ------------------------------------------------------------------ settings
@@ -185,7 +202,7 @@ const TILE = 40, W = 960, H = 520, STEP_MS = 1000 / 60;
 const GRAVITY = 0.65, MAX_FALL = 15, RUN_ACCEL = 0.7, RUN_FRICTION = 0.8, AIR_CONTROL = 0.55;
 const MAX_RUN = 4.6, JUMP_SPEED = 12.8, JUMP_CUT = 4.5, COYOTE_FRAMES = 6, JUMP_BUFFER_FRAMES = 7;
 const INVULN_FRAMES = 90, START_LIVES = 3, MAX_HEARTS = 3, ARM_LEN = 16, AXE_HEAD = 48, AXE_LEN = 56;
-const KNIGHT_W = 30, KNIGHT_H = 56, BIKE_W = 44;
+const KNIGHT_W = 30, KNIGHT_H = 56, BIKE_W = 44, TANK_W = 72, TANK_H = 52;
 const WATER_Y = 11 * TILE + 14;   // surface of the sea in water levels
 const SOLID = "#=C";
 
@@ -201,6 +218,10 @@ const HANDLE = rgb(130, 86, 44), HANDLE_DARK = rgb(80, 50, 24), BLADE = rgb(210,
 const GOLD_BLADE = rgb(255, 222, 110), GOLD_BLADE_DARK = rgb(176, 120, 20);
 const GOLD = rgb(255, 205, 60), GOLD_DARK = rgb(190, 130, 20);
 const HEART = rgb(230, 50, 70), HEART_EMPTY = rgb(90, 60, 70), GRASS_LIGHT = rgb(140, 220, 110);
+const DRESSES = [   // flamenco dresses: main colour, ruffle colour, polka dots
+  [rgb(214, 30, 50), rgb(150, 16, 34), WHITE], [rgb(250, 190, 40), rgb(196, 124, 20), rgb(214, 30, 50)],
+  [rgb(140, 56, 170), rgb(88, 26, 110), WHITE], [rgb(36, 32, 40), rgb(12, 10, 14), rgb(230, 40, 60)],
+];
 const ENEMY_COLORS = {
   t: [rgb(196, 132, 76), rgb(130, 80, 40), rgb(238, 206, 160)],    // kangaroo with a joey
   T: [rgb(150, 142, 136), rgb(92, 86, 82), rgb(222, 214, 204)],     // grey boxing kangaroo
@@ -215,6 +236,7 @@ const ENEMY_COLORS = {
   k: [rgb(206, 160, 90), rgb(130, 90, 44), rgb(70, 44, 30)],        // scorpion
   m: [rgb(84, 74, 80), rgb(46, 40, 44), rgb(242, 160, 170)],        // mole
   s: [rgb(120, 136, 152), rgb(76, 90, 106), rgb(236, 240, 244)],    // shark
+  d: [rgb(214, 30, 50), rgb(250, 120, 140), WHITE],                // flamenco dancer (rose petals)
 };
 
 // Each level has its own landscape
@@ -234,6 +256,9 @@ const THEMES = {
   sea:    { sky: [[90, 180, 240], [214, 240, 252]], far: rgb(52, 140, 196), near: rgb(36, 112, 172), bg: "sea", water: true,
             sun: rgb(255, 246, 190), clouds: true, flat: true, plat: "wood", spikes: "urchin",
             top: [rgb(240, 214, 140), rgb(214, 184, 110), rgb(252, 234, 180)], dirt: [rgb(218, 186, 120), rgb(196, 160, 96), rgb(236, 208, 150)] },
+  night:  { sky: [[12, 14, 38], [58, 38, 78]], far: rgb(30, 28, 54), near: rgb(44, 38, 68), bg: "plaza", dark: "night",
+            clouds: false, flat: true, plat: "stone", spikes: "metal",
+            top: [rgb(128, 116, 126), rgb(92, 84, 96), rgb(160, 148, 158)], dirt: [rgb(76, 68, 82), rgb(58, 52, 64), rgb(96, 88, 102)] },
   desert: { sky: [[232, 120, 60], [255, 214, 140]], far: rgb(196, 104, 66), near: rgb(222, 150, 90), bg: "desert",
             sun: rgb(255, 240, 200), clouds: false, flat: true, plat: "rust", spikes: "cactus",
             top: [rgb(234, 176, 104), rgb(204, 140, 76), rgb(250, 206, 140)], dirt: [rgb(170, 96, 56), rgb(140, 74, 42), rgb(196, 120, 72)] },
@@ -257,7 +282,7 @@ const VOICE_LINES = {
   jolin: "¡Jolín!", oro: "¡Más oro!", desastre: "¡Qué desastre!", fin: "Fin del juego.", ole: "¡Olé!",
   nivel: "¡Nivel superado!", jefe: "¡Cuidado! ¡El Rey Canguro!", victoria: "¡Victoria!",
   coco: "¡Hasta luego, cocodrilo!", topo: "¡Toma, topo!", tiburon: "¡Adiós, tiburón!", serpiente: "¡Adiós, serpiente!",
-  moto: "¡Una moto! ¡A toda velocidad!", glu: "¡Glu, glu!",
+  moto: "¡Una moto! ¡A toda velocidad!", glu: "¡Glu, glu!", tanque: "¡Un tanque! ¡Adelante!", pista: "¡Fuera de la pista!",
   tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
 };
 const AUDIO_RATE = 22050;
@@ -357,6 +382,8 @@ function buildSounds(rate) {
     vroom: lowpass(concat(synth(rate, 0.18, 55, 80, "square", 0.32, 25, 0.01, 0.2), synth(rate, 0.6, 80, 170, "square", 0.32, 32, 0.004, 1.1)), 0.3),
     hiss: lowpass(synth(rate, 0.45, 1, null, "noise", 0.35, 0, 0.08, 1.5), 0.6),
     snap: mixAll(lowpass(synth(rate, 0.03, 1, null, "noise", 0.9, 0, 0.001, 3), 0.8), synth(rate, 0.12, 160, 60, "sine", 0.7, 0, 0.002, 2)),
+    boom: mixAll(synth(rate, 0.45, 110, 30, "sine", 1, 0, 0.002, 1.4), lowpass(synth(rate, 0.35, 1, null, "noise", 0.9, 0, 0.002, 1.6), 0.12)),
+    castanets: concat(...[0, 1, 2, 3].map(() => concat(lowpass(synth(rate, 0.018, 1, null, "noise", 0.8, 0, 0.001, 3), 0.9), silence(rate, 0.045)))),
     stomp: mixAll(synth(rate, 0.35, 90, 28, "sine", 1, 0, 0.004, 1.2), lowpass(synth(rate, 0.2, 1, null, "noise", 0.6), 0.15)),
     jump: synth(rate, 0.13, 280, 640, "square", 0.16, 0, 0.004, 1),
     coin: concat(synth(rate, 0.06, 988, null, "square", 0.16, 0, 0.004, 0.3), synth(rate, 0.25, 1319, null, "square", 0.16, 0, 0.004, 1.5)),
@@ -386,6 +413,32 @@ function initAudio() {   // browsers only allow sound after the first tap or key
       }
     } catch (e) { /* stay silent */ }
   }, 0);
+}
+let engine = null;   // a running engine sound that follows the speed of the motorbike or tank
+function updateEngine() {
+  const p = game.player, want = !!(soundOn && actx && master && !game.paused && game.state === "play" && p && (p.bike || p.tank));
+  try {
+    if (want && !engine) {
+      const o1 = actx.createOscillator(), o2 = actx.createOscillator(), lfo = actx.createOscillator();
+      const lp = actx.createBiquadFilter(), g = actx.createGain(), lg = actx.createGain();
+      o1.type = "sawtooth"; o2.type = "square"; lfo.type = "square"; lp.type = "lowpass"; lp.frequency.value = 500;
+      g.gain.value = 0; lg.gain.value = 0.025;
+      o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(master); lfo.connect(lg); lg.connect(g.gain);
+      o1.start(); o2.start(); lfo.start();
+      engine = { o1, o2, lfo, lp, g };
+    } else if (!want && engine) {
+      const e = engine; engine = null;
+      e.g.gain.setTargetAtTime(0, actx.currentTime, 0.05);
+      setTimeout(() => { try { e.o1.stop(); e.o2.stop(); e.lfo.stop(); } catch (_) {} }, 400);
+    }
+    if (engine) {
+      const sp = Math.abs(p.vx), now = actx.currentTime, f = p.tank ? 32 + sp * 10 : 46 + sp * 12;
+      engine.o1.frequency.setTargetAtTime(f, now, 0.08); engine.o2.frequency.setTargetAtTime(f * 0.5, now, 0.08);
+      engine.lfo.frequency.setTargetAtTime(f / (p.tank ? 4 : 3), now, 0.08);
+      engine.lp.frequency.setTargetAtTime(p.tank ? 280 + sp * 70 : 420 + sp * 100, now, 0.1);
+      engine.g.gain.setTargetAtTime(p.tank ? 0.09 : 0.05 + sp * 0.007, now, 0.1);
+    }
+  } catch (_) { engine = null; }
 }
 function play(name) {
   if (!soundOn || !actx || !sfx[name]) return;
@@ -448,13 +501,19 @@ class Player {
     this.attackTimer = 0; this.cooldown = 0; this.coyote = 0; this.jumpBuffer = 0; this.anim = 0;
     this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
     this.bike = false; this.rideHits = new Set();
+    this.tank = false; this.recoil = 0; this.justFired = false; this.fireCd = upg.quick ? 18 : 26;
   }
   rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
   mountBike() { const cx = this.x + this.w / 2; this.bike = true; this.w = BIKE_W; this.x = cx - this.w / 2; }
+  mountTank() {   // the tank is armoured: two extra hearts while you drive it
+    const cx = this.x + this.w / 2, bottom = this.y + this.h;
+    this.tank = true; this.w = TANK_W; this.h = TANK_H; this.x = cx - this.w / 2; this.y = bottom - this.h;
+    this.maxHearts += 2; this.hearts += 2;
+  }
   attackFrame() { return this.attackTimer ? this.atkTotal - this.attackTimer : 0; }
   swingActive() { const f = this.attackFrame(); return f >= this.act0 && f <= this.act1; }
   attackBox() {   // the area the (long!) axe hurts this frame, or null
-    if (!this.swingActive()) return null;
+    if (this.tank || !this.swingActive()) return null;
     const r = this.rect(), k = this.reach, w = Math.round(92 * k), cx = r.x + Math.floor(r.w / 2);
     return { x: this.facing > 0 ? cx : cx - w, y: r.y - Math.round(44 * k), w, h: Math.round(56 + 56 * k) };
   }
@@ -465,10 +524,13 @@ class Player {
     return true;
   }
   update(inp, level) {
-    this.justJumped = this.justSwung = false;
+    this.justJumped = this.justSwung = this.justFired = false;
     if (this.invuln > 0) this.invuln--;
     if (this.cooldown > 0) this.cooldown--;
-    if (inp.attack && this.attackTimer === 0 && this.cooldown === 0) {
+    if (this.recoil > 0) this.recoil -= 0.5;
+    if (this.tank) {   // in the tank the attack button fires the cannon
+      if (inp.attack && this.cooldown === 0) { this.justFired = true; this.cooldown = this.fireCd; this.recoil = 7; }
+    } else if (inp.attack && this.attackTimer === 0 && this.cooldown === 0) {
       this.attackTimer = this.atkTotal; this.hitIds.clear(); this.justSwung = true;
     }
     if (this.attackTimer > 0) { this.attackTimer--; if (this.attackTimer === 0) this.cooldown = this.atkCooldown; }
@@ -476,9 +538,9 @@ class Player {
     let move = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
     if (this.knockback > 0) { this.knockback--; move = 0; }
     const bike = this.bike;   // on the motorbike: much faster, slower to speed up, rolls on, jumps further
-    let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (bike ? 0.65 : 1);
+    let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (bike ? 0.65 : this.tank ? 0.4 : 1);
     if (bike && this.onGround && move && Math.sign(this.vx) === -move) accel = 0.9;   // brakes
-    const top = (bike ? 8.5 : MAX_RUN) * (!bike && this.attackTimer && this.onGround ? 0.6 : 1);
+    const top = (bike ? 8.5 : this.tank ? 3.4 : MAX_RUN) * (!bike && this.attackTimer && this.onGround ? 0.6 : 1);
     if (move) {
       this.vx = Math.max(-top, Math.min(top, this.vx + move * accel));
       if (this.attackTimer === 0) this.facing = move;
@@ -489,7 +551,7 @@ class Player {
     this.coyote = this.onGround ? COYOTE_FRAMES : Math.max(0, this.coyote - 1);
     this.jumpBuffer = inp.jumpPressed ? JUMP_BUFFER_FRAMES : Math.max(0, this.jumpBuffer - 1);
     if (this.jumpBuffer && this.coyote) {
-      this.vy = -(bike ? 13.5 : JUMP_SPEED); this.jumpBuffer = this.coyote = 0; this.onGround = false; this.justJumped = true;
+      this.vy = -(bike ? 13.5 : this.tank ? 10.5 : JUMP_SPEED); this.jumpBuffer = this.coyote = 0; this.onGround = false; this.justJumped = true;
     }
     if (!inp.jumpHeld && this.vy < -JUMP_CUT) this.vy = -JUMP_CUT;
 
@@ -700,6 +762,40 @@ class Mole extends Enemy {   // digs towards the knight underground (watch the m
   draw(cam) { drawMole(this, cam); }
 }
 
+class Dancer extends Enemy {   // fierce flamenco dancer: stamps towards you, throws spinning fans, twirls into you
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("d", 30, 54, 2, 400);
+    this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
+    this.mul = mul; this.speed = 0.9 * mul; this.mode = "dance"; this.modeT = randInt(30, 90);
+    this.throwCd = randInt(70, 150); this.armUp = 0; this.dress = pick(DRESSES);
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.armUp > 0) this.armUp--;
+    const dx = player.x + player.w / 2 - (this.x + this.w / 2), dist = Math.abs(dx);
+    const sameFloor = Math.abs(player.y + player.h - (this.y + this.h)) < 80;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.9; }
+    else if (this.mode === "twirl") {   // spins across the floor at you
+      this.vx = this.dir * 4.2 * this.mul;
+      if (--this.modeT <= 0) { this.mode = "dance"; this.modeT = 70; }
+    } else if (dist < 440 && !player.dead) {
+      this.dir = dx > 0 ? 1 : -1;
+      this.vx = dist > 210 ? this.dir * this.speed : 0;
+      if (--this.throwCd <= 0 && dist < 360) { game.throwFan(this, player); this.throwCd = Math.round(randInt(140, 210) / this.mul); this.armUp = 16; }
+      if (dist < 170 && sameFloor && --this.modeT <= 0) { this.mode = "twirl"; this.modeT = 40; game.sound("castanets"); }
+    } else this.vx = 0;
+    physicsMove(this, level);
+    if (this.vx && (this.hitWall || (this.onGround && ledgeAhead(this, level)))) {
+      this.vx = 0; if (this.mode === "twirl") { this.mode = "dance"; this.modeT = 70; }
+    }
+    if (this.y > level.pxH + 100) this.alive = false;
+  }
+  hit(fromDir, dmg = 1) { this.mode = "dance"; this.modeT = 70; return super.hit(fromDir, dmg); }
+  draw(cam) { drawDancer(this, cam); }
+}
+
 class Shark extends Enemy {   // swims in the water under a gap (only its fin shows) and leaps out when the knight comes near
   constructor(tx, ty, level, mul = 1) {
     super();
@@ -795,7 +891,7 @@ class Coin {
 class Level {
   constructor(def) {
     const rows = def.map, width = Math.max(...rows.map(r => r.length)), mul = def.speed;
-    this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null;
+    this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null; this.tank = null;
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
     this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = [];
@@ -813,6 +909,8 @@ class Level {
       else if (ch === "m") this.enemies.push(new Mole(x, y, mul));
       else if (ch === "s") later.push(["s", x, y]);
       else if (ch === "M") this.bike = { x: x - 4, y: y + TILE - 34, w: 48, h: 34, taken: false };
+      else if (ch === "K") this.tank = { x: x - 16, y: y + TILE - TANK_H, w: TANK_W, h: TANK_H, taken: false };
+      else if (ch === "d") this.enemies.push(new Dancer(x, y, mul));
       else if (ch === "B") later.push(["B", x, y]);
       else if (ch === "[") this.arena[0] = x;
       else if (ch === "]") this.arena[1] = x + TILE;
@@ -1169,6 +1267,89 @@ function drawBike(spin, flames) {   // spiky, rusty wasteland motorbike (44 wide
   C(rgb(255, 240, 180), 39, 28, 3.5); CS(STEEL_DARK, 39, 28, 3.5, 1);                 // headlight
 }
 
+function drawTank(spin, recoil, knight, t) {   // 72 wide, tracks touch the ground at y 52
+  const OL = rgb(92, 104, 60), OLD = rgb(60, 70, 40), OLL = rgb(132, 144, 88);
+  R(rgb(40, 40, 44), -2, 32, 78, 20, 10);                                            // tracks
+  for (let k = 0; k < 10; k++) R(rgb(74, 74, 80), ((k * 8 + spin * 6) % 76 + 76) % 76 - 1, 32, 4, 3);
+  for (let i = 0; i < 7; i++) {
+    const cx = 6 + i * 10.4;
+    C(rgb(92, 92, 98), cx, 42, 6); L(rgb(56, 56, 62), cx - Math.cos(spin) * 5, 42 - Math.sin(spin) * 5, cx + Math.cos(spin) * 5, 42 + Math.sin(spin) * 5, 1.5);
+    C(rgb(60, 60, 66), cx, 42, 2.2);
+  }
+  P(OL, [[0, 34], [6, 20], [66, 20], [74, 34]]); L(OLL, 8, 22, 64, 22, 2);             // hull
+  for (let i = 0; i < 5; i++) C(OLD, 12 + i * 12, 28, 1.6);
+  C(GOLD, 40, 28, 4.5); C(ARMOR, 40, 28, 2.5);                                         // the knight's emblem
+  C(rgb(255, 240, 180), 69, 26, 3);                                                    // headlight
+  R(OLD, 46 - recoil, 10, 32, 7, 2); R(OLD, 75 - recoil, 8.5, 6, 10, 2);              // cannon
+  R(OL, 14, 4, 38, 18, 8); R(OLL, 18, 6, 26, 3, 2);                                    // turret
+  if (knight) {   // the knight pops out of the hatch, plume and moustache and all
+    const b = Math.sin(t * 0.2) * 0.8, fl = Math.sin(t * 0.15) * 2;
+    P(CAPE, [[24, -2], [32, -2], [20, 6 + b], [8 - fl, 2 + b]]);
+    R(ARMOR, 22, -6, 20, 12, 5); C(ARMOR_LIGHT, 23, -2, 4); C(ARMOR_LIGHT, 41, -2, 4);
+    P(PLUME, [[30, -21], [24, -32 + b], [10, -30 + b], [2 - fl, -22 + b], [16, -19]]);
+    R(ARMOR, 25, -24, 17, 18, 7); RS(ARMOR_DARK, 25, -24, 17, 18, 1.5, 7);
+    R(SKIN, 33, -19, 10, 12, 3); R(ARMOR_DARK, 32, -22, 11, 3, 1);
+    L(BLACK, 36, -16.5, 40, -17, 1.4); C(BLACK, 38.5, -14.5, 1.3); P(SKIN_DARK, [[41, -15], [44, -11.5], [41, -11]]);
+    P(MOUSTACHE, [[34, -10], [38, -11], [42, -10], [45, -12], [44, -8.5], [38, -9], [34, -8], [31, -10]]);
+    R(ARMOR, 25, -18, 9, 13, 3);
+  }
+  E(OLD, 22, 2, 22, 6);                                                                // hatch rim
+}
+
+function drawFan(x, y, rad, ang, col, dark) {   // an open flamenco fan
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+  ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, rad, -Math.PI * 0.92, -Math.PI * 0.08); ctx.closePath(); ctx.fill();
+  for (let k = 0; k < 7; k++) { const a = -Math.PI * 0.92 + k * Math.PI * 0.14; L(dark, 0, 0, Math.cos(a) * rad, Math.sin(a) * rad, 1); }
+  ctx.strokeStyle = dark; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, 0, rad, -Math.PI * 0.92, -Math.PI * 0.08); ctx.stroke();
+  C(GOLD, 0, 0, 1.8);
+  ctx.restore();
+}
+
+function drawDancer(e, cam) {
+  const r = e.rect(), w = e.w, h = e.h;
+  const [dress, dark, dots] = e.flash ? [WHITE, rgb(210, 210, 210), WHITE] : e.dress;
+  flipAt(r.x - cam, r.y, w, e.dir);
+  const twirl = e.mode === "twirl", stamp = Math.sin(e.t * 0.35) > 0.6, sway = Math.sin(e.t * 0.15);
+  R(BLACK, w * 0.28, h - 4 - (stamp ? 3 : 0), 8, 4, 2); R(BLACK, w * 0.55, h - 4 - (stamp ? 0 : 2), 8, 4, 2);   // stamping heels
+  const flare = twirl ? 1.05 : 0.6 + sway * 0.04, top = h * 0.46, bot = h * 0.93;
+  for (let k = 2; k >= 0; k--) {   // three tiers of ruffles, wider when she spins
+    const y0 = top + (bot - top) * k / 3, y1 = top + (bot - top) * (k + 1) / 3, sp = w * flare * (0.42 + k * 0.28), sp0 = w * flare * (0.3 + k * 0.28);
+    const col = k % 2 ? dark : dress;
+    P(col, [[w / 2 - sp0, y0], [w / 2 + sp0, y0], [w / 2 + sp, y1], [w / 2 - sp, y1]]);
+    for (let s = -sp; s < sp - 2; s += 7) C(col, w / 2 + s + 3.5, y1, 3.5);
+  }
+  const spinOff = twirl ? (e.t * 3) % 10 : 0;
+  for (const [fx, fy] of [[-0.3, 0.15], [0.1, 0.25], [0.35, 0.45], [-0.15, 0.6], [0.2, 0.8], [-0.45, 0.85], [0.5, 0.7]])
+    C(dots, w / 2 + (fx * w * flare * 1.6 + spinOff) % (w * flare), top + fy * (bot - top), 1.7);
+  P(dress, [[w * 0.3, h * 0.22], [w * 0.7, h * 0.22], [w * 0.64, h * 0.48], [w * 0.36, h * 0.48]]);    // bodice
+  P(dark, [[w * 0.3, h * 0.22], [w * 0.7, h * 0.22], [w * 0.66, h * 0.27], [w * 0.34, h * 0.27]]);
+  const up = e.armUp > 0;
+  L(SKIN, w * 0.64, h * 0.27, w * 0.88, up ? h * 0.12 : -h * 0.02, 3);                                 // arm raised high with a fan
+  if (!up) drawFan(w * 0.9, -h * 0.05, 11, 0.4 + sway * 0.2, dress === WHITE ? WHITE : dots === WHITE ? dark : dots, BLACK);
+  L(SKIN, w * 0.36, h * 0.27, w * 0.2, h * 0.44, 3); drawFan(w * 0.16, h * 0.46, 9, -1.2, dark, BLACK);  // other hand on the hip, fan too
+  C(SKIN, w * 0.54, h * 0.13, 7);                                                                        // head
+  E(BLACK, w * 0.34, -h * 0.01, w * 0.42, h * 0.13); C(BLACK, w * 0.3, h * 0.08, 6);                    // hair and bun
+  C(rgb(230, 30, 60), w * 0.44, -h * 0.01, 4.5); C(rgb(255, 130, 150), w * 0.44, -h * 0.01, 1.6);       // rose in her hair
+  L(BLACK, w * 0.56, h * 0.08, w * 0.7, h * 0.11, 1.8);                                                 // fierce eyebrow
+  C(BLACK, w * 0.64, h * 0.13, 1.3); C(rgb(200, 20, 40), w * 0.68, h * 0.2, 1.9); C(GOLD, w * 0.5, h * 0.21, 1.8);
+  if (twirl) for (let k = 0; k < 3; k++) { const a = e.t * 0.5 + k * 2.1; L(WHITE, w / 2 + Math.cos(a) * w * 0.7, h * 0.7, w / 2 + Math.cos(a + 0.6) * w * 0.7, h * 0.66, 1.5); }
+  ctx.restore();
+  drawCreatureHp(e, cam);
+}
+
+function drawShot(s, cam) {
+  const x = s.x - cam, y = s.y;
+  if (s.kind === "knife") {   // spinning ninja throwing knife
+    ctx.save(); ctx.translate(x, y); ctx.rotate(s.t * 0.7); ctx.scale(1.6, 1.6);
+    P(STEEL, [[-11, 0], [0, -3], [11, 0], [0, 3]]); L(WHITE, -8, -0.5, 8, -0.5, 1);
+    CS(rgb(60, 60, 70), -12, 0, 3, 1.5);
+    ctx.restore();
+  } else if (s.kind === "shell") {
+    ctx.globalAlpha = 0.35; C(rgb(200, 200, 200), x - s.vx * 1.5, y, 4); C(rgb(200, 200, 200), x - s.vx * 3, y, 3); ctx.globalAlpha = 1;
+    C(rgb(40, 40, 46), x, y, 5); C(rgb(120, 120, 130), x - 1.5, y - 1.5, 1.5);
+  } else drawFan(x, y, 12, s.t * 0.45, s.col, s.dark);   // a dancer's spinning fan
+}
+
 function drawMole(e, cam) {
   const r = e.rect(), w = e.w, h = e.h, groundY = r.y + h, x = r.x - cam;
   const [mound, soil] = [game.level.theme.top[1], game.level.theme.dirt[1]];
@@ -1395,6 +1576,38 @@ function drawBackground(theme, cam) {
       L(rgb(120, 84, 50), x + 400, hz - 20, x + 412, hz - 110, 6);
       for (const a of [-2.6, -2.0, -1.2, -0.5]) P(rgb(50, 130, 70), [[x + 412, hz - 110], [x + 412 + Math.cos(a) * 60, hz - 110 + Math.sin(a) * 30 + 26], [x + 412 + Math.cos(a) * 30, hz - 104 + Math.sin(a) * 10]]);
     }
+  } else if (theme.bg === "plaza") {   // a Spanish town square at night
+    for (let i = 0; i < 40; i++) C(WHITE, (i * 151) % W, (i * 61) % 200 + 8, (i % 3) * 0.5 + 0.6);
+    C(rgb(250, 240, 210), W - 170, 88, 30); C(rgb(232, 222, 190), W - 178, 80, 6);
+    const per = 700;   // far: houses, a bell tower with a lit window
+    for (let x = -wrapX(cam * 0.2, per) - per; x < W + per; x += per) {
+      R(theme.far, x, 250, 160, 300); R(theme.far, x + 170, 222, 120, 330); R(theme.far, x + 300, 160, 60, 400);
+      P(theme.far, [[x + 294, 160], [x + 330, 108], [x + 366, 160]]); R(rgb(255, 214, 120), x + 322, 180, 16, 22, 8);
+      R(theme.far, x + 380, 262, 200, 300); P(theme.far, [[x + 370, 262], [x + 480, 218], [x + 590, 262]]);
+      for (const [wx, wy] of [[x + 30, 280], [x + 100, 280], [x + 200, 250], [x + 420, 290], [x + 510, 290]]) R(rgb(255, 200, 110), wx, wy, 14, 18, 2);
+    }
+    const per2 = 520;   // near: house fronts with balconies and red geraniums
+    for (let x = -wrapX(cam * 0.45, per2) - per2; x < W + per2; x += per2) {
+      R(theme.near, x, 300, 240, 260); R(theme.near, x + 260, 330, 200, 230);
+      [[x + 30, 330], [x + 110, 330], [x + 180, 330], [x + 290, 362], [x + 380, 362]].forEach(([wx, wy], i) => {
+        R(i % 3 === 1 ? rgb(60, 50, 80) : rgb(255, 196, 100), wx, wy, 26, 36, 3);
+        R(rgb(20, 18, 30), wx - 6, wy + 34, 38, 4);
+        for (let k = 0; k < 5; k++) L(rgb(20, 18, 30), wx - 4 + k * 8, wy + 24, wx - 4 + k * 8, wy + 36, 1.5);
+        C(rgb(220, 50, 70), wx + 4, wy + 30, 3); C(rgb(220, 50, 70), wx + 20, wy + 30, 3);
+      });
+    }
+    const per3 = 300, bulbs = [rgb(255, 90, 90), rgb(255, 220, 90), rgb(120, 220, 120), rgb(120, 170, 255)];
+    for (let x = -wrapX(cam * 0.6, per3) - per3; x < W + per3; x += per3) {   // strings of festival lights
+      ctx.strokeStyle = rgb(30, 26, 40); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 70); ctx.quadraticCurveTo(x + 150, 150, x + 300, 70); ctx.stroke();
+      for (let k = 1; k < 10; k++) { const u = k / 10; C(bulbs[k % 4], x + u * 300, 70 + 2 * u * (1 - u) * 80, 4); }
+    }
+    game.mineLights = [];
+    const per4 = 480;   // street lamps (they move with the street and light up the dark)
+    for (let x = -wrapX(cam, per4) - per4 + 200; x < W + per4; x += per4) {
+      R(rgb(30, 30, 36), x, 296, 6, 144); R(rgb(30, 30, 36), x - 6, 292, 18, 6);
+      P(rgb(40, 40, 48), [[x - 8, 276], [x + 14, 276], [x + 10, 292], [x - 4, 292]]); C(rgb(255, 220, 140), x + 3, 286, 6);
+      game.mineLights.push([x + 3, 286]);
+    }
   } else if (theme.bg === "desert") {   // wasteland: mesas, dunes, rusty wrecks and broken power poles
     const per = 600;
     for (let x = -wrapX(cam * 0.15, per) - per; x < W + per; x += per) {
@@ -1426,7 +1639,7 @@ function drawBackground(theme, cam) {
 }
 
 // ------------------------------------------------------------------ the blacksmith's shop
-const CARD_W = 168, CARD_H = 230, CARD_GAP = 14, CARD_Y = 128;
+const CARD_W = 146, CARD_H = 230, CARD_GAP = 10, CARD_Y = 128;
 function shopLayout() {
   const x0 = (W - (SHOP.length * CARD_W + (SHOP.length - 1) * CARD_GAP)) / 2;
   return {
@@ -1450,9 +1663,9 @@ function drawShop(g) {
     R(owned ? rgb(52, 92, 58) : rgb(96, 64, 40), c.x, c.y, c.w, c.h, 12);
     RS(sel ? GOLD : rgb(150, 108, 66), c.x, c.y, c.w, c.h, sel ? 4 : 2, 12);
     emoji(item.icon, 50, c.x + c.w / 2, c.y + 56);
-    T(item.name, 19, c.x + c.w / 2, c.y + 116, WHITE);
-    item.desc.forEach((line, k) => T(line, 15, c.x + c.w / 2, c.y + 146 + k * 20, rgb(236, 220, 196)));
-    T(owned ? "¡TUYO!" : `${item.price} monedas`, 19, c.x + c.w / 2, c.y + 206,
+    T(item.name, 17, c.x + c.w / 2, c.y + 116, WHITE);
+    item.desc.forEach((line, k) => T(line, 14, c.x + c.w / 2, c.y + 146 + k * 19, rgb(236, 220, 196)));
+    T(owned ? "¡TUYO!" : `${item.price} monedas`, 17, c.x + c.w / 2, c.y + 206,
       owned ? GRASS_LIGHT : afford ? GOLD : rgb(240, 120, 110));
   });
   const b = lay.button, bsel = g.shopSel === SHOP.length;
@@ -1515,7 +1728,7 @@ class Game {
     this.level = new Level(LEVELS[this.levelIndex]);
     this.player = new Player(...this.level.start, this.upg);
     this.particles = []; this.popups = []; this.camX = 0; this.shake = 0; this.levelTimer = 0;
-    this.bossAnnounced = false; this.flyingAxe = null;
+    this.bossAnnounced = false; this.flyingAxe = null; this.shots = [];
   }
   loseLife() {
     this.lives--; this.state = "dying"; this.stateTimer = 110; this.flyingAxe = null;
@@ -1529,6 +1742,13 @@ class Game {
     }
   }
   popup(x, y, text, color = GOLD) { this.popups.push({ x, y, text, color, life: 55 }); }
+  throwFan(e, player) {   // a dancer throws a spinning fan at the knight
+    const sx = e.x + e.w / 2, sy = e.y + 14, tx = player.x + player.w / 2, ty = player.y + player.h * 0.4;
+    const dist = Math.max(40, Math.abs(tx - sx)), speed = 3.6 * e.mul, dir = tx > sx ? 1 : -1;
+    const vy = Math.max(-3, Math.min(3, (ty - sy) / (dist / speed)));
+    this.shots.push({ kind: "fan", enemy: true, x: sx, y: sy, vx: dir * speed, vy, t: 0, col: e.dress[0], dark: e.dress[1] });
+    play("swing");
+  }
   dust(x, y) { this.burst(x, y, [rgb(196, 176, 140), rgb(160, 140, 110)], 3, 2); }
   splashAt(x) { this.burst(x, WATER_Y, [WHITE, rgb(160, 210, 250), rgb(90, 170, 230)], 14, 5); }
 
@@ -1558,13 +1778,13 @@ class Game {
     inp.jumpPressed = inp.attack = false;
   }
 
-  strike(e, fromDir, hitIds) {   // an axe (held or flying) hits an enemy
+  strike(e, fromDir, hitIds, base = 1) {   // an axe, knife or cannonball hits an enemy
     if (!e.alive || hitIds.has(e.id) || !e.hittable()) return;
     hitIds.add(e.id);
     const er = e.rect(), ex = er.x + er.w / 2, ey = er.y + er.h / 2;
     this.burst(ex, ey, this.upg.sharp ? [GOLD, WHITE] : [WHITE, rgb(255, 230, 120)], 8);
     this.shake = Math.max(this.shake, 5); play("hit");
-    if (e.hit(fromDir, this.upg.sharp ? 2 : 1)) this.defeated(e, ex, ey, er);
+    if (e.hit(fromDir, base * (this.upg.sharp ? 2 : 1))) this.defeated(e, ex, ey, er);
   }
   breakCrates(box) {
     const lvl = this.level;
@@ -1587,6 +1807,14 @@ class Game {
       play("swing");
       if (this.upg.boomerang && !this.flyingAxe)
         this.flyingAxe = new FlyingAxe(p.x + p.w / 2 + p.facing * 30, p.y + 14, p.facing);
+      if (this.upg.knives)   // ninja throwing knife
+        this.shots.push({ kind: "knife", x: p.x + p.w / 2 + p.facing * 18, y: p.y + 24, vx: p.facing * 11, vy: 0, t: 0, hit: new Set() });
+    }
+    if (p.justFired) {   // BOOM: the tank fires its cannon
+      const mx = p.facing > 0 ? p.x + p.w + 10 : p.x - 10;
+      this.shots.push({ kind: "shell", x: mx, y: p.y + 13, vx: p.facing * 9, vy: -0.4, t: 0, hit: new Set() });
+      play("boom"); this.shake = Math.max(this.shake, 4);
+      this.burst(mx, p.y + 13, [rgb(255, 200, 80), rgb(180, 180, 180), WHITE], 10, 3);
     }
     const box = p.attackBox();   // the held axe hits enemies and crates
     if (box) { for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, p.facing, p.hitIds); this.breakCrates(box); }
@@ -1606,6 +1834,12 @@ class Game {
       bk.taken = true; p.mountBike(); play("vroom"); say("moto", true);
       this.popup(p.x + p.w / 2, p.y - 20, "¡Una moto!", GOLD); this.burst(p.x + p.w / 2, p.y + p.h, [rgb(196, 176, 140), WHITE], 16, 4);
     }
+    const tk = lvl.tank;   // climb into the tank!
+    if (tk && !tk.taken && !p.tank && !p.bike && collide(p.rect(), tk)) {
+      tk.taken = true; p.mountTank(); play("vroom"); say("tanque", true);
+      this.popup(p.x + p.w / 2, p.y - 40, "¡Un tanque!", GOLD); this.burst(p.x + p.w / 2, p.y + p.h, [rgb(160, 160, 160), WHITE], 16, 4);
+    }
+    if (p.tank && p.onGround && Math.abs(p.vx) > 2 && this.t % 6 === 0) this.dust(p.x + (p.vx > 0 ? 0 : p.w), p.y + p.h);
     if (p.bike) {
       if (p.onGround && Math.abs(p.vx) > 4 && this.t % 3 === 0) this.dust(p.x + (p.vx > 0 ? 0 : p.w), p.y + p.h);
       if (this.t % 24 === 0) p.rideHits.clear();
@@ -1632,6 +1866,33 @@ class Game {
       ouch(e.x + e.w / 2);
     }
     for (const s of lvl.spikes) if (collide(pr, { x: s.x + 4, y: s.y + 20, w: TILE - 8, h: 20 }) && ouch(s.x + TILE / 2)) p.vy = -10;
+    for (const s of this.shots) {   // knives, cannonballs and the dancers' fans
+      s.t++; s.x += s.vx; s.y += s.vy;
+      if (s.kind === "shell") s.vy += 0.05;
+      const sr = { x: s.x - 9, y: s.y - 9, w: 18, h: 18 };
+      if (s.enemy) {
+        if (box && collide(box, sr)) {   // chop a fan right out of the air
+          s.dead = true; this.burst(s.x, s.y, [s.col, WHITE], 10, 3); this.popup(s.x, s.y - 10, "¡Zas!", WHITE); play("hit");
+        } else if (collide(pr, sr)) { ouch(s.x); s.dead = true; }
+      } else {
+        for (const o of this.shots) if (o.enemy && !o.dead && collide(sr, { x: o.x - 10, y: o.y - 10, w: 20, h: 20 })) {   // shoot fans down
+          o.dead = true; this.burst(o.x, o.y, [o.col, WHITE], 10, 3); if (s.kind !== "shell") s.dead = true;
+        }
+        for (const e of lvl.enemies) {
+          if (s.dead && s.kind !== "shell") break;
+          if (!e.alive || !e.hittable() || s.hit.has(e.id) || !collide(sr, e.rect())) continue;
+          this.strike(e, Math.sign(s.vx), s.hit, s.kind === "shell" ? 2 : 1); s.dead = true; break;
+        }
+        this.breakCrates(sr);
+      }
+      if (lvl.solidAt(Math.floor(s.x / TILE), Math.floor(s.y / TILE)) || s.t > (s.enemy ? 170 : 90)) s.dead = true;
+      if (s.dead && s.kind === "shell") {   // explosion
+        this.burst(s.x, s.y, [rgb(255, 200, 80), rgb(255, 120, 40), rgb(150, 150, 150)], 22, 5); play("boom");
+        this.shake = Math.max(this.shake, 6);
+        for (const e of lvl.enemies) if (e.alive && e.hittable() && Math.hypot(e.x + e.w / 2 - s.x, e.y + e.h / 2 - s.y) < 60) this.strike(e, Math.sign(s.vx), s.hit, 2);
+      }
+    }
+    this.shots = this.shots.filter(s => !s.dead);
     if (lvl.theme.water && p.y + p.h > WATER_Y + 20) {   // fell in the sea
       this.splashAt(p.x + p.w / 2); play("splash"); this.popup(p.x + p.w / 2, WATER_Y - 40, "¡Glu, glu!", WHITE);
       say("glu", true); this.loseLife(); return;
@@ -1668,7 +1929,7 @@ class Game {
     }
     const WORDS = {   // what pops up, which sound, which voice line
       T: ["¡K.O.!", "boing_big", "rey"], c: ["¡Hasta luego, cocodrilo!", "snap", "coco"], m: ["¡Toma, topo!", "pop", "topo"],
-      s: ["¡Adiós, tiburón!", "splash", "tiburon"], n: ["¡Adiós, serpiente!", "hiss", "serpiente"], k: [null, "click", "toma"],
+      s: ["¡Adiós, tiburón!", "splash", "tiburon"], d: ["¡Fuera de la pista!", "castanets", "pista"], n: ["¡Adiós, serpiente!", "hiss", "serpiente"], k: [null, "click", "toma"],
       w: [null, "squeak", "toma"], b: [null, "squeak", "toma"], g: [null, "screech", "toma"], v: [null, "screech", "toma"],
     };
     const [word, snd, line] = WORDS[e.kind] || [null, "boing", pick(["toma", "adios"])];
@@ -1698,6 +1959,11 @@ class Game {
       ctx.save(); ctx.translate(bk.x + 2 - cam, bk.y + bk.h - 56); drawBike(0, false); ctx.restore();
       if (Math.floor(this.t / 20) % 2 === 0) T("¡Súbete!", 18, bk.x + bk.w / 2 - cam, bk.y - 40, GOLD);
     }
+    const tk = lvl.tank;
+    if (tk && !tk.taken) {   // the parked tank
+      ctx.save(); ctx.translate(tk.x - cam, tk.y); drawTank(0, 0, false, this.t); ctx.restore();
+      if (Math.floor(this.t / 20) % 2 === 0) T("¡Súbete al tanque!", 18, tk.x + tk.w / 2 - cam, tk.y - 30, GOLD);
+    }
     const fl = lvl.flag;
     if (fl && lvl.flagOpen()) {
       const x = fl.x + 3 - cam, wave = Math.sin(this.t * 0.1) * 4;
@@ -1708,21 +1974,30 @@ class Game {
     for (const c of lvl.coins) drawCoin(c, cam);
     for (const e of lvl.enemies) if (e.x + e.w > cam - 60 && e.x < cam + W + 60) e.draw(cam);
     const p = this.player;
-    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawKnight(p, cam, this.upg, this.t);
+    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) {
+      if (p.tank) { flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing); drawTank(p.x / 9, Math.max(0, p.recoil), true, this.t); ctx.restore(); }
+      else drawKnight(p, cam, this.upg, this.t);
+    }
+    for (const s of this.shots) drawShot(s, cam);
     if (this.flyingAxe) drawMiniAxe(this.flyingAxe.x - cam, this.flyingAxe.y, this.flyingAxe.t * 0.45, this.upg.sharp);
     for (const q of this.particles) {
       const s = Math.max(1, Math.floor(q.size * q.life / q.maxLife + 1));
       R(q.color, Math.floor(q.x - cam - s / 2), Math.floor(q.y - s / 2), s, s);
     }
-    if (theme.dark) {   // the mine is dark: only the knight's surroundings and the lanterns are lit
-      const lx = p.x + p.w / 2 - cam, ly = p.y + p.h / 2;
-      const g = ctx.createRadialGradient(lx, ly, 70, lx, ly, 430);
-      g.addColorStop(0, "rgba(8,5,3,0)"); g.addColorStop(1, "rgba(8,5,3,0.86)");
+    if (theme.dark) {   // mine and night: only the knight's surroundings and the lamps are lit
+      const night = theme.dark === "night", lx = p.x + p.w / 2 - cam, ly = p.y + p.h / 2;
+      const g = ctx.createRadialGradient(lx, ly, night ? 90 : 70, lx, ly, night ? 520 : 430);
+      g.addColorStop(0, night ? "rgba(6,6,22,0)" : "rgba(8,5,3,0)"); g.addColorStop(1, night ? "rgba(6,6,22,0.8)" : "rgba(8,5,3,0.86)");
       ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, H + 40);
-      for (const [x, y] of this.mineLights || []) {   // soft lantern glow
-        const lg = ctx.createRadialGradient(x, y, 2, x, y, 70);
+      if (p.tank) {   // the tank's headlight
+        const fx = (p.facing > 0 ? p.x + p.w : p.x) - cam, fy = p.y + 26, d = p.facing;
+        P("rgba(255,240,170,0.16)", [[fx, fy - 4], [fx + d * 380, fy - 70], [fx + d * 380, fy + 60], [fx, fy + 6]]);
+      }
+      const glow = night ? 120 : 70;
+      for (const [x, y] of this.mineLights || []) {   // soft lamp glow
+        const lg = ctx.createRadialGradient(x, y, 2, x, y, glow);
         lg.addColorStop(0, "rgba(255,200,110,0.55)"); lg.addColorStop(1, "rgba(255,200,110,0)");
-        ctx.fillStyle = lg; ctx.fillRect(x - 70, y - 70, 140, 140); C(rgb(255, 224, 150), x, y, 5);
+        ctx.fillStyle = lg; ctx.fillRect(x - glow, y - glow, glow * 2, glow * 2); C(rgb(255, 224, 150), x, y, 5);
       }
     }
     for (const q of this.popups) T(q.text, 20, q.x - cam, q.y, q.color);
@@ -1754,7 +2029,7 @@ class Game {
     if (this.state === "title") {
       shade();
       T("EL CABALLERO DEL HACHA", 58, W / 2, 104, ARMOR_LIGHT);
-      T("¡Abre camino a hachazos por seis niveles!", 28, W / 2, 168, WHITE);
+      T("¡Abre camino a hachazos por siete niveles!", 28, W / 2, 168, WHITE);
       if (isTouch) {
         T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 232, WHITE);
       } else {
@@ -1919,6 +2194,7 @@ function frame(now) {
     game.step();
     acc -= STEP_MS;
   }
+  updateEngine();
   ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
   game.draw();
   requestAnimationFrame(frame);
