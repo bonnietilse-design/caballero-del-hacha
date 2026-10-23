@@ -1,1 +1,1 @@
-A game. Play it!
+A game. Play it at https://bonnietilse-design.github.io/caballero-del-hacha/
