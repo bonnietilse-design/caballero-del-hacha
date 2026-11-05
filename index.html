@@ -170,7 +170,7 @@ const LEVELS = [
     "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################",
     "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################"
   ] },
-  { name: "Combate Aéreo", theme: "sky", speed: 1.15, mode: "plane", hint: "Mantén SALTA para subir · 🪓 lanza un cohete", map: [
+  { name: "Combate Aéreo", theme: "sky", speed: 1.15, mode: "plane", hint: "SALTA: subir · 🪓: disparar · ¡cada 4 disparos, un cohete!", map: [
     "................................................................................................................................................................................................................................................",
     "................................................................................................................................................................................................................................................",
     ".....................................o..o..............E.................o..o..o....................E...........o..o................................o..o..E................................o..o...........................Z.....................",
@@ -215,7 +215,7 @@ const LEVELS = [
     "################....################.....#################.....#################.....###############.....######################################################################",
     "################....################.....#################.....#################.....###############.....######################################################################"
   ] },
-  { name: "El Torneo", theme: "tourney", speed: 1.2, mode: "horse", hint: "¡Carga con la lanza a todo galope!", map: [
+  { name: "El Torneo", theme: "tourney", speed: 1.2, mode: "horse", hint: "¡Carga con la lanza! ¡Ojo con las flechas!", map: [
     "........................................................................................................................................................................................................",
     "........................................................................................................................................................................................................",
     "........................................................................................................................................................................................................",
@@ -226,7 +226,7 @@ const LEVELS = [
     "................................................oooo................................oooo..............................oooo..............................oooo............................................",
     "..............................o...................................o.................................o....................................o................................o.............................",
     "........................................................................................................................................................................................................",
-    "..P...................J.......#....C....J...................J.....#...........J................J....#....C......J...................J....#..........C................J....#...........J.............F...",
+    "..P...................J.......#....C....J.....a.............J.....#...J.......J...........a....J....#...JC......J...a.........J.....J....#.....J..a.C................J....#.....a.....J.......J.....F...",
     "################################################....################################....##############################....##############################....############################################",
     "################################################....################################....##############################....##############################....############################################"
   ] },
@@ -241,7 +241,7 @@ const LEVELS = [
     "........................................................................",
     "........................................................................",
     "......oooooo............................................................",
-    "..P...........h...........h.........[...............X.............]..F..",
+    "..P...........h...........h.........[...............X.............]F....",
     "########################################################################",
     "########################################################################"
   ] }
@@ -255,6 +255,10 @@ const SHOP = [
   { id: "heart", icon: "❤️", name: "Corazón extra", desc: ["4 corazones", "por nivel"], price: 15 },
   { id: "boomerang", icon: "🪃", name: "Hacha voladora", desc: ["Lanza el hacha", "y vuelve"], price: 25 },
   { id: "knives", icon: "🗡️", name: "Cuchillos ninja", desc: ["Lanzas un cuchillo", "con cada hachazo"], price: 20 },
+  { id: "paella", icon: "🥘", name: "Paella bomba", desc: ["Cada 3 hachazos", "lanzas una paella"], price: 18 },
+  { id: "guitar", icon: "🎸", name: "Guitarra trueno", desc: ["Cada 6 hachazos,", "¡un acorde que aturde!"], price: 22 },
+  { id: "bees", icon: "🐝", name: "Abejas guardianas", desc: ["Dos abejas te", "siguen y pican"], price: 20 },
+  { id: "mirror", icon: "🪞", name: "Escudo espejo", desc: ["Devuelve los", "disparos enemigos"], price: 16 },
 ];
 
 // ------------------------------------------------------------------ settings
@@ -288,6 +292,7 @@ const ENEMY_PLANES = [[rgb(96, 96, 104), rgb(64, 64, 72), rgb(210, 44, 44)], [rg
                       [rgb(74, 96, 62), rgb(48, 64, 42), rgb(240, 240, 240)]];
 const ENEMY_COLORS = {
   h: [rgb(18, 16, 26), rgb(150, 20, 40), WHITE],                    // shadow ninja
+  a: [rgb(60, 96, 52), rgb(110, 76, 40), WHITE],                    // archer
   E: [rgb(96, 96, 104), rgb(255, 160, 60), rgb(70, 70, 70)],        // enemy biplane
   J: [rgb(50, 44, 46), rgb(150, 20, 30), GOLD],                     // enemy cavalry
   X: [rgb(34, 32, 40), rgb(200, 30, 40), GOLD],                     // the Black Knight
@@ -367,6 +372,8 @@ const VOICE_LINES = {
   ninja: "¡Ahora soy un ninja!", avion: "¡A volar!", caballo: "¡Al galope!", espada: "¡En guardia!",
   negro: "¡Cuidado! ¡El Caballero Negro!", sombra: "¡Adiós, sombra!", derribado: "¡Derribado!", desmontado: "¡Desmontado!",
   shuri: "¡Más shuriken!", bloqueo: "¡Bloqueado!", dirigible: "¡Cuidado! ¡El Dirigible!", sombras: "¡Sombras, a mí!",
+  arquero: "¡Adiós, arquero!", heroe: "¡Enhorabuena, caballero! ¡Eres un héroe!", gracias_jugar: "¡Gracias por jugar!",
+  reflejo: "¡Reflejado!",
   tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
 };
 const AUDIO_RATE = 22050;
@@ -486,6 +493,11 @@ function buildSounds(rate) {
     gameover: jingle([392, 330, 262, 196], 0.26),
     clear: jingle([523, 659, 784, 1047, 784, 1047], 0.12, 0.4),
     win: flamenco(rate),
+    slide: synth(rate, 0.75, 1500, 260, "square", 0.1, 26, 0.004, 0.5),
+    chord: (() => { const rnd = seeded(5);
+      return mixAll(...[164.8, 207.7, 246.9, 329.6, 415.3, 493.9].map((fr, k) => concat(silence(rate, k * 0.014), pluck(rate, fr, 0.9, 0.24, rnd)))); })(),
+    firework: mixAll(lowpass(synth(rate, 0.5, 1, null, "noise", 0.45, 16, 0.002, 2), 0.5), synth(rate, 0.22, 200, 60, "sine", 0.45, 0, 0.002, 1.5)),
+    rocket: mixAll(whoosh(rate, 0.3, 0.7), synth(rate, 0.3, 300, 900, "square", 0.06, 0, 0.004, 1)),
   };
 }
 function initAudio() {   // browsers only allow sound after the first tap or key press
@@ -617,7 +629,7 @@ class Player {
     this.act0 = Math.round(this.atkTotal * 0.27); this.act1 = Math.round(this.atkTotal * 0.64);
     this.x = cx - this.w / 2; this.y = bottom - this.h;
   }
-  updatePlane(inp, level) {   // biplane: always flying forward; hold jump to climb, let go to sink; the gun never stops
+  updatePlane(inp, level) {   // biplane: always flying forward; hold jump to climb, let go to sink; press attack to fire
     this.justJumped = this.justSwung = this.justFired = this.justRocket = false;
     if (this.invuln > 0) this.invuln--;
     if (this.cooldown > 0) this.cooldown--;
@@ -630,8 +642,11 @@ class Player {
     if (this.y > 418 - this.h) { this.y = 418 - this.h; this.vy = Math.min(0, this.vy); }
     this.x = Math.min(this.x, level.pxW - this.w);
     this.facing = 1; this.onGround = false; this.anim += 1;
-    if (--this.gunT <= 0) { this.justFired = true; this.gunT = this.gunCd; }
-    if (inp.attack && this.cooldown === 0) { this.justRocket = true; this.cooldown = 40; }
+    if (inp.attack && this.cooldown === 0) {   // each press fires a short burst; every 4th press also launches a rocket
+      this.burstN = 2; this.gunT = 0; this.cooldown = this.gunCd; this.presses = (this.presses || 0) + 1;
+      if (this.presses % 4 === 0) this.justRocket = true;
+    }
+    if (this.burstN > 0 && --this.gunT <= 0) { this.justFired = true; this.burstN--; this.gunT = 5; }
   }
   rect() { return { x: Math.round(this.x), y: Math.round(this.y), w: this.w, h: this.h }; }
   mountBike() { const cx = this.x + this.w / 2; this.bike = true; this.w = BIKE_W; this.x = cx - this.w / 2; }
@@ -833,7 +848,7 @@ const LUNGER_STATS = {   // creep along, give a warning (open jaws, raised head 
   c: { w: 70, h: 22, hp: 2, score: 300, speed: 0.5, lunge: 5.5, sight: 190, warn: 30, time: 22, sound: "hiss" },   // saltwater crocodile
   n: { w: 58, h: 18, hp: 1, score: 200, speed: 0.5, lunge: 6.5, sight: 150, warn: 26, time: 12, sound: "hiss" },   // taipan snake
   k: { w: 44, h: 26, hp: 1, score: 150, speed: 0.8, lunge: 6.0, sight: 170, warn: 26, time: 16, sound: "click" },  // scorpion
-  J: { w: 70, h: 72, hp: 2, score: 400, speed: 1.0, lunge: 6.4, sight: 340, warn: 34, time: 70, sound: "neigh" },  // enemy cavalry
+  J: { w: 70, h: 72, hp: 3, score: 500, speed: 1.2, lunge: 7.0, sight: 360, warn: 28, time: 80, sound: "neigh" },  // enemy cavalry
 };
 class Lunger extends Enemy {
   constructor(kind, tx, ty, mul = 1) {
@@ -988,34 +1003,93 @@ class Shark extends Enemy {   // swims in the water under a gap (only its fin sh
   draw(cam) { drawShark(this, cam); }
 }
 
-class Shadow extends Enemy {   // shadow ninja: creeps about, throws shuriken, leaps at the knight
+class Shadow extends Enemy {   // shadow ninja: throws shuriken, slashes, blocks, and vanishes in smoke to strike from behind
   constructor(tx, ty, mul = 1) {
     super();
-    this.init("h", 26, 48, 1, 250);
-    this.x = tx + 7; this.y = ty + TILE - this.h; this.mul = mul; this.speed = 1.1 * mul;
-    this.throwT = randInt(60, 140); this.jumpT = randInt(40, 100); this.throwAnim = 0;
+    this.init("h", 26, 48, 2, 350);
+    this.x = tx + 7; this.y = ty + TILE - this.h; this.mul = mul; this.speed = 1.5 * mul;
+    this.throwT = randInt(50, 110); this.jumpT = randInt(40, 100); this.throwAnim = 0;
+    this.blinkT = randInt(140, 240); this.slashT = 0; this.slashCd = 0; this.slashBox = null; this.smoke = 0; this.guardT = 0;
+  }
+  blocks(fromDir) {   // now and then he catches your blow on his blade
+    if (this.slashT || this.stun || fromDir !== -this.dir || Math.random() > 0.25) return false;
+    this.guardT = 16; return true;
   }
   update(level, player, game) {
     this.t++;
     if (this.flash) this.flash--;
     if (this.throwAnim) this.throwAnim--;
+    if (this.guardT) this.guardT--;
+    if (this.smoke) this.smoke--;
+    if (this.slashCd) this.slashCd--;
+    this.slashBox = null;
     const dx = player.x + player.w / 2 - (this.x + this.w / 2), dy = player.y + player.h - (this.y + this.h), dist = Math.abs(dx);
-    const sees = dist < 340 && Math.abs(dy) < 150 && !player.dead;
-    if (this.stun > 0) { this.stun--; this.vx *= 0.9; }
-    else if (sees) {
+    const sees = dist < 360 && Math.abs(dy) < 150 && !player.dead;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.9; this.slashT = 0; }
+    else if (this.slashT > 0) {   // sword slash: a wind-up (watch for the "!"), then the blade sweeps
+      this.slashT--; if (this.onGround) this.vx = 0;
+      if (this.slashT === 8) game.sound("swing");
+      if (this.slashT <= 8 && this.slashT > 2) { const r = this.rect(); this.slashBox = { x: this.dir > 0 ? r.x + r.w - 6 : r.x - 40, y: r.y + 2, w: 46, h: 42 }; }
+    } else if (sees) {
       this.dir = dx > 0 ? 1 : -1;
-      if (this.onGround) this.vx = dist > 140 ? this.dir * this.speed : 0;
-      if (--this.throwT <= 0) {
-        game.enemyShot(this.x + this.w / 2, this.y + 18, player, 4.2 * this.mul, "eshuriken", rgb(70, 70, 84), BLACK);
-        this.throwT = Math.round(randInt(120, 180) / this.mul); this.throwAnim = 12;
+      if (this.onGround) this.vx = dist > 120 ? this.dir * this.speed : 0;
+      if (--this.throwT <= 0) {   // one shuriken, or two in a spread
+        game.enemyShot(this.x + this.w / 2, this.y + 18, player, 4.6 * this.mul, "eshuriken", rgb(70, 70, 84), BLACK);
+        if (Math.random() < 0.5) { const o = game.shots[game.shots.length - 1]; game.shots.push({ ...o, vy: o.vy - 1.3 }); o.vy += 0.6; }
+        this.throwT = Math.round(randInt(90, 130) / this.mul); this.throwAnim = 12;
       }
-      if (this.onGround && dist < 150 && --this.jumpT <= 0) { this.vy = -10.5; this.vx = this.dir * 3; this.jumpT = randInt(80, 130); game.sound("swing"); }
+      if (this.onGround && dist < 64 && Math.abs(dy) < 40 && this.slashCd === 0) { this.slashT = 20; this.slashCd = 70; }
+      else if (this.onGround && player.onGround && dist > 110 && --this.blinkT <= 0) this.blink(level, player, game);
+      else if (this.onGround && dist < 150 && dist > 64 && --this.jumpT <= 0) { this.vy = -10.5; this.vx = this.dir * 3; this.jumpT = randInt(80, 130); game.sound("swing"); }
     } else if (this.onGround) this.vx = this.dir * this.speed * 0.6;
     physicsMove(this, level);
     if (this.onGround && this.stun === 0 && (this.hitWall || ledgeAhead(this, level))) { if (!sees) this.dir *= -1; this.vx = 0; }
     if (this.y > level.pxH + 100) this.alive = false;
   }
+  blink(level, player, game) {   // poof! vanish in smoke and reappear behind the knight, sword ready
+    this.blinkT = Math.round(randInt(200, 300) / this.mul);
+    const nx = player.x + player.w / 2 - player.facing * 58 - this.w / 2, ny = player.y + player.h - this.h;
+    const floor = Math.floor((player.y + player.h + 4) / TILE);
+    if (!level.solidAt(Math.floor((nx + this.w / 2) / TILE), floor) || blockedAt(this, level, nx, ny) || nx < 0 || nx > level.pxW - this.w) return;
+    const smoke = [rgb(60, 56, 74), rgb(110, 104, 130), rgb(30, 28, 40)];
+    game.burst(this.x + this.w / 2, this.y + this.h / 2, smoke, 16, 3);
+    this.x = nx; this.y = ny; this.vx = this.vy = 0; this.dir = player.facing; this.smoke = 20;
+    game.burst(this.x + this.w / 2, this.y + this.h / 2, smoke, 16, 3); game.sound("pop");
+    this.slashT = 28; this.slashCd = 70;
+  }
   draw(cam) { drawShadow(this, cam); }
+}
+
+class Archer extends Enemy {   // archer at the tourney: stands his ground and looses arrows in a high arc
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("a", 28, 50, 1, 250);
+    this.x = tx + 6; this.y = ty + TILE - this.h; this.mul = mul; this.drawT = 0; this.shootT = randInt(30, 90);
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    const dx = player.x + player.w / 2 - (this.x + this.w / 2), dist = Math.abs(dx);
+    if (this.stun > 0) { this.stun--; this.vx *= 0.85; this.drawT = 0; }
+    else {
+      this.vx = 0;
+      if (dist < 640 && !player.dead) {
+        this.dir = dx > 0 ? 1 : -1;
+        if (this.drawT > 0) { if (--this.drawT === 0) this.shoot(player, game); }
+        else if (--this.shootT <= 0) { this.drawT = 34; this.shootT = Math.round(randInt(100, 150) / this.mul); }
+      }
+    }
+    physicsMove(this, level);
+    if (this.y > level.pxH + 100) this.alive = false;
+  }
+  shoot(player, game) {   // aim where the rider will be when the arrow comes down
+    const sx = this.x + this.w / 2 + this.dir * 16, sy = this.y + 16, T = 46, g = 0.15;
+    const tx = player.x + player.w / 2 + player.vx * T * 0.85, ty = player.y + player.h * 0.4;
+    const vx = Math.max(-9, Math.min(9, (tx - sx) / T)), vy = (ty - sy - 0.5 * g * T * T) / T;
+    game.shots.push({ kind: "arrow", enemy: true, x: sx, y: sy, vx, vy, t: 0, life: 200, col: rgb(150, 110, 60), dark: WOOD_DARK });
+    game.sound("swing");
+  }
+  draw(cam) { drawArcher(this, cam); }
 }
 
 class EnemyPlane extends Enemy {   // enemy biplane: flies at the knight shooting; red aces swing round and chase him
@@ -1269,6 +1343,7 @@ class Level {
       else if (ch === "K") this.tank = { x: x - 16, y: y + TILE - TANK_H, w: TANK_W, h: TANK_H, taken: false };
       else if (ch === "d") this.enemies.push(new Dancer(x, y, mul));
       else if (ch === "h") this.enemies.push(new Shadow(x, y, mul));
+      else if (ch === "a") this.enemies.push(new Archer(x, y, mul));
       else if (ch === "E") this.enemies.push(new EnemyPlane(x, y, mul));
       else if (ch === "N") this.pickups.push({ x: x + TILE / 2, y: y + TILE / 2 });
       else if (ch === "X") later.push(["X", x, y]);
@@ -1615,17 +1690,84 @@ function drawNinja(p, cam, upg, t) {   // the knight as a ninja: blue gi, red he
   ctx.restore();
 }
 
-function drawShadow(e, cam) {   // shadow ninja: a black silhouette with glowing eyes and a red scarf
+function drawShadow(e, cam) {   // shadow ninja: a black silhouette with glowing eyes, a red scarf and a katana
   const r = e.rect(), w = e.w, body = e.flash ? WHITE : rgb(18, 16, 26), rim = rgb(96, 84, 140);
+  if (e.smoke) { ctx.globalAlpha = e.smoke / 24; for (let k = 0; k < 5; k++) C(rgb(90, 84, 110), r.x - cam + 13 + Math.cos(k * 1.3 + e.t * 0.1) * 18, r.y + 24 + Math.sin(k * 1.7) * 18, 12); ctx.globalAlpha = 1; }
   flipAt(r.x - cam, r.y, w, e.dir);
   const step = e.onGround && Math.abs(e.vx) > 0.2 ? Math.sin(e.t * 0.4) * 5 : 0, fl = Math.sin(e.t * 0.25) * 3;
   L(rgb(170, 20, 40), 6, 8, -12, 6 + fl, 3); L(rgb(170, 20, 40), 6, 10, -10, 14 + fl, 3);
   L(body, 9, 30, 9 + step, 46, 6); L(body, 17, 30, 17 - step, 46, 6);
   P(body, [[3, 12], [23, 12], [21, 32], [5, 32]]); PS(rim, [[3, 12], [23, 12], [21, 32], [5, 32]], 1);
   C(body, 14, 4, 9); CS(rim, 14, 4, 9, 1);
-  R(rgb(250, 250, 255), 15, 1, 8, 3, 1);
-  if (e.throwAnim) L(body, 18, 16, 28, 2, 5); else L(body, 18, 16, 24, 28, 5);
+  R(e.slashT ? rgb(255, 70, 60) : rgb(250, 250, 255), 15, 1, 8, 3, 1);
+  const sh = [18, 16];
+  if (e.slashT || e.guardT) {   // katana: raised high to wind up, swept forward to slash, upright to block
+    const ang = e.guardT ? 0.25 : e.slashT > 8 ? -2.2 : e.slashT > 2 ? lerp(1.9, 0.2, (e.slashT - 2) / 6) : 1.9;
+    const d = [Math.sin(ang), -Math.cos(ang)], hand = [sh[0] + d[0] * 10, sh[1] + d[1] * 10];
+    drawKatana(hand, d); L(body, sh[0], sh[1], hand[0], hand[1], 5);
+    if (e.slashT <= 8 && e.slashT > 2) { ctx.globalAlpha = 0.5; ctx.strokeStyle = WHITE; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(sh[0], sh[1], 40, -1.4, 0.9); ctx.stroke(); ctx.globalAlpha = 1; }
+  } else if (e.throwAnim) L(body, 18, 16, 28, 2, 5); else L(body, 18, 16, 24, 28, 5);
   ctx.restore();
+  if (e.slashT > 8) T("!", 24, r.x + w / 2 - cam, r.y - 16, rgb(255, 80, 60));
+  drawCreatureHp(e, cam);
+}
+
+function drawArcher(e, cam) {   // green-hooded archer with a longbow
+  const r = e.rect(), f = e.flash, TUN = f ? WHITE : rgb(60, 96, 52), HOOD = f ? WHITE : rgb(40, 66, 36), LEA = rgb(110, 76, 40);
+  flipAt(r.x - cam, r.y, e.w, e.dir);
+  const pull = e.drawT ? Math.min(1, (34 - e.drawT) / 18) : 0, px = 24 - pull * 13;
+  R(LEA, -3, 10, 7, 20, 2); for (const k of [0, 3]) L(WHITE, -1 + k, 10, -3 + k, 4, 2);                  // quiver
+  L(rgb(70, 50, 34), 10, 34, 8, 47, 6); L(rgb(70, 50, 34), 18, 34, 20, 47, 6);                           // legs
+  R(BOOT, 3, 45, 10, 5, 2); R(BOOT, 15, 45, 10, 5, 2);
+  P(TUN, [[4, 14], [24, 14], [26, 37], [2, 37]]); R(LEA, 3, 28, 22, 3);                                    // tunic and belt
+  C(SKIN, 15, 8, 7); C(BLACK, 19, 7, 1.3);
+  P(HOOD, [[6, 7], [12, -4], [24, 3], [22, 6], [8, 10]]); L(rgb(200, 30, 40), 12, -3, 2, -9, 2);            // hat and feather
+  ctx.strokeStyle = rgb(130, 84, 40); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(18, 18, 16, -1.2, 1.2); ctx.stroke();   // bow
+  L(rgb(230, 230, 220), 23.8, 3.1, px, 18, 1); L(rgb(230, 230, 220), px, 18, 23.8, 32.9, 1);               // string
+  if (e.drawT) { L(WOOD, px, 18, 40, 18, 2); P(STEEL, [[40, 15], [45, 18], [40, 21]]); }
+  L(TUN, 15, 16, 34, 18, 5); L(TUN, 12, 18, px, 18, 5);                                                      // arms
+  ctx.restore();
+}
+
+function drawBee(x, y, t, dir) {   // a guardian bee
+  ctx.globalAlpha = 0.7; E(rgb(230, 240, 255), x - 6, y - 9 + Math.sin(t * 1.3) * 2, 8, 6); E(rgb(230, 240, 255), x - 1, y - 10 - Math.sin(t * 1.3) * 2, 8, 6); ctx.globalAlpha = 1;
+  E(rgb(250, 200, 40), x - 8, y - 5, 16, 11); R(BLACK, x - 3, y - 5, 2.5, 11); R(BLACK, x + 2, y - 5, 2.5, 11);
+  C(BLACK, x + dir * 8, y, 3.5); L(BLACK, x - dir * 8, y, x - dir * 12, y + 1, 1.5);
+}
+
+function drawCastle(x, by, flagUp) {   // the little castle the knight marches into at the end of a level (84 wide)
+  const S = rgb(214, 170, 112), SD = rgb(150, 108, 66), SL = rgb(236, 200, 146), DOOR = rgb(34, 20, 14);
+  L(STONE_DARK, x + 42, by - 122, x + 42, by - 160, 2);
+  const fy = by - 128 - 26 * flagUp; P(rgb(200, 30, 40), [[x + 43, fy - 12], [x + 64, fy - 6], [x + 43, fy]]); P(GOLD, [[x + 43, fy - 9], [x + 54, fy - 6], [x + 43, fy - 3]]);
+  R(S, x, by - 72, 84, 72); for (let k = 0; k < 4; k++) R(S, x + 1 + k * 23, by - 84, 13, 12);
+  R(S, x + 22, by - 112, 40, 40); for (let k = 0; k < 3; k++) R(S, x + 22 + k * 15, by - 122, 10, 10);
+  for (let y = by - 62; y < by; y += 12) L(SD, x, y, x + 84, y, 1.5);
+  for (let y = by - 100; y < by - 72; y += 12) L(SD, x + 22, y, x + 62, y, 1.5);
+  R(SL, x, by - 72, 84, 3); R(SL, x + 22, by - 112, 40, 3);
+  R(DOOR, x + 30, by - 34, 24, 34); C(DOOR, x + 42, by - 34, 12);
+  R(DOOR, x + 37, by - 102, 10, 16, 4); R(DOOR, x + 8, by - 58, 8, 14, 3); R(DOOR, x + 68, by - 58, 8, 14, 3);
+}
+
+function drawCredits(g) {   // scrolling credits over a starry night, with a parade of everyone you beat
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, rgb(8, 10, 34)); bg.addColorStop(1, rgb(46, 20, 50));
+  ctx.fillStyle = bg; ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (let i = 0; i < 70; i++) { const x = (i * 137.5) % W, y = (i * 71.3) % 400; ctx.globalAlpha = 0.4 + 0.4 * Math.sin(g.t * 0.05 + i); R(WHITE, x, y, 2, 2); }
+  ctx.globalAlpha = 1;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 410); ctx.clip();
+  let y = g.creditsY;
+  for (const [text, size, col] of g.creditLines) {
+    const hgt = size * 1.45;
+    if (text && y + hgt > -40 && y < 450) T(text, size, W / 2, y + hgt / 2, col || WHITE);
+    y += hgt;
+  }
+  ctx.restore();
+  ctx.fillStyle = "rgba(8,10,34,0.9)"; ctx.fillRect(0, 0, W, 18);
+  R(rgb(120, 64, 40), 0, 474, W, 46); R(rgb(170, 100, 60), 0, 474, W, 5);   // the stage
+  for (const a of g.parade) a.e.draw(0);
+  drawKnight(g.paradeKnight, 0, g.upg, g.t);
+  for (const q of g.particles) R(q.color, q.x - 2, q.y - 2, 4, 4);
+  if (g.creditsDone && Math.floor(g.t / 30) % 2 === 0) T(isTouch ? "Toca para jugar otra vez" : "Pulsa ENTER para jugar otra vez", 26, W / 2, 300, WHITE);
 }
 
 function drawHorse(ph, run, cloth, trim, coat, mane, armour) {   // warhorse, 66 wide, hooves at y 74
@@ -1912,6 +2054,10 @@ function drawShot(s, cam) {
     P(STEEL, [[-11, 0], [0, -3], [11, 0], [0, 3]]); L(WHITE, -8, -0.5, 8, -0.5, 1);
     CS(rgb(60, 60, 70), -12, 0, 3, 1.5);
     ctx.restore();
+  } else if (s.kind === "shell" && s.rocket) {   // the biplane's rocket
+    ctx.globalAlpha = 0.4; C(rgb(210, 210, 210), x - 16, y, 5); C(rgb(210, 210, 210), x - 26, y + 1, 4); ctx.globalAlpha = 1;
+    P(rgb(255, 170, 50), [[x - 10, y - 3], [x - 18 - Math.random() * 6, y], [x - 10, y + 3]]);
+    R(rgb(210, 40, 40), x - 10, y - 3, 16, 6, 2); P(WHITE, [[x + 6, y - 3], [x + 11, y], [x + 6, y + 3]]); P(rgb(150, 20, 20), [[x - 10, y - 3], [x - 13, y - 7], [x - 6, y - 3]]);
   } else if (s.kind === "shell") {
     ctx.globalAlpha = 0.35; C(rgb(200, 200, 200), x - s.vx * 1.5, y, 4); C(rgb(200, 200, 200), x - s.vx * 3, y, 3); ctx.globalAlpha = 1;
     C(rgb(40, 40, 46), x, y, 5); C(rgb(120, 120, 130), x - 1.5, y - 1.5, 1.5);
@@ -1919,6 +2065,16 @@ function drawShot(s, cam) {
   else if (s.kind === "ebullet") { C(rgb(255, 110, 50), x, y, 4.5); C(rgb(255, 230, 120), x, y, 2); }
   else if (s.kind === "shuriken") drawShuriken(x, y, s.t * 0.6, rgb(206, 212, 226), 9);
   else if (s.kind === "eshuriken") drawShuriken(x, y, s.t * 0.6, rgb(90, 86, 110), 9);
+  else if (s.kind === "arrow") {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(s.vy, s.vx));
+    L(WOOD, -14, 0, 9, 0, 2.5); P(STEEL, [[8, -3.5], [15, 0], [8, 3.5]]); P(rgb(200, 30, 40), [[-15, 0], [-19, -5], [-10, 0]]); P(rgb(200, 30, 40), [[-15, 0], [-19, 5], [-10, 0]]);
+    ctx.restore();
+  } else if (s.kind === "paella") {   // a spinning pan of exploding paella
+    ctx.save(); ctx.translate(x, y); ctx.rotate(s.t * 0.25);
+    L(rgb(40, 40, 46), 12, 0, 22, 0, 4); C(rgb(40, 40, 46), 0, 0, 13); C(rgb(250, 190, 40), 0, 0, 10);
+    for (const [a, c] of [[0, rgb(220, 40, 40)], [2.1, rgb(80, 170, 60)], [4.2, rgb(240, 150, 120)], [1, rgb(220, 40, 40)], [3.3, rgb(80, 170, 60)]]) C(c, Math.cos(a) * 5, Math.sin(a) * 5, 2.4);
+    ctx.restore();
+  }
   else if (s.kind === "wave") {   // the Black Knight's shockwave rolling along the floor
     const fk = Math.sin(s.t * 0.9) * 4;
     P(s.dark, [[x - 18, y + 16], [x - 8, y - 12 + fk], [x, y - 2], [x + 8, y - 18 - fk], [x + 18, y + 16]]);
@@ -2304,41 +2460,41 @@ function drawBackground(theme, cam) {
 }
 
 // ------------------------------------------------------------------ the blacksmith's shop
-const CARD_W = 146, CARD_H = 230, CARD_GAP = 10, CARD_Y = 128;
+const CARD_W = 168, CARD_H = 138, CARD_GAP = 12, CARD_ROWS = [108, 256], PER_ROW = 5;
 function shopLayout() {
-  const x0 = (W - (SHOP.length * CARD_W + (SHOP.length - 1) * CARD_GAP)) / 2;
+  const x0 = (W - (PER_ROW * CARD_W + (PER_ROW - 1) * CARD_GAP)) / 2;
   return {
-    cards: SHOP.map((_, i) => ({ x: x0 + i * (CARD_W + CARD_GAP), y: CARD_Y, w: CARD_W, h: CARD_H })),
-    button: { x: W / 2 - 170, y: 392, w: 340, h: 62 },
+    cards: SHOP.map((_, i) => ({ x: x0 + (i % PER_ROW) * (CARD_W + CARD_GAP), y: CARD_ROWS[Math.floor(i / PER_ROW)], w: CARD_W, h: CARD_H })),
+    button: { x: W / 2 - 170, y: 410, w: 340, h: 56 },
   };
 }
 function drawShop(g) {
   const bg = ctx.createLinearGradient(0, 0, 0, H);
   bg.addColorStop(0, rgb(74, 46, 30)); bg.addColorStop(1, rgb(30, 18, 12));
   ctx.fillStyle = bg; ctx.fillRect(-20, -20, W + 40, H + 40);
-  for (const y of [118, 372]) { R(rgb(110, 72, 42), 0, y, W, 8); R(rgb(60, 36, 22), 0, y + 8, W, 4); }
+  for (const y of [248, 396]) { R(rgb(110, 72, 42), 0, y, W, 6); R(rgb(60, 36, 22), 0, y + 6, W, 3); }
   ctx.globalAlpha = 0.25 + 0.1 * Math.sin(g.t * 0.08);   // forge glow
   C(rgb(255, 140, 40), 70, 470, 90); C(rgb(255, 140, 40), W - 70, 470, 90);
   ctx.globalAlpha = 1;
-  T("TIENDA DEL HERRERO", 46, W / 2, 46, GOLD);
-  T(`Tus monedas: ${g.coins}`, 24, W / 2, 92, WHITE);
+  T("TIENDA DEL HERRERO", 40, W / 2, 38, GOLD);
+  T(`Tus monedas: ${g.coins}`, 22, W / 2, 80, WHITE);
   const lay = shopLayout();
   SHOP.forEach((item, i) => {
     const c = lay.cards[i], owned = g.upg[item.id], sel = g.shopSel === i, afford = g.coins >= item.price;
     R(owned ? rgb(52, 92, 58) : rgb(96, 64, 40), c.x, c.y, c.w, c.h, 12);
     RS(sel ? GOLD : rgb(150, 108, 66), c.x, c.y, c.w, c.h, sel ? 4 : 2, 12);
-    emoji(item.icon, 50, c.x + c.w / 2, c.y + 56);
-    T(item.name, 17, c.x + c.w / 2, c.y + 116, WHITE);
-    item.desc.forEach((line, k) => T(line, 14, c.x + c.w / 2, c.y + 146 + k * 19, rgb(236, 220, 196)));
-    T(owned ? "¡TUYO!" : `${item.price} monedas`, 17, c.x + c.w / 2, c.y + 206,
+    emoji(item.icon, 34, c.x + c.w / 2, c.y + 28);
+    T(item.name, 16, c.x + c.w / 2, c.y + 62, WHITE);
+    item.desc.forEach((line, k) => T(line, 13, c.x + c.w / 2, c.y + 84 + k * 16, rgb(236, 220, 196)));
+    T(owned ? "¡TUYO!" : `${item.price} monedas`, 16, c.x + c.w / 2, c.y + 122,
       owned ? GRASS_LIGHT : afford ? GOLD : rgb(240, 120, 110));
   });
   const b = lay.button, bsel = g.shopSel === SHOP.length;
   R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14);
   RS(bsel ? GOLD : rgb(40, 80, 36), b.x, b.y, b.w, b.h, 3, 14);
-  T("¡Al siguiente nivel! ▶", 26, W / 2, b.y + b.h / 2, WHITE);
-  if (g.shopMsg && g.shopMsgT > 0) T(g.shopMsg, 22, W / 2, 480, g.shopMsgCol);
-  else T(isTouch ? "Toca una mejora para comprarla" : "← → elegir     ENTER comprar", 18, W / 2, 482, rgb(220, 200, 170));
+  T("¡Al siguiente nivel! ▶", 24, W / 2, b.y + b.h / 2, WHITE);
+  if (g.shopMsg && g.shopMsgT > 0) T(g.shopMsg, 20, W / 2, 492, g.shopMsgCol);
+  else T(isTouch ? "Toca una mejora para comprarla" : "← → ↑ ↓ elegir     ENTER comprar", 17, W / 2, 494, rgb(220, 200, 170));
 }
 
 // ------------------------------------------------------------------ game
@@ -2349,6 +2505,7 @@ class Game {
   constructor() {
     this.t = 0; this.state = "title"; this.stateTimer = 0; this.paused = false;
     this.lives = START_LIVES; this.score = 0; this.coins = 0; this.levelIndex = 0; this.upg = {};
+    this.kills = 0; this.deaths = 0; this.runFrames = 0; this.swings = 0;
     this.shopSel = 0; this.shopMsg = ""; this.shopMsgT = 0; this.shopMsgCol = WHITE;
     this.tileSets = {};
     const rnd = seeded(3);
@@ -2363,7 +2520,7 @@ class Game {
   }
   newGame(levelIndex = 0) {   // from the title: fresh start; after game over: carry on in the same level
     this.paused = false; this.levelIndex = levelIndex;
-    if (levelIndex === 0) { this.upg = {}; this.coins = 0; }
+    if (levelIndex === 0) { this.upg = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; }
     this.lives = START_LIVES; this.score = 0;
     this.resetLevel(); this.state = "play"; say(this.startLine(), true);
   }
@@ -2380,7 +2537,7 @@ class Game {
     this.coins -= item.price; this.upg[item.id] = true;
     this.shopMessage(`¡${item.name} comprado!`, GRASS_LIGHT);
     const c = shopLayout().cards[i];
-    this.burst(c.x + c.w / 2, c.y + 56, [GOLD, WHITE, rgb(255, 150, 60)], 26, 6);
+    this.burst(c.x + c.w / 2, c.y + 30, [GOLD, WHITE, rgb(255, 150, 60)], 26, 6);
     play("anvil"); say("gracias", true);
   }
   shopMessage(msg, col) { this.shopMsg = msg; this.shopMsgCol = col; this.shopMsgT = 150; }
@@ -2396,9 +2553,157 @@ class Game {
     if (this.level.mode) this.player.setMode(this.level.mode, this.upg);
     this.particles = []; this.popups = []; this.camX = 0; this.shake = 0; this.levelTimer = 0;
     this.bossAnnounced = false; this.flyingAxe = null; this.shots = [];
+    this.bees = null; this.rings = []; this.mirrorCd = 0; this.mirrorGlow = 0; this.inCastle = false; this.castleFlag = 0;
+  }
+  castleX() { return Math.min(this.level.flag.x + 56, this.level.pxW - 86); }
+  followCam() {
+    const p = this.player, lvl = this.level;
+    const target = p.x + p.w / 2 - W * (p.plane ? 0.3 : 0.42) + (p.bike || p.horse ? p.vx * 18 : 0);   // look further ahead at speed
+    this.camX += (target - this.camX) * 0.12;
+    this.camX = Math.max(0, Math.min(this.camX, lvl.pxW - W));
+  }
+  startPole() {   // grab the flagpole like Mario: the higher you grab it, the more points
+    const p = this.player, lvl = this.level, fl = lvl.flag, base = fl.y + fl.h;
+    let top = p.y;
+    if (p.bike || p.tank || p.horse) {   // leap off the ride, which waits at the foot of the pole
+      lvl.parked = { kind: p.bike ? "bike" : p.tank ? "tank" : "horse", x: fl.x - p.w - 4, y: base - p.h, w: p.w, h: p.h };
+      p.bike = p.tank = p.horse = false; p.w = KNIGHT_W; p.h = KNIGHT_H; top = p.y - 40; play("jump");
+    }
+    const hi = fl.y + 14, lo = base - p.h;
+    p.x = fl.x - p.w + 1; p.y = Math.max(hi, Math.min(top, lo)); p.vx = p.vy = 0; p.facing = 1;
+    p.attackTimer = 0; p.invuln = 0; p.wallT = 0; p.knockback = 0; p.maxFall = MAX_FALL;
+    const frac = (lo - p.y) / (lo - hi);
+    const pts = frac > 0.9 ? 5000 : frac > 0.6 ? 2000 : frac > 0.35 ? 800 : frac > 0.12 ? 400 : 100;
+    this.score += pts; this.popup(fl.x + 34, p.y + 10, `+${pts}`, pts >= 2000 ? GOLD : WHITE);
+    this.state = "pole"; this.poleStage = "slide"; this.stateTimer = 0; this.flyingAxe = null; this.shots = []; this.rings = [];
+    lvl.flagDrop = 0; play("slide"); if (pts >= 2000) say("ole", true);
+  }
+  updatePole() {
+    const p = this.player, lvl = this.level, fl = lvl.flag, base = fl.y + fl.h, door = this.castleX() + 42;
+    this.stateTimer++;
+    lvl.flagDrop = Math.min(fl.h - 52, lvl.flagDrop + 5);
+    if (this.poleStage === "slide") {   // slide down while the flag comes down too
+      p.y = Math.min(base - p.h, p.y + 5);
+      if (p.y >= base - p.h && lvl.flagDrop >= fl.h - 52) { this.poleStage = "turn"; this.stateTimer = 0; p.x = fl.x + 5; p.facing = -1; }
+    } else if (this.poleStage === "turn") {   // swing round to the other side of the pole, then hop off
+      if (this.stateTimer > 16) { this.poleStage = "walk"; p.facing = 1; p.vy = -7; p.vx = 2.6; play("jump"); }
+    } else if (this.poleStage === "walk") {   // march into the castle
+      p.vx = 2.6; physicsMove(p, lvl); p.anim += p.onGround ? 0.65 : 0.05;
+      if (p.x + p.w / 2 >= door || p.y > lvl.pxH) { this.poleStage = "in"; this.stateTimer = 0; this.inCastle = true; play("clear"); }
+    } else {
+      this.castleFlag = Math.min(1, this.castleFlag + 0.04);
+      if (this.stateTimer === 12) this.burst(door, base - 150, [GOLD, WHITE, HEART], 24, 5);
+      if (this.stateTimer > 54) this.finishLevel();
+    }
+    this.followCam();
+  }
+  finishLevel() {
+    const p = this.player, bonus = 1000 + 250 * Math.max(0, p.hearts);
+    this.score += bonus; this.popup(p.x + p.w / 2, p.y - 20, `¡Olé! +${bonus}`); this.stateTimer = 0; this.flyingAxe = null;
+    if (this.levelIndex < LEVELS.length - 1) { this.state = "levelclear"; say("nivel", true); }
+    else this.startFinale();
+  }
+  startFinale() {   // the Black Knight is beaten: fireworks and flamenco!
+    const p = this.player, lvl = this.level;
+    this.state = "finale"; this.stateTimer = 0; this.fireworks = []; this.musicT = 0; this.inCastle = false; this.castleFlag = 1;
+    p.x = this.castleX() + 42 - p.w / 2; p.facing = 1; this.finaleY = lvl.flag.y + lvl.flag.h - p.h;
+    say("heroe", true);
+  }
+  updateFinale() {
+    const p = this.player;
+    p.y = this.finaleY - Math.abs(Math.sin(this.stateTimer * 0.09)) * 36; p.onGround = p.y > this.finaleY - 2;
+    if (this.stateTimer % 46 === 20) p.attackTimer = p.atkTotal; else if (p.attackTimer > 0) p.attackTimer--;
+    if (this.stateTimer % 15 === 0) this.fireworks.push({ x: this.camX + 90 + Math.random() * (W - 180), y: H + 10, vy: -(8 + Math.random() * 2.5), fuse: randInt(34, 50) });
+    for (const f of this.fireworks) {
+      f.y += f.vy; f.vy += 0.1;
+      if (--f.fuse <= 0) {   // bang: a ring of sparks that drift down slowly
+        f.dead = true; play("firework");
+        const cols = pick([[GOLD, WHITE], [HEART, rgb(255, 180, 190)], [ARMOR_LIGHT, WHITE], [GRASS_LIGHT, GOLD], [rgb(200, 120, 255), WHITE]]);
+        for (let i = 0; i < 44; i++) {
+          const a = i / 44 * Math.PI * 2, v = 3 + Math.random() * 2.5, life = randInt(50, 80);
+          this.particles.push({ x: f.x, y: f.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, grav: 0.05, drag: 0.96, color: pick(cols), life, maxLife: life, size: randInt(3, 5) });
+        }
+      }
+    }
+    this.fireworks = this.fireworks.filter(f => !f.dead);
+    if (this.stateTimer > 480) this.startCredits();
+  }
+  startCredits() {
+    this.state = "credits"; this.creditsT = 0; this.creditsDone = false; this.particles = []; this.popups = []; this.fireworks = [];
+    const sec = Math.floor(this.runFrames / 60), time = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+    const head = t => [t, 18, GOLD], name = t => [t, 26, WHITE], cast = t => [t, 21, rgb(236, 220, 196)], gap = (n = 16) => ["", n];
+    this.creditLines = [
+      ["EL CABALLERO DEL HACHA", 44, GOLD], gap(24),
+      head("PROTAGONISTA"), name("El Caballero del Hacha"), gap(),
+      head("VILLANOS"), name("El Rey Canguro"), name("El Dirigible"), name("El Caballero Negro"), gap(),
+      head("REPARTO"), cast("Canguros boxeadores · Cocodrilos de agua salada"), cast("Serpientes taipán · Topos mineros · Tiburones"),
+      cast("Ninjas de las sombras · Escorpiones del páramo"), cast("Bailaoras flamencas · Ases del aire"), cast("Jinetes negros · Arqueros del torneo"), gap(),
+      head("MÚSICA Y SONIDO"), cast("Guitarra flamenca, palmas y castañuelas"), gap(),
+      head("HERRERO"), cast("Hachas, paellas, guitarras y abejas"), gap(),
+      head("IDEA Y DISEÑO"), name("Bub"), gap(),
+      head("PROGRAMACIÓN"), name("Claude"), gap(34),
+      ["TUS HAZAÑAS", 24, GOLD], name(`Puntos: ${this.score}`), name(`Monedas: ${this.coins}`), name(`Enemigos derrotados: ${this.kills}`),
+      name(`Vidas perdidas: ${this.deaths}`), name(`Tiempo: ${time}`), gap(44),
+      ["¡GRACIAS POR JUGAR!", 46, GOLD],
+    ];
+    this.creditsH = this.creditLines.reduce((a, l) => a + l[1] * 1.45, 0);
+    this.creditsY = 420;
+    const G = 474, add = (e, fly) => { e.dir = 1; e.maxHp = 1; e.fly = fly; e.baseY = fly ? 370 : G - e.h; e.y = e.baseY; e.onGround = true; this.parade.push({ e }); };
+    this.parade = [];
+    for (const [k, fly] of [["t"], ["w", 1], ["c"], ["T"], ["b", 1], ["n"], ["m"], ["j"], ["g", 1], ["k"], ["h"], ["v", 1], ["d"], ["a"], ["J"]]) {
+      const e = ROO_STATS[k] ? new Kangaroo(k, 0, 0) : FLYER_STATS[k] ? new Flyer(k, 0, 0) : LUNGER_STATS[k] ? new Lunger(k, 0, 0)
+        : k === "m" ? new Mole(0, 0) : k === "h" ? new Shadow(0, 0) : k === "d" ? new Dancer(0, 0) : new Archer(0, 0);
+      if (k === "m") { e.mode = "up"; e.up = 1; }
+      add(e, !!fly);
+    }
+    this.parade.forEach((a, i) => { a.e.x = -80 - i * 118; });
+    const kp = new Player(0, 0, this.upg); kp.x = -80 - this.parade.length * 118 - 20; kp.y = G - kp.h; kp.onGround = true; kp.vx = 1.4;
+    this.paradeKnight = kp; this.paradeLen = (this.parade.length + 1) * 118;
+  }
+  updateCredits() {
+    this.creditsT++;
+    const stop = 210 - (this.creditsH - 46 * 1.45 / 2);   // the last line comes to rest in the middle
+    this.creditsY = Math.max(stop, 420 - this.creditsT * 0.8);
+    if (this.creditsY === stop && !this.creditsDone) { this.creditsDone = true; say("gracias_jugar", true); }
+    if (this.creditsDone && this.t % 40 === 0) this.burst(100 + Math.random() * (W - 200), 120 + Math.random() * 120, pick([[GOLD, WHITE], [HEART, WHITE], [ARMOR_LIGHT, WHITE]]), 26, 5);
+    const wrap = x => x > W + 100 ? x - this.paradeLen : x;
+    for (const { e } of this.parade) {
+      e.t++; e.x = wrap(e.x + 1.4); e.vx = 1.4;
+      if (e.fly) e.y = e.baseY + Math.sin(e.t * 0.08) * 12;
+      else if (ROO_STATS[e.kind]) { const hop = Math.max(0, Math.sin(e.t * 0.12)); e.y = e.baseY - hop * 24; e.onGround = hop === 0; }
+      if (LUNGER_STATS[e.kind]) e.jaw = 0.5 + 0.5 * Math.sin(e.t * 0.06);
+      if (e.kind === "a") e.drawT = 34 - Math.floor(e.t % 60 / 2);
+      if (e.kind === "d") e.mode = Math.sin(e.t * 0.02) > 0.8 ? "twirl" : "dance";
+    }
+    const kp = this.paradeKnight; kp.x = wrap(kp.x + 1.4); kp.anim += 0.35;
+    if (this.creditsT % 70 === 0) kp.attackTimer = kp.atkTotal; else if (kp.attackTimer > 0) kp.attackTimer--;
+  }
+  updateBees() {   // the guardian bees circle the knight and dart at anything that comes close
+    const p = this.player, lvl = this.level;
+    if (!this.upg.bees || p.dead) return;
+    const cx = p.x + p.w / 2, cy = p.y + p.h / 2;
+    if (!this.bees) this.bees = [0, 1].map(k => ({ k, x: cx, y: cy, cd: 40 + k * 50, target: null, dir: 1 }));
+    for (const b of this.bees) {
+      const a = this.t * 0.08 + b.k * Math.PI, hx = cx + Math.cos(a) * (p.w / 2 + 26), hy = cy - 10 + Math.sin(a) * 22;
+      if (b.cd > 0) b.cd--;
+      if (b.target && (!b.target.alive || !b.target.hittable())) b.target = null;
+      if (!b.target && b.cd === 0) {
+        let best = 170;
+        for (const e of lvl.enemies) {
+          if (!e.alive || !e.hittable() || e.kind === "z") continue;
+          const d = Math.hypot(e.x + e.w / 2 - cx, e.y + e.h / 2 - cy); if (d < best) { best = d; b.target = e; }
+        }
+      }
+      if (b.target) {
+        const tr = b.target.rect(), dx = tr.x + tr.w / 2 - b.x, dy = tr.y + tr.h / 2 - b.y, d = Math.hypot(dx, dy) || 1, v = Math.min(d, 8);
+        b.x += dx / d * v; b.y += dy / d * v; b.dir = dx > 0 ? 1 : -1;
+        if (collide({ x: b.x - 7, y: b.y - 7, w: 14, h: 14 }, tr)) { play("buzz"); this.strike(b.target, b.dir, new Set(), 1); b.target = null; b.cd = 110; }
+        else if (d > 420) b.target = null;
+      } else { b.dir = hx > b.x ? 1 : -1; b.x += (hx - b.x) * 0.25; b.y += (hy - b.y) * 0.25; }
+    }
   }
   loseLife() {
-    this.lives--; this.state = "dying"; this.stateTimer = 110; this.flyingAxe = null;
+    this.lives--; this.deaths++; this.state = "dying"; this.stateTimer = 110; this.flyingAxe = null;
     const p = this.player; p.dead = true; p.vy = -11; p.attackTimer = 0; p.invuln = 0;
     play("die"); if (this.lives > 0) say("desastre", true);
   }
@@ -2432,16 +2737,21 @@ class Game {
         if (this.lives > 0) { this.resetLevel(); this.state = "play"; }
         else { this.state = "gameover"; play("gameover"); say("fin", true); }
       }
-    } else if (this.state === "win" || this.state === "levelclear") {
+    } else if (this.state === "pole") this.updatePole();
+    else if (this.state === "finale" || this.state === "credits") {
       this.stateTimer++;
-      if (this.stateTimer % (this.state === "win" ? 18 : 30) === 0)
+      if (--this.musicT <= 0) { play("win"); this.musicT = 222; }   // the flamenco keeps playing
+      if (this.state === "finale") this.updateFinale(); else this.updateCredits();
+    } else if (this.state === "levelclear") {
+      this.stateTimer++;
+      if (this.stateTimer % 30 === 0)
         this.burst(this.camX + 100 + Math.random() * (W - 200), 60 + Math.random() * 160,
           pick([[GOLD, WHITE], [HEART, WHITE], [ARMOR_LIGHT, WHITE], [GRASS_LIGHT, WHITE]]), 30, 6);
     } else if (this.state === "shop") {
       if (this.shopMsgT > 0) this.shopMsgT--;
     }
     for (const c of this.level.coins) c.t++;
-    for (const q of this.particles) { q.vy += 0.25; q.x += q.vx; q.y += q.vy; q.life--; }
+    for (const q of this.particles) { if (q.drag) { q.vx *= q.drag; q.vy *= q.drag; } q.vy += q.grav ?? 0.25; q.x += q.vx; q.y += q.vy; q.life--; }
     this.particles = this.particles.filter(q => q.life > 0);
     for (const q of this.popups) { q.y -= 0.8; q.life--; }
     this.popups = this.popups.filter(q => q.life > 0);
@@ -2476,7 +2786,9 @@ class Game {
 
   updatePlay() {
     const p = this.player, lvl = this.level;
-    this.levelTimer++;
+    this.levelTimer++; this.runFrames++;
+    if (this.mirrorCd > 0) this.mirrorCd--;
+    if (this.mirrorGlow > 0) this.mirrorGlow--;
     p.update(inp, lvl);
     if (p.justJumped) play("jump");
     if (p.justSwung) {
@@ -2489,13 +2801,23 @@ class Game {
       }
       if (this.upg.knives)   // ninja throwing knife
         this.shots.push({ kind: "knife", x: p.x + p.w / 2 + p.facing * 18, y: p.y + 24, vx: p.facing * 11, vy: 0, t: 0, hit: new Set() });
+      this.swings++;
+      if (this.upg.paella && this.swings % 3 === 0) {   // lob a pan of exploding paella
+        this.shots.push({ kind: "paella", x: p.x + p.w / 2 + p.facing * 14, y: p.y + 8, vx: p.facing * 6.5 + p.vx * 0.5, vy: -7.5, t: 0, life: 140, hit: new Set() });
+        play("swing");
+      }
+      if (this.upg.guitar && this.swings % 6 === 0) {   // a thunderous flamenco chord: a ring that stuns everything nearby
+        this.rings.push({ x: p.x + p.w / 2, y: p.y + p.h / 2, r: 10, hit: new Set() }); play("chord"); this.shake = Math.max(this.shake, 6);
+        this.popup(p.x + p.w / 2, p.y - 30, "¡Olé!", GOLD);
+      }
     }
-    if (p.plane && p.justFired) {   // rat-a-tat: the biplane's gun never stops
-      this.shots.push({ kind: "bullet", x: p.x + p.w + 4, y: p.y + 18 + (this.t % 2 ? -2 : 2), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
-      if (this.t % 2 === 0) play("gun");
+    if (p.plane && p.justFired) {   // rat-a-tat: each press of the attack button fires a burst
+      this.shots.push({ kind: "bullet", x: p.x + p.w + 4, y: p.y + 18 + (p.burstN % 2 ? -2 : 2), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
+      play("gun");
     }
-    if (p.justRocket) {   // the attack button drops a bomb-rocket
-      this.shots.push({ kind: "shell", x: p.x + p.w, y: p.y + 26, vx: 9 + p.vx, vy: 0.5, t: 0, hit: new Set() }); play("swing");
+    if (p.justRocket) {   // every fourth press: a rocket!
+      this.shots.push({ kind: "shell", rocket: true, x: p.x + p.w, y: p.y + 24, vx: 10 + p.vx, vy: 0.2, t: 0, hit: new Set() }); play("rocket");
+      this.popup(p.x + p.w / 2, p.y - 12, "¡Cohete!", GOLD);
     }
     if (p.tank && p.justFired) {   // BOOM: the tank fires its cannon
       const mx = p.facing > 0 ? p.x + p.w + 10 : p.x - 10;
@@ -2518,6 +2840,13 @@ class Game {
       if (!fa.alive) this.flyingAxe = null;
     }
     for (const e of lvl.enemies) e.update(lvl, p, this);
+    this.updateBees();
+    for (const g of this.rings) {   // the guitar's shockwave ring spreads out
+      g.r += 9; if (g.r > 250) g.dead = true;
+      for (const e of lvl.enemies) if (e.alive && Math.hypot(e.x + e.w / 2 - g.x, e.y + e.h / 2 - g.y) < g.r) { this.strike(e, e.x + e.w / 2 > g.x ? 1 : -1, g.hit, 1); if (e.alive && !e.blocks && e !== lvl.boss) e.stun = Math.max(e.stun, 50); }
+      for (const o of this.shots) if (o.enemy && Math.hypot(o.x - g.x, o.y - g.y) < g.r) { o.dead = true; this.burst(o.x, o.y, [GOLD, WHITE], 6, 3); }
+    }
+    this.rings = this.rings.filter(g => !g.dead);
     lvl.enemies = lvl.enemies.filter(e => e.alive);
 
     const bk = lvl.bike;   // hop on the motorbike!
@@ -2579,28 +2908,36 @@ class Game {
     for (const s of lvl.spikes) if (collide(pr, { x: s.x + 4, y: s.y + 20, w: TILE - 8, h: 20 }) && ouch(s.x + TILE / 2)) p.vy = -10;
     for (const s of this.shots) {   // knives, cannonballs and the dancers' fans
       s.t++; s.x += s.vx; s.y += s.vy;
-      if (s.kind === "shell") s.vy += 0.05;
+      if (s.kind === "shell") s.vy += s.rocket ? 0.01 : 0.05;
+      if (s.kind === "arrow") s.vy += 0.15;
+      if (s.kind === "paella") s.vy += 0.35;
+      const boomy = s.kind === "shell" || s.kind === "paella";
       const sr = s.kind === "wave" ? { x: s.x - 14, y: s.y - 12, w: 28, h: 28 } : { x: s.x - 9, y: s.y - 9, w: 18, h: 18 };
       if (s.enemy) {
         if (box && !s.nochop && collide(box, sr)) {   // chop a fan right out of the air
           s.dead = true; this.burst(s.x, s.y, [s.col, WHITE], 10, 3); this.popup(s.x, s.y - 10, "¡Zas!", WHITE); play("hit");
+        } else if (collide(pr, sr) && this.upg.mirror && this.mirrorCd === 0 && p.invuln === 0) {   // the mirror shield sends it straight back
+          s.enemy = false; s.vx = -s.vx * 1.4 || -p.facing * 8; s.vy = s.kind === "arrow" ? -Math.abs(s.vy) * 0.5 : -s.vy * 0.5; s.t = 0; s.life = 90; s.hit = new Set();
+          this.mirrorCd = 240; this.mirrorGlow = 24; play("clang"); say("reflejo"); this.popup(p.x + p.w / 2, p.y - 20, "¡Reflejado!", ARMOR_LIGHT);
         } else if (collide(pr, sr)) { ouch(s.x); s.dead = true; }
       } else {
         for (const o of this.shots) if (o.enemy && !o.dead && !o.nochop && collide(sr, { x: o.x - 10, y: o.y - 10, w: 20, h: 20 })) {   // shoot fans down
-          o.dead = true; this.burst(o.x, o.y, [o.col, WHITE], 10, 3); if (s.kind !== "shell") s.dead = true;
+          o.dead = true; this.burst(o.x, o.y, [o.col, WHITE], 10, 3); if (!boomy) s.dead = true;
         }
         for (const e of lvl.enemies) {
-          if (s.dead && s.kind !== "shell") break;
+          if (s.dead && !boomy) break;
           if (!e.alive || !e.hittable() || s.hit.has(e.id) || !collide(sr, e.rect())) continue;
-          this.strike(e, Math.sign(s.vx), s.hit, s.kind === "shell" ? 2 : 1); s.dead = true; break;
+          this.strike(e, Math.sign(s.vx), s.hit, boomy ? 2 : 1); s.dead = true; break;
         }
         this.breakCrates(sr);
       }
       if (lvl.solidAt(Math.floor(s.x / TILE), Math.floor(s.y / TILE)) || s.t > (s.life || (s.enemy ? 170 : 90))) s.dead = true;
-      if (s.dead && s.kind === "shell") {   // explosion
-        this.burst(s.x, s.y, [rgb(255, 200, 80), rgb(255, 120, 40), rgb(150, 150, 150)], 22, 5); play("boom");
+      if (s.dead && boomy) {   // explosion (the paella one is bigger, and full of rice)
+        const big = s.kind === "paella";
+        this.burst(s.x, s.y, big ? [rgb(250, 190, 40), rgb(220, 40, 40), rgb(80, 170, 60), WHITE] : [rgb(255, 200, 80), rgb(255, 120, 40), rgb(150, 150, 150)], big ? 30 : 22, 5); play("boom");
         this.shake = Math.max(this.shake, 6);
-        for (const e of lvl.enemies) if (e.alive && e.hittable() && Math.hypot(e.x + e.w / 2 - s.x, e.y + e.h / 2 - s.y) < 60) this.strike(e, Math.sign(s.vx), s.hit, 2);
+        if (big) this.popup(s.x, s.y - 20, "¡Paella!", GOLD);
+        for (const e of lvl.enemies) if (e.alive && e.hittable() && Math.hypot(e.x + e.w / 2 - s.x, e.y + e.h / 2 - s.y) < (big ? 80 : 60)) this.strike(e, Math.sign(s.vx) || 1, s.hit, 2);
       }
     }
     this.shots = this.shots.filter(s => !s.dead);
@@ -2618,22 +2955,14 @@ class Game {
     if (p.plane && lvl.boss && lvl.boss.alive && lvl.boss.awake) p.x = Math.min(p.x, lvl.boss.x - 160);   // can't fly past the airship
     if (!p.plane && lvl.boss && lvl.boss.alive && this.bossAnnounced && lvl.arena[1] < lvl.pxW)   // the arena is closed until the boss is beaten
       p.x = Math.max(lvl.arena[0], Math.min(p.x, lvl.arena[1] - p.w));
-    if (p.plane ? lvl.flagOpen() && p.x + p.w > lvl.flag.x : lvl.flagOpen() && collide(p.rect(), inflate(lvl.flag, 20, 0))) {
-      const bonus = 1000 + 250 * p.hearts;
-      this.score += bonus; this.popup(p.x + p.w / 2, p.y - 10, `¡Olé! +${bonus}`);
-      this.stateTimer = 0; this.flyingAxe = null;
-      if (this.levelIndex < LEVELS.length - 1) { this.state = "levelclear"; play("clear"); say("nivel", true); }
-      else { this.state = "win"; play("win"); say("ole", true); }
-      return;
-    }
     if (p.hearts <= 0 || p.y > lvl.pxH + 60) { this.loseLife(); return; }
-    const target = p.x + p.w / 2 - W * (p.plane ? 0.3 : 0.42) + (p.bike || p.horse ? p.vx * 18 : 0);   // look further ahead at speed
-    this.camX += (target - this.camX) * 0.12;
-    this.camX = Math.max(0, Math.min(this.camX, lvl.pxW - W));
+    if (p.plane && lvl.flagOpen() && p.x + p.w > lvl.flag.x) { play("clear"); this.finishLevel(); return; }   // through the finish line in the sky
+    if (!p.plane && lvl.flagOpen() && collide(p.rect(), inflate(lvl.flag, 20, 0))) { this.startPole(); return; }
+    this.followCam();
   }
 
   defeated(e, ex, ey, er) {
-    this.score += e.score;
+    this.score += e.score; this.kills++;
     const boss = e === this.level.boss;
     this.burst(ex, ey, e.colors(), boss ? 60 : 20, boss ? 9 : 5);
     if (e.kind === "E") this.burst(ex, ey, [rgb(90, 90, 90), rgb(150, 150, 150), rgb(255, 160, 60)], 18, 4);
@@ -2649,6 +2978,7 @@ class Game {
       s: ["¡Adiós, tiburón!", "splash", "tiburon"], d: ["¡Fuera de la pista!", "castanets", "pista"], n: ["¡Adiós, serpiente!", "hiss", "serpiente"], k: [null, "click", "toma"],
       w: [null, "squeak", "toma"], b: [null, "squeak", "toma"], g: [null, "screech", "toma"], v: [null, "screech", "toma"],
       h: ["¡Adiós, sombra!", "shing", "sombra"], z: ["¡Bum!", "boom", "toma"], E: ["¡Derribado!", "boom", "derribado"], J: ["¡Desmontado!", "neigh", "desmontado"],
+      a: ["¡Adiós, arquero!", "boing", "arquero"],
     };
     const [word, snd, line] = WORDS[e.kind] || [null, "boing", pick(["toma", "adios"])];
     this.popup(ex, er.y - 10, `${word || pick(["¡Toma!", "¡Zas!", "¡Adiós!"])} +${e.score}`);
@@ -2656,6 +2986,7 @@ class Game {
   }
 
   draw() {
+    if (this.state === "credits") { drawCredits(this); return; }
     if (this.state === "shop") {
       if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
       drawShop(this);
@@ -2692,29 +3023,47 @@ class Game {
       const x = fl.x - cam;
       for (let y = 40, i = 0; y < 430; y += 16, i++) { R(i % 2 ? BLACK : WHITE, x, y, 10, 16); R(i % 2 ? WHITE : BLACK, x + 10, y, 10, 16); }
       T("META", 22, x + 10, 26, GOLD);
-    } else if (fl && lvl.flagOpen()) {
-      const x = fl.x + 3 - cam, wave = Math.sin(this.t * 0.1) * 4;
-      L(STONE_DARK, x, fl.y, x, fl.y + fl.h, 5); C(GOLD, x, fl.y, 7);
-      const banner = [[x + 2, fl.y + 8], [x + 46, fl.y + 22 + wave], [x + 2, fl.y + 36]];
-      P(ARMOR, banner); PS(ARMOR_DARK, banner, 2);
+    } else if (fl) {
+      const cxl = this.castleX();
+      if (cxl < cam + W && cxl + 90 > cam) drawCastle(cxl - cam, fl.y + fl.h, this.castleFlag);
+      if (lvl.flagOpen()) {
+        const x = fl.x + 3 - cam, wave = Math.sin(this.t * 0.1) * 4, by = fl.y + (lvl.flagDrop || 0);
+        L(STONE_DARK, x, fl.y, x, fl.y + fl.h, 5); C(GOLD, x, fl.y, 7); R(STONE_DARK, x - 9, fl.y + fl.h - 10, 18, 10, 2);
+        const banner = [[x + 2, by + 8], [x + 46, by + 22 + wave], [x + 2, by + 36]];
+        P(ARMOR, banner); PS(ARMOR_DARK, banner, 2); C(GOLD, x + 16, by + 22 + wave * 0.4, 4);
+      }
+    }
+    const pk = lvl.parked;
+    if (pk) {   // the ride the knight jumped off at the flagpole
+      if (pk.kind === "bike") { ctx.save(); ctx.translate(pk.x + 2 - cam, pk.y + pk.h - 56); drawBike(0, false); ctx.restore(); }
+      else if (pk.kind === "tank") { ctx.save(); ctx.translate(pk.x - cam, pk.y); drawTank(0, 0, false, this.t); ctx.restore(); }
+      else { flipAt(pk.x - cam, pk.y, pk.w, 1); drawHorse(this.t * 0.02, false, ARMOR, GOLD, rgb(236, 232, 226), rgb(150, 138, 126), STEEL); ctx.restore(); }
     }
     for (const c of lvl.coins) drawCoin(c, cam);
     for (const e of lvl.enemies) if (e.x + e.w > cam - 60 && e.x < cam + W + 60) e.draw(cam);
     const p = this.player;
-    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) {
+    if (!this.inCastle && !(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) {
       if (p.tank) { flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing); drawTank(p.x / 9, Math.max(0, p.recoil), true, this.t); ctx.restore(); }
       else if (p.plane) drawPlane(p.x - cam, p.y, 1, PLAYER_PLANE, true, this.t, p.vy * 0.06);
       else if (p.horse) drawJoust(p, cam, this.upg, this.t);
       else if (p.ninja) drawNinja(p, cam, this.upg, this.t);
       else drawKnight(p, cam, this.upg, this.t);
     }
+    if (this.mirrorGlow) { ctx.globalAlpha = this.mirrorGlow / 30; CS(ARMOR_LIGHT, p.x + p.w / 2 - cam, p.y + p.h / 2, Math.max(p.w, p.h) * 0.75, 4); ctx.globalAlpha = 1; }
+    if (this.bees && this.state === "play") for (const b of this.bees) drawBee(b.x - cam, b.y, this.t, b.dir);
+    for (const g of this.rings) {   // the guitar chord's shockwave
+      ctx.globalAlpha = Math.max(0, 1 - g.r / 250); CS(GOLD, g.x - cam, g.y, g.r, 5); CS(WHITE, g.x - cam, g.y, g.r - 8, 2);
+      for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2 + g.r * 0.01; T("♪", 22, g.x - cam + Math.cos(a) * g.r, g.y + Math.sin(a) * g.r, GOLD); }
+      ctx.globalAlpha = 1;
+    }
+    for (const f of this.fireworks || []) if (this.state === "finale") { R(WHITE, f.x - cam - 1.5, f.y, 3, 8); ctx.globalAlpha = 0.5; R(GOLD, f.x - cam - 1, f.y + 8, 2, 12); ctx.globalAlpha = 1; }
     for (const s of this.shots) drawShot(s, cam);
     if (this.flyingAxe) drawMiniAxe(this.flyingAxe.x - cam, this.flyingAxe.y, this.flyingAxe.t * 0.45, this.upg.sharp);
     for (const q of this.particles) {
       const s = Math.max(1, Math.floor(q.size * q.life / q.maxLife + 1));
       R(q.color, Math.floor(q.x - cam - s / 2), Math.floor(q.y - s / 2), s, s);
     }
-    if (theme.dark) {   // mine and night: only the knight's surroundings and the lamps are lit
+    if (theme.dark && this.state !== "finale") {   // mine and night: only the knight's surroundings and the lamps are lit
       const DARKS = { true: ["8,5,3", 70, 430, 0.86], night: ["6,6,22", 90, 520, 0.8], ninja: ["10,10,32", 100, 520, 0.7], throne: ["16,6,10", 120, 600, 0.6] };
       const [dc, r0, r1, da] = DARKS[String(theme.dark)] || DARKS.true, lx = p.x + p.w / 2 - cam, ly = p.y + p.h / 2;
       const g = ctx.createRadialGradient(lx, ly, r0, lx, ly, r1);
@@ -2739,6 +3088,11 @@ class Game {
       T(`NIVEL ${this.levelIndex + 1}`, 20, 16, 62, WHITE, "left", "top");
       SHOP.filter(it => this.upg[it.id]).forEach((it, i) => emoji(it.icon, 18, 26 + i * 24, 98));
       if (p.ninja) { drawShuriken(28, 126, this.t * 0.05, rgb(214, 220, 236), 10); T(`× ${p.shuriken}`, 20, 44, 126, WHITE, "left", "middle"); }
+      if (p.plane) {   // rocket meter: every 4th shot launches a rocket
+        const n = (p.presses || 0) % 4;
+        T("COHETE", 16, 16, 118, WHITE, "left", "top");
+        for (let i = 0; i < 4; i++) R(i < n ? GOLD : i === 3 ? rgb(210, 40, 40) : HEART_EMPTY, 92 + i * 16, 119, 12, 14, 3);
+      }
       T(`MONEDAS ${this.coins}`, 20, W / 2, 14, WHITE, "center", "top");
       T(`PUNTOS ${String(this.score).padStart(6, "0")}`, 20, W - 120, 14, WHITE, "right", "top");
       const b = lvl.boss;
@@ -2784,12 +3138,12 @@ class Game {
       T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 220, WHITE);
       T(`Siguiente: ${LEVELS[this.levelIndex + 1].name}`, 30, W / 2, 268, WHITE);
       if (this.stateTimer > 60) tap("Toca para ir a la tienda", "Pulsa ENTER para ir a la tienda", 350);
-    } else if (this.state === "win" && this.stateTimer > 40) {
-      shade();
-      T("¡OLÉ!", 80, W / 2, 130, GOLD);
-      T("¡Has vencido al Caballero Negro, caballero!", 30, W / 2, 200, WHITE);
-      T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 250, WHITE);
-      tap("Toca para jugar otra vez", "Pulsa ENTER para jugar otra vez", 340);
+    } else if (this.state === "finale") {
+      const k = 1 + Math.sin(this.stateTimer * 0.12) * 0.06;
+      ctx.save(); ctx.translate(W / 2, 128); ctx.scale(k, k); T("¡VICTORIA!", 84, 0, 0, GOLD); ctx.restore();
+      T("¡Has vencido al Caballero Negro!", 30, W / 2, 196, WHITE);
+      T("¡Eres un héroe, caballero!", 26, W / 2, 234, ARMOR_LIGHT);
+      if (this.stateTimer > 90) tap("Toca para ver los créditos", "Pulsa ENTER para ver los créditos", 290);
     }
     if (this.paused) {
       shade();
@@ -2827,10 +3181,12 @@ function unlock() {   // first touch: allow sound, go fullscreen where the phone
 function tapStart() {
   if (game.paused) { setPaused(false); return true; }
   const s = game.state;
-  if (s === "title" || (s === "win" && game.stateTimer > 40)) { game.newGame(0); return true; }
+  if (s === "title") { game.newGame(0); return true; }
+  if (s === "finale") { if (game.stateTimer > 90) game.startCredits(); return true; }
+  if (s === "credits") { if (game.creditsT > 150) game.newGame(0); return true; }
   if (s === "gameover") { game.newGame(game.levelIndex); return true; }
   if (s === "levelclear") { if (game.stateTimer > 60) game.openShop(); return true; }
-  return s === "win" || s === "shop";
+  return s === "shop" || s === "pole";
 }
 const keys = { left: false, right: false, jump: false };
 const touch = { left: false, right: false, jump: false };
@@ -2841,6 +3197,8 @@ window.addEventListener("keydown", e => {
     const n = SHOP.length;
     if (e.code === "ArrowLeft" || e.code === "KeyA") game.shopSel = (game.shopSel + n) % (n + 1);
     else if (e.code === "ArrowRight" || e.code === "KeyD") game.shopSel = (game.shopSel + 1) % (n + 1);
+    else if (e.code === "ArrowDown" || e.code === "KeyS") game.shopSel = game.shopSel >= n ? 0 : Math.min(n, game.shopSel + PER_ROW);
+    else if (e.code === "ArrowUp" || e.code === "KeyW") game.shopSel = game.shopSel >= n ? n - PER_ROW : Math.max(0, game.shopSel - PER_ROW);
     else if (["Enter", "NumpadEnter", "Space", "KeyX", "KeyJ"].includes(e.code) && !e.repeat) {
       if (game.shopSel < n) game.buy(game.shopSel); else game.nextLevel();
     }
