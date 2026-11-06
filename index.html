@@ -95,14 +95,14 @@ const LEVELS = [
     "####################..###################....##########################....##########################....#########################",
     "####################..###################....##########################....##########################....#########################"
   ] },
-  { name: "El Bosque", theme: "forest", speed: 1.1, hint: "¡Ojo con las serpientes taipán!", map: [
+  { name: "El Bosque", theme: "forest", speed: 1.1, door: 11, hint: "¡Ojo con las serpientes taipán!", map: [
     "......................................................................................................................................................",
     "......................................................................................................................................................",
     "......................................................................................................................................................",
-    "......................................................................................................................................................",
-    "......................................................................................................................................................",
-    "..............................w.................w.....................w...........................w.....................w...................w.........",
-    "...................................................ooo................................................................................................",
+    "............................................................oD........................................................................................",
+    "............................................................HH........................................................................................",
+    "..............................w.................w.......oo............w...........................w.....................w...................w.........",
+    "...................................................ooo..HH............................................................................................",
     "............................ooooo...............................................ooooo.................................oooo............................",
     ".....ooo....................=====........oo.........##.........oo...............=====......oo....................oo...====...................oooo.....",
     ".........................................==...C....###.........==..........................==....................==...................................",
@@ -140,7 +140,7 @@ const LEVELS = [
     "################....##############....############.....#############....##################....##########.....###############....############.....###########################",
     "################....##############....############.....#############....##################....##########.....###############....############.....###########################"
   ] },
-  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", hint: "¡Salta de pared en pared y lanza shuriken!", map: [
+  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, door: 12, mode: "ninja", hint: "¡Salta de pared en pared y lanza shuriken!", map: [
     "................................................................................................................................................................................",
     "................................................................................................................................................................................",
     "................................................................................................................................................................................",
@@ -149,9 +149,9 @@ const LEVELS = [
     "............................N.........................................h.........##............................................h.................................................",
     "...................o###############.............................o##########....o##......................................o##########.............................................",
     "...................o###############.............................o##########....o##............................oooo......o##########.............................................",
-    "...................o###############.............o..o............o##########....o##.................o..o.......====......o##########.....................o..o....................",
-    "...................o###############.............#..#............o##########....o##.................#..#.................o##########.....................#..#....................",
-    "..P.....N...h.......###############...h.........#..#........h.N..##########.....##....^^..h........#..#.....N.h.....h....##########..N...^..h.....h.....#..#......N..h......F...",
+    "...................o###############.............o..o............o##VVVVV###....o##.................o..o.......====......o##########.....................o..o....................",
+    "...................o###############.............#..#............oQQVVVVV###....o##.................#..#.................o##########.....................#..#....................",
+    "..P.....N...h.......###############...h.........#..#........h.N..QQVoooD###.....##....^^..h........#..#.....N.h.....h....##########..N...^..h.....h.....#..#......N..h......F...",
     "#############################################...#..#...#########################################...#..#..##############################################.#..#...#################",
     "#############################################...#..#...#########################################...#..#..##############################################.#..#...#################"
   ] },
@@ -244,6 +244,36 @@ const LEVELS = [
     "..P...........h...........h.........[...............X.............]F....",
     "########################################################################",
     "########################################################################"
+  ] },
+  { name: "La Tierra de los Dinosaurios", theme: "dino", speed: 1.0, secret: true, returnTo: 2, hint: "¡Un nivel secreto! ¡Cuidado con los dinosaurios!", map: [
+    "..................................................................................................................................................................................................................",
+    "..................................................................................................................................................................................................................",
+    "..................................................................................................................................................................................................................",
+    "..................................................................................................................................................................................................................",
+    "..................q.....................q.........................q...........................U...q...................q...........................q...............................................................",
+    ".............................................................................................oooo.................................................................................................................",
+    "..........................................oooo......................oooo.....................====.......................oooo......................................................................................",
+    "..........oooo.....................oooo...====..............oooo....====................oooo.....................oooo...====................oooo......oooo........................................................",
+    "..........====.....................====.....................====........................====.....................====.......................====......====..............==........................==..............",
+    ".....ooo..........oo.....................................oo.....................................................oo...................................................oo...........................................",
+    "..P...........r...................^^....y......r..............r.........y...............^^r.......................r.....y.....r...........^..r......y......r...........[..................R.........].....F.......",
+    "##########################....######################...#########################....####################....######################....##########################...###############################################",
+    "##########################....######################...#########################....####################....######################....##########################...###############################################"
+  ] },
+  { name: "El Espacio Exterior", theme: "space", speed: 1.15, secret: true, returnTo: 5, mode: "ufo", hint: "SALTA: subir · 🪓: láser · ¡Esquiva los asteroides!", map: [
+    "......................................................................................................................................................................................................................................",
+    "........................................................................................................................U.............................................................................................................",
+    "....................O...................................O...O.......O...............O.......................................................O...................O.....................................................................",
+    "................O.....................o.O.o.o...O...........O.........u.........o.o.o.o.........................O...O.....o.Ouo.o...............O...O...........O...o.o.O.o.O.........................................................",
+    "..............................u.....O.........o.o.............................o.........O.o.........O...................o.........o.o.............................o..u......o.o.............O.............o.o.........................",
+    "............................O...O.o...............o.............O.......O.o.o...O...........o...........O...........o.o...............o.....................O.o.o...O...O.......o.....................u.O.............................",
+    "..P.......o.............O.....o.o...................o...................o...........O.........ouO.................o.....................O...............O...o.......O...........O.o...................o.....O.........................",
+    "............o...............o.........................o...............o.....................O...o...........O...o...............O...O.....o...........u...o.O.......................o...O.......O...O.................................",
+    "..............o.o.........o.....................u...O...o.o.........o.......O...........O.........o.o.........o.........O...................o.o.....O...o...................O.........o.ou......o.o...................................",
+    "..................o.o.o.o...................................o.o.o.o.............O.....................o.o.o.o.u.............................O...o.o.o.o.............................O.....o.o.o.......................................",
+    "............................................O.......................O...O...O...................................................................O.......O.....................................................................F.......",
+    "......................................................................................................................................................................................................................................",
+    "......................................................................................................................................................................................................................................"
   ] }
 ];
 
@@ -268,7 +298,8 @@ const MAX_RUN = 4.6, JUMP_SPEED = 13.6, JUMP_CUT = 4.5, COYOTE_FRAMES = 10, JUMP
 const INVULN_FRAMES = 90, START_LIVES = 3, MAX_HEARTS = 3, ARM_LEN = 16, AXE_HEAD = 48, AXE_LEN = 56;
 const KNIGHT_W = 30, KNIGHT_H = 56, BIKE_W = 44, TANK_W = 72, TANK_H = 52, HORSE_W = 66, HORSE_H = 74, PLANE_W = 70, PLANE_H = 34;
 const WATER_Y = 11 * TILE + 14;   // surface of the sea in water levels
-const SOLID = "#=C";
+const SOLID = "#=CHQ";   // ground, platforms, crates, hidden blocks, cracked stone
+const MAIN_LEVELS = LEVELS.filter(l => !l.secret).length;   // the secret levels come after these
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
 const WHITE = "#fff", BLACK = rgb(15, 15, 25);
@@ -293,6 +324,12 @@ const ENEMY_PLANES = [[rgb(96, 96, 104), rgb(64, 64, 72), rgb(210, 44, 44)], [rg
 const ENEMY_COLORS = {
   h: [rgb(18, 16, 26), rgb(150, 20, 40), WHITE],                    // shadow ninja
   a: [rgb(60, 96, 52), rgb(110, 76, 40), WHITE],                    // archer
+  r: [rgb(84, 150, 96), rgb(44, 96, 62), rgb(214, 220, 160)],       // raptor
+  y: [rgb(150, 126, 84), rgb(214, 120, 60), WHITE],                 // triceratops
+  q: [rgb(170, 96, 70), rgb(200, 130, 96), WHITE],                  // pterodactyl
+  R: [rgb(104, 128, 70), rgb(210, 200, 150), WHITE],                // tyrannosaurus
+  O: [rgb(126, 110, 100), rgb(90, 80, 74), rgb(180, 170, 160)],     // asteroid
+  u: [rgb(110, 220, 90), rgb(150, 110, 200), WHITE],                // alien
   E: [rgb(96, 96, 104), rgb(255, 160, 60), rgb(70, 70, 70)],        // enemy biplane
   J: [rgb(50, 44, 46), rgb(150, 20, 30), GOLD],                     // enemy cavalry
   X: [rgb(34, 32, 40), rgb(200, 30, 40), GOLD],                     // the Black Knight
@@ -345,6 +382,11 @@ const THEMES = {
   throne: { sky: [[30, 20, 30], [60, 30, 40]], far: rgb(52, 38, 50), near: rgb(36, 26, 36), bg: "throne", dark: "throne", lamp: "255,150,60", glow: 110,
             clouds: false, bricks: true, spikes: "metal",
             top: [rgb(150, 144, 166), rgb(104, 98, 122), rgb(186, 180, 200)], dirt: [rgb(96, 88, 108), rgb(72, 66, 84), rgb(118, 110, 130)] },
+  dino:   { sky: [[244, 120, 84], [255, 214, 150]], far: rgb(128, 70, 84), near: rgb(52, 106, 58), bg: "dino", lava: true,
+            sun: rgb(255, 236, 180), clouds: false, spikes: "rock",
+            top: [rgb(112, 170, 64), rgb(76, 126, 44), rgb(150, 206, 90)], dirt: [rgb(122, 74, 52), rgb(96, 56, 40), rgb(146, 94, 66)] },
+  space:  { sky: [[4, 4, 20], [30, 12, 52]], far: rgb(60, 40, 110), near: rgb(30, 20, 70), bg: "space", clouds: false, flat: true,
+            top: [rgb(120, 110, 140), rgb(84, 76, 104), rgb(150, 140, 170)], dirt: [rgb(70, 64, 90), rgb(52, 48, 70), rgb(90, 84, 110)] },
   desert: { sky: [[232, 120, 60], [255, 214, 140]], far: rgb(196, 104, 66), near: rgb(222, 150, 90), bg: "desert",
             sun: rgb(255, 240, 200), clouds: false, flat: true, plat: "rust", spikes: "cactus",
             top: [rgb(234, 176, 104), rgb(204, 140, 76), rgb(250, 206, 140)], dirt: [rgb(170, 96, 56), rgb(140, 74, 42), rgb(196, 120, 72)] },
@@ -372,6 +414,9 @@ const VOICE_LINES = {
   ninja: "¡Ahora soy un ninja!", avion: "¡A volar!", caballo: "¡Al galope!", espada: "¡En guardia!",
   negro: "¡Cuidado! ¡El Caballero Negro!", sombra: "¡Adiós, sombra!", derribado: "¡Derribado!", desmontado: "¡Desmontado!",
   shuri: "¡Más shuriken!", bloqueo: "¡Bloqueado!", dirigible: "¡Cuidado! ¡El Dirigible!", sombras: "¡Sombras, a mí!",
+  secreto: "¡Un pasadizo secreto!", dinos: "¡Dinosaurios! ¡Qué miedo!", trex: "¡Cuidado! ¡Un tiranosaurio!",
+  ovni: "¡A los mandos del platillo volante!", vida: "¡Una vida extra!", raptor: "¡Adiós, raptor!", tricera: "¡Toma, tricerátops!",
+  ptero: "¡Adiós, pterodáctilo!", marciano: "¡Adiós, marciano!", bloque: "¡Un bloque secreto!",
   arquero: "¡Adiós, arquero!", heroe: "¡Enhorabuena, caballero! ¡Eres un héroe!", gracias_jugar: "¡Gracias por jugar!",
   reflejo: "¡Reflejado!",
   tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
@@ -494,6 +539,11 @@ function buildSounds(rate) {
     clear: jingle([523, 659, 784, 1047, 784, 1047], 0.12, 0.4),
     win: flamenco(rate),
     slide: synth(rate, 0.75, 1500, 260, "square", 0.1, 26, 0.004, 0.5),
+    roar: mixAll(lowpass(synth(rate, 1.2, 1, null, "noise", 0.9, 14, 0.06, 0.7), 0.1), synth(rate, 1.2, 130, 55, "square", 0.16, 20, 0.06, 0.7), synth(rate, 1.2, 66, 40, "sine", 0.5, 0, 0.06, 0.7)),
+    zap: synth(rate, 0.14, 1700, 300, "square", 0.07, 0, 0.002, 1.4),
+    door: mixAll(lowpass(synth(rate, 0.55, 210, 140, "square", 0.12, 34, 0.03, 0.5), 0.2), synth(rate, 0.18, 90, 60, "sine", 0.5, 0, 0.002, 2)),
+    secret: jingle([784, 988, 1175, 1568, 1319, 1760], 0.08, 0.3),
+    oneup: jingle([659, 784, 1319, 1047, 1175, 1568], 0.09, 0.35),
     chord: (() => { const rnd = seeded(5);
       return mixAll(...[164.8, 207.7, 246.9, 329.6, 415.3, 493.9].map((fr, k) => concat(silence(rate, k * 0.014), pluck(rate, fr, 0.9, 0.24, rnd)))); })(),
     firework: mixAll(lowpass(synth(rate, 0.5, 1, null, "noise", 0.45, 16, 0.002, 2), 0.5), synth(rate, 0.22, 200, 60, "sine", 0.45, 0, 0.002, 1.5)),
@@ -534,7 +584,7 @@ function updateEngine() {
       setTimeout(() => { try { e.o1.stop(); e.o2.stop(); e.lfo.stop(); } catch (_) {} }, 400);
     }
     if (engine) {
-      const sp = Math.abs(p.vx), now = actx.currentTime, f = p.tank ? 32 + sp * 10 : p.plane ? 62 + sp * 9 - p.vy * 3 : 46 + sp * 12;
+      const sp = Math.abs(p.vx), now = actx.currentTime, f = p.ufo ? 150 + Math.sin(now * 5) * 30 - p.vy * 6 : p.tank ? 32 + sp * 10 : p.plane ? 62 + sp * 9 - p.vy * 3 : 46 + sp * 12;
       engine.o1.frequency.setTargetAtTime(f, now, 0.08); engine.o2.frequency.setTargetAtTime(f * 0.5, now, 0.08);
       engine.lfo.frequency.setTargetAtTime(f / (p.tank ? 4 : p.plane ? 2 : 3), now, 0.08);
       engine.lp.frequency.setTargetAtTime(p.tank ? 280 + sp * 70 : p.plane ? 700 + sp * 60 : 420 + sp * 100, now, 0.1);
@@ -625,7 +675,7 @@ class Player {
     if (m === "ninja") { this.ninja = true; this.shuriken = 12; this.reach = upg.long ? 0.95 : 0.78; }
     if (m === "sword") { this.sword = true; this.atkTotal = upg.quick ? 12 : 16; this.atkCooldown = upg.quick ? 2 : 4; this.reach = upg.long ? 1.2 : 0.95; }
     if (m === "horse") { this.horse = true; this.w = HORSE_W; this.h = HORSE_H; }
-    if (m === "plane") { this.plane = true; this.w = PLANE_W; this.h = PLANE_H; this.vx = 3.4; }
+    if (m === "plane" || m === "ufo") { this.plane = true; this.ufo = m === "ufo"; this.w = PLANE_W; this.h = PLANE_H; this.vx = 3.4; }
     this.act0 = Math.round(this.atkTotal * 0.27); this.act1 = Math.round(this.atkTotal * 0.64);
     this.x = cx - this.w / 2; this.y = bottom - this.h;
   }
@@ -636,7 +686,7 @@ class Player {
     if (this.knockback > 0) this.knockback--;
     const move = this.knockback ? 0 : (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
     this.vx += ((move > 0 ? 6.4 : move < 0 ? 1.8 : 3.4) - this.vx) * 0.06;
-    this.vy += inp.jumpHeld ? -0.5 : 0.3; this.vy = Math.max(-4.8, Math.min(4, this.vy * 0.97));
+    this.vy += inp.jumpHeld ? -0.5 : this.ufo ? 0.24 : 0.3; this.vy = Math.max(-4.8, Math.min(this.ufo ? 3.4 : 4, this.vy * 0.97));   // the UFO floats down gently
     this.x += this.vx; this.y += this.vy;
     if (this.y < 46) { this.y = 46; this.vy = Math.max(0, this.vy); }
     if (this.y > 418 - this.h) { this.y = 418 - this.h; this.vy = Math.min(0, this.vy); }
@@ -804,6 +854,7 @@ const FLYER_STATS = {   // wasp, bat, seagull, vulture: all fly to and fro, then
   b: { w: 28, h: 18, hp: 1, speed: 1.6, dive: 3.5, score: 150, sound: "squeak" },
   g: { w: 34, h: 18, hp: 1, speed: 1.5, dive: 3.4, score: 150, sound: "screech" },
   v: { w: 40, h: 26, hp: 2, speed: 1.2, dive: 3.8, score: 300, sound: "screech" },
+  q: { w: 56, h: 30, hp: 2, speed: 1.7, dive: 4.2, score: 300, sound: "screech" },   // pterodactyl
 };
 class Flyer extends Enemy {
   constructor(kind, tx, ty, mul = 1) {
@@ -841,7 +892,7 @@ class Flyer extends Enemy {
     if (this.hp <= 0) { this.alive = false; return true; }
     return false;
   }
-  draw(cam) { if (this.kind === "w") drawWasp(this, cam); else drawBird(this, cam); }
+  draw(cam) { if (this.kind === "w") drawWasp(this, cam); else if (this.kind === "q") drawPtero(this, cam); else drawBird(this, cam); }
 }
 
 const LUNGER_STATS = {   // creep along, give a warning (open jaws, raised head or tail), then lunge
@@ -849,6 +900,8 @@ const LUNGER_STATS = {   // creep along, give a warning (open jaws, raised head 
   n: { w: 58, h: 18, hp: 1, score: 200, speed: 0.5, lunge: 6.5, sight: 150, warn: 26, time: 12, sound: "hiss" },   // taipan snake
   k: { w: 44, h: 26, hp: 1, score: 150, speed: 0.8, lunge: 6.0, sight: 170, warn: 26, time: 16, sound: "click" },  // scorpion
   J: { w: 70, h: 72, hp: 3, score: 500, speed: 1.2, lunge: 7.0, sight: 360, warn: 28, time: 80, sound: "neigh" },  // enemy cavalry
+  r: { w: 50, h: 40, hp: 2, score: 300, speed: 1.2, lunge: 6.8, sight: 230, warn: 24, time: 22, sound: "screech" },   // raptor
+  y: { w: 84, h: 52, hp: 3, score: 600, speed: 0.6, lunge: 6.0, sight: 280, warn: 44, time: 44, sound: "stomp" },    // triceratops
 };
 class Lunger extends Enemy {
   constructor(kind, tx, ty, mul = 1) {
@@ -857,6 +910,7 @@ class Lunger extends Enemy {
     this.init(kind, s.w, s.h, s.hp, s.score);
     this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
     this.speed = s.speed * mul; this.lungeSpeed = s.lunge * mul; this.mode = "walk"; this.modeT = 0; this.jaw = 0;
+    if (kind === "y") this.blocks = fromDir => this.mode !== "rest" && this.stun === 0 && fromDir === -this.dir;   // horns and frill stop blows from the front
   }
   update(level, player, game) {
     this.t++;
@@ -884,7 +938,9 @@ class Lunger extends Enemy {
     if (this.y > level.pxH + 100) this.alive = false;
   }
   hit(fromDir, dmg = 1) { this.mode = "rest"; this.modeT = 50; return super.hit(fromDir, dmg); }
-  draw(cam) { if (this.kind === "c") drawCroc(this, cam); else if (this.kind === "n") drawTaipan(this, cam); else if (this.kind === "J") drawCavalry(this, cam); else drawScorpion(this, cam); }
+  draw(cam) {
+    const fn = { c: drawCroc, n: drawTaipan, J: drawCavalry, r: drawRaptor, y: drawTrike }[this.kind] || drawScorpion; fn(this, cam);
+  }
 }
 
 class Mole extends Enemy {   // digs towards the knight underground (watch the moving mound!) and pops up beside him
@@ -1268,6 +1324,127 @@ class BlackKnight extends Enemy {   // the final duel: shield up while he walks,
   draw(cam) { drawBlackKnight(this, cam); }
 }
 
+class TRex extends Enemy {   // el Tiranosaurio Rex: stomps after you, snaps his jaws, roars rocks down from the sky and charges
+  constructor(tx, ty, level, mul = 1) {
+    super();
+    this.init("R", 136, 104, 22, 5000);
+    this.x = tx + (TILE - this.w) / 2; this.y = ty + TILE - this.h;
+    this.minX = level.arena[0]; this.maxX = level.arena[1]; this.mul = mul;
+    this.mode = "wait"; this.modeT = 50; this.jaw = 0; this.invuln = 0; this.slashBox = null; this.actions = 0; this.rocks = 0;
+    this.title = "EL TIRANOSAURIO REX"; this.voice = "trex"; this.intro = "¡Un tiranosaurio!";
+  }
+  harmful() { return this.mode === "charge"; }   // his body only hurts when he charges; his bite hurts any time
+  startRoar(game) {
+    this.mode = "roar"; this.modeT = 60; this.vx = 0; this.rocks = this.hp <= this.maxHp / 2 ? 7 : 5;
+    game.sound("roar"); game.popup(this.x + this.w / 2, this.y - 30, "¡GRRROAAAR!", HEART);
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.invuln) this.invuln--;
+    this.slashBox = null;
+    const anger = 1 + (this.maxHp - this.hp) / this.maxHp * 0.6;
+    const dx = player.x + player.w / 2 - (this.x + this.w / 2), dist = Math.abs(dx), face = () => { this.dir = dx > 0 ? 1 : -1; };
+    const awake = player.x > this.minX - 100 && !player.dead;
+    let jawTo = 0;
+    if (this.mode === "wait") { this.vx = 0; face(); if (awake && --this.modeT <= 0) this.mode = "walk"; }
+    else if (this.mode === "walk") {
+      face(); this.vx = this.dir * 1.25 * this.mul * anger;
+      if (this.onGround && this.t % 32 === 0) { game.sound("stomp"); game.shake = Math.max(game.shake, 3); }
+      const level_ = Math.abs(player.y + player.h - (this.y + this.h)) < 90;
+      if (dist < 150 && level_) { this.actions++; this.mode = "rear"; this.modeT = Math.round(22 / anger); this.vx = 0; }
+      else if ((dist > 260 || this.hitWall) && this.onGround && Math.random() < 0.014 * anger) this.startRoar(game);
+    } else if (this.mode === "rear") { this.vx = 0; jawTo = 1; if (--this.modeT <= 0) { this.mode = "bite"; this.modeT = 12; game.sound("snap"); } }
+    else if (this.mode === "bite") {   // CHOMP: his head lunges forward
+      jawTo = this.modeT > 6 ? 1 : 0; this.vx = this.dir * 5;
+      const r = this.rect(); this.slashBox = { x: this.dir > 0 ? r.x + r.w - 34 : r.x - 46, y: r.y - 4, w: 80, h: 64 };
+      if (--this.modeT <= 0) { this.mode = "recover"; this.modeT = Math.round(42 / anger); }
+    } else if (this.mode === "recover") {
+      this.vx = 0;
+      if (--this.modeT <= 0) { if (this.actions % 3 === 0) this.startRoar(game); else this.mode = "walk"; }
+    } else if (this.mode === "roar") {   // the ground shakes and rocks come tumbling down
+      this.vx = 0; jawTo = 1; game.shake = Math.max(game.shake, 4);
+      if (this.modeT % 9 === 0 && this.rocks > 0) {
+        this.rocks--;
+        const rx = Math.max(this.minX + 20, Math.min(this.maxX - 20, player.x + player.w / 2 + randInt(-170, 170)));
+        game.shots.push({ kind: "rock", enemy: true, x: rx, y: -30, vx: 0, vy: 1, t: 0, life: 240, col: rgb(130, 96, 70), dark: rgb(80, 58, 42) });
+      }
+      if (--this.modeT <= 0) { this.mode = "aim"; this.modeT = 22; face(); game.popup(this.x + this.w / 2, this.y - 30, "¡Que viene!", HEART); }
+    } else if (this.mode === "aim") { this.vx = 0; if (--this.modeT <= 0) { this.mode = "charge"; this.modeT = 100; game.sound("roar"); } }
+    else if (this.mode === "charge") {   // head down, full speed, until he crashes into something
+      this.vx = this.dir * Math.min(8.5, 6.2 * this.mul * anger);
+      if (this.t % 4 === 0) game.dust(this.x + (this.dir > 0 ? 0 : this.w), this.y + this.h);
+      const crashed = this.hitWall || this.x <= this.minX + 2 || this.x >= this.maxX - this.w - 2;
+      if (crashed) {
+        this.mode = "stunned"; this.modeT = 90; this.vx = 0; game.shake = 18; game.sound("stomp");
+        game.popup(this.x + this.w / 2, this.y - 30, "¡Mareado! ¡Ahora!", GOLD);
+      } else if (--this.modeT <= 0) { this.mode = "recover"; this.modeT = 40; }
+    } else if (this.mode === "stunned") { this.vx = 0; if (--this.modeT <= 0) this.mode = "walk"; }
+    this.jaw += (jawTo - this.jaw) * 0.3;
+    physicsMove(this, level);
+    this.x = Math.max(this.minX, Math.min(this.x, this.maxX - this.w));
+  }
+  hit(fromDir, dmg = 1) {
+    if (this.invuln > 0) return false;
+    this.hp -= dmg; this.flash = 10; this.invuln = 14;
+    if (this.hp <= 0) { this.alive = false; return true; }
+    if (this.mode === "wait" || this.mode === "walk" && Math.random() < 0.5) { this.actions++; this.mode = "rear"; this.modeT = 14; this.dir = -fromDir; }   // hit him head-on and he snaps right back
+    return false;
+  }
+  draw(cam) { drawTRex(this, cam); }
+}
+
+const ROCK_SIZES = [13, 22, 34];   // small, medium and big asteroids
+class Asteroid extends Enemy {   // a space rock: drifts and spins; shoot it and it splits; don't fly into it!
+  constructor(cx, cy, size = 2, mul = 1, awake = false) {
+    super();
+    const r = ROCK_SIZES[size];
+    this.init("O", r * 2, r * 2, [1, 3, 6][size], [50, 100, 200][size]);
+    this.size = size; this.r = r; this.x = cx - r; this.y = cy - r; this.awake = awake; this.mul = mul;
+    this.vx = -(0.5 + Math.random() * 1.6) * mul; this.vy = (Math.random() - 0.5) * 1.4;
+    this.spin = (Math.random() - 0.5) * 0.06; this.ang = Math.random() * 6;
+    this.shape = Array.from({ length: 11 }, () => 0.78 + Math.random() * 0.26);
+  }
+  rect() { const k = this.r * 0.7; return { x: Math.round(this.x + this.r - k), y: Math.round(this.y + this.r - k), w: Math.round(k * 2), h: Math.round(k * 2) }; }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (!this.awake) { if (this.x < game.camX + W + 60) this.awake = true; else return; }
+    this.x += this.vx; this.y += this.vy; this.ang += this.spin;
+    if (this.y < 46 && this.vy < 0 || this.y + this.h > 418 && this.vy > 0) this.vy = -this.vy;
+    if (this.x + this.w < game.camX - 150) this.alive = false;
+  }
+  hit(fromDir, dmg = 1) { this.hp -= dmg; this.flash = 6; if (this.hp <= 0) { this.alive = false; return true; } return false; }
+  draw(cam) { drawAsteroid(this, cam); }
+}
+
+class Alien extends Enemy {   // a little green alien in a saucer: hovers in front of you firing zaps, then zooms off
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("u", 50, 30, 2, 300);
+    this.x = tx; this.y = ty; this.mul = mul; this.awake = false; this.hold = randInt(240, 340);
+    this.shootT = randInt(40, 80); this.phase = Math.random() * 6;
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (!this.awake) { if (this.x < game.camX + W + 30) this.awake = true; else return; }
+    if (this.hold > 0) {
+      this.hold--;
+      const tx = player.x + 400 + Math.sin(this.t * 0.03 + this.phase) * 90, ty = player.y + Math.sin(this.t * 0.045 + this.phase) * 110;
+      this.x += Math.max(-4, Math.min(player.vx + 3, (tx - this.x) * 0.05 + player.vx));
+      this.y += (ty - this.y) * 0.03;
+      if (--this.shootT <= 0 && !player.dead) {
+        game.enemyShot(this.x + 25, this.y + 22, player, 4.4 * this.mul, "zap", rgb(130, 255, 120), rgb(30, 160, 60)); game.sound("zap");
+        this.shootT = Math.round(randInt(70, 110) / this.mul);
+      }
+    } else { this.x -= 5; if (this.x + this.w < game.camX - 100) this.alive = false; }
+    this.y = Math.max(50, Math.min(380, this.y));
+  }
+  hit(fromDir, dmg = 1) { this.hp -= dmg; this.flash = 8; if (this.hp <= 0) { this.alive = false; return true; } return false; }
+  draw(cam) { drawUFO(this.x - cam, this.y, this.t, Math.sin(this.t * 0.05) * 0.12, true, this.flash); drawCreatureHp(this, cam); }
+}
+
 class Boss extends Enemy {   // the Rey Canguro: big hops, shakes the ground, calls little kangaroos
   constructor(tx, ty, level, mul = 1) {
     super();
@@ -1325,7 +1502,7 @@ class Level {
     this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null; this.tank = null; this.mode = def.mode || null; this.pickups = [];
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
-    this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = [];
+    this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = []; this.lifeups = []; this.door = null; this.revealed = new Set();
     this.start = [TILE * 2, TILE * 9]; this.flag = null; this.boss = null; this.arena = [0, this.pxW];
     const later = [];
     this.rows.forEach((row, cy) => [...row].forEach((ch, cx) => {
@@ -1345,6 +1522,12 @@ class Level {
       else if (ch === "h") this.enemies.push(new Shadow(x, y, mul));
       else if (ch === "a") this.enemies.push(new Archer(x, y, mul));
       else if (ch === "E") this.enemies.push(new EnemyPlane(x, y, mul));
+      else if (ch === "O") this.enemies.push(new Asteroid(x + TILE / 2, y + TILE / 2, Math.random() < 0.45 ? 2 : 1, mul));
+      else if (ch === "u") this.enemies.push(new Alien(x, y, mul));
+      else if (ch === "U") this.lifeups.push({ x: x + TILE / 2, y: y + TILE / 2 });
+      else if (ch === "D") this.door = { x: x + 4, y: y + TILE - 64, w: 32, h: 64, to: def.door };
+      else if (ch === "R") later.push(["R", x, y]);
+      else if (ch === "V") { const c = this.cover || (this.cover = { x0: x, y0: y, x1: x, y1: y }); c.x0 = Math.min(c.x0, x); c.y0 = Math.min(c.y0, y); c.x1 = Math.max(c.x1, x); c.y1 = Math.max(c.y1, y); }
       else if (ch === "N") this.pickups.push({ x: x + TILE / 2, y: y + TILE / 2 });
       else if (ch === "X") later.push(["X", x, y]);
       else if (ch === "Z") later.push(["Z", x, y]);
@@ -1356,7 +1539,10 @@ class Level {
     }));
     for (const [k, x, y] of later) {   // these need the finished map
       if (k === "s") this.enemies.push(new Shark(x, y, this, mul));
-      else { this.boss = k === "X" ? new BlackKnight(x, y, this, mul) : k === "Z" ? new Airship(x, y, this, mul) : new Boss(x, y, this, mul); this.enemies.push(this.boss); }
+      else {
+        this.boss = k === "X" ? new BlackKnight(x, y, this, mul) : k === "Z" ? new Airship(x, y, this, mul) : k === "R" ? new TRex(x, y, this, mul) : new Boss(x, y, this, mul);
+        this.enemies.push(this.boss);
+      }
     }
   }
   flagOpen() { return this.flag && (!this.boss || !this.boss.alive); }
@@ -1770,6 +1956,139 @@ function drawCredits(g) {   // scrolling credits over a starry night, with a par
   if (g.creditsDone && Math.floor(g.t / 30) % 2 === 0) T(isTouch ? "Toca para jugar otra vez" : "Pulsa ENTER para jugar otra vez", 26, W / 2, 300, WHITE);
 }
 
+function drawRaptor(e, cam) {   // a quick, striped raptor with a sickle claw
+  const r = e.rect(), f = e.flash, B = f ? WHITE : rgb(84, 150, 96), D = f ? WHITE : rgb(44, 96, 62), BL = f ? WHITE : rgb(214, 220, 160);
+  flipAt(r.x - cam, r.y, e.w, e.dir);
+  const run = Math.abs(e.vx) > 0.3 && e.onGround, s = run ? Math.sin(e.t * (e.mode === "lunge" ? 0.7 : 0.35)) * 6 : 0, sway = Math.sin(e.t * 0.12) * 3;
+  P(B, [[14, 13], [-14, 8 + sway], [-16, 11 + sway], [14, 24]]);                                      // tail
+  L(D, 22, 25, 18 + s, 37, 5); L(D, 18 + s, 37, 24 + s, 39, 3);                                     // far leg
+  E(B, 8, 9, 32, 19); E(BL, 14, 18, 22, 8);                                                         // body and belly
+  for (const k of [12, 18, 24]) L(D, k, 10, k - 3, 17, 2);                                         // stripes
+  L(B, 26, 25, 24 - s, 37, 6); L(B, 24 - s, 37, 31 - s, 39, 3); P(WHITE, [[29 - s, 37], [33 - s, 32], [31 - s, 38]]);   // near leg, sickle claw
+  L(B, 32, 15, 40, 5, 8); L(D, 34, 18, 40, 24, 2.5);                                                // neck, little arm
+  ctx.save(); ctx.translate(40, 4);
+  P(B, [[-4, -5], [12, -4], [16, 0], [4, 2], [-4, 3]]);
+  ctx.save(); ctx.rotate(e.jaw * 0.5); P(D, [[-2, 2], [14, 2], [12, 5], [-2, 5]]); ctx.restore();
+  if (e.jaw > 0.2) for (let k = 0; k < 3; k++) P(WHITE, [[4 + k * 4, 1], [6 + k * 4, 1], [5 + k * 4, 3.5]]);
+  C(rgb(255, 210, 60), 2, -2, 2.2); C(BLACK, 2.6, -2, 1);
+  P(rgb(220, 60, 50), [[-4, -5], [-10, -9], [0, -6]]); P(rgb(220, 60, 50), [[-6, -2], [-12, -4], [-4, -1]]);   // feathery crest
+  ctx.restore(); ctx.restore();
+  drawCreatureHp(e, cam);
+}
+
+function drawTrike(e, cam) {   // triceratops: three horns and a great frill (his front is armoured!)
+  const r = e.rect(), f = e.flash, B = f ? WHITE : rgb(150, 126, 84), D = f ? WHITE : rgb(110, 90, 58), FR = f ? WHITE : rgb(214, 120, 60), HORN = rgb(240, 232, 210);
+  flipAt(r.x - cam, r.y, e.w, e.dir);
+  const s = Math.abs(e.vx) > 0.3 && e.onGround ? Math.sin(e.t * (e.mode === "lunge" ? 0.6 : 0.25)) * 4 : 0, low = e.jaw * 6;
+  P(B, [[8, 22], [-10, 30], [8, 34]]);                                                               // tail
+  R(D, 12 + s, 34, 12, 18, 3); R(D, 50 - s, 34, 12, 18, 3);                                         // far legs
+  E(B, 2, 6, 68, 38); for (let k = 0; k < 5; k++) C(D, 14 + k * 11, 12 + (k % 2) * 3, 3);         // body with bumps
+  R(B, 20 - s, 36, 13, 16, 3); R(B, 56 + s, 36, 13, 16, 3);                                         // near legs
+  ctx.save(); ctx.translate(62, 18 + low);
+  E(FR, -10, -26, 26, 46); for (let k = 0; k < 4; k++) C(rgb(250, 196, 100), -6 + (k % 2) * 6, -18 + k * 9, 3);   // frill
+  E(B, 0, -8, 24, 26);                                                                                // head
+  P(D, [[20, 2], [28, 8], [19, 12]]);                                                                 // beak
+  P(HORN, [[8, -6], [30, -18], [12, -1]]); P(HORN, [[4, -11], [27, -25], [8, -6]]);                  // brow horns
+  P(HORN, [[18, 0], [23, -7], [21, 3]]);                                                              // nose horn
+  C(BLACK, 11, -2, 2);
+  ctx.restore(); ctx.restore();
+  if (e.mode === "open") T("!", 26, r.x + e.w / 2 - cam, r.y - 34, rgb(255, 80, 60));   // about to charge!
+  drawCreatureHp(e, cam);
+}
+
+function drawPtero(e, cam) {   // pterodactyl: leathery wings, a long beak and a crest
+  const r = e.rect(), f = e.flash, B = f ? WHITE : rgb(170, 96, 70), M = f ? WHITE : rgb(206, 136, 100), D = rgb(110, 56, 40);
+  flipAt(r.x - cam, r.y, e.w, e.dir);
+  const flap = e.mode === "dive" ? -0.6 : Math.sin(e.t * 0.22), wy = 12 - flap * 16;
+  P(D, [[24, 13], [0, wy - 4], [12, 20], [26, 18]]);                                                 // far wing
+  E(B, 16, 9, 24, 11); L(D, 20, 19, 16, 25, 2); L(D, 26, 19, 24, 25, 2);                           // body, legs
+  L(B, 38, 13, 46, 9, 4);                                                                             // neck
+  P(B, [[44, 4], [60, 10], [44, 12]]); P(B, [[45, 5], [34, -2], [47, 7]]); C(BLACK, 47, 8, 1.3);    // head, beak, crest, eye
+  P(M, [[24, 13], [4, wy + 2], [18, 23], [30, 18]]); L(D, 24, 13, 4, wy + 2, 1.5);                  // near wing
+  ctx.restore();
+  drawCreatureHp(e, cam);
+}
+
+function drawTRex(e, cam) {   // the Tyrannosaurus Rex: huge head, tiny arms
+  const r = e.rect(), f = e.flash, B = f ? WHITE : rgb(104, 128, 70), D = f ? WHITE : rgb(70, 92, 48), BL = f ? WHITE : rgb(214, 204, 156);
+  flipAt(r.x - cam, r.y, e.w, e.dir);
+  const walk = Math.abs(e.vx) > 0.3, s = walk ? Math.sin(e.t * (e.mode === "charge" ? 0.4 : 0.15)) * 10 : 0;
+  const lean = e.mode === "charge" ? 12 : e.mode === "rear" || e.mode === "roar" ? -10 : e.mode === "bite" ? 14 : e.mode === "stunned" ? 8 : 0;
+  P(B, [[30, 38], [-34, 28 + Math.sin(e.t * 0.08) * 4], [-36, 35], [30, 62]]);                       // tail
+  L(D, 52, 64, 46 - s, 90, 18); L(D, 46 - s, 92, 58 - s, 102, 10);                                    // far leg
+  E(B, 18, 24, 88, 54); E(BL, 36, 48, 60, 24);                                                        // body, belly
+  for (let k = 0; k < 5; k++) P(D, [[30 + k * 14, 26], [36 + k * 14, 25], [33 + k * 14, 36]]);     // back stripes
+  L(B, 60, 60, 64 + s, 90, 22); L(B, 64 + s, 92, 78 + s, 102, 10);                                    // near leg
+  for (const k of [0, 5, 10]) P(BL, [[72 + s + k, 99], [76 + s + k, 99], [74 + s + k, 104]]);        // claws
+  L(D, 94, 56, 104, 66, 5); L(D, 104, 66, 108, 61, 3);                                                // tiny arms
+  ctx.save(); ctx.translate(94, 32 + lean * 0.6); ctx.rotate(lean * 0.012);
+  L(B, -8, 10, 6, -6, 28);                                                                             // neck
+  P(B, [[0, -28], [34, -26], [46, -18], [46, -6], [6, -2], [-6, -12]]);                               // head
+  for (let k = 0; k < 5; k++) P(WHITE, [[12 + k * 7, -6], [15 + k * 7, -6], [13.5 + k * 7, -1]]);    // upper teeth
+  ctx.save(); ctx.translate(4, -4); ctx.rotate(e.jaw * 0.55);
+  P(D, [[0, 0], [40, 0], [38, 9], [2, 12]]); for (let k = 0; k < 4; k++) P(WHITE, [[10 + k * 7, 1], [13 + k * 7, 1], [11.5 + k * 7, -3]]);
+  ctx.restore();
+  C(rgb(255, 200, 40), 22, -19, 3.6); C(BLACK, 23, -19, 1.7); L(D, 15, -24, 29, -22, 3); C(D, 42, -19, 1.6);
+  ctx.restore(); ctx.restore();
+  const hx = r.x - cam + (e.dir > 0 ? 116 : 20), hy = r.y - 4;
+  if (e.mode === "stunned") for (let k = 0; k < 3; k++) { const a = e.t * 0.15 + k * 2.1; T("★", 18, hx + Math.cos(a) * 26, hy + Math.sin(a) * 8, GOLD); }
+  if (e.mode === "roar") { ctx.globalAlpha = 0.5; for (let k = 0; k < 3; k++) CS(WHITE, hx + e.dir * 30, hy + 20, 14 + ((e.t * 3 + k * 16) % 48), 3); ctx.globalAlpha = 1; }
+}
+
+function drawAsteroid(e, cam) {   // a lumpy, cratered space rock
+  const n = e.shape.length;
+  ctx.save(); ctx.translate(e.x + e.r - cam, e.y + e.r); ctx.rotate(e.ang);
+  const pts = e.shape.map((k, i) => [Math.cos(i / n * Math.PI * 2) * e.r * k, Math.sin(i / n * Math.PI * 2) * e.r * k]);
+  P(e.flash ? WHITE : rgb(126, 110, 100), pts); PS(rgb(70, 60, 56), pts, 2);
+  E(rgb(96, 84, 78), -e.r * 0.5, -e.r * 0.45, e.r * 0.5, e.r * 0.4); E(rgb(96, 84, 78), e.r * 0.1, e.r * 0.05, e.r * 0.36, e.r * 0.3);
+  E(rgb(156, 142, 130), -e.r * 0.55, e.r * 0.2, e.r * 0.26, e.r * 0.2);
+  ctx.restore();
+}
+
+function drawUFO(x, y, t, tilt, alien, flash) {   // flying saucer 70 x 34: the knight's (him in the dome) or an alien's (drawn at 50 x 30)
+  ctx.save(); ctx.translate(x + (alien ? 25 : 35), y + (alien ? 15 : 17)); ctx.rotate(tilt);
+  if (alien) ctx.scale(50 / 70, 30 / 34);
+  ctx.translate(-35, -17);
+  const bg = ctx.createLinearGradient(0, 26, 0, 56), bc = alien ? "140,255,140" : "160,230,255", ba = 0.3 + 0.1 * Math.sin(t * 0.2);   // beam glow
+  bg.addColorStop(0, `rgba(${bc},${ba})`); bg.addColorStop(1, `rgba(${bc},0)`); ctx.fillStyle = bg; path([[24, 26], [46, 26], [60, 56], [10, 56]]); ctx.fill();
+  const disc = flash ? WHITE : alien ? rgb(160, 120, 210) : STEEL, under = flash ? WHITE : alien ? rgb(96, 64, 150) : STEEL_DARK;
+  ctx.globalAlpha = 0.45; C(rgb(170, 230, 255), 35, 15, 18); ctx.globalAlpha = 1;                                                   // glass dome
+  if (alien) {   // the little green pilot
+    E(rgb(110, 220, 90), 27, 1, 16, 17); E(BLACK, 28.5, 6, 5.5, 7); E(BLACK, 35.5, 6, 5.5, 7); C(WHITE, 30, 7.5, 1); C(WHITE, 37, 7.5, 1);
+    L(rgb(110, 220, 90), 31, 2, 27, -6, 1.5); L(rgb(110, 220, 90), 39, 2, 43, -6, 1.5); C(rgb(255, 240, 80), 27, -6, 2); C(rgb(255, 240, 80), 43, -6, 2);
+  } else drawPilot(35, 5, t);
+  ctx.globalAlpha = 0.35; ctx.strokeStyle = WHITE; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(35, 15, 14, -2.6, -1.7); ctx.stroke(); ctx.globalAlpha = 1;
+  CS(rgb(200, 240, 255), 35, 15, 18, 1.5);
+  E(under, 6, 20, 58, 12); E(disc, 0, 13, 70, 14); E(rgb(255, 255, 255), 10, 14, 30, 4);
+  for (let k = 0; k < 5; k++) C([GOLD, HEART, GRASS_LIGHT, ARMOR_LIGHT, WHITE][(k + Math.floor(t / 8)) % 5], 10 + k * 12.5, 23, 2.6);
+  ctx.restore();
+}
+
+function drawDoor(x, y, open, t) {   // a secret door: arched wooden door in a stone frame, with a twinkling star above
+  R(STONE_DARK, x - 6, y - 4, 44, 68, 18); R(rgb(20, 10, 30), x, y + 2, 32, 62, 15);
+  if (open > 0) { ctx.globalAlpha = open * 0.85; R(rgb(255, 240, 180), x + 4, y + 8, 24, 56, 12); ctx.globalAlpha = 1; }
+  const w = 32 * (1 - open);
+  if (w > 1) {
+    R(WOOD, x, y + 2, w, 62, 15 * (1 - open)); for (const yy of [18, 42]) R(WOOD_DARK, x, y + yy, w, 5);
+    L(WOOD_DARK, x + w / 2, y + 8, x + w / 2, y + 62, 2); C(GOLD, x + w - 6, y + 36, 2.5);
+  }
+  ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * 0.1); T("✦", 20, x + 16, y - 16, GOLD); ctx.globalAlpha = 1;
+}
+
+function drawOneUp(x, y, t) {   // an extra life
+  const by = y + Math.sin(t * 0.08) * 4;
+  ctx.globalAlpha = 0.25 + 0.15 * Math.sin(t * 0.15); C(GOLD, x, by, 22); ctx.globalAlpha = 1;
+  ctx.save(); ctx.translate(x, by); ctx.scale(1.5, 1.5); drawHeart(-9, -10, true); ctx.restore();
+  T("1UP", 14, x, by + 20, GOLD);
+}
+
+function drawLava(t) {   // bubbling lava at the bottom of the pits
+  const g = ctx.createLinearGradient(0, 474, 0, H); g.addColorStop(0, rgb(255, 196, 60)); g.addColorStop(1, rgb(190, 40, 20));
+  ctx.globalAlpha = 0.3; R(rgb(255, 120, 40), -20, 430, W + 40, 44); ctx.globalAlpha = 1;
+  ctx.fillStyle = g; ctx.fillRect(-20, 474, W + 40, 60);
+  for (let i = 0; i < 26; i++) { const x = (i * 97 + t * 0.4 * (i % 3 + 1)) % (W + 40) - 20; C(rgb(255, 232, 130), x, 477 + Math.sin(t * 0.08 + i) * 3, 3 + (i % 3) * 2); }
+}
+
 function drawHorse(ph, run, cloth, trim, coat, mane, armour) {   // warhorse, 66 wide, hooves at y 74
   const leg = (x, off, col) => {
     const a = run ? Math.sin(ph + off) * 0.6 : 0.05, kx = x + Math.sin(a) * 12;
@@ -2061,6 +2380,14 @@ function drawShot(s, cam) {
   } else if (s.kind === "shell") {
     ctx.globalAlpha = 0.35; C(rgb(200, 200, 200), x - s.vx * 1.5, y, 4); C(rgb(200, 200, 200), x - s.vx * 3, y, 3); ctx.globalAlpha = 1;
     C(rgb(40, 40, 46), x, y, 5); C(rgb(120, 120, 130), x - 1.5, y - 1.5, 1.5);
+  } else if (s.kind === "laser") { L(rgb(120, 255, 140), x - 16, y, x + 6, y, 4); L(WHITE, x - 8, y, x + 6, y, 1.5); }
+  else if (s.kind === "shell" && s.plasma) {   // the UFO's plasma ball
+    ctx.globalAlpha = 0.35; C(rgb(120, 255, 200), x, y, 14); ctx.globalAlpha = 1; C(rgb(140, 255, 220), x, y, 8); C(WHITE, x, y, 4);
+  } else if (s.kind === "zap") { ctx.globalAlpha = 0.4; C(s.col, x, y, 9); ctx.globalAlpha = 1; C(s.col, x, y, 5); C(WHITE, x, y, 2); }
+  else if (s.kind === "rock") {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(s.t * 0.12);
+    P(s.col, [[-14, -6], [-4, -14], [10, -10], [14, 2], [6, 12], [-10, 10]]); PS(s.dark, [[-14, -6], [-4, -14], [10, -10], [14, 2], [6, 12], [-10, 10]], 2);
+    ctx.restore();
   } else if (s.kind === "bullet") { L(rgb(255, 210, 90), x - 10, y, x + 4, y, 3); L(WHITE, x - 2, y, x + 4, y, 1.5); }
   else if (s.kind === "ebullet") { C(rgb(255, 110, 50), x, y, 4.5); C(rgb(255, 230, 120), x, y, 2); }
   else if (s.kind === "shuriken") drawShuriken(x, y, s.t * 0.6, rgb(206, 212, 226), 9);
@@ -2397,6 +2724,43 @@ function drawBackground(theme, cam) {
       R(rgb(70, 70, 84), x - 4, 378, 32, 18, 3); P(rgb(60, 60, 72), [[x - 8, 380], [x + 12, 364], [x + 32, 380]]);
       R(rgb(255, 120, 90), x + 6, 384, 12, 8); game.mineLights.push([x + 12, 388]);
     }
+  } else if (theme.bg === "dino") {   // prehistoric: smoking volcanoes, a long-necked giant strolling past, palms and ferns
+    const per = 720;
+    for (let x = -wrapX(cam * 0.1, per) - per; x < W + per; x += per) {
+      P(theme.far, [[x, 420], [x + 200, 150], [x + 260, 150], [x + 460, 420]]);
+      P(rgb(255, 130, 50), [[x + 200, 150], [x + 212, 172], [x + 226, 160], [x + 240, 176], [x + 260, 150]]);
+      L(rgb(255, 120, 40), x + 228, 162, x + 214, 250, 5); L(rgb(255, 150, 60), x + 240, 170, x + 252, 220, 3);
+      ctx.globalAlpha = 0.4;
+      for (let k = 0; k < 4; k++) { const s = (game.t * 0.35 + k * 40) % 160; C(rgb(96, 80, 90), x + 230 + s * 0.35, 140 - s, 16 + s * 0.25); }
+      ctx.globalAlpha = 1;
+    }
+    const bx = wrapX(1100 - cam * 0.2 + game.t * 0.12, W + 700) - 350, BR = rgb(150, 92, 96), st = Math.sin(game.t * 0.05) * 6;
+    P(BR, [[bx + 10, 336], [bx - 90, 360], [bx - 86, 350], [bx + 10, 318]]);
+    for (const lx of [22, 52, 98, 126]) R(BR, bx + lx + (lx % 4 ? st : -st), 352, 16, 70);
+    E(BR, bx, 300, 150, 70); L(BR, bx + 130, 324, bx + 196, 186, 24); E(BR, bx + 182, 172, 42, 22);
+    for (let x = -wrapX(cam * 0.45, 280) - 280; x < W + 280; x += 280) {   // palms and cycads
+      const tx = x + 60, top = 270 + (Math.floor(x / 280) % 2) * 30;
+      L(rgb(110, 76, 50), tx - 10, 450, tx, top, 12);
+      for (let k = 0; k < 7; k++) { const a = -Math.PI + 0.2 + k * 0.45; L(theme.near, tx, top, tx + Math.cos(a) * 80, top + Math.sin(a) * 30 + 34, 9); }
+      for (let k = 0; k < 5; k++) { const a = -Math.PI * 0.9 + k * 0.6; L(theme.near, x + 190, 448, x + 190 + Math.cos(a) * 50, 448 + Math.sin(a) * 40, 6); }
+    }
+    ctx.fillStyle = theme.near; ctx.fillRect(-20, 440, W + 40, 100);
+  } else if (theme.bg === "space") {   // deep space: nebulae, twinkling stars, a ringed planet and a little moon
+    for (const [nx, ny, nr, nc] of [[300, 180, 340, "170,60,210"], [950, 330, 300, "40,120,230"]]) {   // soft glowing nebulae
+      const x = wrapX(nx - cam * 0.03, W + 1000) - 500, ng = ctx.createRadialGradient(x, ny, 10, x, ny, nr);
+      ng.addColorStop(0, `rgba(${nc},0.28)`); ng.addColorStop(1, `rgba(${nc},0)`); ctx.fillStyle = ng; ctx.fillRect(x - nr, ny - nr, nr * 2, nr * 2);
+    }
+    for (const [par, n, sz, a] of [[0.04, 70, 1.5, 0.6], [0.14, 44, 2, 0.8], [0.32, 26, 3, 1]]) for (let i = 0; i < n; i++) {
+      const x = wrapX(i * 173.3 + n * 7 - cam * par, W + 40) - 20, y = (i * 97.7 + n * 13) % 450 + 10;
+      ctx.globalAlpha = a * (0.6 + 0.4 * Math.sin(game.t * 0.05 + i * 1.7)); R(WHITE, x, y, sz, sz);
+    }
+    ctx.globalAlpha = 1;
+    const px = wrapX(760 - cam * 0.07, W + 800) - 300;
+    C(rgb(214, 150, 92), px, 150, 64); C(rgb(236, 186, 126), px - 18, 132, 40);
+    for (const [dy, c] of [[-24, rgb(190, 120, 70)], [6, rgb(196, 130, 80)], [30, rgb(180, 110, 64)]]) { ctx.save(); ctx.beginPath(); ctx.arc(px, 150, 64, 0, Math.PI * 2); ctx.clip(); R(c, px - 70, 150 + dy, 140, 9); ctx.restore(); }
+    ctx.save(); ctx.translate(px, 150); ctx.rotate(-0.28); ES(rgb(240, 214, 160), -118, -20, 236, 40, 7); ES(rgb(200, 170, 120), -100, -14, 200, 28, 3); ctx.restore();
+    const mx = wrapX(240 - cam * 0.12, W + 600) - 200;
+    C(rgb(196, 196, 210), mx, 380, 28); C(rgb(160, 160, 178), mx - 8, 372, 6); C(rgb(160, 160, 178), mx + 10, 388, 8); C(rgb(160, 160, 178), mx + 6, 368, 3);
   } else if (theme.bg === "sky") {   // high above the clouds
     for (const [par, y, s, n] of [[0.1, 110, 1.4, 5], [0.3, 250, 2, 4], [0.55, 370, 2.6, 4]])
       for (let i = 0; i < n; i++) drawCloud(wrapX(i * 397 - cam * par, W + 400) - 200, y + (i % 2) * 30, s);
@@ -2505,7 +2869,7 @@ class Game {
   constructor() {
     this.t = 0; this.state = "title"; this.stateTimer = 0; this.paused = false;
     this.lives = START_LIVES; this.score = 0; this.coins = 0; this.levelIndex = 0; this.upg = {};
-    this.kills = 0; this.deaths = 0; this.runFrames = 0; this.swings = 0;
+    this.kills = 0; this.deaths = 0; this.runFrames = 0; this.swings = 0; this.secrets = new Set(); this.noDoors = false; this.lifeTaken = new Set();
     this.shopSel = 0; this.shopMsg = ""; this.shopMsgT = 0; this.shopMsgCol = WHITE;
     this.tileSets = {};
     const rnd = seeded(3);
@@ -2520,13 +2884,27 @@ class Game {
   }
   newGame(levelIndex = 0) {   // from the title: fresh start; after game over: carry on in the same level
     this.paused = false; this.levelIndex = levelIndex;
-    if (levelIndex === 0) { this.upg = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; }
+    if (levelIndex === 0) { this.upg = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.secrets = new Set(); this.lifeTaken = new Set(); }
     this.lives = START_LIVES; this.score = 0;
     this.resetLevel(); this.state = "play"; say(this.startLine(), true);
   }
-  startLine() { return { ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada" }[this.level.mode] || "vamos"; }
+  startLine() { return LEVELS[this.levelIndex].theme === "dino" ? "dinos" : { ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni" }[this.level.mode] || "vamos"; }
+  levelLabel(i = this.levelIndex) { return LEVELS[i].secret ? "NIVEL SECRETO" : `NIVEL ${i + 1}`; }
+  afterLevel() { const d = LEVELS[this.levelIndex]; return d.returnTo ?? this.levelIndex + 1; }   // secret levels drop you back into the main game
+  enterDoor() {   // into the secret door!
+    const p = this.player, d = this.level.door;
+    this.state = "door"; this.stateTimer = 0; this.doorTo = d.to; p.vx = 0; p.x = d.x + d.w / 2 - p.w / 2; p.attackTimer = 0;
+    play("door"); this.popup(d.x + d.w / 2, d.y - 30, "¡Una puerta secreta!", GOLD);
+  }
+  updateDoor() {
+    this.stateTimer++;
+    if (this.stateTimer === 50) {
+      this.secrets.add(this.doorTo); this.levelIndex = this.doorTo; this.resetLevel(); this.state = "play";
+      play("secret"); say("secreto", true);
+    }
+  }
   openShop() { this.state = "shop"; this.shopSel = 0; this.shopMsgT = 0; say("tienda", true); }
-  nextLevel() { this.levelIndex++; this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
+  nextLevel() { this.levelIndex = this.afterLevel(); this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
   buy(i) {
     const item = SHOP[i];
     if (this.upg[item.id]) { this.shopMessage("¡Ya lo tienes!", WHITE); return; }
@@ -2549,11 +2927,21 @@ class Game {
   }
   resetLevel() {
     this.level = new Level(LEVELS[this.levelIndex]);
+    this.level.lifeups = this.level.lifeups.filter(k => !this.lifeTaken.has(this.levelIndex + ":" + k.x));   // each extra life can only be taken once
     this.player = new Player(...this.level.start, this.upg);
     if (this.level.mode) this.player.setMode(this.level.mode, this.upg);
     this.particles = []; this.popups = []; this.camX = 0; this.shake = 0; this.levelTimer = 0;
     this.bossAnnounced = false; this.flyingAxe = null; this.shots = [];
     this.bees = null; this.rings = []; this.mirrorCd = 0; this.mirrorGlow = 0; this.inCastle = false; this.castleFlag = 0;
+  }
+  revealBlocks() {   // hidden blocks appear when the knight touches one
+    const p = this.player, lvl = this.level, near = inflate(p.rect(), 3, 3);
+    for (const t of lvl.tilesNear(near)) {
+      const key = t.cx + "," + t.cy;
+      if (lvl.tile(t.cx, t.cy) !== "H" || lvl.revealed.has(key) || !collide(near, t)) continue;
+      if (lvl.revealed.size === 0) { this.popup(t.x + 20, t.y - 10, "¡Un bloque secreto!", GOLD); play("secret"); say("bloque", true); }
+      lvl.revealed.add(key); this.burst(t.x + 20, t.y + 20, [GOLD, WHITE], 12, 3);
+    }
   }
   castleX() { return Math.min(this.level.flag.x + 56, this.level.pxW - 86); }
   followCam() {
@@ -2600,7 +2988,7 @@ class Game {
   finishLevel() {
     const p = this.player, bonus = 1000 + 250 * Math.max(0, p.hearts);
     this.score += bonus; this.popup(p.x + p.w / 2, p.y - 20, `¡Olé! +${bonus}`); this.stateTimer = 0; this.flyingAxe = null;
-    if (this.levelIndex < LEVELS.length - 1) { this.state = "levelclear"; say("nivel", true); }
+    if (this.levelIndex !== MAIN_LEVELS - 1) { this.state = "levelclear"; say("nivel", true); }
     else this.startFinale();
   }
   startFinale() {   // the Black Knight is beaten: fireworks and flamenco!
@@ -2635,22 +3023,23 @@ class Game {
     this.creditLines = [
       ["EL CABALLERO DEL HACHA", 44, GOLD], gap(24),
       head("PROTAGONISTA"), name("El Caballero del Hacha"), gap(),
-      head("VILLANOS"), name("El Rey Canguro"), name("El Dirigible"), name("El Caballero Negro"), gap(),
+      head("VILLANOS"), name("El Rey Canguro"), name("El Dirigible"), name("El Caballero Negro"), name("El Tiranosaurio Rex"), gap(),
       head("REPARTO"), cast("Canguros boxeadores · Cocodrilos de agua salada"), cast("Serpientes taipán · Topos mineros · Tiburones"),
-      cast("Ninjas de las sombras · Escorpiones del páramo"), cast("Bailaoras flamencas · Ases del aire"), cast("Jinetes negros · Arqueros del torneo"), gap(),
+      cast("Ninjas de las sombras · Escorpiones del páramo"), cast("Bailaoras flamencas · Ases del aire"), cast("Jinetes negros · Arqueros del torneo"),
+      cast("Raptores · Tricerátops · Pterodáctilos · Marcianos"), gap(),
       head("MÚSICA Y SONIDO"), cast("Guitarra flamenca, palmas y castañuelas"), gap(),
       head("HERRERO"), cast("Hachas, paellas, guitarras y abejas"), gap(),
       head("IDEA Y DISEÑO"), name("Bub"), gap(),
       head("PROGRAMACIÓN"), name("Claude"), gap(34),
       ["TUS HAZAÑAS", 24, GOLD], name(`Puntos: ${this.score}`), name(`Monedas: ${this.coins}`), name(`Enemigos derrotados: ${this.kills}`),
-      name(`Vidas perdidas: ${this.deaths}`), name(`Tiempo: ${time}`), gap(44),
+      name(`Vidas perdidas: ${this.deaths}`), name(`Secretos encontrados: ${this.secrets.size} de 2`), name(`Tiempo: ${time}`), gap(44),
       ["¡GRACIAS POR JUGAR!", 46, GOLD],
     ];
     this.creditsH = this.creditLines.reduce((a, l) => a + l[1] * 1.45, 0);
     this.creditsY = 420;
     const G = 474, add = (e, fly) => { e.dir = 1; e.maxHp = 1; e.fly = fly; e.baseY = fly ? 370 : G - e.h; e.y = e.baseY; e.onGround = true; this.parade.push({ e }); };
     this.parade = [];
-    for (const [k, fly] of [["t"], ["w", 1], ["c"], ["T"], ["b", 1], ["n"], ["m"], ["j"], ["g", 1], ["k"], ["h"], ["v", 1], ["d"], ["a"], ["J"]]) {
+    for (const [k, fly] of [["t"], ["w", 1], ["c"], ["T"], ["b", 1], ["n"], ["m"], ["j"], ["g", 1], ["k"], ["h"], ["v", 1], ["d"], ["a"], ["J"], ["r"], ["q", 1], ["y"]]) {
       const e = ROO_STATS[k] ? new Kangaroo(k, 0, 0) : FLYER_STATS[k] ? new Flyer(k, 0, 0) : LUNGER_STATS[k] ? new Lunger(k, 0, 0)
         : k === "m" ? new Mole(0, 0) : k === "h" ? new Shadow(0, 0) : k === "d" ? new Dancer(0, 0) : new Archer(0, 0);
       if (k === "m") { e.mode = "up"; e.up = 1; }
@@ -2738,6 +3127,7 @@ class Game {
         else { this.state = "gameover"; play("gameover"); say("fin", true); }
       }
     } else if (this.state === "pole") this.updatePole();
+    else if (this.state === "door") this.updateDoor();
     else if (this.state === "finale" || this.state === "credits") {
       this.stateTimer++;
       if (--this.musicT <= 0) { play("win"); this.musicT = 222; }   // the flamenco keeps playing
@@ -2775,8 +3165,14 @@ class Game {
   breakCrates(box) {
     const lvl = this.level;
     for (const t of lvl.tilesNear(box)) {
-      if (lvl.tile(t.cx, t.cy) !== "C" || !collide(box, t)) continue;
+      const ch = lvl.tile(t.cx, t.cy);
+      if ((ch !== "C" && ch !== "Q") || !collide(box, t)) continue;
       lvl.tiles.delete(t.cx + "," + t.cy);
+      if (ch === "Q") {   // cracked stone: a secret passage!
+        this.burst(t.x + 20, t.y + 20, [rgb(120, 116, 130), rgb(80, 76, 90), WHITE], 16, 4); this.shake = Math.max(this.shake, 4); play("crate");
+        if (!lvl.passage) { lvl.passage = true; this.popup(t.x + 20, t.y - 10, "¡Un pasadizo!", GOLD); play("secret"); say("secreto", true); }
+        continue;
+      }
       this.burst(t.x + 20, t.y + 20, [WOOD, WOOD_DARK], 14);
       lvl.coins.push(new Coin(t.x + 20, t.y + 20));
       this.score += 10; this.shake = Math.max(this.shake, 3);
@@ -2812,12 +3208,12 @@ class Game {
       }
     }
     if (p.plane && p.justFired) {   // rat-a-tat: each press of the attack button fires a burst
-      this.shots.push({ kind: "bullet", x: p.x + p.w + 4, y: p.y + 18 + (p.burstN % 2 ? -2 : 2), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
-      play("gun");
+      this.shots.push({ kind: p.ufo ? "laser" : "bullet", x: p.x + p.w + 4, y: p.y + (p.ufo ? 20 : 18) + (p.burstN % 2 ? -2 : 2), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
+      play(p.ufo ? "zap" : "gun");
     }
     if (p.justRocket) {   // every fourth press: a rocket!
-      this.shots.push({ kind: "shell", rocket: true, x: p.x + p.w, y: p.y + 24, vx: 10 + p.vx, vy: 0.2, t: 0, hit: new Set() }); play("rocket");
-      this.popup(p.x + p.w / 2, p.y - 12, "¡Cohete!", GOLD);
+      this.shots.push({ kind: "shell", rocket: !p.ufo, plasma: p.ufo, x: p.x + p.w, y: p.y + 24, vx: 10 + p.vx, vy: p.ufo ? 0 : 0.2, t: 0, hit: new Set() }); play("rocket");
+      this.popup(p.x + p.w / 2, p.y - 12, p.ufo ? "¡Plasma!" : "¡Cohete!", GOLD);
     }
     if (p.tank && p.justFired) {   // BOOM: the tank fires its cannon
       const mx = p.facing > 0 ? p.x + p.w + 10 : p.x - 10;
@@ -2839,8 +3235,11 @@ class Game {
       this.breakCrates(r);
       if (!fa.alive) this.flyingAxe = null;
     }
+    if (lvl.theme.bg === "space" && this.levelTimer % 50 === 0 && lvl.flag && p.x < lvl.flag.x - 1400)   // an endless stream of asteroids
+      lvl.enemies.push(new Asteroid(this.camX + W + 80, randInt(70, 400), Math.random() < 0.5 ? 1 : 2, LEVELS[this.levelIndex].speed, true));
     for (const e of lvl.enemies) e.update(lvl, p, this);
     this.updateBees();
+    if (!p.plane) this.revealBlocks();
     for (const g of this.rings) {   // the guitar's shockwave ring spreads out
       g.r += 9; if (g.r > 250) g.dead = true;
       for (const e of lvl.enemies) if (e.alive && Math.hypot(e.x + e.w / 2 - g.x, e.y + e.h / 2 - g.y) < g.r) { this.strike(e, e.x + e.w / 2 > g.x ? 1 : -1, g.hit, 1); if (e.alive && !e.blocks && e !== lvl.boss) e.stun = Math.max(e.stun, 50); }
@@ -2908,7 +3307,8 @@ class Game {
     for (const s of lvl.spikes) if (collide(pr, { x: s.x + 4, y: s.y + 20, w: TILE - 8, h: 20 }) && ouch(s.x + TILE / 2)) p.vy = -10;
     for (const s of this.shots) {   // knives, cannonballs and the dancers' fans
       s.t++; s.x += s.vx; s.y += s.vy;
-      if (s.kind === "shell") s.vy += s.rocket ? 0.01 : 0.05;
+      if (s.kind === "shell") s.vy += s.rocket ? 0.01 : s.plasma ? 0 : 0.05;
+      if (s.kind === "rock") s.vy += 0.3;
       if (s.kind === "arrow") s.vy += 0.15;
       if (s.kind === "paella") s.vy += 0.35;
       const boomy = s.kind === "shell" || s.kind === "paella";
@@ -2932,6 +3332,7 @@ class Game {
         this.breakCrates(sr);
       }
       if (lvl.solidAt(Math.floor(s.x / TILE), Math.floor(s.y / TILE)) || s.t > (s.life || (s.enemy ? 170 : 90))) s.dead = true;
+      if (s.dead && s.kind === "rock") this.burst(s.x, s.y, [s.col, s.dark, rgb(196, 176, 140)], 12, 4);
       if (s.dead && boomy) {   // explosion (the paella one is bigger, and full of rice)
         const big = s.kind === "paella";
         this.burst(s.x, s.y, big ? [rgb(250, 190, 40), rgb(220, 40, 40), rgb(80, 170, 60), WHITE] : [rgb(255, 200, 80), rgb(255, 120, 40), rgb(150, 150, 150)], big ? 30 : 22, 5); play("boom");
@@ -2941,6 +3342,16 @@ class Game {
       }
     }
     this.shots = this.shots.filter(s => !s.dead);
+    if (lvl.theme.lava && p.y + p.h > 486) {   // fell in the lava
+      this.burst(p.x + p.w / 2, 480, [rgb(255, 200, 60), rgb(255, 110, 30), rgb(120, 40, 20)], 24, 6); play("hurt");
+      this.popup(p.x + p.w / 2, 420, "¡Quema, quema!", HEART); say("jolin", true); this.loseLife(); return;
+    }
+    for (const k of [...lvl.lifeups]) if (collide(p.rect(), { x: k.x - 20, y: k.y - 20, w: 40, h: 40 })) {   // an extra life
+      lvl.lifeups.splice(lvl.lifeups.indexOf(k), 1); this.lives++; this.lifeTaken.add(this.levelIndex + ":" + k.x); play("oneup"); say("vida", true);
+      this.popup(k.x, k.y - 24, "¡Vida extra!", GOLD); this.burst(k.x, k.y, [GOLD, HEART, WHITE], 24, 5);
+    }
+    const dr = lvl.door;
+    if (dr && !this.noDoors && collide(pr, dr) && p.onGround) { this.enterDoor(); return; }
     if (lvl.theme.water && p.y + p.h > WATER_Y + 20) {   // fell in the sea
       this.splashAt(p.x + p.w / 2); play("splash"); this.popup(p.x + p.w / 2, WATER_Y - 40, "¡Glu, glu!", WHITE);
       say("glu", true); this.loseLife(); return;
@@ -2968,10 +3379,14 @@ class Game {
     if (e.kind === "E") this.burst(ex, ey, [rgb(90, 90, 90), rgb(150, 150, 150), rgb(255, 160, 60)], 18, 4);
     if (boss) {
       this.popup(ex, er.y - 20, `¡Victoria! +${e.score}`); this.shake = 24;
-      play(e.kind === "X" ? "clang" : e.kind === "Z" ? "boom" : "boing_big"); say("victoria", true);
+      play(e.kind === "X" ? "clang" : e.kind === "Z" ? "boom" : e.kind === "R" ? "roar" : "boing_big"); say("victoria", true);
       if (e.kind === "Z") for (let k = 0; k < 6; k++) this.burst(e.x + randInt(20, e.w - 20), e.y + randInt(10, 90), [rgb(255, 200, 80), rgb(255, 120, 40), rgb(90, 90, 90)], 20, 7);
       const f = this.level.flag; if (f) this.burst(f.x, f.y + 40, [GOLD, WHITE, ARMOR_LIGHT], 40, 6);
       return;
+    }
+    if (e.kind === "O" && e.size > 0) for (const d of [-1, 1]) {   // a shot asteroid breaks into two smaller ones
+      const a = new Asteroid(ex, ey, e.size - 1, e.mul, true); a.vy = d * (0.8 + Math.random()); a.vx = e.vx - Math.random();
+      this.level.enemies.push(a);
     }
     const WORDS = {   // what pops up, which sound, which voice line
       T: ["¡K.O.!", "boing_big", "rey"], c: ["¡Hasta luego, cocodrilo!", "snap", "coco"], m: ["¡Toma, topo!", "pop", "topo"],
@@ -2979,10 +3394,12 @@ class Game {
       w: [null, "squeak", "toma"], b: [null, "squeak", "toma"], g: [null, "screech", "toma"], v: [null, "screech", "toma"],
       h: ["¡Adiós, sombra!", "shing", "sombra"], z: ["¡Bum!", "boom", "toma"], E: ["¡Derribado!", "boom", "derribado"], J: ["¡Desmontado!", "neigh", "desmontado"],
       a: ["¡Adiós, arquero!", "boing", "arquero"],
+      r: ["¡Adiós, raptor!", "screech", "raptor"], y: ["¡Toma, tricerátops!", "stomp", "tricera"], q: ["¡Adiós, pterodáctilo!", "screech", "ptero"],
+      O: ["¡Pum!", "boom", null], u: ["¡Adiós, marciano!", "zap", "marciano"],
     };
     const [word, snd, line] = WORDS[e.kind] || [null, "boing", pick(["toma", "adios"])];
     this.popup(ex, er.y - 10, `${word || pick(["¡Toma!", "¡Zas!", "¡Adiós!"])} +${e.score}`);
-    play(snd); say(line, word !== null);
+    play(snd); if (line) say(line, word !== null);
   }
 
   draw() {
@@ -2997,10 +3414,22 @@ class Game {
     if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
     drawBackground(theme, cam);
     if (theme.water) drawWater(this.t);
+    if (theme.lava) drawLava(this.t);
     for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) for (let cy = 0; cy < lvl.h; cy++) {
       const ch = lvl.tile(cx, cy); if (!ch) continue;
-      const img = ch === "#" ? tiles[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : tiles[ch];
+      if (ch === "H") {   // hidden block: just a faint shimmer until it's found
+        const found = lvl.revealed.has(cx + "," + cy);
+        ctx.globalAlpha = found ? 1 : 0.07 + 0.05 * Math.sin(this.t * 0.08 + cx);
+        ctx.drawImage(tiles["="], cx * TILE - cam, cy * TILE); ctx.globalAlpha = 1;
+        if (found) { RS(GOLD, cx * TILE - cam + 1, cy * TILE + 1, TILE - 2, TILE - 2, 2, 4); T("?", 20, cx * TILE - cam + 20, cy * TILE + 21, GOLD); }
+        continue;
+      }
+      const img = ch === "#" || ch === "Q" ? tiles[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : tiles[ch];
       ctx.drawImage(img, cx * TILE - cam, cy * TILE);
+      if (ch === "Q") {   // cracked stone (hit it!)
+        const x0 = cx * TILE - cam, y0 = cy * TILE, cr = "rgba(0,0,0,0.45)";
+        L(cr, x0 + 8, y0 + 4, x0 + 18, y0 + 18, 2); L(cr, x0 + 18, y0 + 18, x0 + 14, y0 + 30, 2); L(cr, x0 + 18, y0 + 18, x0 + 32, y0 + 22, 2); L(cr, x0 + 32, y0 + 22, x0 + 36, y0 + 36, 1.5);
+      }
     }
     for (const s of lvl.spikes) if (s.x > cam - TILE && s.x < cam + W) drawSpike(s, cam, theme);
     const bk = lvl.bike;
@@ -3013,13 +3442,23 @@ class Game {
       ctx.save(); ctx.translate(tk.x - cam, tk.y); drawTank(0, 0, false, this.t); ctx.restore();
       if (Math.floor(this.t / 20) % 2 === 0) T("¡Súbete al tanque!", 18, tk.x + tk.w / 2 - cam, tk.y - 30, GOLD);
     }
+    if (lvl.door) {
+      const d = lvl.door;
+      if (d.x + d.w > cam - 40 && d.x < cam + W + 40) drawDoor(d.x - cam, d.y, this.state === "door" ? Math.min(1, this.stateTimer / 14) : 0, this.t);
+      if (theme.dark && this.mineLights && !(lvl.cover && !lvl.passage)) this.mineLights.push([d.x + d.w / 2 - cam, d.y + 30]);
+    }
+    for (const k of lvl.lifeups) drawOneUp(k.x - cam, k.y, this.t);
     for (const k of lvl.pickups) {   // shuriken bundles
       const by = k.y + Math.sin(this.t * 0.08 + k.x) * 4;
       ctx.globalAlpha = 0.3; C(rgb(200, 220, 255), k.x - cam, by, 16); ctx.globalAlpha = 1;
       drawShuriken(k.x - cam, by, this.t * 0.08, rgb(214, 220, 236), 12);
     }
     const fl = lvl.flag;
-    if (fl && lvl.mode === "plane") {   // finish line in the sky
+    if (fl && lvl.mode === "ufo") {   // a swirling portal home
+      const x = fl.x - cam;
+      for (let k = 0; k < 5; k++) { ctx.globalAlpha = 0.25 + k * 0.12; ES(k % 2 ? rgb(120, 230, 255) : rgb(210, 120, 255), x - 30 + k * 6 + Math.sin(this.t * 0.1 + k) * 3, 80 + k * 22, 60 - k * 12, 300 - k * 44, 5); }
+      ctx.globalAlpha = 1; T("PORTAL", 22, x, 60, GOLD);
+    } else if (fl && lvl.mode === "plane") {   // finish line in the sky
       const x = fl.x - cam;
       for (let y = 40, i = 0; y < 430; y += 16, i++) { R(i % 2 ? BLACK : WHITE, x, y, 10, 16); R(i % 2 ? WHITE : BLACK, x + 10, y, 10, 16); }
       T("META", 22, x + 10, 26, GOLD);
@@ -3041,9 +3480,13 @@ class Game {
     }
     for (const c of lvl.coins) drawCoin(c, cam);
     for (const e of lvl.enemies) if (e.x + e.w > cam - 60 && e.x < cam + W + 60) e.draw(cam);
+    const cv = lvl.cover;
+    if (cv && !lvl.passage) for (let x = cv.x0; x <= cv.x1; x += TILE) for (let y = cv.y0; y <= cv.y1; y += TILE) ctx.drawImage(tiles.dirt, x - cam, y);   // the secret room hides behind fake rock
     const p = this.player;
-    if (!this.inCastle && !(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) {
+    const inDoor = this.state === "door" && this.stateTimer > 16;
+    if (!this.inCastle && !inDoor && !(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) {
       if (p.tank) { flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing); drawTank(p.x / 9, Math.max(0, p.recoil), true, this.t); ctx.restore(); }
+      else if (p.ufo) drawUFO(p.x - cam, p.y + Math.sin(this.t * 0.1) * 2, this.t, p.vy * 0.04, false, false);
       else if (p.plane) drawPlane(p.x - cam, p.y, 1, PLAYER_PLANE, true, this.t, p.vy * 0.06);
       else if (p.horse) drawJoust(p, cam, this.upg, this.t);
       else if (p.ninja) drawNinja(p, cam, this.upg, this.t);
@@ -3085,12 +3528,12 @@ class Game {
     if (this.state !== "title") {
       for (let i = 0; i < p.maxHearts; i++) drawHeart(16 + i * 24, 14, i < p.hearts);
       T(`VIDAS ${this.lives}`, 20, 16, 38, WHITE, "left", "top");
-      T(`NIVEL ${this.levelIndex + 1}`, 20, 16, 62, WHITE, "left", "top");
+      T(this.levelLabel(), 20, 16, 62, LEVELS[this.levelIndex].secret ? GOLD : WHITE, "left", "top");
       SHOP.filter(it => this.upg[it.id]).forEach((it, i) => emoji(it.icon, 18, 26 + i * 24, 98));
       if (p.ninja) { drawShuriken(28, 126, this.t * 0.05, rgb(214, 220, 236), 10); T(`× ${p.shuriken}`, 20, 44, 126, WHITE, "left", "middle"); }
       if (p.plane) {   // rocket meter: every 4th shot launches a rocket
         const n = (p.presses || 0) % 4;
-        T("COHETE", 16, 16, 118, WHITE, "left", "top");
+        T(p.ufo ? "PLASMA" : "COHETE", 16, 16, 118, WHITE, "left", "top");
         for (let i = 0; i < 4; i++) R(i < n ? GOLD : i === 3 ? rgb(210, 40, 40) : HEART_EMPTY, 92 + i * 16, 119, 12, 14, 3);
       }
       T(`MONEDAS ${this.coins}`, 20, W / 2, 14, WHITE, "center", "top");
@@ -3104,7 +3547,7 @@ class Game {
     }
     if (this.state === "play" && this.levelTimer < 150) {   // level title card
       ctx.globalAlpha = Math.min(1, (150 - this.levelTimer) / 40);
-      T(`NIVEL ${this.levelIndex + 1}`, 52, W / 2, 170, GOLD);
+      T(LEVELS[this.levelIndex].secret ? "¡NIVEL SECRETO!" : this.levelLabel(), 52, W / 2, 170, GOLD);
       T(lvl.name, 34, W / 2, 222, WHITE);
       if (lvl.hint) T(lvl.hint, 22, W / 2, 262, GOLD);
       ctx.globalAlpha = 1;
@@ -3115,7 +3558,7 @@ class Game {
     if (this.state === "title") {
       shade();
       T("EL CABALLERO DEL HACHA", 58, W / 2, 104, ARMOR_LIGHT);
-      T("¡Abre camino a hachazos por once niveles!", 28, W / 2, 168, WHITE);
+      T("¡Abre camino a hachazos por once niveles... y busca los secretos!", 25, W / 2, 168, WHITE);
       if (isTouch) {
         T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 232, WHITE);
       } else {
@@ -3131,13 +3574,16 @@ class Game {
       shade();
       T("FIN DEL JUEGO", 72, W / 2, 160, HEART);
       T(`Puntos: ${this.score}`, 30, W / 2, 236, WHITE);
-      tap(`Toca para seguir en el nivel ${this.levelIndex + 1}`, `Pulsa ENTER para seguir en el nivel ${this.levelIndex + 1}`, 330);
+      const where = LEVELS[this.levelIndex].secret ? "en el nivel secreto" : `en el nivel ${this.levelIndex + 1}`;
+      tap(`Toca para seguir ${where}`, `Pulsa ENTER para seguir ${where}`, 330);
     } else if (this.state === "levelclear" && this.stateTimer > 30) {
       shade();
       T("¡NIVEL SUPERADO!", 70, W / 2, 140, GOLD);
       T(`Puntos: ${this.score}      Monedas: ${this.coins}`, 30, W / 2, 220, WHITE);
-      T(`Siguiente: ${LEVELS[this.levelIndex + 1].name}`, 30, W / 2, 268, WHITE);
+      T(`Siguiente: ${LEVELS[this.afterLevel()].name}`, 30, W / 2, 268, WHITE);
       if (this.stateTimer > 60) tap("Toca para ir a la tienda", "Pulsa ENTER para ir a la tienda", 350);
+    } else if (this.state === "door" && this.stateTimer > 20) {   // fade to black through the door
+      ctx.fillStyle = `rgba(0,0,0,${Math.min(1, (this.stateTimer - 20) / 26)})`; ctx.fillRect(-20, -20, W + 40, H + 40);
     } else if (this.state === "finale") {
       const k = 1 + Math.sin(this.stateTimer * 0.12) * 0.06;
       ctx.save(); ctx.translate(W / 2, 128); ctx.scale(k, k); T("¡VICTORIA!", 84, 0, 0, GOLD); ctx.restore();
@@ -3186,7 +3632,7 @@ function tapStart() {
   if (s === "credits") { if (game.creditsT > 150) game.newGame(0); return true; }
   if (s === "gameover") { game.newGame(game.levelIndex); return true; }
   if (s === "levelclear") { if (game.stateTimer > 60) game.openShop(); return true; }
-  return s === "shop" || s === "pole";
+  return s === "shop" || s === "pole" || s === "door";
 }
 const keys = { left: false, right: false, jump: false };
 const touch = { left: false, right: false, jump: false };
