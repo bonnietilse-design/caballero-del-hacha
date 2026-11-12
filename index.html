@@ -1721,8 +1721,35 @@ class Level {
 // ------------------------------------------------------------------ drawing helpers
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
+// realistic shading: each solid colour gets a highlight and a shadow, so shapes look rounded and solid
+let SHADE = true;   // switched off automatically if a slow phone can't keep up
+const shadeCache = new Map();
+function shades(col) {   // [highlight, base, shadow] for an "rgb(r,g,b)" colour (other kinds of colour stay flat)
+  let s = shadeCache.get(col);
+  if (s !== undefined) return s;
+  const m = typeof col === "string" && /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(col);
+  if (m) {
+    const c = [+m[1], +m[2], +m[3]];
+    const lt = k => `rgb(${c.map(v => Math.round(v + (255 - v) * k)).join(",")})`, dk = k => `rgb(${c.map(v => Math.round(v * (1 - k))).join(",")})`;
+    s = [lt(0.3), col, dk(0.34)];
+  } else s = null;
+  shadeCache.set(col, s);
+  return s;
+}
+function linShade(col, x0, y0, x1, y1) {   // light at (x0, y0), shadow at (x1, y1)
+  const s = SHADE && shades(col); if (!s) return col;
+  const g = ctx.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, s[0]); g.addColorStop(0.42, s[1]); g.addColorStop(1, s[2]);
+  return g;
+}
+function radShade(col, cx, cy, r) {   // a rounded, sphere-like shading
+  const s = SHADE && shades(col); if (!s) return col;
+  const g = ctx.createRadialGradient(cx - r * 0.38, cy - r * 0.42, r * 0.05, cx, cy, r * 1.15);
+  g.addColorStop(0, s[0]); g.addColorStop(0.5, s[1]); g.addColorStop(1, s[2]);
+  return g;
+}
 function R(col, x, y, w, h, r = 0) {
-  ctx.fillStyle = col;
+  const a = Math.abs(w * h);
+  ctx.fillStyle = a >= 80 && a <= 60000 ? linShade(col, x, y, x + w * 0.25, y + h) : col;
   if (r && ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill(); } else ctx.fillRect(x, y, w, h);
 }
 function RS(col, x, y, w, h, lw, r = 0) {
@@ -1730,19 +1757,30 @@ function RS(col, x, y, w, h, lw, r = 0) {
   if (r && ctx.roundRect) ctx.roundRect(x + lw / 2, y + lw / 2, w - lw, h - lw, r); else ctx.rect(x + lw / 2, y + lw / 2, w - lw, h - lw);
   ctx.stroke();
 }
-function C(col, x, y, r) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); ctx.fill(); }
+function C(col, x, y, r) { ctx.fillStyle = r >= 5.5 ? radShade(col, x, y, r) : col; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); ctx.fill(); }
 function CS(col, x, y, r, lw) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r - lw / 2), 0, Math.PI * 2); ctx.stroke(); }
-function E(col, x, y, w, h) { ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(x + w / 2, y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2); ctx.fill(); }
+function E(col, x, y, w, h) { ctx.fillStyle = Math.abs(w * h) >= 110 ? radShade(col, x + w / 2, y + h / 2, Math.max(Math.abs(w), Math.abs(h)) * 0.55) : col; ctx.beginPath(); ctx.ellipse(x + w / 2, y + h / 2, Math.abs(w / 2), Math.abs(h / 2), 0, 0, Math.PI * 2); ctx.fill(); }
 function ES(col, x, y, w, h, lw) {
   ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
   ctx.ellipse(x + w / 2, y + h / 2, Math.max(0, Math.abs(w / 2) - lw / 2), Math.max(0, Math.abs(h / 2) - lw / 2), 0, 0, Math.PI * 2); ctx.stroke();
 }
 function path(pts) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); }
-function P(col, pts) { ctx.fillStyle = col; path(pts); ctx.fill(); }
+function P(col, pts) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const [x, y] of pts) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  ctx.fillStyle = (x1 - x0) * (y1 - y0) >= 90 ? linShade(col, x0, y0, x0 + (x1 - x0) * 0.3, y1) : col;
+  path(pts); ctx.fill();
+}
 function PS(col, pts, lw) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = "round"; path(pts); ctx.stroke(); }
 function L(col, x1, y1, x2, y2, lw) {
   ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round";
   ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  const s = lw >= 5 && SHADE && shades(col);
+  if (s) {   // thick limbs and poles: a soft highlight along the lit side makes them look round
+    const a = ctx.globalAlpha, o = lw * 0.18;
+    ctx.globalAlpha = a * 0.45; ctx.strokeStyle = s[0]; ctx.lineWidth = lw * 0.38;
+    ctx.beginPath(); ctx.moveTo(x1 - o, y1 - o); ctx.lineTo(x2 - o, y2 - o); ctx.stroke(); ctx.globalAlpha = a;
+  }
 }
 const FONT = '"Trebuchet MS", "Segoe UI", system-ui, sans-serif';
 function T(msg, size, x, y, color = WHITE, align = "center", base = "middle") {
@@ -1761,74 +1799,111 @@ function flipAt(x, y, w, dir) {   // draw facing right, mirrored when facing lef
 
 function makeTiles(theme) {
   const rnd = seeded(7);
-  const mk = draw => { const c = document.createElement("canvas"); c.width = c.height = TILE; draw(c.getContext("2d")); return c; };
+  const mk = (draw, h = TILE) => { const c = document.createElement("canvas"); c.width = TILE; c.height = h; draw(c.getContext("2d")); return c; };
   const [d0, d1, d2] = theme.dirt, [t0, t1, t2] = theme.top;
+  const nums = c => (String(c).match(/\d+/g) || [128, 128, 128]).slice(0, 3).map(Number);
   const ln = (g, col, x1, y1, x2, y2, lw = 2) => { g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); };
-  const dirt = g => {
-    g.fillStyle = d0; g.fillRect(0, 0, TILE, TILE);
-    if (theme.bricks) {   // castle walls: stone bricks
-      ln(g, d1, 0, 20, TILE, 20); ln(g, d1, 0, 39, TILE, 39); ln(g, d1, 20, 0, 20, 20); ln(g, d1, 6, 20, 6, 40); ln(g, d1, 32, 20, 32, 40);
-      ln(g, d2, 2, 2, 17, 2); ln(g, d2, 23, 2, 38, 2); ln(g, d2, 9, 22, 29, 22);
-      return;
+  const texture = (g, base, dark, light, y0 = 0, y1 = TILE, grain = 0.35) => {   // seamless blotchy noise between three tones, plus fine grain
+    const img = g.getImageData && g.getImageData(0, y0, TILE, y1 - y0); if (!img || !img.data) { g.fillStyle = base; g.fillRect(0, y0, TILE, y1 - y0); return; }
+    const B = nums(base), D = nums(dark), Lt = nums(light), grid = [], N = 4, cell = TILE / N;
+    for (let i = 0; i < N * N; i++) grid.push(rnd());
+    const at = (i, j) => grid[((j % N + N) % N) * N + ((i % N + N) % N)], d = img.data;
+    for (let y = y0; y < y1; y++) for (let x = 0; x < TILE; x++) {
+      const fx = x / cell, fy = y / cell, i = Math.floor(fx), j = Math.floor(fy), u = fx - i, v = fy - j;
+      const sm = q => q * q * (3 - 2 * q), su = sm(u), sv = sm(v);
+      const n = (at(i, j) * (1 - su) + at(i + 1, j) * su) * (1 - sv) + (at(i, j + 1) * (1 - su) + at(i + 1, j + 1) * su) * sv;
+      const t = (n - 0.5) * 1.3 + (rnd() - 0.5) * grain, k = (y - y0) * TILE * 4 + x * 4;
+      const to = t < 0 ? D : Lt, m = Math.min(1, Math.abs(t));
+      for (let c = 0; c < 3; c++) d[k + c] = B[c] + (to[c] - B[c]) * m;
+      d[k + 3] = 255;
     }
-    g.fillStyle = d1; for (let i = 0; i < 10; i++) g.fillRect(Math.floor(rnd() * (TILE - 3)), Math.floor(rnd() * (TILE - 3)), 3, 3);
-    g.fillStyle = d2; for (let i = 0; i < 4; i++) g.fillRect(Math.floor(rnd() * (TILE - 2)), Math.floor(rnd() * (TILE - 2)), 2, 2);
+    g.putImageData(img, 0, y0);
   };
-  const plain = mk(dirt);
-  const top = mk(g => {
-    dirt(g);
-    if (theme.bricks) {   // castle floor: pale slabs on top
-      g.fillStyle = t1; g.fillRect(0, 0, TILE, 12); g.fillStyle = t0; g.fillRect(0, 0, TILE, 9);
-      ln(g, t2, 0, 1, TILE, 1); ln(g, t1, 20, 0, 20, 9);
+  const pebble = (g, x, y, w, h, col) => {   // a little shaded stone in the earth
+    const gr = g.createRadialGradient(x - w * 0.2, y - h * 0.3, 1, x, y, Math.max(w, h));
+    const c = nums(col); gr.addColorStop(0, `rgb(${c.map(v => Math.min(255, v + 50)).join(",")})`); gr.addColorStop(1, `rgb(${c.map(v => v * 0.6).join(",")})`);
+    g.fillStyle = "rgba(0,0,0,0.25)"; g.beginPath(); g.ellipse(x + 1, y + 1.5, w, h, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, w, h, 0, 0, Math.PI * 2); g.fill();
+  };
+  const bevel = (g, x, y, w, h, light, dark, lw = 2) => { ln(g, light, x, y + lw / 2, x + w, y + lw / 2, lw); ln(g, light, x + lw / 2, y, x + lw / 2, y + h, lw); ln(g, dark, x, y + h - lw / 2, x + w, y + h - lw / 2, lw); ln(g, dark, x + w - lw / 2, y, x + w - lw / 2, y + h, lw); };
+  const dirt = g => {
+    if (theme.bricks) {   // castle walls: weathered stone bricks
+      texture(g, d0, d1, d2);
+      for (const [x, y, w, h] of [[0, 0, 20, 20], [20, 0, 20, 20], [-14, 20, 20, 20], [6, 20, 26, 20], [32, 20, 20, 20]]) bevel(g, x + 1, y + 1, w - 2, h - 2, "rgba(255,255,255,0.18)", "rgba(0,0,0,0.3)");
+      g.fillStyle = "rgba(0,0,0,0.35)"; g.fillRect(0, 19, TILE, 2); g.fillRect(19, 0, 2, 19); g.fillRect(5, 21, 2, 19); g.fillRect(31, 21, 2, 19);
       return;
     }
-    if (theme.kerb) {   // race track: asphalt with red and white kerbs
-      g.fillStyle = t1; g.fillRect(0, 0, TILE, 14); g.fillStyle = t0; g.fillRect(0, 0, TILE, 11);
-      g.fillStyle = rgb(220, 40, 40); g.fillRect(0, 0, 20, 5); g.fillStyle = WHITE; g.fillRect(20, 0, 20, 5);
+    texture(g, d0, d1, d2);
+    for (let i = 0, n = 1 + Math.floor(rnd() * 3); i < n; i++) pebble(g, 5 + rnd() * 30, 6 + rnd() * 30, 1.5 + rnd() * 3, 1.2 + rnd() * 2, d2);
+    g.strokeStyle = "rgba(0,0,0,0.18)"; g.lineWidth = 1;   // fine roots and cracks
+    for (let i = 0; i < 2; i++) { const x = rnd() * TILE, y = rnd() * TILE; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 6, y + 4, x + 10 * (rnd() - 0.3), y + 9); g.stroke(); }
+  };
+  const plainV = [mk(dirt), mk(dirt), mk(dirt), mk(dirt)], plain = plainV[0];
+  const LIP = 10;   // grass blades poke up above the tile
+  const topTile = () => mk(g => {
+    g.translate(0, LIP); dirt(g); g.setTransform(1, 0, 0, 1, 0, 0);
+    if (theme.bricks) {   // castle floor: pale stone slabs
+      texture(g, t0, t1, t2, LIP, LIP + 11); bevel(g, 0, LIP, 20, 11, "rgba(255,255,255,0.35)", "rgba(0,0,0,0.35)"); bevel(g, 20, LIP, 20, 11, "rgba(255,255,255,0.35)", "rgba(0,0,0,0.35)");
+      g.fillStyle = "rgba(0,0,0,0.3)"; g.fillRect(0, LIP + 11, TILE, 3);
       return;
     }
-    if (theme.flat) {   // sand or rock: a smooth top layer with grit
-      g.fillStyle = t1; g.fillRect(0, 0, TILE, 12); g.fillStyle = t0; g.fillRect(0, 0, TILE, 9);
-      g.fillStyle = t2; for (let i = 0; i < 8; i++) g.fillRect(Math.floor(rnd() * (TILE - 2)), Math.floor(rnd() * 8), 2, 2);
+    if (theme.kerb) {   // race track: grainy asphalt with a red-and-white kerb
+      texture(g, t0, t1, t2, LIP, LIP + 13, 0.6);
+      for (const [x, c] of [[0, rgb(214, 36, 36)], [20, rgb(240, 240, 240)]]) { g.fillStyle = c; g.fillRect(x, LIP, 20, 5); }
+      g.fillStyle = "rgba(255,255,255,0.35)"; g.fillRect(0, LIP, TILE, 1); g.fillStyle = "rgba(0,0,0,0.3)"; g.fillRect(0, LIP + 5, TILE, 1); g.fillRect(0, LIP + 13, TILE, 2);
       return;
     }
-    g.fillStyle = t1; g.fillRect(0, 0, TILE, 13);
-    g.fillStyle = t0; g.fillRect(0, 0, TILE, 10);
-    for (let x = 3; x < TILE; x += 7) {
-      ln(g, t2, x, 2, x + 2, 6);
-      g.fillStyle = t1; g.beginPath(); g.arc(x + 2, 13, 3, 0, Math.PI * 2); g.fill();
+    if (theme.flat) {   // sand or rock: a soft top layer with ripples and grit
+      texture(g, t0, t1, t2, LIP, LIP + 13, 0.5);
+      g.strokeStyle = "rgba(255,255,255,0.18)"; g.lineWidth = 1;
+      for (const y of [3, 8]) { g.beginPath(); for (let x = 0; x <= TILE; x += 4) g.lineTo(x, LIP + y + Math.sin(x * 0.3 + y) * 1.2); g.stroke(); }
+      g.fillStyle = "rgba(255,255,255,0.3)"; g.fillRect(0, LIP, TILE, 1.5);
+      const sh = g.createLinearGradient(0, LIP + 12, 0, LIP + 18); sh.addColorStop(0, "rgba(0,0,0,0.3)"); sh.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = sh; g.fillRect(0, LIP + 12, TILE, 6);
+      return;
     }
-  });
+    texture(g, t0, t1, t2, LIP, LIP + 12, 0.45);   // a mat of grass...
+    const sh = g.createLinearGradient(0, LIP + 11, 0, LIP + 19); sh.addColorStop(0, "rgba(0,0,0,0.35)"); sh.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = sh; g.fillRect(0, LIP + 11, TILE, 8);
+    for (let k = 0; k < 7; k++) {   // ...with tufts hanging over the edge
+      const x = (k * 6 + rnd() * 4) % TILE; g.fillStyle = k % 2 ? t1 : t0; g.beginPath(); g.moveTo(x - 3, LIP + 11); g.quadraticCurveTo(x, LIP + 16 + rnd() * 4, x + 3, LIP + 11); g.fill();
+    }
+    g.lineCap = "round";
+    for (let k = 0; k < 26; k++) {   // and blades sticking up
+      const x = (k * 1.55 + rnd() * 2) % TILE, hgt = 4 + rnd() * 8, lean = (rnd() - 0.5) * 4;
+      g.strokeStyle = [t0, t1, t2][k % 3]; g.lineWidth = 1.4 + rnd();
+      g.beginPath(); g.moveTo(x, LIP + 3); g.quadraticCurveTo(x + lean * 0.3, LIP + 3 - hgt * 0.6, x + lean, LIP + 3 - hgt); g.stroke();
+    }
+    g.fillStyle = "rgba(255,255,255,0.12)"; g.fillRect(0, LIP + 1, TILE, 2);
+  }, TILE + LIP);
+  const topV = [topTile(), topTile(), topTile()], top = topV[0];
   const stone = mk(g => {
-    if (theme.plat === "wood") {   // wooden planks
-      g.fillStyle = WOOD; g.fillRect(0, 0, TILE, TILE);
-      for (const y of [13, 26]) ln(g, WOOD_DARK, 0, y, TILE, y);
-      ln(g, WOOD_DARK, 20, 0, 20, 13); ln(g, WOOD_DARK, 8, 13, 8, 26); ln(g, WOOD_DARK, 30, 26, 30, 40);
-      g.fillStyle = WOOD_DARK; for (const [x, y] of [[4, 5], [36, 5], [4, 33], [36, 33]]) g.fillRect(x, y, 2, 2);
-      g.strokeStyle = WOOD_DARK; g.lineWidth = 2; g.strokeRect(1, 1, TILE - 2, TILE - 2);
+    if (theme.plat === "wood") {   // wooden planks with grain
+      texture(g, WOOD, WOOD_DARK, rgb(224, 176, 110), 0, TILE, 0.2);
+      g.strokeStyle = "rgba(90,56,26,0.45)"; g.lineWidth = 1;
+      for (let y = 3; y < TILE; y += 4) { g.beginPath(); for (let x = 0; x <= TILE; x += 5) g.lineTo(x, y + Math.sin(x * 0.12 + y) * 1.3); g.stroke(); }
+      for (const [y0, h] of [[0, 13], [13, 13], [26, 14]]) bevel(g, 0, y0, TILE, h, "rgba(255,230,180,0.35)", "rgba(60,30,10,0.55)");
+      for (const [x, y] of [[4, 6], [34, 6], [4, 19], [34, 19], [4, 32], [34, 32]]) pebble(g, x, y, 1.6, 1.6, rgb(150, 150, 160));
       return;
     }
-    if (theme.plat === "rust") {   // rusty metal sheet with rivets
-      g.fillStyle = rgb(150, 84, 48); g.fillRect(0, 0, TILE, TILE);
-      g.fillStyle = rgb(110, 56, 30); for (let i = 0; i < 6; i++) g.fillRect(Math.floor(rnd() * 32), Math.floor(rnd() * 32), 8, 5);
-      g.fillStyle = rgb(196, 120, 70); g.fillRect(0, 0, TILE, 3);
-      g.fillStyle = rgb(70, 40, 24); for (const [x, y] of [[4, 6], [34, 6], [4, 34], [34, 34]]) g.fillRect(x, y, 3, 3);
-      g.strokeStyle = rgb(70, 40, 24); g.lineWidth = 2; g.strokeRect(1, 1, TILE - 2, TILE - 2);
+    if (theme.plat === "rust") {   // rusty metal plate with rivets
+      texture(g, rgb(150, 84, 48), rgb(96, 48, 24), rgb(200, 126, 74), 0, TILE, 0.5);
+      bevel(g, 0, 0, TILE, TILE, "rgba(255,200,150,0.4)", "rgba(40,16,4,0.6)", 3);
+      for (const [x, y] of [[6, 6], [34, 6], [6, 34], [34, 34]]) pebble(g, x, y, 2.4, 2.4, rgb(110, 70, 50));
       return;
     }
-    g.fillStyle = STONE; g.fillRect(0, 0, TILE, TILE);
-    const half = TILE / 2;
-    ln(g, STONE_DARK, 0, half, TILE, half); ln(g, STONE_DARK, half, 0, half, half); ln(g, STONE_DARK, TILE / 4, half, TILE / 4, TILE);
-    ln(g, STONE_LIGHT, 3, 3, half - 4, 3); ln(g, STONE_LIGHT, half + 3, 3, TILE - 4, 3);
-    g.strokeStyle = STONE_DARK; g.strokeRect(1, 1, TILE - 2, TILE - 2);
+    texture(g, STONE, STONE_DARK, STONE_LIGHT, 0, TILE, 0.3);   // dressed stone blocks
+    for (const [x, y, w, h] of [[0, 0, 20, 20], [20, 0, 20, 20], [0, 20, 10, 20], [10, 20, 20, 20], [30, 20, 10, 20]]) bevel(g, x, y, w, h, "rgba(255,255,255,0.4)", "rgba(0,0,0,0.38)");
+    for (let i = 0; i < 3; i++) { g.fillStyle = "rgba(0,0,0,0.15)"; g.beginPath(); g.arc(rnd() * TILE, rnd() * TILE, 1.5 + rnd() * 2, 0, Math.PI * 2); g.fill(); }
   });
-  const crate = mk(g => {
-    g.fillStyle = WOOD; g.fillRect(0, 0, TILE, TILE);
-    for (const y of [13, 26]) ln(g, WOOD_DARK, 0, y, TILE, y);
-    ln(g, WOOD_DARK, 4, 4, TILE - 5, TILE - 5, 4);
-    g.lineWidth = 4; g.strokeRect(2, 2, TILE - 4, TILE - 4);
+  const crate = mk(g => {   // a sturdy wooden crate
+    texture(g, WOOD, WOOD_DARK, rgb(226, 178, 112), 0, TILE, 0.2);
+    g.strokeStyle = "rgba(90,56,26,0.4)"; g.lineWidth = 1;
+    for (let y = 6; y < TILE; y += 5) { g.beginPath(); for (let x = 0; x <= TILE; x += 5) g.lineTo(x, y + Math.sin(x * 0.15 + y * 0.7) * 1.2); g.stroke(); }
+    g.strokeStyle = rgb(110, 70, 34); g.lineWidth = 5; g.strokeRect(2.5, 2.5, TILE - 5, TILE - 5);
+    g.beginPath(); g.moveTo(5, 5); g.lineTo(TILE - 5, TILE - 5); g.stroke();
+    bevel(g, 0, 0, TILE, TILE, "rgba(255,230,180,0.45)", "rgba(50,24,8,0.6)", 2);
+    for (const [x, y] of [[5, 5], [35, 5], [5, 35], [35, 35]]) pebble(g, x, y, 1.8, 1.8, rgb(160, 160, 170));
   });
-  return { grass: top, dirt: plain, "=": stone, C: crate };
+  return { grass: top, dirt: plain, grassV: topV, dirtV: plainV, "=": stone, C: crate };
 }
 
 function angleAt(prog) {   // axe angle in degrees: 0 = up, positive = towards the front
@@ -2900,8 +2975,39 @@ function drawHeart(x, y, full) {
   const col = full ? HEART : HEART_EMPTY;
   C(col, x + 5, y + 5, 5); C(col, x + 13, y + 5, 5); P(col, [[x, y + 7], [x + 18, y + 7], [x + 9, y + 17]]);
 }
-function drawCloud(x, y, s) {
-  for (const [dx, dy, rad] of [[0, 0, 22], [25, -10, 28], [55, 0, 22], [28, 6, 22]]) C(WHITE, x + dx * s, y + dy * s, rad * s);
+let vignette = null;
+function drawVignette() {   // darken the corners a touch, like a camera lens
+  if (!vignette) {
+    vignette = document.createElement("canvas"); vignette.width = W; vignette.height = H;
+    const g = vignette.getContext("2d"); if (!g || !g.createRadialGradient) return;
+    const gr = g.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, W * 0.68);
+    gr.addColorStop(0, "rgba(0,0,0,0)"); gr.addColorStop(1, "rgba(0,0,0,0.32)"); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  }
+  ctx.drawImage(vignette, 0, 0);
+}
+function drawCloud(x, y, s) {   // a soft, lit cloud: bright on top, a little blue-grey underneath
+  for (const [dx, dy, rad] of [[0, 0, 22], [25, -10, 28], [55, 0, 22], [28, 6, 22], [40, -2, 20], [12, -4, 18]]) {
+    const cx = x + dx * s, cy = y + dy * s, r = rad * s, g = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.5, r * 0.1, cx, cy, r);
+    g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.7, "rgba(246,249,255,0.97)"); g.addColorStop(1, "rgba(206,218,236,0.9)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function drawSunGlow(x, y, r, col, crescent) {   // a glowing sun with gentle rays of light (or a crescent moon)
+  const c = String(col).match(/\d+/g).slice(0, 3).join(",");
+  let g = ctx.createRadialGradient(x, y, r * 0.6, x, y, r * 6);
+  g.addColorStop(0, `rgba(${c},0.45)`); g.addColorStop(0.35, `rgba(${c},0.12)`); g.addColorStop(1, `rgba(${c},0)`);
+  ctx.fillStyle = g; ctx.fillRect(x - r * 6, y - r * 6, r * 12, r * 12);
+  if (SHADE && !crescent) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(game.t * 0.0007); ctx.globalAlpha = 0.07;
+    for (let k = 0; k < 9; k++) { ctx.rotate(Math.PI * 2 / 9); ctx.fillStyle = `rgb(${c})`; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(r * 9, -r * 0.9); ctx.lineTo(r * 9, r * 0.9); ctx.fill(); }
+    ctx.restore();
+  }
+  g = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
+  g.addColorStop(0, "rgb(255,255,250)"); g.addColorStop(1, `rgb(${c})`);
+  ctx.save();
+  if (crescent) { ctx.beginPath(); ctx.rect(x - r * 2, y - r * 2, r * 4, r * 4); ctx.arc(x + r * 0.35, y - r * 0.24, r * 0.88, 0, Math.PI * 2); ctx.clip("evenodd"); }
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
 }
 const wrapX = (x, period) => ((x % period) + period) % period;
 function drawBackground(theme, cam) {
@@ -2910,8 +3016,8 @@ function drawBackground(theme, cam) {
   ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
   if (theme.bg === "castle") {   // moon and stars at sunset
     for (let i = 0; i < 30; i++) C(WHITE, (i * 137) % W, (i * 53) % 180 + 10, (i % 3) * 0.5 + 0.6);
-    C(theme.sun, W - 150, 80, 34); C(rgb(...theme.sky[0]), W - 138, 72, 30);
-  } else if (theme.sun) C(theme.sun, W - 140, 90, 42);
+    drawSunGlow(W - 150, 80, 34, theme.sun, true);
+  } else if (theme.sun) drawSunGlow(W - 140, 90, 42, theme.sun);
   if (theme.clouds) for (const [cx, cy, s] of game.clouds) drawCloud(wrapX(cx - cam * 0.15, W + 300) - 150, cy, s);
 
   if (theme.bg === "hills") {
@@ -3894,6 +4000,11 @@ class Game {
     if (this.rk) drawRocketWorld(this);
     else {
     drawBackground(theme, cam);
+    if (SHADE && !theme.dark && theme.bg !== "space") {   // distance haze: the far landscape fades into the sky colour
+      const hz = ctx.createLinearGradient(0, 120, 0, 450), c = theme.sky[1].join(",");
+      hz.addColorStop(0, `rgba(${c},0)`); hz.addColorStop(1, `rgba(${c},0.28)`);
+      ctx.fillStyle = hz; ctx.fillRect(-20, 120, W + 40, 330);
+    }
     if (theme.water) drawWater(this.t);
     if (theme.lava) drawLava(this.t);
     for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) for (let cy = 0; cy < lvl.h; cy++) {
@@ -3905,8 +4016,13 @@ class Game {
         if (found) { RS(GOLD, cx * TILE - cam + 1, cy * TILE + 1, TILE - 2, TILE - 2, 2, 4); T("?", 20, cx * TILE - cam + 20, cy * TILE + 21, GOLD); }
         continue;
       }
-      const img = ch === "#" || ch === "Q" ? tiles[lvl.solidAt(cx, cy - 1) ? "dirt" : "grass"] : tiles[ch];
-      ctx.drawImage(img, cx * TILE - cam, cy * TILE);
+      const buried = lvl.solidAt(cx, cy - 1), vr = (cx * 7 + cy * 13 + ((cx * cy) >> 2)) >>> 0;
+      const img = ch === "#" || ch === "Q" ? (buried ? tiles.dirtV[vr % 4] : tiles.grassV[vr % 3]) : tiles[ch];
+      ctx.drawImage(img, cx * TILE - cam, cy * TILE - (img.height - TILE));
+      if ((ch === "#" || ch === "Q") && buried && SHADE) {   // the deeper, the darker
+        const depth = lvl.solidAt(cx, cy - 2) ? (lvl.solidAt(cx, cy - 3) ? 0.34 : 0.24) : 0.12;
+        ctx.fillStyle = `rgba(0,0,0,${depth})`; ctx.fillRect(cx * TILE - cam, cy * TILE, TILE, TILE);
+      }
       if (ch === "Q") {   // cracked stone (hit it!)
         const x0 = cx * TILE - cam, y0 = cy * TILE, cr = "rgba(0,0,0,0.45)";
         L(cr, x0 + 8, y0 + 4, x0 + 18, y0 + 18, 2); L(cr, x0 + 18, y0 + 18, x0 + 14, y0 + 30, 2); L(cr, x0 + 18, y0 + 18, x0 + 32, y0 + 22, 2); L(cr, x0 + 32, y0 + 22, x0 + 36, y0 + 36, 1.5);
@@ -3971,6 +4087,21 @@ class Game {
       else { flipAt(pk.x - cam, pk.y, pk.w, 1); drawHorse(this.t * 0.02, false, ARMOR, GOLD, rgb(236, 232, 226), rgb(150, 138, 126), STEEL); ctx.restore(); }
     }
     for (const c of lvl.coins) drawCoin(c, cam);
+    if (SHADE && theme.bg !== "sky" && theme.bg !== "space") {   // soft shadows on the ground beneath everyone
+      const shadow = (x, w, y) => {
+        const cx = Math.floor((x + w / 2) / TILE);
+        for (let cy = Math.max(0, Math.floor(y / TILE)); cy < lvl.h; cy++) if (lvl.solidAt(cx, cy)) {
+          const gy = cy * TILE, d = gy - y; if (d < -4 || d > 260) return;
+          const k = 1 - Math.max(0, d) / 260, sw = w * (0.55 + 0.5 * k), g = ctx.createRadialGradient(x + w / 2 - cam, gy, 1, x + w / 2 - cam, gy, sw / 2);
+          g.addColorStop(0, `rgba(0,0,0,${0.38 * k})`); g.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.fillStyle = g; ctx.save(); ctx.translate(x + w / 2 - cam, gy); ctx.scale(1, 0.18); ctx.translate(-(x + w / 2 - cam), -gy);
+          ctx.fillRect(x + w / 2 - cam - sw / 2, gy - sw / 2, sw, sw); ctx.restore();
+          return;
+        }
+      };
+      for (const e of lvl.enemies) if (e.alive && e.x + e.w > cam - 60 && e.x < cam + W + 60 && e.y > -100) shadow(e.x, e.w, e.y + e.h);
+      if (!p.plane && !p.dead && !this.inCastle) shadow(p.x, p.w, p.y + p.h);
+    }
     for (const e of lvl.enemies) if (e.x + e.w > cam - 60 && e.x < cam + W + 60) e.draw(cam);
     const cv = lvl.cover;
     if (cv && !lvl.passage) for (let x = cv.x0; x <= cv.x1; x += TILE) for (let y = cv.y0; y <= cv.y1; y += TILE) ctx.drawImage(tiles.dirt, x - cam, y);   // the secret room hides behind fake rock
@@ -3998,10 +4129,11 @@ class Game {
     for (const f of this.fireworks || []) if (this.state === "finale") { R(WHITE, f.x - cam - 1.5, f.y, 3, 8); ctx.globalAlpha = 0.5; R(GOLD, f.x - cam - 1, f.y + 8, 2, 12); ctx.globalAlpha = 1; }
     for (const s of this.shots) drawShot(s, cam);
     if (this.flyingAxe) drawMiniAxe(this.flyingAxe.x - cam, this.flyingAxe.y, this.flyingAxe.t * 0.45, this.upg.sharp);
-    for (const q of this.particles) {
-      const s = Math.max(1, Math.floor(q.size * q.life / q.maxLife + 1));
-      R(q.color, Math.floor(q.x - cam - s / 2), Math.floor(q.y - s / 2), s, s);
+    for (const q of this.particles) {   // soft round sparks and dust, fading as they die
+      const k = q.life / q.maxLife, s = Math.max(1, q.size * k + 1);
+      ctx.globalAlpha = Math.min(1, 0.35 + k); ctx.fillStyle = q.color; ctx.beginPath(); ctx.arc(q.x - cam, q.y, s * 0.62, 0, Math.PI * 2); ctx.fill();
     }
+    ctx.globalAlpha = 1;
     if (theme.dark && this.state !== "finale") {   // mine and night: only the knight's surroundings and the lamps are lit
       const DARKS = { true: ["8,5,3", 70, 430, 0.86], night: ["6,6,22", 90, 520, 0.8], ninja: ["10,10,32", 100, 520, 0.7], throne: ["16,6,10", 120, 600, 0.6] };
       const [dc, r0, r1, da] = DARKS[String(theme.dark)] || DARKS.true, lx = p.x + p.w / 2 - cam, ly = p.y + p.h / 2;
@@ -4019,6 +4151,7 @@ class Game {
         ctx.fillStyle = lg; ctx.fillRect(x - glow, y - glow, glow * 2, glow * 2); C(rgb(255, 224, 150), x, y, 5);
       }
     }
+    if (SHADE) drawVignette();
     for (const q of this.popups) T(q.text, 20, q.x - cam, q.y, q.color);
     }
 
@@ -4235,7 +4368,10 @@ bPause.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagat
 document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
 
 let last = performance.now(), acc = 0;
+let slowFrames = 0;
 function frame(now) {
+  const dt = now - last;
+  if (SHADE && game.state === "play" && !game.paused) { slowFrames = dt > 26 ? slowFrames + 1 : Math.max(0, slowFrames - 2); if (slowFrames > 150) SHADE = false; }
   acc += Math.min(100, now - last); last = now;
   if (game.paused) acc = 0;
   while (acc >= STEP_MS) {
