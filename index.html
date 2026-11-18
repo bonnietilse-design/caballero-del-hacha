@@ -637,9 +637,58 @@ const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
 const WHITE = "#fff", BLACK = rgb(15, 15, 25);
 const STONE = rgb(150, 150, 165), STONE_DARK = rgb(95, 95, 115), STONE_LIGHT = rgb(190, 190, 205);
 const WOOD = rgb(196, 140, 72), WOOD_DARK = rgb(120, 80, 40);
-const ARMOR = rgb(52, 104, 214), ARMOR_MID = rgb(82, 136, 236), ARMOR_LIGHT = rgb(130, 178, 255), ARMOR_DARK = rgb(26, 52, 120);
+let ARMOR = rgb(52, 104, 214), ARMOR_MID = rgb(82, 136, 236), ARMOR_LIGHT = rgb(130, 178, 255), ARMOR_DARK = rgb(26, 52, 120);
 const STEEL = rgb(170, 180, 200), STEEL_DARK = rgb(40, 58, 110), BOOT = rgb(40, 34, 50);
-const PLUME = rgb(230, 60, 60), CAPE = rgb(196, 32, 52), CAPE_DARK = rgb(120, 16, 34);
+let PLUME = rgb(230, 60, 60), CAPE = rgb(196, 32, 52), CAPE_DARK = rgb(120, 16, 34);
+// ------------------------------------------------------------------ dress up the knight (chosen before the adventure)
+const HELMETS = [
+  { id: "plume", name: "Clásico" }, { id: "viking", name: "Vikingo" }, { id: "dragon", name: "Dragón" }, { id: "crown", name: "Corona real" },
+  { id: "chicken", name: "Pollo loco" }, { id: "unicorn", name: "Unicornio" }, { id: "pirate", name: "Pirata" }, { id: "fish", name: "Pez gordo" },
+];
+const ARMORS = [
+  { id: "blue", name: "Azul", c: [[52, 104, 214], [82, 136, 236], [130, 178, 255], [26, 52, 120]] },
+  { id: "red", name: "Roja", c: [[196, 48, 48], [228, 88, 78], [255, 150, 140], [104, 18, 22]] },
+  { id: "gold", name: "Dorada", c: [[206, 156, 36], [234, 192, 78], [255, 230, 140], [116, 78, 10]] },
+  { id: "green", name: "Verde", c: [[46, 146, 78], [78, 186, 108], [140, 228, 160], [18, 78, 38]] },
+  { id: "black", name: "Negra", c: [[52, 52, 66], [82, 82, 100], [132, 132, 152], [16, 16, 24]] },
+  { id: "pink", name: "Rosa", c: [[226, 96, 166], [244, 138, 198], [255, 190, 228], [136, 36, 96]] },
+  { id: "purple", name: "Morada", c: [[118, 60, 188], [150, 100, 220], [200, 160, 255], [58, 24, 108]] },
+  { id: "silver", name: "Plateada", c: [[150, 160, 178], [190, 200, 212], [234, 240, 248], [74, 82, 100]] },
+];
+const CAPES = [
+  { id: "red", name: "Roja", c: [[196, 32, 52], [120, 16, 34], [230, 60, 60]] },
+  { id: "blue", name: "Azul", c: [[40, 90, 200], [20, 44, 120], [70, 140, 240]] },
+  { id: "green", name: "Verde", c: [[40, 150, 70], [18, 84, 36], [90, 200, 100]] },
+  { id: "purple", name: "Morada", c: [[130, 50, 180], [70, 20, 110], [180, 100, 230]] },
+  { id: "gold", name: "Dorada", c: [[220, 170, 40], [140, 96, 14], [255, 210, 80]] },
+  { id: "black", name: "Negra", c: [[40, 40, 50], [16, 16, 22], [90, 90, 110]] },
+  { id: "pink", name: "Rosa", c: [[236, 110, 180], [150, 50, 110], [255, 160, 210]] },
+  { id: "rainbow", name: "Arcoíris", c: [[230, 70, 70], [120, 40, 140], [255, 200, 60]] },
+];
+const WEAPON_LIST = [
+  { id: "axe", name: "Hacha doble", info: "Equilibrada", dmg: 1, spd: 1, reach: 1 },
+  { id: "sword", name: "Espada", info: "Rápida pero más floja", dmg: 0.8, spd: 0.72, reach: 1 },
+  { id: "hammer", name: "Martillo de guerra", info: "Lento pero ¡machaca!", dmg: 1.6, spd: 1.35, reach: 0.95 },
+  { id: "spear", name: "Lanza", info: "Llega muy lejos", dmg: 0.9, spd: 1, reach: 1.35 },
+];
+const LOOK_ROWS = [["helmet", "CASCO", HELMETS], ["armor", "ARMADURA", ARMORS], ["cape", "CAPA", CAPES], ["weapon", "ARMA", WEAPON_LIST]];
+let LOOK = { helmet: "plume", armor: "blue", cape: "red", weapon: "axe" };
+try { const sv = JSON.parse(localStorage.getItem("caballero_look") || "null"); if (sv) for (const [k, , list] of LOOK_ROWS) if (list.some(o => o.id === sv[k])) LOOK[k] = sv[k]; } catch (e) {}
+const lookOf = k => LOOK_ROWS.find(r => r[0] === k)[2].find(o => o.id === LOOK[k]);
+const weaponNow = () => lookOf("weapon");
+function applyLook() {   // repaint the knight's colours from the chosen look
+  const a = lookOf("armor").c, c = lookOf("cape").c;
+  [ARMOR, ARMOR_MID, ARMOR_LIGHT, ARMOR_DARK] = a.map(v => rgb(...v));
+  [CAPE, CAPE_DARK, PLUME] = c.map(v => rgb(...v));
+  if (LOOK.cape === "rainbow") try {   // stripes from shoulders to hem
+    const gr = ctx.createLinearGradient(0, 14, 0, 56);
+    [[230, 60, 60], [250, 160, 40], [250, 220, 60], [80, 190, 90], [70, 130, 230], [150, 80, 210]].forEach((v, i) => { gr.addColorStop(i / 6, rgb(...v)); gr.addColorStop((i + 1) / 6 - 0.001, rgb(...v)); });
+    CAPE = gr;
+  } catch (e) {}   // (the canvas isn't ready on the very first call; it's called again once it is)
+  try { PLAYER_PLANE[0] = ARMOR; PLAYER_PLANE[1] = ARMOR_LIGHT; } catch (e) {}   // (not defined yet on the very first call)
+  try { localStorage.setItem("caballero_look", JSON.stringify(LOOK)); } catch (e) {}
+}
+applyLook();
 const SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82), MOUSTACHE = rgb(84, 46, 20);
 const HANDLE = rgb(130, 86, 44), HANDLE_DARK = rgb(80, 50, 24), BLADE = rgb(210, 218, 232), BLADE_DARK = rgb(90, 98, 120);
 const GOLD_BLADE = rgb(255, 222, 110), GOLD_BLADE_DARK = rgb(176, 120, 20);
@@ -650,6 +699,7 @@ const DRESSES = [   // flamenco dresses: main colour, ruffle colour, polka dots
   [rgb(140, 56, 170), rgb(88, 26, 110), WHITE], [rgb(36, 32, 40), rgb(12, 10, 14), rgb(230, 40, 60)],
 ];
 const PLAYER_PLANE = [ARMOR, ARMOR_LIGHT, GOLD];
+applyLook();
 const ACE_PLANE = [rgb(200, 30, 40), rgb(140, 16, 24), WHITE];
 const ENEMY_PLANES = [[rgb(96, 96, 104), rgb(64, 64, 72), rgb(210, 44, 44)], [rgb(130, 40, 40), rgb(86, 24, 24), rgb(250, 200, 40)],
                       [rgb(74, 96, 62), rgb(48, 64, 42), rgb(240, 240, 240)]];
@@ -1096,9 +1146,10 @@ class Player {
     this.x = x; this.y = y; this.w = KNIGHT_W; this.h = KNIGHT_H; this.vx = 0; this.vy = 0; this.facing = 1;
     this.onGround = false; this.hitWall = false; this.invuln = 0; this.knockback = 0;
     this.maxHearts = MAX_HEARTS + (upg.heart ? 1 : 0); this.hearts = this.maxHearts;
-    this.atkTotal = upg.quick ? 18 : 22; this.atkCooldown = upg.quick ? 4 : 6;
+    const wp = weaponNow();   // the weapon chosen before the adventure: speed, reach and power
+    this.atkTotal = Math.round((upg.quick ? 18 : 22) * wp.spd); this.atkCooldown = Math.round((upg.quick ? 4 : 6) * wp.spd);
     this.act0 = Math.round(this.atkTotal * 0.27); this.act1 = Math.round(this.atkTotal * 0.64);
-    this.reach = upg.long ? 1.2 : 1;
+    this.reach = (upg.long ? 1.2 : 1) * wp.reach; this.dmg = wp.dmg;
     this.attackTimer = 0; this.cooldown = 0; this.coyote = 0; this.jumpBuffer = 0; this.anim = 0;
     this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
     this.bike = false; this.rideHits = new Set();
@@ -3133,6 +3184,7 @@ class Level {
 // ------------------------------------------------------------------ drawing helpers
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
+applyLook();
 // realistic shading: each solid colour gets a highlight and a shadow, so shapes look rounded and solid
 let SHADE = true;   // switched off automatically if a slow phone can't keep up
 const shadeCache = new Map();
@@ -3367,6 +3419,37 @@ function drawAxe(hand, d, k = 1, gold = false) {
   P(BLADE_DARK, [pt(c, 5, -4), pt(c, 15, 0), pt(c, 5, 4)]);
   C(gold ? GOLD_DARK : BLADE_DARK, c[0], c[1], 5);
 }
+function drawWeapon(hand, d, k, gold) {   // whatever the knight chose to carry
+  const w = LOOK.weapon;
+  if (w === "sword") drawSword(hand, d, k * 0.95, gold);
+  else if (w === "hammer") drawHammer(hand, d, k, gold);
+  else if (w === "spear") drawSpear(hand, d, k, gold);
+  else drawAxe(hand, d, k, gold);
+}
+function drawHammer(hand, d, k = 1, gold = false) {   // a big war hammer: long handle, heavy steel block
+  const n = [-d[1], d[0]], len = 54 * k, [hx, hy] = hand;
+  const pt = (a, b) => [hx + d[0] * a + n[0] * b, hy + d[1] * a + n[1] * b];
+  L(HANDLE_DARK, ...pt(-13, 0), ...pt(len, 0), 8); L(HANDLE, ...pt(-12, 0), ...pt(len, 0), 5);
+  for (const kk of [14, 20, 26]) L(HANDLE_DARK, ...pt(kk, -3.5), ...pt(kk, 3.5), 2);
+  const body = gold ? GOLD_BLADE : rgb(150, 156, 170), dark = gold ? GOLD_BLADE_DARK : rgb(70, 74, 90);
+  if (gold) { ctx.globalAlpha = 0.35 + 0.15 * Math.sin(Date.now() / 120); C(GOLD, ...pt(len, 0), 30); ctx.globalAlpha = 1; }
+  const blk = [pt(len - 11, -19), pt(len + 11, -19), pt(len + 11, 19), pt(len - 11, 19)];
+  P(body, blk); PS(dark, blk, 2.5);
+  for (const b of [-19, 19]) { const f = [pt(len - 13, b * 1.08), pt(len + 13, b * 1.08), pt(len + 13, b * 0.9), pt(len - 13, b * 0.9)]; P(dark, f); }   // striking faces
+  L(gold ? GOLD : rgb(110, 116, 132), ...pt(len - 11, 0), ...pt(len + 11, 0), 4);   // a band round the middle
+  L(WHITE, ...pt(len - 7, -15), ...pt(len - 7, 15), 1.5);
+  P(dark, [pt(len + 11, -4), pt(len + 21, 0), pt(len + 11, 4)]);   // spike on top
+}
+function drawSpear(hand, d, k = 1, gold = false) {   // a long spear with a leaf-shaped point and a red tassel
+  const n = [-d[1], d[0]], len = 78 * k, [hx, hy] = hand;
+  const pt = (a, b) => [hx + d[0] * a + n[0] * b, hy + d[1] * a + n[1] * b];
+  L(HANDLE_DARK, ...pt(-22, 0), ...pt(len, 0), 6); L(HANDLE, ...pt(-21, 0), ...pt(len, 0), 3.5);
+  if (gold) { ctx.globalAlpha = 0.35 + 0.15 * Math.sin(Date.now() / 120); C(GOLD, ...pt(len + 12, 0), 22); ctx.globalAlpha = 1; }
+  for (const [a, col] of [[-5, rgb(230, 50, 50)], [0, rgb(200, 30, 40)], [5, rgb(250, 90, 80)]]) L(col, ...pt(len - 4, 0), ...pt(len - 16, a * 1.6 + Math.sin(Date.now() / 140 + a) * 2), 2.5);   // tassel
+  R(GOLD, ...pt(len - 3, 0).map(v => v - 3), 6, 6, 2);
+  const tip = [pt(len, -3), pt(len + 10, -8), pt(len + 32, 0), pt(len + 10, 8), pt(len, 3)];
+  P(gold ? GOLD_BLADE : BLADE, tip); PS(gold ? GOLD_BLADE_DARK : BLADE_DARK, tip, 1.5); L(WHITE, ...pt(len + 4, 0), ...pt(len + 26, 0), 1.2);
+}
 function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
   ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.scale(0.62, 0.62);
   drawAxe([0, 26], [0, -1], 0.55, gold);
@@ -3431,9 +3514,44 @@ function drawKnight(p, cam, upg, t) {
 
   // open-faced helmet: proud nose, twirled moustache, tall plume
   const pb = step * 0.5;
-  P(PLUME, [[15, -4], [9, -16 + pb], [-4, -15 + pb], [-13 - flap * 0.4, -6 + pb], [1, -3], [11, -1]]);
-  P(rgb(255, 120, 110), [[13, -6], [6, -14 + pb], [-3, -12 + pb], [5, -6]]);
+  const hm = LOOK.helmet;
+  if (hm === "plume") {
+    P(PLUME, [[15, -4], [9, -16 + pb], [-4, -15 + pb], [-13 - flap * 0.4, -6 + pb], [1, -3], [11, -1]]);
+    P("rgba(255,255,255,0.35)", [[13, -6], [6, -14 + pb], [-3, -12 + pb], [5, -6]]);
+  } else if (hm === "unicorn") {   // a rainbow mane flowing back
+    [[230, 60, 60], [250, 160, 40], [250, 220, 60], [80, 190, 90], [70, 130, 230], [150, 80, 210]].forEach((c, i) =>
+      L(rgb(...c), 12 - i, -6 + i * 2.2, -6 - flap * 0.5 - i * 0.6, 4 + i * 3 + pb, 3));
+  } else if (hm === "fish") {   // a fish tail sticking out the back
+    P(rgb(250, 140, 40), [[10, 0], [-6 - flap * 0.3, -12 + pb], [-2, 1], [-6 - flap * 0.3, 13 + pb]]);
+    L(rgb(255, 200, 120), 6, 1, -3, -6 + pb, 1.5); L(rgb(255, 200, 120), 6, 2, -3, 9 + pb, 1.5);
+  }
+  if (hm === "fish") { E(rgb(250, 150, 50), 6, -12, 28, 24); ES(rgb(190, 90, 20), 6, -12, 28, 24, 2); for (const [sx, sy] of [[12, -6], [17, -9], [10, 2]]) CS(rgb(220, 110, 30), sx, sy, 3, 1); }   // he's wearing a fish
   R(ARMOR, 9, -6, 18, 19, 7); RS(ARMOR_DARK, 9, -6, 18, 19, 2, 7);
+  if (hm === "viking") {   // two big horns
+    for (const [bx, tx, ty] of [[11, -1, -19], [25, 35, -19]]) {
+      const pts = [[bx - 3, -2], [bx + 3, -4], [tx + (tx > bx ? -3 : 3), ty + 8], [tx, ty]];
+      P(rgb(240, 230, 200), pts); PS(rgb(170, 150, 110), pts, 1.5); L(rgb(170, 150, 110), bx - 1, -5, bx + (tx - bx) * 0.3, -8, 1.5);
+    }
+    R(rgb(150, 110, 60), 9, -3, 18, 3, 1);
+  } else if (hm === "dragon") {   // a spiky crest and little horns
+    for (let i = 0; i < 5; i++) { const x = 6 + i * 4.5, h = 8 + (i % 2) * 4; P(rgb(70, 180, 80), [[x - 3, -3], [x - 6, -6 - h + pb * 0.5], [x + 3, -5]]); }
+    P(rgb(250, 200, 60), [[22, -6], [27, -14], [26, -5]]);
+    P(rgb(50, 140, 60), [[10, 4], [-2 - flap * 0.4, -4 + pb], [2, 6], [-3 - flap * 0.4, 10 + pb], [9, 9]]);   // a little wing
+  } else if (hm === "crown") {   // a golden crown with jewels
+    P(GOLD, [[9, -5], [9, -16], [13, -10], [18, -18], [22, -10], [27, -16], [27, -5]]); PS(GOLD_DARK, [[9, -5], [9, -16], [13, -10], [18, -18], [22, -10], [27, -16], [27, -5]], 1.5);
+    C(HEART, 18, -9, 2.5); C(rgb(60, 140, 255), 12, -8, 1.8); C(rgb(60, 200, 110), 24, -8, 1.8); C(WHITE, 18, -18, 1.8);
+  } else if (hm === "chicken") {   // a floppy red comb, a beak and a wattle
+    for (const [x, y, r] of [[12, -8, 4], [17, -11, 5], [22, -9, 4.2], [26, -6, 3]]) C(rgb(230, 40, 40), x, y + pb * 0.3, r);
+    P(rgb(255, 190, 40), [[26, -4], [34, -2], [26, 0]]); P(rgb(230, 150, 20), [[26, -1], [32, -1], [26, 0.5]]);
+    E(rgb(230, 40, 40), 27, 12, 5, 7);
+  } else if (hm === "unicorn") {   // a twisty golden horn
+    P(GOLD, [[22, -5], [27, -5], [34, -26]]); for (const t of [0.3, 0.55, 0.78]) L(GOLD_DARK, 22 + 12 * t - 1, -5 - 21 * t, 27 + 7 * t, -5 - 21 * t + 3, 1.2);
+  } else if (hm === "pirate") {   // a black tricorn hat with a skull
+    P(rgb(30, 28, 34), [[2, -3], [9, -14], [18, -17], [27, -14], [34, -3], [18, -7]]); L(GOLD, 2, -3, 18, -7, 1.5); L(GOLD, 18, -7, 34, -3, 1.5);
+    C(WHITE, 18, -11, 2.6); R(WHITE, 16.5, -9.5, 3, 2); L(WHITE, 14, -7, 22, -14, 1); L(WHITE, 14, -14, 22, -7, 1);
+  } else if (hm === "fish") {
+    C(WHITE, 27, -7, 3.5); C(BLACK, 28, -7, 1.6); P(rgb(250, 140, 40), [[17, -12], [21, -20], [25, -11]]);   // its eye and a fin
+  }
   R(SKIN, 18, -1, 10, 12, 3);
   R(ARMOR_DARK, 17, -4, 11, 3, 1);                      // raised visor
   L(BLACK, 21, 1.5, 25, 1, 1.5); C(BLACK, 23.5, 3.5, 1.4); // brow and eye
@@ -3446,7 +3564,7 @@ function drawKnight(p, cam, upg, t) {
 
   const ad = p.attackTimer ? d : [Math.sin(0.2), -Math.cos(0.2)];
   if (p.sword) drawSword(hand, ad, k, upg.sharp);   // the broadsword in the final duel
-  else if (!game.flyingAxe) drawAxe(hand, ad, k, upg.sharp);   // the axe, then the arm gripping it
+  else if (!game.flyingAxe) drawWeapon(hand, ad, k, upg.sharp);   // the chosen weapon, then the arm gripping it
   L(SKIN_DARK, sh[0], sh[1], hand[0], hand[1], 12); L(SKIN, sh[0], sh[1], hand[0], hand[1], 9);
   const bi = [lerp(sh[0], hand[0], 0.4), lerp(sh[1], hand[1], 0.4)];
   C(SKIN_DARK, bi[0], bi[1], 8); C(SKIN, bi[0], bi[1], 7); C(SKIN_LIGHT, bi[0] - 2, bi[1] - 2, 2);
@@ -5758,6 +5876,45 @@ function shopLayout() {
     button: { x: W / 2 - 170, y: 410, w: 340, h: 56 },
   };
 }
+function customLayout() {
+  const rows = LOOK_ROWS.map((_, r) => { const y = 92 + r * 70; return { y, left: { x: 520, y, w: 50, h: 52 }, box: { x: 574, y, w: 262, h: 52 }, right: { x: 840, y, w: 50, h: 52 } }; });
+  return { rows, dice: { x: 24, y: 20, w: 130, h: 44 }, button: { x: W / 2 - 170, y: 410, w: 340, h: 56 } };
+}
+function drawCustom(g) {   // the dressing room: pick a wild helmet, armour, cape and weapon
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, rgb(40, 34, 78)); bg.addColorStop(1, rgb(18, 14, 34));
+  ctx.fillStyle = bg; ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (let i = 0; i < 6; i++) { const x = 40 + i * 180; R(rgb(60, 50, 104), x, 0, 26, H); R(rgb(80, 68, 130), x + 4, 0, 4, H); }   // stone pillars
+  for (const [x, y] of [[60, 110], [W - 60, 110]]) { ctx.globalAlpha = 0.25 + 0.1 * Math.sin(g.t * 0.1 + x); C(rgb(255, 160, 60), x, y, 40); ctx.globalAlpha = 1; C(rgb(255, 200, 90), x, y, 7); }   // torches
+  T("¡PREPARA A TU CABALLERO!", 40, W / 2, 44, GOLD);
+  // the knight on a pedestal, three times bigger
+  R(rgb(90, 80, 120), 110, 352, 240, 22, 6); R(rgb(120, 108, 156), 110, 352, 240, 6, 6); R(rgb(70, 60, 98), 130, 374, 200, 20, 4);
+  ctx.globalAlpha = 0.35; E(BLACK, 150, 344, 160, 14); ctx.globalAlpha = 1;
+  if (g.cuP) { ctx.save(); ctx.translate(230, 352); ctx.scale(LOOK.weapon === "spear" ? 2.3 : 2.8, LOOK.weapon === "spear" ? 2.3 : 2.8); drawKnight(g.cuP, 0, {}, g.t); ctx.restore(); }
+  const lay = customLayout(), wp = weaponNow();
+  LOOK_ROWS.forEach(([key, label, list], r) => {
+    const L0 = lay.rows[r], sel = g.cuSel === r, opt = list.find(o => o.id === LOOK[key]);
+    T(label, 18, 510, L0.y + 26, sel ? GOLD : rgb(200, 190, 230), "right", "middle");
+    for (const [b, ch] of [[L0.left, "◀"], [L0.right, "▶"]]) { R(sel ? rgb(110, 90, 170) : rgb(74, 62, 120), b.x, b.y, b.w, b.h, 12); T(ch, 22, b.x + b.w / 2, b.y + b.h / 2 + 1, WHITE, "center", "middle"); }
+    R(sel ? rgb(86, 70, 140) : rgb(56, 46, 92), L0.box.x, L0.box.y, L0.box.w, L0.box.h, 12); RS(sel ? GOLD : rgb(110, 96, 160), L0.box.x, L0.box.y, L0.box.w, L0.box.h, sel ? 3 : 2, 12);
+    if (opt.c) {   // colour swatches for armour and cape
+      for (let i = 0; i < 3; i++) C(rgb(...opt.c[i]), L0.box.x + 24 + i * 12, L0.box.y + 26, 7);
+      T(opt.name, 22, L0.box.x + L0.box.w / 2 + 22, L0.box.y + 27, WHITE, "center", "middle");
+    } else if (key === "weapon") {
+      T(opt.name, 20, L0.box.x + L0.box.w / 2, L0.box.y + 18, WHITE, "center", "middle");
+      T(opt.info, 14, L0.box.x + L0.box.w / 2, L0.box.y + 39, rgb(255, 210, 120), "center", "middle");
+    } else T(opt.name, 22, L0.box.x + L0.box.w / 2, L0.box.y + 27, WHITE, "center", "middle");
+    T(`${list.indexOf(opt) + 1}/${list.length}`, 11, L0.box.x + L0.box.w - 8, L0.box.y + 10, rgb(170, 160, 210), "right", "middle");
+  });
+  // weapon stats as little bars
+  const st = [["FUERZA", wp.dmg / 1.6], ["RAPIDEZ", 0.72 / wp.spd], ["ALCANCE", wp.reach / 1.35]];
+  st.forEach(([n, v], i) => { const x = 560 + i * 116, y = 380; T(n, 12, x, y - 10, rgb(200, 190, 230), "left", "middle"); R(rgb(40, 32, 70), x, y - 2, 100, 9, 4); R(i === 0 ? HEART : i === 1 ? GRASS_LIGHT : rgb(90, 170, 255), x, y - 2, 100 * Math.min(1, v), 9, 4); });
+  const d = lay.dice; R(rgb(74, 62, 120), d.x, d.y, d.w, d.h, 12); RS(rgb(150, 130, 220), d.x, d.y, d.w, d.h, 2, 12); T("🎲 Al azar", 17, d.x + d.w / 2, d.y + d.h / 2 + 1, WHITE, "center", "middle");
+  const b = lay.button, bsel = g.cuSel === LOOK_ROWS.length;
+  R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14); RS(bsel ? GOLD : rgb(130, 200, 110), b.x, b.y, b.w, b.h, bsel ? 4 : 2, 14);
+  T("¡A la aventura! ▶", 28, W / 2, b.y + b.h / 2 + 1, WHITE, "center", "middle");
+  T(isTouch ? "Toca ◀ ▶ para cambiar" : "↑ ↓ elegir     ← → cambiar     R al azar     ENTER ¡a la aventura!", 17, W / 2, 494, rgb(200, 190, 230));
+  for (const q of g.particles) R(q.color, q.x - 2, q.y - 2, 4, 4);
+}
 function drawShop(g) {
   const bg = ctx.createLinearGradient(0, 0, 0, H);
   bg.addColorStop(0, rgb(74, 46, 30)); bg.addColorStop(1, rgb(30, 18, 12));
@@ -5767,7 +5924,7 @@ function drawShop(g) {
   C(rgb(255, 140, 40), 70, 470, 90); C(rgb(255, 140, 40), W - 70, 470, 90);
   ctx.globalAlpha = 1;
   T("TIENDA DEL HERRERO", 40, W / 2, 38, GOLD);
-  T(`Tus monedas: ${g.coins}`, 22, W / 2, 80, WHITE);
+  T(`Tus monedas: ${g.coins}     ·     ${g.shopBought ? "¡Ya has comprado en este nivel!" : "Puedes comprar 1 cosa"}`, 20, W / 2, 80, g.shopBought ? rgb(255, 190, 130) : WHITE);
   const lay = shopLayout();
   SHOP.forEach((item, i) => {
     const c = lay.cards[i], owned = g.owned && g.owned[item.id], on = owned && g.upg[item.id], sel = g.shopSel === i, afford = g.coins >= item.price;
@@ -5777,8 +5934,9 @@ function drawShop(g) {
     T(item.name, item.name.length > 15 ? 12 : 14, c.x + c.w / 2, c.y + 62, WHITE);
     item.desc.forEach((line, k) => T(line, line.length > 18 ? 10.5 : 12, c.x + c.w / 2, c.y + 84 + k * 16, rgb(236, 220, 196)));
     if (owned && !on) { ctx.globalAlpha = 0.45; R(rgb(30, 26, 22), c.x, c.y, c.w, 110, 12); ctx.globalAlpha = 1; }   // switched off: greyed out
-    T(on ? "✓ PUESTO" : owned ? "QUITADO" : `${item.price} monedas`, 16, c.x + c.w / 2, c.y + 122,
-      on ? GRASS_LIGHT : owned ? rgb(200, 190, 180) : afford ? GOLD : rgb(240, 120, 110));
+    if (!owned && g.shopBought) { ctx.globalAlpha = 0.4; R(rgb(30, 26, 22), c.x, c.y, c.w, c.h, 12); ctx.globalAlpha = 1; }   // sold out until the next level
+    T(on ? "✓ PUESTO" : owned ? "QUITADO" : g.shopBought ? "Próximo nivel" : `${item.price} monedas`, g.shopBought && !owned ? 14 : 16, c.x + c.w / 2, c.y + 122,
+      on ? GRASS_LIGHT : owned ? rgb(200, 190, 180) : g.shopBought ? rgb(190, 180, 170) : afford ? GOLD : rgb(240, 120, 110));
   });
   const b = lay.button, bsel = g.shopSel === SHOP.length;
   R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14);
@@ -6043,9 +6201,30 @@ class Game {
     for (let i = 0; i < MAIN_LEVELS; i++) { r.push(i); const d = LEVELS[i].door; if (d != null && this.secrets.has(d)) r.push(d); }
     return r;
   }
-  startGame() {   // from the title: fresh lives, coins and upgrades, then the map (beaten levels and found secrets are remembered)
+  startGame() {   // from the title: first dress up the knight
+    this.state = "custom"; this.cuSel = 0; this.cuT = 0; this.cuP = null; this.particles = [];
+  }
+  cuKnight() { const p = new Player(0, 0, {}); p.onGround = true; p.facing = 1; p.y = -p.h; p.x = -p.w / 2; return p; }
+  cuChange(row, dir) {   // flick through the helmets, armours, capes and weapons
+    const [key, , list] = LOOK_ROWS[row], i = list.findIndex(o => o.id === LOOK[key]);
+    LOOK[key] = list[(i + dir + list.length) % list.length].id; applyLook();
+    this.cuP = null; this.cuT = 0; play(key === "weapon" ? "shing" : "click");
+    if (key === "weapon") this.cuSwing = 1;
+  }
+  cuRandom() { for (let r = 0; r < LOOK_ROWS.length; r++) { const list = LOOK_ROWS[r][2]; LOOK[LOOK_ROWS[r][0]] = list[randInt(0, list.length - 1)].id; } applyLook(); this.cuP = null; this.cuSwing = 1; play("boing"); }
+  cuTap(x, y) {
+    const lay = customLayout();
+    for (let r = 0; r < lay.rows.length; r++) {
+      const R0 = lay.rows[r];
+      if (inside(x, y, R0.left)) { this.cuSel = r; this.cuChange(r, -1); return; }
+      if (inside(x, y, R0.right) || inside(x, y, R0.box)) { this.cuSel = r; this.cuChange(r, 1); return; }
+    }
+    if (inside(x, y, lay.dice)) { this.cuRandom(); return; }
+    if (inside(x, y, lay.button)) this.beginGame();
+  }
+  beginGame() {   // fresh lives, coins and upgrades, then the map (beaten levels and found secrets are remembered)
     this.upg = {}; this.owned = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.lifeTaken = new Set(); this.lives = START_LIVES; this.score = 0;
-    this.loadProgress();
+    this.loadProgress(); play("anvil");
     const first = Array.from({ length: MAIN_LEVELS }, (_, i) => i).find(i => !this.done.has(LEVELS[i].name)) ?? 0;
     this.openMap(first);
   }
@@ -6097,7 +6276,7 @@ class Game {
       play("secret"); say("secreto", true);
     }
   }
-  openShop() { this.state = "shop"; this.shopSel = 0; this.shopMsgT = 0; say("tienda", true); }
+  openShop() { this.state = "shop"; this.shopSel = 0; this.shopMsgT = 0; this.shopBought = false; say("tienda", true); }
   nextLevel() { this.levelIndex = this.afterLevel(); this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
   buy(i) {
     const item = SHOP[i];
@@ -6107,11 +6286,14 @@ class Game {
       this.shopMessage(this.upg[item.id] ? `¡${item.name}: puesto!` : `${item.name}: quitado`, this.upg[item.id] ? GRASS_LIGHT : rgb(220, 200, 170));
       play(this.upg[item.id] ? "clang" : "click"); return;
     }
+    if (this.shopBought) {   // only one new thing per visit
+      this.shopMessage("¡Solo una compra por nivel! Vuelve después del próximo.", rgb(255, 180, 120)); play("nope"); return;
+    }
     if (this.coins < item.price) {
       this.shopMessage(`¡No tienes bastante oro! Te faltan ${item.price - this.coins} monedas.`, rgb(255, 140, 120));
       play("nope"); say("nooro", true); return;
     }
-    this.coins -= item.price; this.upg[item.id] = true; this.owned[item.id] = true;
+    this.coins -= item.price; this.upg[item.id] = true; this.owned[item.id] = true; this.shopBought = true;
     this.shopMessage(`¡${item.name} comprado!`, GRASS_LIGHT);
     const c = shopLayout().cards[i];
     this.burst(c.x + c.w / 2, c.y + 30, [GOLD, WHITE, rgb(255, 150, 60)], 26, 6);
@@ -6797,6 +6979,11 @@ class Game {
           pick([[GOLD, WHITE], [HEART, WHITE], [ARMOR_LIGHT, WHITE], [GRASS_LIGHT, WHITE]]), 30, 6);
     } else if (this.state === "shop") {
       if (this.shopMsgT > 0) this.shopMsgT--;
+    } else if (this.state === "custom") {   // the knight in the dressing room shows off his weapon now and then
+      if (!this.cuP) this.cuP = this.cuKnight();
+      const p = this.cuP; this.cuT++; p.anim += 0.05;
+      if (this.cuSwing || this.cuT % 110 === 60) { this.cuSwing = 0; p.attackTimer = p.atkTotal; p.hitIds.clear(); }
+      if (p.attackTimer > 0) p.attackTimer--;
     }
     for (const c of this.level.coins) c.t++;
     for (const q of this.particles) { if (q.drag) { q.vx *= q.drag; q.vy *= q.drag; } q.vy += q.grav ?? 0.25; q.x += q.vx; q.y += q.vy; q.life--; }
@@ -6980,7 +7167,7 @@ class Game {
     const box = p.attackBox();   // the held axe (or sword, katana, lance) hits enemies and crates
     if (box) {
       const ids = p.horse && !p.swingActive() ? p.rideHits : p.hitIds;
-      for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, p.facing, ids);
+      for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, p.facing, ids, p.sword || p.horse ? 1 : p.dmg || 1);
       this.breakCrates(box);
     }
     const fa = this.flyingAxe;   // the flying axe too
@@ -7211,6 +7398,7 @@ class Game {
   draw() {
     if (this.state === "credits") { drawCredits(this); return; }
     if (this.state === "map") { drawMap(this); return; }
+    if (this.state === "custom") { drawCustom(this); return; }
     if (this.state === "shop") {
       if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
       drawShop(this);
@@ -7588,6 +7776,19 @@ const touch = { left: false, right: false, jump: false };
 const KEYMAP = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "jump", ArrowUp: "jump", KeyW: "jump" };
 window.addEventListener("keydown", e => {
   unlock();
+  if (game.state === "custom") {   // keyboard dressing room
+    const n = LOOK_ROWS.length;
+    if (e.code === "ArrowUp" || e.code === "KeyW") game.cuSel = (game.cuSel + n) % (n + 1);
+    else if (e.code === "ArrowDown" || e.code === "KeyS") game.cuSel = (game.cuSel + 1) % (n + 1);
+    else if ((e.code === "ArrowLeft" || e.code === "KeyA") && game.cuSel < n) game.cuChange(game.cuSel, -1);
+    else if ((e.code === "ArrowRight" || e.code === "KeyD") && game.cuSel < n) game.cuChange(game.cuSel, 1);
+    else if (e.code === "KeyR" && !e.repeat) game.cuRandom();
+    else if (["Space", "KeyX", "KeyJ"].includes(e.code) && !e.repeat) { if (game.cuSel < n) game.cuChange(game.cuSel, 1); else game.beginGame(); }
+    else if (["Enter", "NumpadEnter"].includes(e.code) && !e.repeat) game.beginGame();
+    if (e.code === "KeyM") toggleSound();
+    e.preventDefault();
+    return;
+  }
   if (game.state === "shop") {   // keyboard shopping
     const n = SHOP.length;
     if (e.code === "ArrowLeft" || e.code === "KeyA") game.shopSel = (game.shopSel + n) % (n + 1);
@@ -7616,6 +7817,7 @@ canvas.addEventListener("pointerdown", e => {
   e.preventDefault(); unlock();
   const r = canvas.getBoundingClientRect(), tx = (e.clientX - r.left) / r.width * W, ty = (e.clientY - r.top) / r.height * H;
   if (game.state === "shop") game.shopTap(tx, ty);
+  else if (game.state === "custom") game.cuTap(tx, ty);
   else if (game.state === "map") game.mapTap(tx, ty);
   else if (game.paused && inside(tx, ty, QUIT_BTN)) game.quitToMap();
   else tapStart();
