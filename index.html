@@ -669,7 +669,7 @@ const WEAPON_LIST = [
   { id: "axe", name: "Hacha doble", info: "Equilibrada", dmg: 1, spd: 1, reach: 1 },
   { id: "sword", name: "Espada", info: "Rápida pero más floja", dmg: 0.8, spd: 0.72, reach: 1 },
   { id: "hammer", name: "Martillo de guerra", info: "Lento pero ¡machaca!", dmg: 1.6, spd: 1.35, reach: 0.95 },
-  { id: "spear", name: "Lanza", info: "Llega muy lejos", dmg: 0.9, spd: 1, reach: 1.35 },
+  { id: "spear", name: "Lanza", info: "Pincha muy lejos", dmg: 0.9, spd: 1, reach: 1.35 },
 ];
 const LOOK_ROWS = [["helmet", "CASCO", HELMETS], ["armor", "ARMADURA", ARMORS], ["cape", "CAPA", CAPES], ["weapon", "ARMA", WEAPON_LIST]];
 let LOOK = { helmet: "plume", armor: "blue", cape: "red", weapon: "axe" };
@@ -1240,6 +1240,10 @@ class Player {
       return { x: this.facing > 0 ? r.x + r.w - 8 : r.x + 8 - w, y: r.y + 6, w, h: r.h - 6 };
     }
     if (!this.swingActive()) return null;
+    if (spearMode(this)) {   // the spear: a long, low stab straight ahead, as far as the point reaches
+      const r = this.rect(), w = Math.round(40 + 102 * this.reach), cx = r.x + Math.floor(r.w / 2);
+      return { x: this.facing > 0 ? cx : cx - w, y: r.y - 6, w, h: r.h + 6 };
+    }
     const r = this.rect(), k = this.reach, w = Math.round(92 * k), cx = r.x + Math.floor(r.w / 2);
     return { x: this.facing > 0 ? cx : cx - w, y: r.y - Math.round(44 * k), w, h: Math.round(56 + 56 * k) };
   }
@@ -3396,7 +3400,19 @@ function angleAt(prog) {   // axe angle in degrees: 0 = up, positive = towards t
   if (prog < 0.6) return lerp(-80, 150, easeOut((prog - 0.25) / 0.35));
   return lerp(150, idle, (prog - 0.6) / 0.4);
 }
+const spearMode = p => LOOK.weapon === "spear" && !p.sword && !p.ninja && !p.horse;
+function spearAngle(prog) {   // point it forward (a little downwards), stab, bring it back up
+  if (prog < 0.18) return lerp(-30, 100, prog / 0.18);
+  if (prog < 0.72) return 100;
+  return lerp(100, -30, (prog - 0.72) / 0.28);
+}
+function spearThrust(prog) {   // how far the arm pushes the spear forward (pixels)
+  if (prog < 0.2) return -6 * prog / 0.2;
+  if (prog < 0.42) return lerp(-6, 18, easeOut((prog - 0.2) / 0.22));
+  return lerp(18, 0, (prog - 0.42) / 0.58);
+}
 function axeAngle(p) {
+  if (p.attackTimer && spearMode(p)) return spearAngle(p.attackFrame() / p.atkTotal);
   if (p.attackTimer === 0) return -30 + (p.onGround && Math.abs(p.vx) > 0.5 ? Math.sin(p.anim * 1.4) * 4 : 0);
   return angleAt(p.attackFrame() / p.atkTotal);
 }
@@ -3462,7 +3478,8 @@ function drawKnight(p, cam, upg, t) {
   if (p.bike) ctx.translate(7, 0);   // the knight sits in the middle of the wider bike
   const sh = [24, 19], k = p.reach, rad = axeAngle(p) * Math.PI / 180, d = [Math.sin(rad), -Math.cos(rad)];
   // when swinging the arm follows the axe; otherwise he holds it upright in front, fist at his belt
-  const hand = p.attackTimer ? [sh[0] + d[0] * ARM_LEN, sh[1] + d[1] * ARM_LEN] : [30, 31 + step * 0.3];
+  const thr = p.attackTimer && spearMode(p) ? spearThrust(p.attackFrame() / p.atkTotal) : 0;
+  const hand = p.attackTimer ? [sh[0] + d[0] * (ARM_LEN + thr), sh[1] + d[1] * (ARM_LEN + thr)] : [30, 31 + step * 0.3];
   const flap = Math.sin(t * 0.15) * 3 + (moving ? 6 : 0) + (p.onGround ? 0 : 5);
 
   // flowing cape behind everything
@@ -3478,7 +3495,9 @@ function drawKnight(p, cam, upg, t) {
     R(STEEL_DARK, -9, 20, 12, 4, 1);
   }
 
-  if (p.swingActive()) {   // swing trail
+  if (p.swingActive() && spearMode(p)) {   // a stab streak along the spear
+    ctx.globalAlpha = 0.45; L(upg.sharp ? GOLD : WHITE, hand[0] + d[0] * 40, hand[1] + d[1] * 40, hand[0] + d[0] * (78 * k + 34), hand[1] + d[1] * (78 * k + 34), 7); ctx.globalAlpha = 1;
+  } else if (p.swingActive()) {   // swing trail
     const prog = p.attackFrame() / p.atkTotal, reach = ARM_LEN + AXE_HEAD * k;
     for (let i = 1; i < 7; i++) {
       const a = angleAt(Math.max(0, prog - i * 0.025)) * Math.PI / 180;
@@ -6142,7 +6161,7 @@ function drawMap(g) {   // the world map: four lands side by side, the road betw
   LEVELS.forEach((L, i) => { if (L.door != null && g.secrets.has(L.door)) road([MAP_NODES[i], MAP_NODES[L.door]], true); });
   LEVELS.forEach((L, i) => {
     const n = MAP_NODES[i]; if (!n || n.x - cam < -60 || n.x - cam > W + 60) return;
-    if (n.secret && !g.secrets.has(i)) { ctx.globalAlpha = 0.35 + 0.15 * Math.sin(t * 0.05 + i); C(rgb(40, 30, 20), n.x - cam, n.y, 18); T("?", 22, n.x - cam, n.y + 1, GOLD); ctx.globalAlpha = 1; return; }
+    if (n.secret && !g.secrets.has(i)) return;   // secret levels stay off the map until you find their door
     drawMapNode(i, n.x - cam, n.y, i === g.mapSel && !K.moving, g.done.has(L.name), t);
   });
   const p = g.mapPlayer;   // the knight
@@ -7694,7 +7713,7 @@ class Game {
     if (this.state === "title") {
       shade();
       T("EL CABALLERO DEL HACHA", 58, W / 2, 104, ARMOR_LIGHT);
-      T(`¡${MAIN_LEVELS} niveles en cuatro mundos... y secretos por descubrir!`, 25, W / 2, 168, WHITE);
+      T(`¡${MAIN_LEVELS} niveles en ${["uno", "dos", "tres", "cuatro", "cinco", "seis"][WORLDS.length - 1]} mundos... y secretos por descubrir!`, 25, W / 2, 168, WHITE);
       if (isTouch) {
         T("◀ ▶ mover      SALTA saltar      🪓 hachazo", 22, W / 2, 232, WHITE);
       } else {
