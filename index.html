@@ -96,7 +96,7 @@ const LEVELS = [
       "####################..###################....##########################....##########################....#########################",
       "####################..###################....##########################....##########################....#########################"
     ] },
-  { name: "El Bosque", theme: "forest", speed: 1.1, door: 23, hint: "¡Ojo con las serpientes taipán!",
+  { name: "El Bosque", theme: "forest", speed: 1.1, door: 28, hint: "¡Ojo con las serpientes taipán!",
     map: [
       "......................................................................................................................................................",
       "......................................................................................................................................................",
@@ -128,7 +128,23 @@ const LEVELS = [
       "################################################...########...............................##############........######.........#############.........#################################################################################################################",
       "################################################...########...............................##############........######.........#############.........#################################################################################################################"
     ] },
-  { name: "La Mina", theme: "mine", speed: 1.15, door: 24, hint: "¡Cuidado con los topos!",
+  { name: "La Selva de las Lianas", theme: "jungle", speed: 1.15, hint: "¡Salta a una liana para agarrarte! ◀ ▶ columpiarte · SALTA soltarte",
+    map: [
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "..................................................................:.................U.............................................................:.........................................................",
+      "........................:...........................................................................:...........................................................................:...........................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "................................i.....................i.......................i....i.......................i....................i...i...i........................i..........................................",
+      "........ooo.....................ooo.....oo.............ooo........................ooo.......oo.............ooo..........oo...........ooo.........................ooo......................oo................",
+      "..P...........n.............................n.......................n...........................n.....................n...............................n.............................n...............F.......",
+      "##############################.......###############.........###############............################........##############..............##################.........#####################################",
+      "##############################.......###############.........###############............################........##############..............##################.........#####################################"
+    ] },
+  { name: "La Mina", theme: "mine", speed: 1.15, door: 29, hint: "¡Cuidado con los topos!",
     map: [
       "#########################################################################################################################################################################",
       "#########################################################################################################################################################################",
@@ -159,6 +175,22 @@ const LEVELS = [
       "..P..M............^.....k...................k.....^.........................k.......^.........................k....^........................k......^...........................k.........^......k.....................k...^.........F...",
       "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################",
       "##############################.......#######################.......############################.......########################.......###########################.......#################################......##########################"
+    ] },
+  { name: "Las Dunas", theme: "desert", speed: 1.15, mode: "buggy", hint: "▶ acelerar · ◀ frenar · SALTA brincar · 🪓 turbo (¡rompe obstáculos!)",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
     ] },
   { name: "La Gran Carrera", theme: "race", speed: 1.2, mode: "car", time: 30, hint: "¡Llega a la meta a tiempo! 🪓: turbo",
     map: [
@@ -191,6 +223,54 @@ const LEVELS = [
       "..P..................................^^..........................................^....................^^....................................^...............................^^..............................F.....",
       "##############################....############################....#############################....###############################....###############################....#########################################",
       "##############################....############################....#############################....###############################....###############################....#########################################"
+    ] },
+  { name: "La Moto de Nieve", theme: "snow", speed: 1.15, mode: "skidoo", hint: "▶ acelerar · SALTA brincar · 🪓 turbo · ¡esquiva los pingüinos!",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "La Escalada de Hielo", theme: "snow", speed: 1.15, mode: "climb", hint: "SALTA: escalar · ◀ ▶ moverte · 🪓 romper el hielo que cae",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "El Descenso", theme: "snow", speed: 1.15, mode: "ski", hint: "◀ ▶ girar · ¡pasa entre las banderas! · SALTA saltar · 🪓 agacharte",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
     ] },
   { name: "Combate Aéreo", theme: "sky", speed: 1.15, mode: "plane", hint: "SALTA: subir · 🪓: disparar · ¡cada 4 disparos, un cohete!",
     map: [
@@ -288,7 +368,7 @@ const LEVELS = [
       "########################################.#############################################.############################################.##################################################",
       "########################################.#############################################.############################################.##################################################"
     ] },
-  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 25, hint: "¡Salta de pared en pared y lanza shuriken!",
+  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 30, hint: "¡Salta de pared en pared y lanza shuriken!",
     map: [
       "................................................................................................................................................................................",
       "................................................................................................................................................................................",
@@ -384,7 +464,7 @@ const LEVELS = [
       "########################################################################",
       "########################################################################"
     ] },
-  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 26, hint: "¡No te caigas al agua!",
+  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 31, hint: "¡No te caigas al agua!",
     map: [
       "............................................................................................................................................................................",
       "............................................................................................................................................................................",
@@ -543,10 +623,11 @@ const WATER_Y = 11 * TILE + 14;   // surface of the sea in water levels
 const SOLID = "#=CHQxl|";   // ground, platforms, crates, hidden blocks, cracked stone
 const MAIN_LEVELS = LEVELS.filter(l => !l.secret).length;   // the secret levels come after these
 const WORLDS = [
-  { name: "LA TIERRA", lv: [0, 1, 2, 3, 4, 5, 6] },
-  { name: "EL CIELO Y EL ESPACIO", lv: [7, 8, 9, 10, 11] },
-  { name: "EL REINO", lv: [12, 13, 14, 15, 16, 17, 18] },
-  { name: "LOS MARES", lv: [19, 20, 21, 22] },
+  { name: "LA TIERRA", lv: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+  { name: "EL HIELO", lv: [9, 10, 11] },
+  { name: "EL CIELO Y EL ESPACIO", lv: [12, 13, 14, 15, 16] },
+  { name: "EL REINO", lv: [17, 18, 19, 20, 21, 22, 23] },
+  { name: "LOS MARES", lv: [24, 25, 26, 27] },
 ];
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
@@ -695,6 +776,10 @@ const THEMES = {
             top: [rgb(120, 120, 130), rgb(90, 90, 100), rgb(150, 150, 160)], dirt: [rgb(90, 90, 100), rgb(70, 70, 80), rgb(110, 110, 120)] },
   temple: { sky: [[16, 24, 20], [40, 56, 44]], far: rgb(58, 70, 58), near: rgb(40, 52, 42), bg: "temple", clouds: false, plat: "stone",
             top: [rgb(84, 140, 70), rgb(60, 104, 52), rgb(120, 176, 96)], dirt: [rgb(104, 110, 98), rgb(80, 86, 76), rgb(128, 134, 120)] },
+  jungle: { sky: [[60, 120, 80], [200, 230, 170]], far: rgb(52, 100, 66), near: rgb(30, 70, 44), bg: "ancient", clouds: false, plat: "wood", spikes: "thorn", pungi: true, sun: rgb(255, 246, 200),
+            top: [rgb(80, 150, 60), rgb(56, 116, 44), rgb(120, 190, 84)], dirt: [rgb(96, 70, 44), rgb(70, 50, 30), rgb(120, 90, 60)] },
+  snow:   { sky: [[120, 170, 226], [226, 240, 250]], far: rgb(196, 212, 232), near: rgb(164, 190, 218), bg: "snow", sun: rgb(255, 252, 236), clouds: true, flat: true,
+            top: [rgb(250, 252, 255), rgb(214, 228, 244), rgb(255, 255, 255)], dirt: [rgb(170, 196, 224), rgb(140, 170, 206), rgb(196, 218, 240)] },
   bears:  { sky: [[34, 24, 36], [84, 58, 56]], far: rgb(70, 50, 54), near: rgb(52, 38, 40), bg: "cave", spikes: "rock",
             top: [rgb(96, 120, 64), rgb(70, 92, 46), rgb(130, 156, 84)], dirt: [rgb(92, 72, 62), rgb(72, 56, 48), rgb(114, 92, 80)] },
   storm:  { sky: [[40, 46, 60], [118, 126, 140]], far: rgb(62, 70, 84), near: rgb(46, 60, 54), bg: "storm", clouds: false, plat: "stone", spikes: "metal",
@@ -740,7 +825,8 @@ const VOICE_LINES = {
   cohete: "¡Despegamos! ¡Rumbo a la Luna!", luna: "¡Hemos llegado a la Luna!", monos: "¡Monos espaciales!",
   osos: "Shhh... ¡pégales mientras duermen!", comido: "¡Me ha comido un oso!", granada: "¡Granada!", turbo: "¡Turbo!",
   arquero: "¡Adiós, arquero!", heroe: "¡Enhorabuena, caballero! ¡Eres un héroe!", gracias_jugar: "¡Gracias por jugar!",
-  reflejo: "¡Reflejado!", mapa: "¿Adónde vamos, caballero?",
+  reflejo: "¡Reflejado!", mapa: "¿Adónde vamos, caballero?", lianas: "¡A la selva! ¡Agárrate a las lianas!", dunas: "¡A las dunas! ¡Acelera!",
+  motonieve: "¡Moto de nieve! ¡Cuidado con los pingüinos!", escalada: "¡A escalar hasta la cima!", descenso: "¡A esquiar! ¡Pasa por todas las puertas!", cima: "¡La cima!",
   luna_nivel: "¡La Luna! ¡Mira qué saltos!", marte: "¡Marte! ¡Cuidado con las arañas mecánicas!", dragones: "¡Dragones! ¡Que no te quemen!",
   piratas: "¡Al abordaje!", arana: "¡Cuidado! ¡La Araña de Hierro!", dragon_rojo: "¡Cuidado! ¡El Dragón Rojo!", capitan: "¡Cuidado! ¡El Capitán Pata de Palo!",
   mama_osa: "¡Cuidado! ¡Mamá Osa!", oso: "¡Adiós, oso!", chatarra: "¡Chatarra!", dragoncito: "¡Adiós, dragón!", pirata: "¡Al agua, pirata!",
@@ -915,7 +1001,7 @@ function initAudio() {   // browsers only allow sound after the first tap or key
 }
 let engine = null;   // a running engine sound that follows the speed of the motorbike or tank
 function updateEngine() {
-  const p = game.player, want = !!(soundOn && actx && master && !game.paused && game.state === "play" && p && (p.bike || p.tank || p.plane || p.car || p.sub || p.ship || (p.rocket && game.levelTimer > 140)));
+  const p = game.player, want = !!(soundOn && actx && master && !game.paused && game.state === "play" && p && ((game.tv && game.levelTimer > 90) || p.bike || p.tank || p.plane || p.car || p.sub || p.ship || (p.rocket && game.levelTimer > 140)));
   try {
     if (want && !engine) {
       const o1 = actx.createOscillator(), o2 = actx.createOscillator(), lfo = actx.createOscillator();
@@ -931,7 +1017,7 @@ function updateEngine() {
       setTimeout(() => { try { e.o1.stop(); e.o2.stop(); e.lfo.stop(); } catch (_) {} }, 400);
     }
     if (engine) {
-      const sp = Math.abs(p.vx), now = actx.currentTime, f = p.ship ? 28 + sp * 6 : p.sub ? 34 + sp * 7 : p.rocket ? 40 + Math.random() * 6 : p.car ? 60 + sp * 12 : p.ufo ? 150 + Math.sin(now * 5) * 30 - p.vy * 6 : p.tank ? 32 + sp * 10 : p.plane ? 62 + sp * 9 - p.vy * 3 : 46 + sp * 12;
+      const sp = Math.abs(p.vx), now = actx.currentTime, f = game.tv ? 36 + sp * 9 : p.ship ? 28 + sp * 6 : p.sub ? 34 + sp * 7 : p.rocket ? 40 + Math.random() * 6 : p.car ? 60 + sp * 12 : p.ufo ? 150 + Math.sin(now * 5) * 30 - p.vy * 6 : p.tank ? 32 + sp * 10 : p.plane ? 62 + sp * 9 - p.vy * 3 : 46 + sp * 12;
       engine.o1.frequency.setTargetAtTime(f, now, 0.08); engine.o2.frequency.setTargetAtTime(f * 0.5, now, 0.08);
       engine.lfo.frequency.setTargetAtTime(f / (p.tank ? 4 : p.plane ? 2 : 3), now, 0.08);
       engine.lp.frequency.setTargetAtTime(p.tank ? 280 + sp * 70 : p.plane ? 700 + sp * 60 : 420 + sp * 100, now, 0.1);
@@ -1141,8 +1227,10 @@ class Player {
     if ((bike || horse) && this.onGround && move && Math.sign(this.vx) === -move) accel = 0.9;   // brakes
     const top = (this.car ? (this.nitroT ? 13.5 : 10) : bike ? 8.5 : this.tank ? 3.4 : horse ? 7.2 : ninja ? 5.6 : this.sneak ? 3.2 : MAX_RUN) * (!bike && !horse && this.attackTimer && this.onGround ? 0.6 : 1) * (this.umbrella ? 0.8 : 1);
     if (this.nitroT && this.onGround) this.vx = Math.max(this.vx, Math.min(13.5, this.vx + 0.6));
+    if (this.onGround) this.fling = false;
     if (move) {
-      this.vx = Math.max(-top, Math.min(top, this.vx + move * accel));
+      const tp = this.fling ? Math.max(top, Math.abs(this.vx) * 0.995) : top;   // flung off a vine: keep the swing speed until landing
+      this.vx = Math.max(-tp, Math.min(tp, this.vx + move * accel));
       if (this.attackTimer === 0) this.facing = move;
     } else if (this.onGround && this.knockback === 0) {
       this.vx *= bike || horse ? 0.97 : RUN_FRICTION; if (Math.abs(this.vx) < 0.1) this.vx = 0;
@@ -2942,7 +3030,7 @@ class Level {
     this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null; this.tank = null; this.mode = def.mode || null; this.shield = !!def.shield; this.pickups = [];
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
-    this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = []; this.lifeups = []; this.door = null; this.revealed = new Set();
+    this.tiles = new Map(); this.vines = []; this.spikes = []; this.coins = []; this.enemies = []; this.lifeups = []; this.door = null; this.revealed = new Set();
     this.oils = []; this.boosts = []; this.clocks = []; this.leaves = [];
     this.grav = def.grav || 1; this.start = [TILE * 2, TILE * 9]; this.flag = null; this.boss = null; this.arena = [0, this.pxW];
     const later = [];
@@ -2960,6 +3048,7 @@ class Level {
       else if (ch === "9") this.enemies.push(new PirateGunner(x, y, mul));
       else if (ch === "!") this.enemies.push(new Cannon(x, y, mul));
       else if (ch === "3" || ch === "+") this.enemies.push(new Helicopter(ch, x, y, mul));
+      else if (ch === "i") this.vines.push({ ax: x + 20, ay: 0, len: y + TILE + 30, th: 0.08 * Math.sin(x * 0.01), om: 0 });
       else if (ch === "(") this.enemies.push(new SwordKnight(x, y, mul));
       else if (ch === "/") this.enemies.push(new EnemyFighter(x, y, mul));
       else if (ch === "?" || ch === ",") this.enemies.push(new Breakable(ch, x, y));
@@ -4071,6 +4160,247 @@ function drawChest(e, cam) {   // a treasure chest; when it opens, a big shining
   }
 }
 
+function drawVine(v, cam) {   // a long jungle vine with leaves, swinging from the canopy
+  const x0 = v.ax - cam, ux = Math.sin(v.th), uy = Math.cos(v.th), x1 = x0 + ux * v.len, y1 = v.ay + uy * v.len, mx = (x0 + x1) / 2 + Math.sin(v.th * 2) * 12, my = (v.ay + y1) / 2;
+  for (const [lw, col] of [[7, rgb(60, 96, 36)], [3, rgb(110, 160, 60)]]) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(x0, v.ay - 10); ctx.quadraticCurveTo(mx, my, x1, y1); ctx.stroke(); }
+  for (let k = 1; k < 9; k++) { const f = k / 9, lx = (1 - f) * (1 - f) * x0 + 2 * f * (1 - f) * mx + f * f * x1, ly = (1 - f) * (1 - f) * (v.ay - 10) + 2 * f * (1 - f) * my + f * f * y1; E(rgb(70, 150, 60), lx + (k % 2 ? 2 : -12), ly - 3, 11, 6); }
+  E(rgb(70, 150, 60), x1 - 8, y1 - 2, 16, 8);
+}
+function drawStakes(x, cx) {   // the bottom of a stake pit: sharpened bamboo
+  const gr = ctx.createLinearGradient(0, 440, 0, H); gr.addColorStop(0, "rgba(20,14,8,0)"); gr.addColorStop(1, "rgba(20,14,8,0.9)"); ctx.fillStyle = gr; ctx.fillRect(x, 440, TILE, H - 440);
+  for (let k = 0; k < 3; k++) {
+    const sx = x + 6 + k * 13, top = 470 + ((cx * 7 + k * 5) % 3) * 6;
+    P(rgb(206, 182, 112), [[sx - 4, H], [sx, top], [sx + 4, H]]); L(rgb(150, 120, 60), sx - 3, top + 22, sx + 3, top + 22, 1.5); P(rgb(240, 226, 170), [[sx - 1, top + 8], [sx, top], [sx + 1, top + 8]]);
+  }
+}
+function terrainY(T, x) {   // the height of the hills at x — or null over a canyon / an icy crevasse
+  for (const g of T.gaps) if (x > g.x0 && x < g.x1) return null;
+  let y = 372 - 46 * Math.sin(x / 260) - 26 * Math.sin(x / 97 + 1) * (T.snow ? 0.5 : 0.8) - 34 * Math.sin(x / 613 + 2);
+  for (const g of T.gaps) { const d = g.x0 - x; if (d > 0 && d < 340) y -= Math.pow(1 - d / 340, 1.6) * 110; const e = x - g.x1; if (e > 0 && e < 200) y -= (1 - e / 200) * 30; }   // a ramp up to each gap
+  if (x < 400) y = 400 + (y - 400) * x / 400;   // flat at the start
+  return Math.max(220, Math.min(476, y));
+}
+
+function drawDriver(t) {   // the knight sitting in a vehicle (origin at his seat), helmet, plume and cape flying
+  const fl = Math.sin(t * 0.3) * 3;
+  P(CAPE, [[-4, -20], [-24 - fl, -12], [-18, -4]]);
+  R(ARMOR, -8, -24, 16, 20, 5); C(ARMOR_MID, 0, -32, 9); R(STEEL_DARK, 0, -34, 9, 3); P(PLUME, [[-2, -40], [-14, -46], [-6, -36]]);
+  L(ARMOR, 4, -18, 16, -14, 4); C(STEEL, 17, -14, 3);
+}
+
+function drawBuggy(x, y, ang, wheel, t, nitro) {   // the dune buggy: roll cage, fat tyres, the knight at the wheel; (x, y) is between the wheels on the ground
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+  if (nitro) { ctx.globalAlpha = 0.8; P(rgb(255, 170, 60), [[-38, -20], [-58 - Math.random() * 14, -16], [-38, -12]]); ctx.globalAlpha = 1; }
+  P(rgb(214, 80, 40), [[-36, -14], [34, -14], [40, -22], [24, -28], [-30, -28]]); R(rgb(160, 50, 26), -36, -16, 72, 6, 2);   // the body
+  ctx.save(); ctx.translate(-2, -26); drawDriver(t); ctx.restore();
+  L(rgb(60, 60, 66), -24, -28, -16, -52, 3); L(rgb(60, 60, 66), 16, -28, 4, -52, 3); L(rgb(60, 60, 66), -16, -52, 4, -52, 3);   // roll cage
+  L(rgb(60, 60, 66), 30, -22, 22, -34, 2); C(rgb(255, 230, 140), 38, -21, 3);
+  for (const wx of [-24, 24]) {   // big knobbly wheels
+    C(rgb(30, 30, 34), wx, -10, 12); C(rgb(150, 150, 160), wx, -10, 5);
+    for (let k = 0; k < 4; k++) { const a = wheel + k * Math.PI / 2; L(rgb(90, 90, 100), wx, -10, wx + Math.cos(a) * 9, -10 + Math.sin(a) * 9, 2); }
+  }
+  ctx.restore();
+}
+
+function drawSkidoo(x, y, ang, wheel, t, nitro) {   // the snowmobile: a ski at the front, a track at the back, the knight astride it
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+  if (nitro) { ctx.globalAlpha = 0.8; P(rgb(160, 220, 255), [[-38, -18], [-58 - Math.random() * 14, -14], [-38, -10]]); ctx.globalAlpha = 1; }
+  R(rgb(40, 40, 46), -36, -12, 44, 12, 6); for (let k = 0; k < 6; k++) { const tx = -32 + ((k * 8 + wheel * 6) % 40); R(rgb(90, 90, 100), tx, -12, 3, 12); }   // the track
+  L(rgb(60, 60, 66), 20, -4, 40, -2, 3); L(rgb(60, 60, 66), 40, -2, 46, -8, 3); L(rgb(60, 60, 66), 26, -14, 28, -4, 2.5);   // the ski
+  P(rgb(30, 110, 200), [[-36, -12], [24, -12], [40, -18], [30, -28], [-10, -28], [-30, -22]]); P(rgb(250, 200, 40), [[-30, -18], [24, -18], [30, -22], [-26, -22]]);   // the body
+  P(rgb(170, 220, 250), [[18, -28], [28, -40], [32, -28]]);   // windscreen
+  ctx.save(); ctx.translate(-6, -26); drawDriver(t); ctx.restore();
+  ctx.restore();
+}
+
+function drawCactus(x, y) {   // a tall desert cactus with two arms
+  E("rgba(0,0,0,0.2)", x - 16, y - 4, 32, 7);
+  R(rgb(60, 130, 70), x - 7, y - 56, 14, 56, 7); R(rgb(60, 130, 70), x - 19, y - 40, 7, 18, 4); R(rgb(60, 130, 70), x - 19, y - 28, 14, 7, 3); R(rgb(60, 130, 70), x + 12, y - 46, 7, 20, 4); R(rgb(60, 130, 70), x + 5, y - 32, 14, 7, 3);
+  L(rgb(90, 170, 100), x - 2, y - 52, x - 2, y - 4, 2);
+}
+function drawSnowman(x, y, t) {   // a snowman with a carrot nose and stick arms
+  E("rgba(60,90,140,0.2)", x - 20, y - 4, 40, 8);
+  C(rgb(244, 248, 255), x, y - 16, 16); C(rgb(250, 252, 255), x, y - 40, 12); C(rgb(250, 252, 255), x, y - 58, 9);
+  C(BLACK, x - 3, y - 60, 1.5); C(BLACK, x + 3, y - 60, 1.5); P(rgb(240, 130, 40), [[x, y - 58], [x + 10, y - 56], [x, y - 55]]);
+  L(rgb(110, 76, 40), x - 10, y - 42, x - 24, y - 50 + Math.sin(t * 0.1) * 3, 2); L(rgb(110, 76, 40), x + 10, y - 42, x + 24, y - 50, 2);
+  R(rgb(200, 40, 40), x - 9, y - 50, 18, 4, 2);
+}
+function drawPenguin(x, y, t, slide) {   // a penguin: waddling upright, or sliding on its belly
+  if (slide) {
+    E(rgb(30, 30, 40), x - 18, y - 16, 36, 15); E(WHITE, x - 14, y - 9, 26, 8); C(rgb(30, 30, 40), x - 16, y - 12, 7); C(WHITE, x - 18, y - 13, 2); P(rgb(250, 160, 40), [[x - 22, y - 12], [x - 30, y - 10], [x - 22, y - 9]]);
+    P(rgb(30, 30, 40), [[x - 2, y - 14], [x + 10, y - 22], [x + 6, y - 12]]);
+    return;
+  }
+  const w = Math.sin(t * 0.25) * 0.15;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(w);
+  E(rgb(30, 30, 40), -12, -34, 24, 34); E(WHITE, -8, -28, 16, 26); C(rgb(30, 30, 40), 0, -34, 9); C(WHITE, -4, -36, 2.5); C(BLACK, -4, -36, 1.2);
+  P(rgb(250, 160, 40), [[-6, -33], [-14, -31], [-6, -29]]); P(rgb(250, 160, 40), [[-8, 0], [-2, 0], [-5, -3]]); P(rgb(250, 160, 40), [[2, 0], [8, 0], [5, -3]]);
+  ctx.restore();
+}
+
+function drawTerrainWorld(g) {   // the hills seen from the side: sky, distant scenery, the ground, things on it, and the vehicle
+  const TV = g.tv, cam = Math.round(g.camX), theme = g.level.theme, p = g.player, gy = x => terrainY(TV, x);
+  drawBackground(theme, cam);
+  if (SHADE) drawSunShafts(theme, g.t);
+  const fill = TV.snow ? [rgb(252, 253, 255), rgb(196, 216, 238)] : [rgb(238, 194, 124), rgb(176, 112, 62)];
+  let seg = [];
+  const flush = () => {
+    if (seg.length > 1) {
+      const gr = ctx.createLinearGradient(0, 230, 0, H); gr.addColorStop(0, fill[0]); gr.addColorStop(1, fill[1]);
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(seg[0][0], H + 10); for (const [x, y] of seg) ctx.lineTo(x, y); ctx.lineTo(seg[seg.length - 1][0], H + 10); ctx.fill();
+      for (const [off, col, lw] of [[0, TV.snow ? WHITE : rgb(252, 220, 160), 3], [30, TV.snow ? "rgba(140,170,210,0.35)" : "rgba(150,90,40,0.3)", 2], [70, TV.snow ? "rgba(140,170,210,0.3)" : "rgba(150,90,40,0.25)", 2], [120, TV.snow ? "rgba(140,170,210,0.25)" : "rgba(150,90,40,0.2)", 2]]) {
+        ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); seg.forEach(([x, y], k) => k ? ctx.lineTo(x, y + off) : ctx.moveTo(x, y + off)); ctx.stroke();
+      }
+    }
+    seg = [];
+  };
+  for (let sx = -10; sx <= W + 10; sx += 6) { const y = gy(sx + cam); if (y == null) flush(); else seg.push([sx, y]); }
+  flush();
+  for (const gp of TV.gaps) if (gp.x1 > cam && gp.x0 < cam + W) {   // the canyon / crevasse
+    const x0 = gp.x0 - cam, x1 = gp.x1 - cam;
+    const gr = ctx.createLinearGradient(0, 380, 0, H); gr.addColorStop(0, TV.snow ? "rgba(40,90,150,0.6)" : "rgba(90,40,20,0.6)"); gr.addColorStop(1, TV.snow ? rgb(10, 30, 70) : rgb(40, 16, 8));
+    ctx.fillStyle = gr; ctx.fillRect(x0, 380, x1 - x0, H - 380);
+    if (TV.snow) { R(rgb(30, 80, 140), x0, 486, x1 - x0, 40); for (let k = 0; k < 4; k++) L("rgba(255,255,255,0.4)", x0 + 10 + k * 40 + Math.sin(g.t * 0.05 + k) * 6, 492, x0 + 30 + k * 40, 492, 2); }
+  }
+  for (const gp of TV.gaps) for (let k = 0; k < 4; k++) { const ax = gp.x0 - 375 + k * 20; if (ax > cam - 20 && ax < cam + W + 20) T("»", 22, ax - cam, gy(ax) - 12, Math.floor(g.t / 6) % 4 === k ? GOLD : rgb(255, 140, 40)); }   // boost arrows
+  for (const o of TV.obs) if (o.x > cam - 60 && o.x < cam + W + 60 && !o.hit) { const oy = gy(o.x); if (o.type === "cactus") drawCactus(o.x - cam, oy); else if (o.type === "snowman") drawSnowman(o.x - cam, oy, g.t); else { E(rgb(120, 110, 104), o.x - cam - 20, oy - 22, 40, 26); E(TV.snow ? WHITE : rgb(160, 150, 140), o.x - cam - 14, oy - 22, 24, 8); } }
+  for (const f of TV.foes) if (!f.dead && f.x > cam - 60 && f.x < cam + W + 60) {
+    if (f.type === "vulture") drawBird({ x: f.x - 22 - 0, y: f.y - 10, w: 44, h: 20, t: f.t, dir: f.mode === "away" ? 1 : -1, flash: 0, kind: "v", mode: f.mode === "swoop" ? "dive" : "patrol", colors: () => ENEMY_COLORS.v, rect() { return { x: this.x, y: this.y, w: this.w, h: this.h }; } }, cam);
+    else drawPenguin(f.x - cam, f.y, f.t, f.type === "slider" && f.x - TV.x < 700);
+  }
+  for (const c of TV.coins) if (!c.dead && c.x > cam - 20 && c.x < cam + W + 20) drawCoin({ t: c.t, rect: () => ({ x: c.x - 9, y: c.y - 9 }) }, cam);
+  for (const h of TV.hearts) if (!h.dead) { ctx.save(); ctx.translate(h.x - cam, h.y + Math.sin(g.t * 0.08) * 4); ctx.scale(1.4, 1.4); drawHeart(-9, -9, true); ctx.restore(); }
+  const fx = TV.len - 300 - cam;   // the finish arch
+  if (fx > -80 && fx < W + 80) {
+    const fy = gy(TV.len - 300);
+    for (const px of [fx - 70, fx + 70]) R(rgb(60, 60, 70), px - 3, fy - 130, 6, 130);
+    for (let k = 0; k < 14; k++) R(k % 2 ? WHITE : BLACK, fx - 70 + k * 10, fy - 140, 10, 10), R(k % 2 ? BLACK : WHITE, fx - 70 + k * 10, fy - 130, 10, 10);
+    T("META", 22, fx, fy - 158, GOLD);
+  }
+  if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0) && !p.dead) (TV.snow ? drawSkidoo : drawBuggy)(TV.x - cam, TV.y, TV.ang, TV.wheel, g.t, TV.nitro > 0);
+  for (const q of g.particles) { const k = q.life / q.maxLife; ctx.globalAlpha = Math.min(1, 0.35 + k); ctx.fillStyle = q.color; ctx.beginPath(); ctx.arc(q.x - cam, q.y, Math.max(1, q.size * k + 1) * 0.62, 0, Math.PI * 2); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  if (SHADE) { drawMotes(LEVELS[g.levelIndex].theme, cam, g.t); drawGrade(theme); drawVignette(); }
+  for (const q of g.popups) T(q.text, 20, q.x - cam, q.y, q.color);
+  const k = Math.min(1, TV.x / (TV.len - 300));   // distance to the finish
+  R("rgba(0,0,0,0.35)", W / 2 - 150, H - 26, 300, 12, 6); R(GOLD, W / 2 - 148, H - 24, 296 * k, 8, 4); T("🏁", 18, W / 2 + 166, H - 20, WHITE);
+}
+
+function drawClimber(x, y, t, climbing, chop, facing) {   // the knight seen from behind on the ice wall, an ice axe in each hand; (x, y) = his feet
+  const s = climbing ? Math.sin(t * 0.25) : 0, up = chop ? -1 : 0;
+  ctx.save(); ctx.translate(x, y);
+  E("rgba(20,40,80,0.18)", -22, -64, 44, 70);                                                  // his shadow on the ice
+  L(STEEL_DARK, -6, -24, -9 - s * 3, -2, 6); L(STEEL_DARK, 6, -24, 9 + s * 3, -2, 6);          // legs
+  for (const fx of [-9 - s * 3, 9 + s * 3]) { R(BOOT, fx - 5, -4, 10, 6, 2); L(STEEL, fx - 5, 2, fx + 5, 2, 1.5); }   // boots with crampons
+  P(CAPE_DARK, [[-12, -52], [12, -52], [15, -18], [-15, -18]]); P(CAPE, [[-10, -52], [10, -52], [12, -22], [-12, -22]]);   // cape
+  R(ARMOR, -11, -54, 22, 18, 6);                                                                // shoulders
+  const arm = (side, lift) => {   // an arm reaching up with its ice axe
+    const hx = side * 16 + (chop ? side * 6 : 0), hy = -76 - lift * 14 + (chop ? -10 : 0);
+    L(ARMOR, side * 9, -50, hx, hy, 6); C(STEEL, hx, hy, 3.5);
+    L(HANDLE, hx, hy + 6, hx, hy - 16, 3); P(STEEL, [[hx, hy - 16], [hx + side * 12, hy - 12], [hx, hy - 12]]);
+  };
+  arm(-1, Math.max(0, s)); arm(1, Math.max(0, -s));
+  C(ARMOR_MID, 0, -60, 10); R(STEEL_DARK, -8, -62, 16, 3); P(PLUME, [[0, -70], [-6, -82], [4, -74], [8, -84], [6, -70]]);   // helmet from behind with its plume
+  if (chop) { ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, -84, 38, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawClimbWorld(g) {   // the frozen cliff, scrolling down as the knight climbs; the summit at the top
+  const CL = g.cl, p = g.player, k = Math.min(1, CL.y / CL.goal), sy = a => 470 - (a - CL.cam);
+  const mix = (a, b, f) => a.map((v, i) => Math.round(v + (b[i] - v) * f));
+  const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, rgb(...mix([110, 170, 230], [40, 70, 150], k))); sky.addColorStop(1, rgb(...mix([220, 236, 250], [150, 190, 240], k)));
+  ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (let i = 0; i < 6; i++) { const my = 380 + CL.cam * 0.08 + (i % 2) * 40; P(rgb(214, 226, 242), [[i * 200 - 100, my + 200], [i * 200, my - 90], [i * 200 + 100, my + 200]]); P(WHITE, [[i * 200, my - 90], [i * 200 - 26, my - 46], [i * 200 + 24, my - 50]]); }   // the peaks around
+  const wl = 70, wr = W - 70, top = sy(CL.goal + 40);   // the cliff face
+  ctx.save(); ctx.beginPath(); ctx.rect(wl - 30, Math.max(-20, top), wr - wl + 60, H + 40); ctx.clip();
+  const ice = ctx.createLinearGradient(wl, 0, wr, 0); ice.addColorStop(0, rgb(150, 196, 230)); ice.addColorStop(0.5, rgb(206, 232, 250)); ice.addColorStop(1, rgb(140, 186, 224));
+  ctx.fillStyle = ice; ctx.fillRect(wl - 30, -20, wr - wl + 60, H + 40);
+  const base = Math.floor(CL.cam / 60) * 60;
+  for (let a = base - 60; a < CL.cam + H + 60; a += 60) {   // cracks, bumps and frozen ripples in the ice
+    const r = seeded(Math.floor(a / 60) + 99);
+    for (let n = 0; n < 3; n++) { const cx = wl + r() * (wr - wl), cy = sy(a) - r() * 60; L("rgba(90,140,190,0.35)", cx, cy, cx + (r() - 0.5) * 50, cy + 20 + r() * 20, 1.5); E("rgba(255,255,255,0.35)", cx + 10, cy - 10, 24 + r() * 30, 6); }
+  }
+  ctx.restore();
+  for (const s of [-1, 1]) { const ex = s < 0 ? wl - 30 : wr + 30; P(rgb(120, 110, 120), [[ex, Math.max(-20, top)], [ex + s * 60, Math.max(-20, top) + 40], [ex + s * 60, H + 20], [ex, H + 20]]); }   // rocky edges
+  if (top > -40) {   // the summit: a snowy cornice and a flag
+    E(WHITE, wl - 50, top - 18, wr - wl + 100, 36); R(rgb(110, 90, 60), W / 2 - 2, top - 90, 4, 80); P(HEART, [[W / 2 + 2, top - 90], [W / 2 + 40, top - 80], [W / 2 + 2, top - 70]]);
+  }
+  for (const L0 of CL.ledges) {   // ice ledges with their gaps
+    const y = sy(L0.alt); if (y < -40 || y > H + 40) continue;
+    let x = wl - 30;
+    const segs = []; for (const gp of [...L0.gaps].sort((a, b) => a.x0 - b.x0)) { segs.push([x, gp.x0]); x = gp.x1; } segs.push([x, wr + 30]);
+    for (const [a, b] of segs) if (b > a) {
+      R(rgb(170, 210, 240), a, y - 18, b - a, 20, 6); R(WHITE, a, y - 22, b - a, 8, 4);
+      for (let ix = a + 8; ix < b - 6; ix += 16) P(rgb(200, 230, 250), [[ix, y + 2], [ix + 4, y + 16 + ((ix * 7) % 10)], [ix + 8, y + 2]]);   // icicles
+    }
+  }
+  for (const c of CL.coins) if (!c.dead) { const y = sy(c.alt); if (y > -20 && y < H + 20) drawCoin({ t: c.t, rect: () => ({ x: c.x - 9, y: y - 9 }) }, 0); }
+  for (const h of CL.hearts) if (!h.dead) { const y = sy(h.alt); if (y > -20 && y < H + 20) { ctx.save(); ctx.translate(h.x, y); ctx.scale(1.4, 1.4); drawHeart(-9, -9, true); ctx.restore(); } }
+  for (const c of CL.ice) {
+    if (c.warn > 0) { if (Math.floor(c.warn / 5) % 2) T("!", 30, c.x, 26, HEART); continue; }
+    const y = sy(c.alt);
+    if (c.big) { ctx.save(); ctx.translate(c.x, y); ctx.rotate(c.spin); C(rgb(240, 246, 255), 0, 0, 16); C(rgb(200, 220, 240), 5, 5, 8); ctx.restore(); }
+    else { P(rgb(200, 232, 252), [[c.x - 6, y - 30], [c.x + 6, y - 30], [c.x, y + 4]]); L(WHITE, c.x - 2, y - 28, c.x, y - 4, 1.5); }
+  }
+  for (const b of CL.flying) { const e = { x: b.x - 22, y: sy(b.alt) - 10, w: 44, h: 20, t: b.t, dir: b.vx > 0 ? 1 : -1, flash: 0, kind: "v", mode: "patrol", colors: () => [rgb(120, 90, 60), rgb(80, 56, 36), rgb(250, 220, 120)], rect() { return { x: this.x, y: this.y, w: this.w, h: this.h }; } }; drawBird(e, 0); }
+  if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0) && !p.dead) drawClimber(CL.x, sy(CL.y), CL.climbT, inp.jumpHeld && g.state === "play", CL.chopT > 6, p.facing);
+  for (const q of g.particles) { const kk = q.life / q.maxLife; ctx.globalAlpha = Math.min(1, 0.35 + kk); ctx.fillStyle = q.color; ctx.beginPath(); ctx.arc(q.x, q.y, Math.max(1, q.size * kk + 1) * 0.62, 0, Math.PI * 2); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  if (SHADE) { drawMotes("snow", CL.cam * 0, g.t); drawGrade(g.level.theme); drawVignette(); }
+  for (const q of g.popups) T(q.text, 20, q.x, q.y, q.color);
+  R("rgba(0,0,0,0.35)", W - 30, 90, 14, 330, 6); R(rgb(180, 220, 255), W - 28, 92 + 326 * (1 - k), 10, 326 * k, 4); T("⛰️", 18, W - 23, 76, WHITE);   // altitude
+  T(`${Math.round(CL.y / 10)} m`, 16, W - 40, 432, WHITE, "right", "top");
+}
+
+function drawSkier(x, y, t, vx, air, tuck) {   // the knight on skis, seen from above
+  const a = Math.max(-0.6, Math.min(0.6, vx * 0.12)), s = air ? 1.25 : 1;
+  ctx.save(); ctx.translate(x, y);
+  E("rgba(60,90,140,0.25)", -14 + (air ? 10 : 0), -6 + (air ? 14 : 4), 28, 34);   // shadow (further away when he's in the air)
+  ctx.scale(s, s); ctx.rotate(-a);
+  for (const sx of [-6, 6]) { R(rgb(200, 40, 40), sx - 2, -22, 4, 44, 2); R(WHITE, sx - 1, -20, 2, 4); }   // skis
+  if (!tuck) for (const sx of [-1, 1]) L(rgb(60, 60, 70), sx * 14, -4, sx * 16, 14, 1.5);   // poles
+  P(CAPE, [[-8, -2], [8, -2], [10, -16], [-10, -16]]);
+  E(ARMOR, -11, -8 + (tuck ? 4 : 0), 22, 16); C(ARMOR_MID, 0, 6 - (tuck ? 6 : 0), 8); P(PLUME, [[0, 2], [-3, -10], [3, -10]]);   // shoulders and helmet seen from above
+  ctx.restore();
+}
+function drawSkiTree(x, y) {   // a snowy pine seen from above
+  E("rgba(60,90,140,0.22)", x - 12, y - 4, 34, 22);
+  C(rgb(30, 90, 50), x, y, 16); C(rgb(40, 110, 60), x - 2, y - 2, 11); C(rgb(250, 252, 255), x - 4, y - 5, 6); C(rgb(60, 130, 70), x + 3, y + 2, 5);
+}
+function drawSkiWorld(g) {   // the slope from above: snow, pine trees, slalom gates, ramps, penguins and snowmen
+  const S = g.sk, p = g.player, SY = 150, sy = y => SY + (y - S.y);
+  const bg = ctx.createLinearGradient(0, 0, W, 0); bg.addColorStop(0, rgb(220, 232, 246)); bg.addColorStop(0.5, rgb(250, 252, 255)); bg.addColorStop(1, rgb(220, 232, 246));
+  ctx.fillStyle = bg; ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (let i = 0; i < 40; i++) { const yy = ((i * 97.3 - S.y) % (H + 40) + H + 40) % (H + 40) - 20, xx = (i * 211.7) % W; E("rgba(170,195,225,0.35)", xx, yy, 40 + (i % 3) * 20, 5); }   // ripples in the snow
+  ctx.strokeStyle = "rgba(150,180,215,0.6)"; ctx.lineWidth = 2;   // the ski tracks behind him
+  for (const o of [-6, 6]) { ctx.beginPath(); S.trail.forEach((q, k) => { const yy = sy(q.y); k ? ctx.lineTo(q.x + o, yy) : ctx.moveTo(q.x + o, yy); }); ctx.stroke(); }
+  const fy = sy(S.len);   // the finish line
+  if (fy < H + 40) { for (let k = 0; k < 24; k++) R(k % 2 ? WHITE : BLACK, k * 40, fy, 40, 10), R(k % 2 ? BLACK : WHITE, k * 40, fy + 10, 40, 10); T("META", 30, W / 2, fy - 24, HEART); }
+  for (const o of S.obs) { const y = sy(o.y); if (y < -30 || y > H + 30) continue;
+    if (o.type === "tree") drawSkiTree(o.x, y);
+    else if (o.type === "rock") { E("rgba(60,90,140,0.22)", o.x - 14, y, 36, 16); E(rgb(130, 130, 140), o.x - 16, y - 10, 32, 22); E(WHITE, o.x - 10, y - 10, 18, 8); }
+    else { P(rgb(150, 200, 240), [[o.x - 30, y + 10], [o.x + 30, y + 10], [o.x + 24, y - 10], [o.x - 24, y - 10]]); T("▲", 16, o.x, y, rgb(40, 90, 160)); }
+  }
+  for (const gt of S.gates) { const y = sy(gt.y); if (y < -40 || y > H + 40) continue;   // slalom gates: two poles with flags
+    const col = gt.red ? HEART : rgb(40, 90, 220);
+    for (const px of [gt.cx - gt.w / 2, gt.cx + gt.w / 2]) { E("rgba(60,90,140,0.25)", px - 2, y, 14, 6); R(rgb(60, 60, 70), px - 2, y - 4, 4, 8, 2); R(col, px - (px < gt.cx ? 18 : 0), y - 14, 18, 12, 2); }
+    if (gt.done === 1) T("✓", 22, gt.cx, y - 18, GRASS_LIGHT); else if (gt.done === 2) T("✗", 22, gt.cx, y - 18, HEART);
+    else { ctx.setLineDash([6, 8]); L("rgba(60,90,140,0.35)", gt.cx - gt.w / 2, y, gt.cx + gt.w / 2, y, 2); ctx.setLineDash([]); }
+  }
+  for (const c of S.coins) if (!c.dead) { const y = sy(c.y); if (y > -20 && y < H + 20) drawCoin({ t: c.t, rect: () => ({ x: c.x - 9, y: y - 9 }) }, 0); }
+  for (const f of S.foes) { const y = sy(f.y); if (y < -40 || y > H + 40 || f.hit) continue;
+    if (f.type === "penguin") { ctx.save(); ctx.translate(f.x, y); ctx.rotate(f.vx > 0 ? -Math.PI / 2 : Math.PI / 2); E(rgb(30, 30, 40), -10, -16, 20, 32); E(WHITE, -6, -10, 12, 22); C(rgb(30, 30, 40), 0, -16, 7); P(rgb(250, 160, 40), [[-2, -22], [0, -28], [2, -22]]); ctx.restore(); }
+    else { E("rgba(60,90,140,0.25)", f.x - 14, y, 40, 16); C(rgb(244, 248, 255), f.x, y, 16); C(WHITE, f.x, y - 6, 10); P(rgb(240, 130, 40), [[f.x, y - 8], [f.x, y + 4], [f.x + 3, y - 6]]); L(rgb(110, 76, 40), f.x - 14, y, f.x - 26, y - 6, 2); L(rgb(110, 76, 40), f.x + 14, y, f.x + 26, y - 6, 2); }
+  }
+  for (const b of S.balls) C(WHITE, b.x, sy(b.y), 7), C(rgb(210, 225, 245), b.x + 2, sy(b.y) + 2, 3);
+  if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0) && !p.dead) drawSkier(S.x, SY, g.t, S.vx, S.jumpT > 0, S.tuck > 0);
+  for (const q of g.particles) { const kk = q.life / q.maxLife; ctx.globalAlpha = Math.min(1, 0.35 + kk); ctx.fillStyle = q.color; ctx.beginPath(); ctx.arc(q.x, q.y, Math.max(1, q.size * kk + 1) * 0.62, 0, Math.PI * 2); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  if (SHADE) { drawGrade(g.level.theme); drawVignette(); }
+  for (const q of g.popups) T(q.text, 20, q.x, q.y, q.color);
+  R("rgba(20,30,60,0.55)", W - 220, H - 44, 206, 32, 10); T(`🚩 PUERTAS ${S.passed}/${S.total}`, 18, W - 117, H - 28, WHITE);
+}
+
 function drawRocket(x, y, t, roll, flame) {   // the knight's moon rocket, 34 x 74
   ctx.save(); ctx.translate(x + 17, y + 37); ctx.scale(Math.cos(roll) || 0.05, 1);
   if (flame) {   // exhaust
@@ -5088,6 +5418,20 @@ function drawBackground(theme, cam) {
       for (let k = 0; k < 5; k++) { const a = -Math.PI * 0.9 + k * 0.6; L(theme.near, x + 190, 448, x + 190 + Math.cos(a) * 50, 448 + Math.sin(a) * 40, 6); }
     }
     ctx.fillStyle = theme.near; ctx.fillRect(-20, 440, W + 40, 100);
+  } else if (theme.bg === "snow") {   // snowy mountains, frozen pines and falling snow
+    for (const [par, base, col, per, hh] of [[0.08, 300, theme.far, 520, 200], [0.25, 360, theme.near, 380, 120]])
+      for (let x = -wrapX(cam * par, per) - per; x < W + per; x += per) {
+        P(col, [[x, base + 200], [x + per * 0.5, base - hh], [x + per, base + 200]]);
+        P(rgb(250, 252, 255), [[x + per * 0.5, base - hh], [x + per * 0.5 - hh * 0.3, base - hh * 0.55], [x + per * 0.5 - hh * 0.1, base - hh * 0.62], [x + per * 0.5 + hh * 0.08, base - hh * 0.5], [x + per * 0.5 + hh * 0.3, base - hh * 0.58]]);
+      }
+    for (let x = -wrapX(cam * 0.5, 90) - 90; x < W + 90; x += 90) {   // pine trees with snow on their branches
+      const h = 70 + ((x / 90 + Math.floor(cam * 0.5 / 90)) % 3 + 3) % 3 * 16, bx = x + 30, by = 430;
+      R(rgb(90, 64, 44), bx - 3, by - 10, 6, 14);
+      for (let k = 0; k < 3; k++) { const w = 30 - k * 8, ty = by - 10 - k * h * 0.28; P(rgb(40, 90, 70), [[bx - w, ty], [bx, ty - h * 0.4], [bx + w, ty]]); P(WHITE, [[bx - w * 0.6, ty - h * 0.12], [bx, ty - h * 0.4], [bx + w * 0.6, ty - h * 0.12]]); }
+    }
+    ctx.globalAlpha = 0.85;
+    for (let i = 0; i < 60; i++) { const fx = ((i * 157.3 - cam * 0.7 + Math.sin(game.t * 0.02 + i) * 20) % (W + 20) + W + 20) % (W + 20) - 10, fy = ((i * 89.7 + game.t * (1 + (i % 3) * 0.5)) % (H + 20)) - 10; C(WHITE, fx, fy, 1.2 + (i % 3) * 0.7); }
+    ctx.globalAlpha = 1;
   } else if (theme.bg === "galaxy") {   // deep space in battle: coloured nebulas, a ringed planet, stars streaking past
     for (const [cx, cy, r, col] of [[200, 140, 220, "rgba(160,60,200,0.16)"], [700, 300, 260, "rgba(40,120,220,0.14)"], [520, 90, 160, "rgba(220,80,120,0.12)"]]) {
       const nx = wrapX(cx - cam * 0.05, W + 600) - 300;
@@ -5477,7 +5821,7 @@ function drawPlatShadow(x, y) {   // a soft shadow cast on the wall behind a flo
   }
   ctx.drawImage(platShadow, x, y);
 }
-const MOTES = { meadow: ["255,250,200", 0.5, -0.2], forest: ["220,255,150", 0.6, -0.15], ancient: ["200,255,160", 0.7, -0.12], mine: ["255,220,160", 0.45, 0.05], temple: ["255,230,170", 0.5, 0.04],
+const MOTES = { snow: ["255,255,255", 0.55, 0.7], jungle: ["220,255,150", 0.6, -0.15], meadow: ["255,250,200", 0.5, -0.2], forest: ["220,255,150", 0.6, -0.15], ancient: ["200,255,160", 0.7, -0.12], mine: ["255,220,160", 0.45, 0.05], temple: ["255,230,170", 0.5, 0.04],
   desert: ["255,230,180", 0.45, 0.1], river: ["255,240,200", 0.4, 0.05], castle: ["255,220,200", 0.35, -0.05], swords: ["255,220,200", 0.35, -0.05], throne: ["255,160,120", 0.4, -0.3], bears: ["230,220,200", 0.4, 0.05],
   night: ["255,240,160", 0.7, -0.1], dragon: ["255,160,60", 0.7, -0.6], mars: ["255,200,170", 0.35, 0.05], sea: ["255,255,255", 0.25, -0.05], pirate: ["255,255,255", 0.25, -0.05] };
 function drawMotes(themeKey, cam, t) {   // pollen, fireflies, dust or embers drifting in the air
@@ -5505,7 +5849,7 @@ LEVELS.forEach((L, i) => {   // each secret level sits on a little side path nex
   MAP_NODES[L.door] = { x: p.x + 46, y: up ? p.y - 118 : p.y + 112, world: p.world, secret: true, parent: i };
 });
 LEVELS.forEach((L, i) => { const n = MAP_NODES[i]; if (n) n.boss = L.map.some(r => /[BXZR0%&$*@{}]/.test(r)); });
-const WORLD_COLS = [[rgb(70, 140, 60), rgb(110, 190, 90)], [rgb(60, 90, 170), rgb(120, 160, 230)], [rgb(120, 60, 120), rgb(180, 110, 170)], [rgb(30, 110, 160), rgb(80, 170, 220)]];
+const WORLD_COLS = { "LA TIERRA": [rgb(70, 140, 60), rgb(110, 190, 90)], "EL HIELO": [rgb(70, 140, 190), rgb(170, 220, 250)], "EL CIELO Y EL ESPACIO": [rgb(60, 90, 170), rgb(120, 160, 230)], "EL REINO": [rgb(120, 60, 120), rgb(180, 110, 170)], "LOS MARES": [rgb(30, 110, 160), rgb(80, 170, 220)] };
 
 function mapTree(x, y, s, dark) {   // a round leafy tree with a soft shadow
   E("rgba(0,0,0,0.18)", x - 14 * s, y - 3 * s, 28 * s, 7 * s);
@@ -5527,7 +5871,8 @@ function mapCastle(x, y, s, col) {   // a castle silhouette with a little flag
 function drawMapWorld(w, x0, t) {   // the scenery of each world
   const grad = (y0, y1, a, b) => { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
   ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, W + 1, H); ctx.clip();
-  if (w === 0) {   // La Tierra: snowy mountains, green hills and forests, a mine, desert dunes and a storm in the east
+  const nm = WORLDS[w].name;
+  if (nm === "LA TIERRA") {   // La Tierra: snowy mountains, green hills and forests, a mine, desert dunes and a storm in the east
     ctx.fillStyle = grad(0, H, "#78b4ea", "#e2f0f6"); ctx.fillRect(x0, 0, W + 1, H);
     drawSunGlow(x0 + 110, 76, 28, rgb(255, 244, 200));
     for (let k = 0; k < 3; k++) drawCloud(x0 + 220 + k * 230 + Math.sin(t * 0.004 + k) * 20, 60 + (k % 2) * 30, 0.8);
@@ -5542,7 +5887,16 @@ function drawMapWorld(w, x0, t) {   // the scenery of each world
     ctx.globalAlpha = 0.85; for (const [dx, dy, r] of [[0, 0, 30], [30, -10, 36], [64, 0, 30]]) C(rgb(80, 86, 104), x0 + 800 + dx, 90 + dy, r); ctx.globalAlpha = 1;   // the storm
     ctx.strokeStyle = "rgba(180,200,230,0.5)"; ctx.lineWidth = 1.5; ctx.beginPath(); for (let k = 0; k < 14; k++) { const rx = x0 + 780 + k * 8, ry = 120 + ((t * 4 + k * 23) % 90); ctx.moveTo(rx, ry); ctx.lineTo(rx - 3, ry + 10); } ctx.stroke();
     if (t % 160 < 6) drawBolt(x0 + 830, 110, x0 + 812, 230, 7, 1);
-  } else if (w === 1) {   // El Cielo y el Espacio: blue sky turning into starry space, the Moon, Mars and a ringed planet
+  } else if (nm === "EL HIELO") {   // El Hielo: snowy peaks, a frozen lake, a ski slope with gates, penguins
+    ctx.fillStyle = grad(0, H, "#8ec4ee", "#eef6fc"); ctx.fillRect(x0, 0, W + 1, H);
+    drawSunGlow(x0 + 760, 80, 26, rgb(255, 252, 230));
+    for (const [px, py, s2] of [[120, 140, 1.2], [330, 110, 1.4], [560, 150, 1.1], [800, 120, 1.3]]) { P(rgb(176, 196, 224), [[x0 + px - 180 * s2, 330], [x0 + px, py], [x0 + px + 180 * s2, 330]]); P(WHITE, [[x0 + px, py], [x0 + px - 50 * s2, py + 60 * s2], [x0 + px - 14 * s2, py + 48 * s2], [x0 + px + 16 * s2, py + 62 * s2], [x0 + px + 54 * s2, py + 56 * s2]]); }
+    ctx.fillStyle = grad(260, H, rgb(250, 252, 255), rgb(206, 224, 244)); ctx.fillRect(x0, 300, W + 1, H);
+    E(rgb(170, 216, 244), x0 + 380, 420, 260, 70); E("rgba(255,255,255,0.6)", x0 + 420, 432, 120, 14);   // a frozen lake
+    for (let k = 0; k < 5; k++) { const gx = x0 + 700 + k * 40, gyy = 300 + k * 40; R(k % 2 ? HEART : rgb(40, 90, 220), gx, gyy - 18, 12, 9, 2); L(rgb(60, 60, 70), gx, gyy - 18, gx, gyy, 2); }   // slalom gates down the slope
+    for (const [tx, ty] of [[40, 360], [90, 400], [250, 470], [620, 480], [680, 380], [900, 430]]) { R(rgb(90, 64, 44), x0 + tx - 3, ty - 8, 6, 10); for (let k = 0; k < 3; k++) { const ww = 22 - k * 6, yy = ty - 8 - k * 14; P(rgb(40, 96, 76), [[x0 + tx - ww, yy], [x0 + tx, yy - 22], [x0 + tx + ww, yy]]); P(WHITE, [[x0 + tx - ww * 0.5, yy - 8], [x0 + tx, yy - 22], [x0 + tx + ww * 0.5, yy - 8]]); } }
+    for (const [px, py] of [[360, 400], [400, 410]]) drawPenguin(x0 + px, py, t, false);
+  } else if (nm === "EL CIELO Y EL ESPACIO") {   // El Cielo y el Espacio: blue sky turning into starry space, the Moon, Mars and a ringed planet
     const g = ctx.createLinearGradient(x0, 0, x0 + W, 0); g.addColorStop(0, "#7cb6ec"); g.addColorStop(0.35, "#2c3c8c"); g.addColorStop(0.6, "#0c0f2e"); g.addColorStop(1, "#04050f");
     ctx.fillStyle = g; ctx.fillRect(x0, 0, W + 1, H);
     for (let i = 0; i < 90; i++) { const sx = 300 + (i * 173.3) % 660, sy = (i * 97.1) % 500; ctx.globalAlpha = Math.min(1, (sx - 300) / 260) * (0.5 + 0.5 * Math.sin(t * 0.05 + i)); R(WHITE, x0 + sx, sy, 2, 2); }
@@ -5554,7 +5908,7 @@ function drawMapWorld(w, x0, t) {   // the scenery of each world
     C(rgb(200, 90, 50), x0 + 680, 420, 34); E(rgb(230, 130, 80), x0 + 656, 404, 40, 10); E(rgb(170, 70, 40), x0 + 660, 428, 44, 8);   // Mars
     ctx.strokeStyle = "rgba(230,200,150,0.7)"; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(x0 + 860, 120, 76, 16, -0.3, 0, Math.PI * 2); ctx.stroke();
     C(rgb(200, 130, 80), x0 + 860, 120, 42); E(rgb(220, 160, 100), x0 + 826, 104, 68, 10);   // ringed planet
-  } else if (w === 2) {   // El Reino: castles on dusky hills, a town with lit windows and the dragons' volcano
+  } else if (nm === "EL REINO") {   // El Reino: castles on dusky hills, a town with lit windows and the dragons' volcano
     ctx.fillStyle = grad(0, H, "#3a2a62", "#ee9a66"); ctx.fillRect(x0, 0, W + 1, H);
     drawSunGlow(x0 + 600, 210, 30, rgb(255, 210, 160), false);
     P(rgb(70, 40, 60), [[x0 + 700, 330], [x0 + 800, 120], [x0 + 840, 120], [x0 + 960, 330]]); P(rgb(255, 120, 40), [[x0 + 800, 120], [x0 + 812, 160], [x0 + 824, 136], [x0 + 840, 120]]);   // the volcano
@@ -5581,7 +5935,7 @@ function drawMapWorld(w, x0, t) {   // the scenery of each world
 }
 
 function drawMapNode(i, x, y, sel, done, t) {   // a level on the map: a round stone with its number; a flag once it's beaten
-  const n = MAP_NODES[i], [c0, c1] = n.secret ? [rgb(150, 110, 30), GOLD] : WORLD_COLS[n.world];
+  const n = MAP_NODES[i], [c0, c1] = n.secret ? [rgb(150, 110, 30), GOLD] : WORLD_COLS[WORLDS[n.world].name];
   E("rgba(0,0,0,0.3)", x - 26, y + 14, 52, 16);
   if (sel) { ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 0.15); C(WHITE, x, y, 33); ctx.globalAlpha = 1; }
   C(done ? GOLD : rgb(60, 50, 40), x, y, 27); C(c0, x, y, 23); C(c1, x - 3, y - 4, 16);
@@ -5649,7 +6003,7 @@ class Game {
   }
   startLine() {
     const th = LEVELS[this.levelIndex].theme;
-    return th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
+    return th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "jungle" ? "lianas" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { buggy: "dunas", skidoo: "motonieve", climb: "escalada", ski: "descenso", ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
   }
   levelLabel(i = this.levelIndex) { const n = MAP_NODES[i]; return LEVELS[i].secret ? "NIVEL SECRETO" : `NIVEL ${n.world + 1}-${n.num}`; }
   loadProgress() {   // which levels are beaten and which secrets are found, remembered between visits
@@ -5750,6 +6104,10 @@ class Game {
     this.raceT = (LEVELS[this.levelIndex].time || 0) * 60;
     if (this.level.theme.bg === "cave") this.player.sneak = true;
     this.rk = this.level.mode === "rocket" ? this.initRocket() : null;
+    const md = this.level.mode; this.vineTold = false;
+    this.tv = md === "buggy" || md === "skidoo" ? this.initTerrain(md) : null;
+    this.cl = md === "climb" ? this.initClimb() : null;
+    this.sk = md === "ski" ? this.initSki() : null;
     this.storm = this.level.theme.bg === "storm" ? { still: 0, hail: [], phase: "calm", phaseT: 260, wind: 0, windTo: 0, windT: 140, flash: 0, bolts: [], bgBolt: 200, bgFlash: null, thunderIn: 0 } : null;
     this.shark = this.player.sub ? { x: this.player.x - 560, y: this.player.y - 20, w: 200, h: 84, t: 0, pause: 0, vy: 0, jaw: 0 } : null;
     this.caught = null;
@@ -5826,6 +6184,276 @@ class Game {
     if (R0.alt >= R0.goal) {   // touchdown on the Moon!
       this.popup(W / 2, 200, "¡LA LUNA!", GOLD); say("luna", true); play("clear"); this.score += 3000; this.finishLevel();
     }
+  }
+  // ---------------------------------------------------------------- jungle vines
+  updateVines() {   // the vines sway on their own; the one the knight hangs from swings with him
+    const p = this.player;
+    for (const v of this.level.vines) {
+      const held = v === p.vine, L = held ? p.grabL : v.len * 0.7;
+      v.om += -0.65 / L * Math.sin(v.th); v.om *= held ? 0.998 : Math.abs(v.th) > 0.1 ? 0.96 : 0.99;   // idle vines settle into a small sway, so they're easy to catch
+      if (!held && Math.abs(v.th) < 0.05 && Math.abs(v.om) < 0.008) v.om += 0.002 * (v.om >= 0 ? 1 : -1);   // a gentle push keeps it swaying
+      v.th = Math.max(-1.3, Math.min(1.3, v.th + v.om));
+    }
+  }
+  updateVine() {   // jump into a vine to grab it, pump with ◀ ▶, let go with SALTA
+    const p = this.player, lvl = this.level;
+    if (!lvl.vines.length) return false;
+    this.updateVines();
+    if (p.vineCd > 0) p.vineCd--;
+    if (!p.vine) {
+      if (p.onGround || p.vineCd > 0 || p.dead) return false;
+      const hx = p.x + p.w / 2;
+      for (const v of lvl.vines) for (const hy of [p.y + 12, p.y + 36]) {   // catch it with the hands or hug it with the body
+        if (p.vine) break;
+        const ux = Math.sin(v.th), uy = Math.cos(v.th), dx = hx - v.ax, dy = hy - v.ay, along = dx * ux + dy * uy, perp = dx * uy - dy * ux;
+        if (along > 60 && along < v.len + 44 && Math.abs(perp) < 34) {
+          p.vine = v; p.grabL = Math.min(along, v.len); v.om = (p.vx * uy - p.vy * ux) / along * 0.9; play("rustle");
+          if (!this.vineTold) { this.vineTold = true; this.popup(hx, p.y - 20, "¡◀ ▶ columpiarte · SALTA soltarte!", GOLD); }
+        }
+      }
+      if (!p.vine) return false;
+    }
+    const v = p.vine, dir = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    if (dir) v.om += dir * 0.0012;   // pump to swing higher
+    const ux = Math.sin(v.th), uy = Math.cos(v.th);
+    p.x = v.ax + ux * p.grabL - p.w / 2; p.y = v.ay + uy * p.grabL - 12;
+    p.vx = uy * v.om * p.grabL; p.vy = -ux * v.om * p.grabL; p.onGround = false; p.facing = dir || (v.om >= 0 ? 1 : -1); p.attackTimer = 0;
+    if (p.invuln > 0) p.invuln--;
+    if (inp.jumpPressed) {   // let go!
+      p.vine = null; p.vineCd = 20; p.vx = Math.max(-9, Math.min(9, p.vx * 1.15)); p.vy = Math.min(p.vy, 0) - 6; p.boing = true; p.fling = true; play("jump");
+    }
+    return true;
+  }
+  // ---------------------------------------------------------------- the dune buggy and the skidoo: rolling hills, jumps, things to dodge
+  initTerrain(kind) {
+    const snow = kind === "skidoo", len = snow ? 15000 : 16000, rnd = seeded(snow ? 11 : 7);
+    const gaps = (snow ? [2900, 6400, 9800, 12900] : [2400, 4900, 7600, 10300, 13100]).map(x => ({ x0: x, x1: x + (snow ? 170 : 200) }));
+    const T = { kind, snow, len, gaps, x: 140, y: 0, vx: 0, vy: 0, ang: 0, air: false, airT: 0, spin: 0, nitro: 0, nitroCd: 0, wheel: 0, coins: [], obs: [], foes: [], hearts: [] };
+    const gy = x => terrainY(T, x), clear = (x, a = 380, b = 160) => gaps.every(g => x < g.x0 - a || x > g.x1 + b);
+    T.y = gy(T.x);
+    for (let x = 800; x < len - 700; x += 640 + Math.floor(rnd() * 520)) if (clear(x)) T.obs.push({ x, type: snow ? (rnd() < 0.55 ? "snowman" : "rock") : (rnd() < 0.65 ? "cactus" : "rock") });
+    if (snow) { for (let x = 1100; x < len - 700; x += 560 + Math.floor(rnd() * 400)) if (clear(x, 300, 200) && T.obs.every(o => Math.abs(o.x - x) > 160)) T.foes.push({ x, type: rnd() < 0.45 ? "slider" : "walker", t: 0, dir: -1 }); }
+    else for (let x = 1500; x < len - 900; x += 1300 + Math.floor(rnd() * 500)) T.foes.push({ x, y: 110, type: "vulture", mode: "wait", t: 0, vx: 0, vy: 0 });
+    for (let x = 500; x < len - 500; x += 240) if (clear(x, 360, 120) && rnd() < 0.55) for (let k = 0; k < 3; k++) T.coins.push({ x: x + k * 30, y: gy(x + k * 30) - 64, t: k * 9 });
+    for (const g of gaps) for (let k = 0; k < 5; k++) { const f = (k + 1) / 6, x = g.x0 + (g.x1 - g.x0) * f; T.coins.push({ x, y: gy(g.x0 - 2) - 90 - Math.sin(f * Math.PI) * 70, t: k * 7 }); }
+    for (const hx of [Math.round(len * 0.3), Math.round(len * 0.62)]) T.hearts.push({ x: hx, y: (gy(hx) ?? 300) - 80 });
+    return T;
+  }
+  syncTV() { const p = this.player, T = this.tv; p.w = 70; p.h = 40; p.x = T.x - 35; p.y = T.y - 40; p.vx = T.vx; }
+  tvHurt(text) {
+    const p = this.player;
+    if (p.invuln > 0 || this.state !== "play") return false;
+    p.hearts--; p.invuln = INVULN_FRAMES; this.shake = 10; play("hurt"); say("jolin", true);
+    this.burst(p.x + p.w / 2, p.y + p.h / 2, [HEART, WHITE], 12); this.popup(p.x + p.w / 2, p.y - 14, text, HEART);
+    if (p.hearts <= 0) this.loseLife();
+    return true;
+  }
+  gotCoin(x, y) { this.coins++; this.score += 50; play("coin"); this.burst(x, y, [GOLD, WHITE], 6, 3); if (this.coins % 5 === 0) say("oro"); }
+  updateTerrain() {
+    const p = this.player, T = this.tv, mul = LEVELS[this.levelIndex].speed, gy = x => terrainY(T, x);
+    if (this.levelTimer < 90) { T.y = gy(T.x); this.syncTV(); return; }   // a moment to read the title
+    if (p.invuln > 0) p.invuln--;
+    if (T.nitroCd > 0) T.nitroCd--;
+    if (T.nitro > 0) T.nitro--;
+    if (inp.attack && T.nitroCd === 0) { T.nitro = 60; T.nitroCd = 200; play("nitro"); this.popup(p.x + 35, p.y - 20, "¡Turbo!", GOLD); }
+    const slope = x => { const a = gy(x - 3), b = gy(x + 3); return a != null && b != null ? (b - a) / 6 : 0; };
+    if (!T.air) {   // on the ground: throttle, brake, gravity on the slopes
+      const sl = slope(T.x), ga = Math.atan(sl);
+      for (const gp of T.gaps) if (T.x > gp.x0 - 380 && T.x < gp.x0 && T.vx < 8.5) { T.vx = 8.5; if (this.t % 6 === 0) play("nitro"); }   // the boost strip and the ramp before each jump carry you over
+      T.vx += (inp.right ? (T.nitro ? 0.3 : 0.16) : 0) - (inp.left ? 0.2 : 0) + 0.5 * Math.sin(ga) * Math.cos(ga) * 0.9;
+      T.vx = Math.max(-3, Math.min(T.nitro ? 11.5 : 8.5, T.vx * 0.994));
+      T.ang += (ga - T.ang) * 0.35;
+      if (inp.jumpPressed) { T.vy = T.vx * sl - 8.5; T.air = true; T.airT = 0; T.spin = 0; play("jump"); } else T.vy = T.vx * sl;
+    } else {   // in the air: ◀ ▶ tilt the nose
+      T.vy += 0.5; T.airT++;
+      const r = ((inp.right ? 1 : 0) - (inp.left ? 1 : 0)) * 0.03; const gb = gy(T.x + 30) != null && gy(T.x - 30) != null ? Math.atan((gy(T.x + 30) - gy(T.x - 30)) / 60) : 0; T.ang += r + (gb - T.ang) * 0.06; T.spin += r;   // it levels out by itself; ◀ ▶ nudge the nose
+    }
+    T.x = Math.max(40, T.x + T.vx); T.y += T.vy; T.wheel += T.vx * 0.09;
+    if (T.x <= 40 && T.vx < 0) T.vx = 0;
+    const g = gy(T.x);
+    if (g != null && T.y >= g) {
+      if (T.air) {   // landing: straight is fine, nose-first or upside down is a crash
+        const ga = Math.atan(slope(T.x));
+        let d = T.ang - ga; d = Math.atan2(Math.sin(d), Math.cos(d));
+        if (Math.abs(d) > 1.1) { T.vx *= 0.5; this.tvHurt("¡Choque!"); }
+        else {
+          T.vx *= 0.92 + 0.08 * Math.cos(d);
+          if (T.airT > 45) { this.score += 200; this.popup(T.x, T.y - 70, "¡Gran salto! +200", GOLD); }
+          play("stomp");
+        }
+        T.ang = ga; T.spin = 0;
+        this.burst(T.x, g, T.snow ? [WHITE, rgb(210, 230, 250)] : [rgb(230, 190, 130), rgb(200, 150, 90)], 10, 3);
+      }
+      T.y = g; T.air = false;
+    } else if (g == null || T.y < g - 2) T.air = true;
+    if (!T.air && Math.abs(T.vx) > 3 && this.t % 3 === 0) this.particles.push({ x: T.x - 30, y: T.y - 4, vx: -T.vx * 0.2, vy: -1, color: T.snow ? WHITE : rgb(220, 180, 120), life: 22, maxLife: 22, size: 5 });
+    this.syncTV();
+    if (T.y > H + 60) { this.popup(p.x + 35, 400, T.snow ? "¡Al agua helada!" : "¡Al barranco!", HEART); play("hurt"); this.loseLife(); return; }
+    const box = { x: T.x - 30, y: T.y - 38, w: 60, h: 34 };
+    for (const o of T.obs) {
+      if (o.hit || Math.abs(o.x - T.x) > 80) continue;
+      const oy = gy(o.x), ob = o.type === "cactus" ? { x: o.x - 7, y: oy - 46, w: 14, h: 46 } : o.type === "snowman" ? { x: o.x - 12, y: oy - 48, w: 24, h: 48 } : { x: o.x - 16, y: oy - 18, w: 32, h: 18 };
+      if (collide(box, ob) && T.nitro > 0) { o.hit = true; this.score += 50; this.shake = 6; play("stomp"); this.burst(o.x, oy - 20, o.type === "cactus" ? [rgb(70, 150, 70), rgb(120, 190, 100)] : o.type === "snowman" ? [WHITE, rgb(220, 236, 250)] : [rgb(140, 130, 120), rgb(100, 90, 80)], 16, 5); this.popup(o.x, oy - 60, "¡Turbo! +50", GOLD); }   // the turbo smashes straight through
+      else if (collide(box, ob)) { o.hit = true; T.vx *= 0.4; if (o.type === "snowman") this.burst(o.x, oy - 30, [WHITE, rgb(220, 236, 250)], 16, 4); this.tvHurt(o.type === "cactus" ? "¡Pincha!" : o.type === "snowman" ? "¡Plaf!" : "¡Pum!"); }
+    }
+    for (const f of T.foes) {
+      if (f.dead) continue;
+      f.t++;
+      if (f.type === "vulture") {   // waits, then swoops at the buggy
+        if (f.mode === "wait") { f.y = 110 + Math.sin(f.t * 0.05) * 10; if (f.x - T.x < 520) { f.mode = "swoop"; play("screech"); } }
+        else { const tx = T.x + 40, ty = T.y - 50, dx = tx - f.x, dy = ty - f.y, d = Math.hypot(dx, dy) || 1; if (f.mode === "swoop" && (d < 30 || f.x < T.x - 40)) f.mode = "away"; if (f.mode === "swoop") { f.vx = dx / d * 4.2 * mul; f.vy = dy / d * 4.2 * mul; } else { f.vx = -3; f.vy = -3; } f.x += f.vx; f.y += f.vy; }
+        if (collide(box, { x: f.x - 18, y: f.y - 10, w: 36, h: 20 })) { f.dead = true; this.burst(f.x, f.y, [rgb(92, 62, 44), WHITE], 10); this.tvHurt("¡Un buitre!"); }
+        if (f.y < -100) f.dead = true;
+      } else {   // penguins: some waddle, some slide on their bellies straight at you
+        if (f.x - T.x < 700) f.x -= (f.type === "slider" ? 4 : 0.7) * mul;
+        const fy = gy(f.x); if (fy == null) { f.dead = true; continue; }
+        f.y = fy;
+        if (collide(box, f.type === "slider" ? { x: f.x - 16, y: fy - 18, w: 32, h: 18 } : { x: f.x - 12, y: fy - 34, w: 24, h: 34 })) { f.dead = true; f.hitT = 1; this.burst(f.x, fy - 16, [rgb(30, 30, 40), WHITE], 10); this.tvHurt("¡Un pingüino!"); }
+      }
+    }
+    if (this.state !== "play") return;
+    for (const c of T.coins) { c.t++; if (!c.dead && Math.abs(c.x - T.x) < 50 && collide(inflate(box, 6, 10), { x: c.x - 9, y: c.y - 9, w: 18, h: 18 })) { c.dead = true; this.gotCoin(c.x, c.y); } }
+    for (const h of T.hearts) if (!h.dead && collide(box, { x: h.x - 14, y: h.y - 14, w: 28, h: 28 })) { h.dead = true; p.hearts = Math.min(p.maxHearts, p.hearts + 1); play("oneup"); this.popup(h.x, h.y - 20, "+1 ❤️", HEART); }
+    this.camX = Math.max(0, Math.min(T.len - W, T.x - 280));
+    if (T.x > T.len - 300) { this.popup(p.x + 35, p.y - 40, "¡META!", GOLD); play("clear"); this.score += 1500; this.finishLevel(); }
+  }
+  // ---------------------------------------------------------------- the ice climb: up a frozen cliff with two ice axes
+  initClimb() {
+    const goal = 6800, ledges = [], coins = [], birds = [];
+    for (let a = 650; a < goal - 300; a += randInt(520, 720)) {   // overhanging ice ledges: you can only climb past them through a gap
+      const n = Math.random() < 0.5 ? 1 : 2, gaps = [];
+      for (let k = 0; k < n; k++) { const x0 = n === 1 ? randInt(100, W - 230) : k === 0 ? randInt(60, W / 2 - 180) : randInt(W / 2 + 40, W - 200); gaps.push({ x0, x1: x0 + 130 }); }
+      ledges.push({ alt: a, gaps });
+    }
+    for (let a = 300; a < goal - 200; a += 420) { const x = randInt(90, W - 90); for (let k = 0; k < 4; k++) coins.push({ x, alt: a + k * 40, t: k * 9 }); }
+    for (let a = 1400; a < goal - 300; a += randInt(700, 1000)) birds.push({ alt: a, out: false });
+    return { goal, x: W / 2, y: 0, cam: 0, ledges, coins, birds, flying: [], ice: [], spawnT: 120, chopT: 0, climbT: 0, hearts: [{ x: W / 2, alt: Math.round(goal * 0.5) }], told: 0 };
+  }
+  updateClimb() {
+    const p = this.player, CL = this.cl, mul = LEVELS[this.levelIndex].speed;
+    CL.cam += (Math.max(0, CL.y - 170) - CL.cam) * 0.1;
+    if (this.levelTimer < 90) return;
+    if (p.invuln > 0) p.invuln--;
+    if (CL.chopT > 0) CL.chopT--;
+    if (CL.told > 0) CL.told--;
+    const dir = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    CL.x = Math.max(86, Math.min(W - 86, CL.x + dir * 2.6));
+    if (dir) p.facing = dir;
+    if (inp.jumpHeld) {   // climb: swing an axe into the ice, pull up
+      let dy = 1.8; const head = CL.y + 62;
+      for (const L of CL.ledges) if (L.alt >= head && L.alt < head + dy + 0.01 && !L.gaps.some(g => CL.x - 14 >= g.x0 && CL.x + 14 <= g.x1)) {
+        dy = Math.max(0, L.alt - head);
+        if (!CL.told) { CL.told = 120; this.popup(CL.x, 470 - (CL.y - CL.cam) - 90, "¡Busca un hueco en la cornisa!", GOLD); }
+      }
+      CL.y += dy; CL.climbT++;
+      if (dy > 0 && CL.climbT % 22 === 0) play("click");
+    }
+    if (inp.attack && CL.chopT === 0) { CL.chopT = 16; play("swing"); }
+    // things falling and flying
+    const lvlNow = CL.y / CL.goal;
+    if (--CL.spawnT <= 0) {
+      const x = Math.random() < 0.5 ? CL.x + randInt(-120, 120) : randInt(40, W - 40), big = Math.random() < 0.25 + lvlNow * 0.2;
+      CL.ice.push({ x: Math.max(30, Math.min(W - 30, x)), alt: CL.cam + H + 30, warn: 40, big, vy: 0, spin: 0 });
+      CL.spawnT = Math.round(randInt(70, 110) * (1 - lvlNow * 0.45) / mul);
+    }
+    for (const b of CL.birds) if (!b.out && CL.y + 260 > b.alt) {
+      b.out = true; const from = Math.random() < 0.5 ? -1 : 1;
+      CL.flying.push({ x: from < 0 ? -40 : W + 40, alt: CL.y + randInt(10, 70), vx: -from * 2.6 * mul, t: 0 }); play("screech");
+    }
+    const box = { x: CL.x - 15, y: CL.y, w: 30, h: 60 };   // in altitude units: y is the bottom
+    const over = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+    const chop = CL.chopT > 6 ? { x: CL.x - 40, y: CL.y + 40, w: 80, h: 80 } : null;
+    const hurt = text => {
+      if (p.invuln > 0) return;
+      p.hearts--; p.invuln = INVULN_FRAMES; this.shake = 10; play("hurt"); say("jolin", true);
+      this.popup(CL.x, 470 - (CL.y - CL.cam) - 70, text, HEART);
+      if (p.hearts <= 0) this.loseLife();
+    };
+    for (const c of CL.ice) {
+      if (c.warn > 0) { c.warn--; c.alt = CL.cam + H + 30; continue; }
+      c.vy = Math.min(c.vy + 0.25, c.big ? 5 : 6.5) ; c.alt -= c.vy; c.spin += 0.2;
+      const r = c.big ? { x: c.x - 16, y: c.alt - 16, w: 32, h: 32 } : { x: c.x - 5, y: c.alt - 26, w: 10, h: 30 };
+      if (chop && over(chop, r)) { c.dead = true; this.score += 50; play("crate"); this.popup(c.x, 470 - (c.alt - CL.cam) - 20, "¡Crac!", WHITE); this.burst(c.x, 470 - (c.alt - CL.cam), [WHITE, rgb(190, 230, 255)], 12, 4); }
+      else if (over(box, r)) { c.dead = true; this.burst(c.x, 470 - (c.alt - CL.cam), [WHITE, rgb(190, 230, 255)], 12, 4); hurt(c.big ? "¡Una bola de nieve!" : "¡Un carámbano!"); }
+      if (c.alt < CL.cam - 60) c.dead = true;
+    }
+    for (const b of CL.flying) {
+      b.t++; b.x += b.vx; b.alt += Math.sin(b.t * 0.08) * 1.2;
+      const r = { x: b.x - 18, y: b.alt - 10, w: 36, h: 20 };
+      if (chop && over(chop, r)) { b.dead = true; this.score += 200; play("screech"); this.popup(b.x, 470 - (b.alt - CL.cam) - 20, "¡Fuera, pájaro!", GOLD); }
+      else if (over(box, r)) { b.dead = true; hurt("¡Un águila!"); }
+      if (b.x < -80 || b.x > W + 80) b.dead = true;
+    }
+    for (const c of CL.coins) { c.t++; if (!c.dead && over(box, { x: c.x - 10, y: c.alt - 10, w: 20, h: 20 })) { c.dead = true; this.gotCoin(c.x, 470 - (c.alt - CL.cam)); } }
+    for (const h of CL.hearts) if (!h.dead && over(box, { x: h.x - 14, y: h.alt - 14, w: 28, h: 28 })) { h.dead = true; p.hearts = Math.min(p.maxHearts, p.hearts + 1); play("oneup"); }
+    CL.ice = CL.ice.filter(c => !c.dead); CL.flying = CL.flying.filter(b => !b.dead);
+    p.x = CL.x - p.w / 2; p.y = 470 - (CL.y - CL.cam) - 60;
+    if (this.state === "play" && CL.y >= CL.goal) { this.popup(W / 2, 200, "¡LA CIMA!", GOLD); say("cima", true); play("clear"); this.score += 2500; this.finishLevel(); }
+  }
+  // ---------------------------------------------------------------- the downhill: top-down skiing through slalom gates
+  initSki() {
+    const len = 12600, gates = [], obs = [], foes = [], coins = [];
+    let side = 1;
+    for (let y = 700; y < len - 500; y += 380) { gates.push({ y, cx: W / 2 + side * randInt(80, 210), w: 160, red: side > 0, done: 0 }); side = -side; }
+    const nearGate = (x, y) => gates.some(g => Math.abs(y - g.y) < 150 && Math.abs(x - g.cx) < 150);
+    for (let y = 300; y < len; y += 46) {   // pine trees along both edges of the piste, and a few in the middle
+      obs.push({ x: randInt(10, 90), y: y + randInt(-14, 14), type: "tree" }); obs.push({ x: randInt(W - 90, W - 10), y: y + randInt(-14, 14), type: "tree" });
+    }
+    for (let y = 900; y < len - 400; y += randInt(170, 260)) {
+      const x = randInt(160, W - 160), type = Math.random() < 0.6 ? "tree" : Math.random() < 0.6 ? "rock" : "ramp";
+      if (!nearGate(x, y)) obs.push({ x, y, type });
+    }
+    for (let y = 1300; y < len - 600; y += randInt(500, 800)) {
+      if (Math.random() < 0.55) foes.push({ type: "penguin", y, x: Math.random() < 0.5 ? -30 : W + 30, vx: 0, t: 0 });
+      else { const x = Math.random() < 0.5 ? randInt(130, 220) : randInt(W - 220, W - 130); if (!nearGate(x, y)) foes.push({ type: "snowman", y, x, throwT: 30, t: 0 }); }
+    }
+    for (const g of gates) if (Math.random() < 0.6) for (let k = 0; k < 3; k++) coins.push({ x: g.cx, y: g.y - 60 - k * 40, t: k * 9 });
+    return { len, y: 0, x: W / 2, vx: 0, speed: 3, jumpT: 0, tuck: 0, gates, obs, foes, coins, balls: [], trail: [], passed: 0, total: gates.length };
+  }
+  updateSki() {
+    const p = this.player, S = this.sk, mul = LEVELS[this.levelIndex].speed, SY = 150;
+    if (this.levelTimer < 90) return;
+    if (p.invuln > 0) p.invuln--;
+    if (S.jumpT > 0) S.jumpT--;
+    if (S.tuck > 0) S.tuck--;
+    const dir = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    S.vx = (S.vx + dir * (S.tuck ? 0.35 : 0.55)) * 0.9; S.x = Math.max(30, Math.min(W - 30, S.x + S.vx));
+    if (inp.jumpPressed && S.jumpT === 0) { S.jumpT = 40; play("jump"); }
+    if (inp.attack && S.tuck === 0) { S.tuck = 70; play("swing"); this.popup(S.x, SY - 40, "¡Agachado!", WHITE); }
+    const target = (4.2 + S.y / S.len * 2.4) * Math.min(1.15, mul) + (S.tuck ? 2.2 : 0) - Math.abs(S.vx) * 0.12;
+    S.speed += (target - S.speed) * 0.05; S.y += S.speed;
+    if (this.t % 2 === 0) { S.trail.push({ x: S.x, y: S.y }); if (S.trail.length > 90) S.trail.shift(); }
+    const sy = y => SY + (y - S.y);
+    const hurt = text => {
+      if (p.invuln > 0) return;
+      p.hearts--; p.invuln = INVULN_FRAMES; this.shake = 10; play("hurt"); say("jolin", true); this.popup(S.x, SY - 30, text, HEART);
+      if (p.hearts <= 0) this.loseLife();
+    };
+    for (const g of S.gates) if (!g.done && S.y >= g.y) {   // through the gate... or past it?
+      if (Math.abs(S.x - g.cx) < g.w / 2) { g.done = 1; S.passed++; this.score += 150; play("coin"); this.popup(g.cx, sy(g.y) - 20, "¡Puerta!", GOLD); }
+      else { g.done = 2; S.speed *= 0.55; play("hurt"); this.popup(g.cx, sy(g.y) - 20, "¡Te saltaste una puerta!", HEART); }   // a missed gate costs you speed (and its points)
+    }
+    const air = S.jumpT > 0, me = { x: S.x - 12, y: SY - 14, w: 24, h: 28 };
+    for (const o of S.obs) {
+      if (o.hit || Math.abs(o.y - S.y) > 40) continue;
+      const r = o.type === "tree" ? { x: o.x - 14, y: sy(o.y) - 10, w: 28, h: 24 } : o.type === "rock" ? { x: o.x - 16, y: sy(o.y) - 10, w: 32, h: 20 } : { x: o.x - 30, y: sy(o.y) - 10, w: 60, h: 20 };
+      if (!collide(me, r)) continue;
+      if (o.type === "ramp") { if (!air) { S.jumpT = 60; play("boing"); this.popup(S.x, SY - 40, "¡Salto!", GOLD); this.score += 100; } }
+      else if (!air) { o.hit = true; S.speed *= 0.4; this.burst(S.x, SY, [WHITE, rgb(200, 220, 240)], 14, 4); hurt(o.type === "tree" ? "¡Un árbol!" : "¡Una roca!"); }
+    }
+    for (const f of S.foes) {
+      const fy = sy(f.y); f.t++;
+      if (f.type === "penguin") { if (fy < H + 40 && !f.vx) { f.vx = (f.x < 0 ? 1 : -1) * 3 * mul; play("squeak"); } f.x += f.vx; }
+      else if (fy > SY + 120 && fy < H + 20 && --f.throwT <= 0) {   // the snowman throws snowballs up the slope at you
+        const dx = S.x - f.x, dy = SY - fy, d = Math.hypot(dx, dy) || 1; S.balls.push({ x: f.x, y: f.y, vx: dx / d * 3.5 * mul, vy: dy / d * 3.5 * mul + S.speed, t: 0 }); f.throwT = randInt(60, 90); play("swing");
+      }
+      if (!f.hit && !air && collide(me, { x: f.x - 16, y: fy - 14, w: 32, h: 28 })) { f.hit = true; hurt(f.type === "penguin" ? "¡Un pingüino!" : "¡Un muñeco de nieve!"); }
+    }
+    for (const b of S.balls) { b.t++; b.x += b.vx; b.y += b.vy - S.speed * 0; if (!air && collide(me, { x: b.x - 7, y: sy(b.y) - 7, w: 14, h: 14 })) { b.dead = true; hurt("¡Bola de nieve!"); } if (sy(b.y) < -40 || b.t > 200) b.dead = true; }
+    S.balls = S.balls.filter(b => !b.dead);
+    for (const c of S.coins) { c.t++; if (!c.dead && collide(me, { x: c.x - 10, y: sy(c.y) - 10, w: 20, h: 20 })) { c.dead = true; this.gotCoin(c.x, sy(c.y)); } }
+    p.x = S.x - p.w / 2; p.y = SY - 30;
+    if (this.state === "play" && S.y >= S.len) { this.popup(W / 2, 220, `¡META! Puertas: ${S.passed}/${S.total}`, GOLD); play("clear"); this.score += 100 * S.passed; if (S.passed === S.total) { this.score += 1000; this.popup(W / 2, 260, "¡TODAS LAS PUERTAS! +1000", GOLD); } this.finishLevel(); }
   }
   hurtFx(x, text) {   // the usual "ouch" effects for weather and sharks
     const p = this.player;
@@ -6021,7 +6649,8 @@ class Game {
       cast("Raptores · Tricerátops · Pterodáctilos · Marcianos"), cast("Pilotos rivales · Monos espaciales · Osos dormilones"),
       cast("El Tiburón Gigante · La Planta Madre · Granizo y rayos"),
       cast("Marcianos lunares · Arañas mecánicas · Dragones"), cast("Piratas · Loros · Cañones · Helicópteros"),
-      cast("Caballeros de la espada · Cazas estelares · Gelatinas"), gap(),
+      cast("Caballeros de la espada · Cazas estelares · Gelatinas"),
+      cast("Pingüinos · Águilas · Muñecos de nieve · Buitres"), gap(),
       head("MÚSICA Y SONIDO"), cast("Guitarra flamenca, palmas y castañuelas"), gap(),
       head("HERRERO"), cast("Hachas, flechas, paellas, guitarras, abejas y cañones"), gap(),
       head("IDEA Y DISEÑO"), name("Bub"), gap(),
@@ -6180,6 +6809,9 @@ class Game {
     const p = this.player, lvl = this.level;
     this.levelTimer++; this.runFrames++;
     if (this.rk) { this.updateRocket(); return; }
+    if (this.tv) { this.updateTerrain(); return; }
+    if (this.cl) { this.updateClimb(); return; }
+    if (this.sk) { this.updateSki(); return; }
     if (this.caught) { this.updateCaught(); return; }
     if (this.mirrorCd > 0) this.mirrorCd--;
     if (this.mirrorGlow > 0) this.mirrorGlow--;
@@ -6189,7 +6821,7 @@ class Game {
       if (this.levelTimer === RACE_GO - 1) { play("go"); this.popup(p.x + p.w / 2 + 200, 200, "¡YA!", GOLD); }
     }
     const wasAir = !p.onGround, fallV = p.vy;
-    p.update(p.car && !racing ? NOINP : inp, lvl);
+    if (!this.updateVine()) p.update(p.car && !racing ? NOINP : inp, lvl);
     if (p.onGround && !p.sub) {   // bouncy mushrooms
       const fy = Math.floor((p.y + p.h + 2) / TILE);
       for (const fx of [Math.floor((p.x + 6) / TILE), Math.floor((p.x + p.w - 6) / TILE)]) if (p.onGround && lvl.tile(fx, fy) === "x") {
@@ -6483,6 +7115,7 @@ class Game {
     if (p.ship && lvl.boss && lvl.boss.alive && lvl.flag) p.x = Math.min(p.x, lvl.flag.x - p.w - 30);   // the port stays shut until the giant helicopter is down   // can't fly past the airship
     if (!p.plane && lvl.boss && lvl.boss.alive && this.bossAnnounced && lvl.arena[1] < lvl.pxW)   // the arena is closed until the boss is beaten
       p.x = Math.max(lvl.arena[0], Math.min(p.x, lvl.arena[1] - p.w));
+    if (lvl.theme.pungi && p.y + p.h > 482 && !p.vine) { this.popup(p.x + p.w / 2, 430, "¡Ay, las estacas!", HEART); play("hurt"); this.loseLife(); return; }
     if (p.hearts <= 0 || p.y > lvl.pxH + 60) { this.loseLife(); return; }
     if ((p.plane || p.sub || p.ship) && lvl.flagOpen() && p.x + p.w > lvl.flag.x) {   // through the finish line in the sky (or out of the sea cave, or into port)
       if (p.sub) this.popup(p.x + p.w / 2, p.y - 30, "¡A salvo!", GOLD);
@@ -6548,6 +7181,9 @@ class Game {
     const cam = Math.floor(this.camX), lvl = this.level, theme = lvl.theme, tiles = this.tiles(), p = this.player;
     if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
     if (this.rk) drawRocketWorld(this);
+    else if (this.tv) drawTerrainWorld(this);
+    else if (this.cl) drawClimbWorld(this);
+    else if (this.sk) drawSkiWorld(this);
     else {
     drawBackground(theme, cam);
     if (SHADE && !theme.dark && theme.bg !== "space") {   // distance haze: the far landscape fades into the sky colour
@@ -6593,6 +7229,8 @@ class Game {
     }
     for (const m of lvl.shrooms) { if (m.sq > 0) m.sq--; if ((m.cx + m.n) * TILE > cam - 60 && m.cx * TILE < cam + W + 60) drawMushroom(m, cam, lvl); }
     for (const s of lvl.spikes) if (s.x > cam - TILE && s.x < cam + W) drawSpike(s, cam, theme);
+    if (theme.pungi) for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) if (!lvl.solidAt(cx, 11) && !lvl.solidAt(cx, 12)) drawStakes(cx * TILE - cam, cx);
+    for (const v of lvl.vines) if (v.ax > cam - 500 && v.ax < cam + W + 500) drawVine(v, cam);
     const bk = lvl.bike;
     if (bk && !bk.taken) {   // the parked motorbike, waiting for the knight
       ctx.save(); ctx.translate(bk.x + 2 - cam, bk.y + bk.h - 56); drawBike(0, false); ctx.restore();
@@ -6756,7 +7394,7 @@ class Game {
       T(this.levelLabel(), 20, 16, 62, LEVELS[this.levelIndex].secret ? GOLD : WHITE, "left", "top");
       SHOP.filter(it => this.upg[it.id]).forEach((it, i) => emoji(it.icon, 18, 26 + i * 24, 98));
       if (p.ninja) { drawShuriken(28, 126, this.t * 0.05, rgb(214, 220, 236), 10); T(`× ${p.shuriken}`, 20, 44, 126, WHITE, "left", "middle"); }
-      if (this.upg.grenade && !p.car && !p.rocket && !p.plane && !p.tank) { emoji("💣", 18, 26, 126); T(`× ${this.grenades}`, 20, 42, 126, WHITE, "left", "middle"); }
+      if (this.upg.grenade && !p.car && !p.rocket && !p.plane && !p.tank && !this.tv && !this.cl && !this.sk) { emoji("💣", 18, 26, 126); T(`× ${this.grenades}`, 20, 42, 126, WHITE, "left", "middle"); }
       if (p.car) {   // race clock and position
         const secs = Math.max(0, this.raceT) / 60, low = secs < 10, pos = 1 + lvl.enemies.filter(e => e.kind === "Y" && e.racer && e.x > p.x).length;
         T(`⏱ ${secs.toFixed(1)}`, 34, W / 2, 46, low && Math.floor(this.t / 10) % 2 ? HEART : GOLD, "center", "top");
@@ -6773,6 +7411,7 @@ class Game {
         if (this.storm && this.storm.still > 20) { const k = Math.min(1, this.storm.still / 125); T("⚡", 16, 16, 142, GOLD, "left", "top"); R(HEART_EMPTY, 40, 144, 100, 12, 3); R(k > 0.6 ? HEART : GOLD, 40, 144, 100 * k, 12, 3); }
       }
       if (this.keys > 0) T("🔑 x" + this.keys, 18, 16, 118, GOLD, "left", "top");
+      if (this.tv) { T("TURBO", 16, 16, 118, WHITE, "left", "top"); R(HEART_EMPTY, 80, 120, 60, 12, 3); R(this.tv.nitroCd ? GOLD : GRASS_LIGHT, 80, 120, 60 * (1 - this.tv.nitroCd / 200), 12, 3); }
       if (p.ship) {
         T("CAÑÓN", 16, 16, 118, WHITE, "left", "top"); R(HEART_EMPTY, 84, 120, 60, 12, 3); R(p.canT ? GOLD : GRASS_LIGHT, 84, 120, 60 * (1 - p.canT / p.canGap), 12, 3);
       }
