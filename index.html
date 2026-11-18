@@ -851,6 +851,7 @@ const easeOut = t => 1 - Math.pow(1 - t, 3);
 const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 const collide = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+const RESET_BTN = { x: 960 / 2 - 190, y: 436, w: 380, h: 38 };
 const inside = (x, y, r) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 const inflate = (r, dx, dy) => ({ x: r.x - Math.floor(dx / 2), y: r.y - Math.floor(dy / 2), w: r.w + dx, h: r.h + dy });
 function seeded(a) {   // small repeatable random number generator
@@ -6161,7 +6162,15 @@ function drawMap(g) {   // the world map: four lands side by side, the road betw
   LEVELS.forEach((L, i) => { if (L.door != null && g.secrets.has(L.door)) road([MAP_NODES[i], MAP_NODES[L.door]], true); });
   LEVELS.forEach((L, i) => {
     const n = MAP_NODES[i]; if (!n || n.x - cam < -60 || n.x - cam > W + 60) return;
-    if (n.secret && !g.secrets.has(i)) return;   // secret levels stay off the map until you find their door
+    if (n.secret && !g.secrets.has(i)) {   // a secret not found yet: a locked "?" with no road to it, until you find its door in the game
+      const x = n.x - cam, y = n.y;
+      ctx.globalAlpha = 0.5 + 0.15 * Math.sin(t * 0.05 + i);
+      C("rgba(0,0,0,0.35)", x, y + 4, 20); C(rgb(52, 40, 30), x, y, 20); CS(rgb(150, 120, 70), x, y, 20, 2);
+      T("?", 26, x, y + 1, GOLD, "center", "middle");
+      ctx.globalAlpha = 1;
+      R(rgb(150, 120, 60), x + 9, y + 9, 13, 10, 2); CS(rgb(150, 120, 60), x + 15.5, y + 9, 4, 2); C(rgb(60, 44, 20), x + 15.5, y + 14, 1.5);   // a little padlock
+      return;
+    }
     drawMapNode(i, n.x - cam, n.y, i === g.mapSel && !K.moving, g.done.has(L.name), t);
   });
   const p = g.mapPlayer;   // the knight
@@ -6219,6 +6228,12 @@ class Game {
     const r = [];
     for (let i = 0; i < MAIN_LEVELS; i++) { r.push(i); const d = LEVELS[i].door; if (d != null && this.secrets.has(d)) r.push(d); }
     return r;
+  }
+  titleReset() {   // first press asks, second press wipes the saved map
+    if (this.resetAsk > 0) {
+      try { localStorage.removeItem("caballero_mapa"); } catch (_) {}
+      this.done = new Set(); this.secrets = new Set(); this.resetAsk = 0; this.resetDone = 150; play("anvil");
+    } else { this.resetAsk = 240; play("click"); }
   }
   startGame() {   // from the title: first dress up the knight
     this.state = "custom"; this.cuSel = 0; this.cuT = 0; this.cuP = null; this.particles = [];
@@ -6890,7 +6905,7 @@ class Game {
       head("IDEA Y DISEÑO"), name("Bub"), gap(),
       head("PROGRAMACIÓN"), name("Claude"), gap(34),
       ["TUS HAZAÑAS", 24, GOLD], name(`Puntos: ${this.score}`), name(`Monedas: ${this.coins}`), name(`Enemigos derrotados: ${this.kills}`),
-      name(`Vidas perdidas: ${this.deaths}`), name(`Secretos encontrados: ${this.secrets.size} de 3`), name(`Tiempo: ${time}`), gap(44),
+      name(`Vidas perdidas: ${this.deaths}`), name(`Secretos encontrados: ${this.secrets.size} de ${LEVELS.length - MAIN_LEVELS}`), name(`Tiempo: ${time}`), gap(44),
       ["¡GRACIAS POR JUGAR!", 46, GOLD],
     ];
     this.creditsH = this.creditLines.reduce((a, l) => a + l[1] * 1.45, 0);
@@ -6977,6 +6992,8 @@ class Game {
 
   step() {
     this.t++;
+    if (this.resetAsk > 0) this.resetAsk--;
+    if (this.resetDone > 0) this.resetDone--;
     if (this.state === "play") this.updatePlay();
     else if (this.state === "map") this.updateMap();
     else if (this.state === "dying") {
@@ -7722,7 +7739,10 @@ class Game {
       }
       T("¡Ojo! Saltar sobre los enemigos duele.", 22, W / 2, 292, WHITE);
       T("Gasta tus monedas en la tienda del herrero.", 22, W / 2, 324, WHITE);
-      tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 396);
+      tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
+      const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
+      R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
+      T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
     } else if (this.state === "dying" && this.lives > 0) {
       T("¡Jolín!", 72, W / 2, H / 2 - 40, HEART);
     } else if (this.state === "gameover") {
@@ -7825,6 +7845,7 @@ window.addEventListener("keydown", e => {
   if (k) { e.preventDefault(); if (k === "jump" && !e.repeat) inp.jumpPressed = true; keys[k] = true; }
   if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code) && !e.repeat) inp.attack = true;
   if (e.code === "KeyM") toggleSound();
+  if (e.code === "KeyB" && game.state === "title" && !e.repeat) game.titleReset();
   if (e.code === "KeyP" || e.code === "Escape") setPaused(!game.paused);
   if (e.code === "KeyQ" && game.paused) game.quitToMap();
   if (e.code === "Enter" || e.code === "NumpadEnter") tapStart();
@@ -7837,6 +7858,7 @@ canvas.addEventListener("pointerdown", e => {
   const r = canvas.getBoundingClientRect(), tx = (e.clientX - r.left) / r.width * W, ty = (e.clientY - r.top) / r.height * H;
   if (game.state === "shop") game.shopTap(tx, ty);
   else if (game.state === "custom") game.cuTap(tx, ty);
+  else if (game.state === "title" && inside(tx, ty, RESET_BTN)) game.titleReset();
   else if (game.state === "map") game.mapTap(tx, ty);
   else if (game.paused && inside(tx, ty, QUIT_BTN)) game.quitToMap();
   else tapStart();
