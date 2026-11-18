@@ -4254,6 +4254,7 @@ function drawRoadWorld(g) {
   }
   if (police && TV.nitro) for (let k = 0; k < 3; k++) C(pick([rgb(255, 200, 60), rgb(255, 120, 40)]), TV.x - cam - 66 - k * 8, TV.y - 20 + randInt(-3, 3), 6 - k);
   if (!police) {
+    if (TV.tip && g.state === "play") { ctx.font = `bold 17px ${FONT}`; const tw = ctx.measureText(TV.tip).width + 24, bx = Math.max(10, Math.min(W - tw - 10, TV.x - cam - tw / 2)); R("rgba(0,0,0,0.6)", bx, TV.y - 150, tw, 32, 10); T(TV.tip, 17, bx + tw / 2, TV.y - 134, WHITE); }
     for (const d of TV.drops) { C(rgb(120, 180, 255), d.x - cam, d.y, 4); C(rgb(220, 240, 255), d.x - cam - 1, d.y - 1, 1.6); }
     for (const e of TV.embers) { C(rgb(255, 140, 40), e.x - cam, e.y, 4); C(GOLD, e.x - cam, e.y, 2); }
     for (const b of TV.blds) if (b.fire && b.fire.hp > 0 && (b.fire.x - cam < -40 || b.fire.x - cam > W + 40)) { const left = b.fire.x - cam < 0; T(left ? "◀ 🔥" : "🔥 ▶", 22, left ? 50 : W - 50, 210, rgb(255, 150, 60)); }
@@ -6942,6 +6943,7 @@ function drawShop(g) {
 
 // ------------------------------------------------------------------ game
 const inp = { left: false, right: false, jumpHeld: false, jumpPressed: false, attack: false };
+let axeHeld = false;   // is the 🪓 button being held down right now? (the fire hose sprays while you hold it)
 const QUIT_BTN = { x: W / 2 - 150, y: 340, w: 300, h: 56 };
 const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 
@@ -7740,19 +7742,19 @@ class Game {
       const r = T.rob;
       if (r) {
         const gap = r.x - T.x;
-        const want = gap > 1400 ? r.sp * 0.3 : gap > 700 ? r.sp * 0.6 : gap < 260 ? r.sp * 0.92 : r.sp;   // they never get too far ahead
+        const want = gap > 1400 ? r.sp * 0.3 : gap > 700 ? r.sp * 0.6 : gap < 420 ? r.sp * 0.84 : r.sp;   // they never get too far ahead
         r.vx += (want - r.vx) * 0.05;
         const blocking = T.traffic.find(c => c.x > r.x + 40 && c.x < r.x + 220);
         if (!r.air && blocking) { r.vy = -9; r.air = true; }
         if (r.air) { r.vy += 0.5; r.y += r.vy; if (r.y >= gy(r.x)) { r.y = gy(r.x); r.air = false; } } else r.y = gy(r.x);
         r.x += r.vx; r.wheel += r.vx * 0.08;
         if (gap < 900 && --r.dropT <= 0) {   // the robbers throw things out of the back
-          r.dropT = Math.round(randInt(95, 150) / mul);
+          r.dropT = Math.round(randInt(130, 200) / mul);
           const k = pick(["oil", "barrel", "bag", "oil", "bag"]);
           T.obs.push({ kind: k, x: r.x - 70, y: gy(r.x - 70), vx: 0, t: 0, hit: false });
           if (k === "bag") this.popup(r.x - 80 - this.camX + this.camX, r.y - 90, "¡Se le cae el dinero!", GOLD);
         }
-        if (front > r.x - 64 && back < r.x + 64 && Math.abs(bottom - r.y) < 46) {   // caught them!
+        if (front > r.x - 80 && back < r.x + 64 && Math.abs(bottom - r.y) < 60) {   // caught them!
           T.caught++; this.score += 600; play("clear"); this.shake = 10; this.popup(r.x, r.y - 110, `¡DETENIDO! (${T.caught}/${T.goal})  +600`, GOLD); say("detenido", true);
           T.pulled.push({ x: r.x + 40, y: r.y, n: r.n, t: 0 }); T.vx = Math.min(T.vx, r.vx * 0.8);
           T.rob = null; T.robT = 110;
@@ -7794,8 +7796,9 @@ class Game {
       // --- Los Bomberos: spray water at the fires, rescue the cats with the ladder, refill at the hydrants
       const burning = T.blds.filter(b => b.fire && b.fire.hp > 0), cats = T.blds.filter(b => b.cat && !b.cat.saved);
       const nozzle = { x: T.x + T.face * 10, y: T.y - 86 };
-      if (inp.attack && T.water > 0 && !T.ladder) {
-        T.water = Math.max(0, T.water - 0.35); T.sprayT++;
+      const spraying = (inp.attack || axeHeld) && T.water > 0 && !T.ladder;   // hold 🪓 to spray
+      if (spraying) {
+        T.water = Math.max(0, T.water - 0.22); T.sprayT++;
         if (T.sprayT % 2 === 0) {
           const tg = burning.filter(b => (b.fire.x - nozzle.x) * T.face > 30 && Math.abs(b.fire.x - nozzle.x) < 720).sort((a, b) => Math.abs(a.fire.x - nozzle.x) - Math.abs(b.fire.x - nozzle.x))[0];
           const tx = tg ? tg.fire.x + randInt(-14, 14) : nozzle.x + T.face * 360, ty = tg ? tg.fire.y + randInt(-14, 14) : nozzle.y + 40;
@@ -7803,7 +7806,7 @@ class Game {
           T.drops.push({ x: nozzle.x, y: nozzle.y, vx: dx / tt, vy: (ty - nozzle.y - 0.5 * gr * tt * tt) / tt, t: 0 });
           if (T.sprayT % 10 === 0) play("slide");
         }
-        if (T.water <= 0) { this.popup(T.x, T.y - 110, "¡Sin agua! Rellena en una boca de incendios", rgb(120, 180, 255)); play("nope"); }
+        if (T.water <= 0) { this.popup(T.x, T.y - 110, "¡Sin agua! Para en una boca de incendios roja", rgb(120, 180, 255)); play("nope"); }
       } else T.sprayT = 0;
       for (const d of T.drops) {
         d.vy += 0.3; d.x += d.vx; d.y += d.vy; d.t++;
@@ -7826,6 +7829,11 @@ class Game {
       if (hyd && Math.abs(T.vx) < 1 && T.water < 100) { T.water = Math.min(100, T.water + 1.2); hyd.on = 6; if (this.t % 30 === 0) this.popup(T.x, T.y - 110, "¡Rellenando agua!", rgb(120, 180, 255)); }
       for (const h of T.hydrants) if (h.on > 0) h.on--;
       const near = cats.find(b => Math.abs(b.cat.x - T.x) < 80);
+      // a little helper bubble above the truck saying what to do next
+      const ahead = burning.filter(b => Math.abs(b.fire.x - T.x) < 640).sort((a, b) => Math.abs(a.fire.x - T.x) - Math.abs(b.fire.x - T.x))[0];
+      T.tip = T.water <= 3 ? "¡Sin agua! Busca una boca de incendios 🚒" : near && !(near.fire && near.fire.hp > 0) ? "¡Para y pulsa SALTA para la escalera! 🐱"
+        : ahead ? ((ahead.fire.x - T.x) * T.face > 40 ? "¡Mantén 🪓 para echar agua! 💦" : "Date la vuelta hacia el fuego 🔥")
+        : burning.length ? (burning.some(b => b.fire.x > T.x) ? "¡Hay fuego más adelante! ➜" : "⬅ ¡Hay fuego detrás!") : cats.length ? "¡Rescata a los gatitos! 🐱" : "";
       if (inp.jumpPressed && !T.ladder) {
         if (near && Math.abs(T.vx) < 1.2) {
           if (near.fire && near.fire.hp > 0) { this.popup(T.x, T.y - 120, "¡Primero apaga el fuego!", HEART); play("nope"); }
@@ -9482,15 +9490,15 @@ window.addEventListener("keydown", e => {
   }
   const k = KEYMAP[e.code];
   if (k) { e.preventDefault(); if (k === "jump" && !e.repeat) inp.jumpPressed = true; keys[k] = true; }
-  if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code) && !e.repeat) inp.attack = true;
+  if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code)) { if (!e.repeat) inp.attack = true; axeHeld = true; }
   if (e.code === "KeyM") toggleSound();
   if (e.code === "KeyB" && game.state === "title" && !e.repeat) game.titleReset();
   if (e.code === "KeyP" || e.code === "Escape") setPaused(!game.paused);
   if (e.code === "KeyQ" && game.paused) game.quitToMap();
   if (e.code === "Enter" || e.code === "NumpadEnter") tapStart();
 });
-window.addEventListener("keyup", e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; });
-window.addEventListener("blur", () => { keys.left = keys.right = keys.jump = false; });
+window.addEventListener("keyup", e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; if (["KeyX", "KeyJ", "ControlLeft"].includes(e.code)) axeHeld = false; });
+window.addEventListener("blur", () => { keys.left = keys.right = keys.jump = false; axeHeld = false; });
 window.addEventListener("contextmenu", e => e.preventDefault());
 canvas.addEventListener("pointerdown", e => {
   e.preventDefault(); unlock();
@@ -9531,7 +9539,7 @@ function holdButton(el, down, up) {
   el.addEventListener("pointercancel", end);
 }
 holdButton(document.getElementById("bJump"), () => { if (!tapStart()) { inp.jumpPressed = true; touch.jump = true; } }, () => { touch.jump = false; });
-holdButton(document.getElementById("bAxe"), () => { if (!tapStart()) inp.attack = true; });
+holdButton(document.getElementById("bAxe"), () => { if (!tapStart()) { inp.attack = true; axeHeld = true; } }, () => { axeHeld = false; });
 
 const bSound = document.getElementById("bSound");
 function toggleSound() {
