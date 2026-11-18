@@ -96,7 +96,7 @@ const LEVELS = [
       "####################..###################....##########################....##########################....#########################",
       "####################..###################....##########################....##########################....#########################"
     ] },
-  { name: "El Bosque", theme: "forest", speed: 1.1, door: 21, hint: "¡Ojo con las serpientes taipán!",
+  { name: "El Bosque", theme: "forest", speed: 1.1, door: 23, hint: "¡Ojo con las serpientes taipán!",
     map: [
       "......................................................................................................................................................",
       "......................................................................................................................................................",
@@ -112,7 +112,7 @@ const LEVELS = [
       "##################...###################....##################....########################....##################....##################################",
       "##################...###################....##################....########################....##################....##################################"
     ] },
-  { name: "La Mina", theme: "mine", speed: 1.15, door: 23, hint: "¡Cuidado con los topos!",
+  { name: "La Mina", theme: "mine", speed: 1.15, door: 25, hint: "¡Cuidado con los topos!",
     map: [
       "#########################################################################################################################################################################",
       "#########################################################################################################################################################################",
@@ -128,7 +128,7 @@ const LEVELS = [
       "#############################...######################...######################....##########################...######################....###############################",
       "#############################...######################...######################....##########################...######################....###############################"
     ] },
-  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, hint: "¡No te caigas al agua!",
+  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 26, hint: "¡No te caigas al agua!",
     map: [
       "............................................................................................................................................................................",
       "............................................................................................................................................................................",
@@ -140,11 +140,11 @@ const LEVELS = [
       "................oooo....oooo......oooo..............................oooo....oooo..........oooo..................oooo........oooo................................oooo........",
       "........................====........................oo......................====..........................oo....====..........................oo................====........",
       "....................................................==....................................................==..................................==............................",
-      "..P.......................c........s...........................c.....s.............................^.....s...........c.......s...............s........^.....c...........F...",
+      "..P.......................c........s...........................c.....s.............................^.....s...........c.......s...............s........^.....c.....D.....F...",
       "################....##############....############.....#############....##################....##########.....###############....############.....###########################",
       "################....##############....############.....#############....##################....##########.....###############....############.....###########################"
     ] },
-  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 22, hint: "¡Salta de pared en pared y lanza shuriken!",
+  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 24, hint: "¡Salta de pared en pared y lanza shuriken!",
     map: [
       "................................................................................................................................................................................",
       "................................................................................................................................................................................",
@@ -272,6 +272,22 @@ const LEVELS = [
       "##################################....################################....##############################################....####################################....########################################################################",
       "##################################....################################....##############################################....####################################....########################################################################"
     ] },
+  { name: "La Batalla Estelar", theme: "galaxy", speed: 1.2, mode: "star", hint: "SALTA: subir · 🪓: láser · ¡cada 4 disparos, un torpedo!",
+    map: [
+      "............................................................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................................................",
+      "........................O................../..........O......................../................./......................................................................./........................../.......................................",
+      "..................................................o./o..o..o./............................................/......o..o..oU.o........../................./.......O................o./o..o..o............................}.....................",
+      "........................./.....................o..............o..o..................O.........................o..............o..oO...........................................o..............o..o............O...............................",
+      ".......................................O....o.......................o.................../...............o..o.......................o........../........................o..o................/......o.........................................",
+      "..P.....o.............................o..o.............................o...........................O.o................................o.............................o.........O......................o................................F.....",
+      "...........o..../..................o................................../...o.......................o......................................o.......................o......................................o...................................",
+      "..............o..o..............o./..........................................o..o..............o..................O/......../...............o..o..............o./..........................................o./..............................",
+      "....................o..o..o..o.....................................................o..o..o..o.....................................................o..o..o..o................................................................................",
+      ".....................................................................O..........................................................................O............................................O..............................................",
+      "............................................................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................................................"
+    ] },
   { name: "El Castillo del Rey Canguro", theme: "castle", speed: 1.2,
     map: [
       "...............................................................................................................................................................................",
@@ -303,6 +319,22 @@ const LEVELS = [
       "..P...................J.......#....C....J.....a.............J.....#...J.......J...........a....J....#...JC......J...a.........J.....J....#.....J..a.C................J....#.....a.....J.......J.....F...",
       "################################################....################################....##############################....##############################....############################################",
       "################################################....################################....##############################....##############################....############################################"
+    ] },
+  { name: "La Fortaleza de las Espadas", theme: "swords", speed: 1.2, shield: true, hint: "¡Mira hacia la espada que te lanzan para pararla con el escudo!",
+    map: [
+      "..........................................................................................................................................................................................................................",
+      "..........................................................................................................................................................................................................................",
+      "..........................................................................................................................................................................................................................",
+      "..........................................................................................................................................................................................................................",
+      "...........................................................................U....................................................b.........................................................................................",
+      "................................................b.......................oooooo..............................................................oooooo..................b.....................................................",
+      "..............................ooooooa...................................======....................ooooao....................................======........................................................................",
+      "..............................======..............................................................======..................................................................................................................",
+      "................................................................................................................####......................................................................................................",
+      "............................................................####................................................####....................................###...............................................................",
+      "..P.................(....^^.........................(.......####......(.......................(.............^...####......(.................(...........###.....(.....^.............[.....................{.].......F.....",
+      "########################################....##########################################....########################################....####################################....############################################",
+      "########################################....##########################################....########################################....####################################....############################################"
     ] },
   { name: "La Montaña de los Dragones", theme: "dragon", speed: 1.25, hint: "¡Dragones! Esquiva sus bolas de fuego y no caigas en la lava",
     map: [
@@ -463,13 +495,29 @@ const LEVELS = [
       "..P...........;;..L...............;;..L.............;;..L....;;.L...................;;..L.................;;..L.............;;..L...............;;..L.....;;..................[....................*....]....F....",
       "##################################################################################################################################################################################################################",
       "##################################################################################################################################################################################################################"
-    ] }
+    ] },
+  { name: "El Templo Perdido", theme: "temple", speed: 1.1, returnTo: 4, secret: true, hint: "¡Un templo secreto! Corta arbustos y vasijas, y busca las llaves",
+    map: [
+      "............................................................................#.......................................................#...........................................",
+      "............................................................................#.......................................................#...........................................",
+      "............................................................................#.......................................................#...........................................",
+      "............................................................................#.......................................................#...........................................",
+      "..................................................b.........................#.......................................................#.b.........................................",
+      "............................................................................#.......................b....................-..........#...........................................",
+      "............................................................................#...........U............................=======........#...........................................",
+      "...................................................................-........|.................................ooooo.................|...........................................",
+      "................................................................======......|.................................=====.................|...........................................",
+      "............................................................................|...o.o.o.o.o.o.........................................|...........a...............................",
+      "..P.....?.?.?.....,,......?..._.........n...?.?.........,,...._.............|......._...................?.?...n.....,......._.......|.......?..###....,,......_.....`.....F.....",
+      "##################################....######################################################....################################################################################",
+      "##################################....######################################################....################################################################################"
+    ] },
 ];
 
 // Upgrades sold in the blacksmith's shop between levels (price in coins)
 const SHOP = [
   { id: "quick", icon: "⚡", name: "Golpe rápido", desc: ["Hachazos", "más rápidos"], price: 10 },
-  { id: "long", icon: "📏", name: "Mango largo", desc: ["El hacha llega", "más lejos"], price: 12 },
+  { id: "bow", icon: "🏹", name: "Arco y flechas", desc: ["Cada 2 hachazos,", "una flecha"], price: 14 },
   { id: "sharp", icon: "✨", name: "Filo de oro", desc: ["Golpes un 50%", "más fuertes"], price: 18 },
   { id: "heart", icon: "❤️", name: "Corazón extra", desc: ["4 corazones", "por nivel"], price: 15 },
   { id: "cannon", icon: "💥", name: "Cañón", desc: ["Cada 5 hachazos,", "¡una bala de cañón!"], price: 28 },
@@ -492,7 +540,7 @@ const SUB_W = 80, SUB_H = 40, SHIP_W = 150, SHIP_H = 58;   // the race starts af
 const NOINP = { left: false, right: false, jumpPressed: false, jumpHeld: false, attack: false };
 const KNIGHT_W = 30, KNIGHT_H = 56, BIKE_W = 44, TANK_W = 72, TANK_H = 52, HORSE_W = 66, HORSE_H = 74, PLANE_W = 70, PLANE_H = 34;
 const WATER_Y = 11 * TILE + 14;   // surface of the sea in water levels
-const SOLID = "#=CHQxl";   // ground, platforms, crates, hidden blocks, cracked stone
+const SOLID = "#=CHQxl|";   // ground, platforms, crates, hidden blocks, cracked stone
 const MAIN_LEVELS = LEVELS.filter(l => !l.secret).length;   // the secret levels come after these
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
@@ -552,6 +600,15 @@ const ENEMY_COLORS = {
   "3": [rgb(96, 110, 70), rgb(58, 66, 44), rgb(200, 40, 40)],      // gunship helicopter
   "+": [rgb(176, 150, 100), rgb(110, 92, 60), rgb(40, 40, 46)],    // bomber helicopter
   "@": [rgb(70, 76, 84), rgb(40, 44, 50), rgb(220, 50, 40)],       // El Helicóptero Gigante
+  "(": [rgb(150, 156, 170), rgb(40, 80, 60), rgb(214, 220, 232)],  // knight with a giant sword
+  "{": [rgb(54, 52, 64), rgb(110, 20, 30), GOLD],                   // El Señor de las Espadas
+  "/": [rgb(126, 32, 44), rgb(60, 20, 28), rgb(255, 160, 60)],     // enemy starfighter
+  "}": [rgb(70, 76, 96), rgb(255, 60, 70), rgb(150, 220, 255)],    // La Nave Nodriza
+  "?": [rgb(54, 140, 60), rgb(110, 196, 90), rgb(40, 110, 50)],    // bush
+  ",": [rgb(170, 96, 60), rgb(150, 80, 50), rgb(230, 190, 120)],   // clay pot
+  "-": [GOLD, WHITE, GOLD],                                           // key
+  "`": [rgb(120, 70, 36), GOLD, rgb(60, 210, 160)],                  // treasure chest
+  _: [rgb(90, 200, 110), rgb(40, 140, 70), WHITE],                   // temple slime
   E: [rgb(96, 96, 104), rgb(255, 160, 60), rgb(70, 70, 70)],        // enemy biplane
   J: [rgb(50, 44, 46), rgb(150, 20, 30), GOLD],                     // enemy cavalry
   X: [rgb(34, 32, 40), rgb(200, 30, 40), GOLD],                     // the Black Knight
@@ -625,6 +682,13 @@ const THEMES = {
             top: [rgb(176, 124, 72), rgb(136, 92, 52), rgb(204, 152, 96)], dirt: [rgb(104, 66, 38), rgb(78, 48, 28), rgb(126, 84, 50)] },
   river:  { sky: [[110, 170, 226], [252, 226, 172]], far: rgb(232, 186, 120), near: rgb(206, 154, 92), bg: "river", water: true, sun: rgb(255, 246, 200),
             clouds: false, flat: true, top: [rgb(230, 196, 130), rgb(204, 166, 100), rgb(246, 220, 160)], dirt: [rgb(196, 150, 90), rgb(170, 124, 70), rgb(216, 172, 110)] },
+  swords: { sky: [[34, 26, 60], [190, 100, 90]], far: rgb(78, 60, 96), near: rgb(44, 34, 62), bg: "castle",
+            sun: rgb(250, 240, 214), clouds: false, bricks: true, top: [rgb(150, 144, 166), rgb(104, 98, 122), rgb(186, 180, 200)],
+            dirt: [rgb(110, 102, 126), rgb(82, 76, 98), rgb(132, 124, 148)] },
+  galaxy: { sky: [[4, 4, 20], [30, 14, 50]], far: rgb(60, 40, 90), near: rgb(40, 30, 70), bg: "galaxy", clouds: false,
+            top: [rgb(120, 120, 130), rgb(90, 90, 100), rgb(150, 150, 160)], dirt: [rgb(90, 90, 100), rgb(70, 70, 80), rgb(110, 110, 120)] },
+  temple: { sky: [[16, 24, 20], [40, 56, 44]], far: rgb(58, 70, 58), near: rgb(40, 52, 42), bg: "temple", clouds: false, plat: "stone",
+            top: [rgb(84, 140, 70), rgb(60, 104, 52), rgb(120, 176, 96)], dirt: [rgb(104, 110, 98), rgb(80, 86, 76), rgb(128, 134, 120)] },
   bears:  { sky: [[34, 24, 36], [84, 58, 56]], far: rgb(70, 50, 54), near: rgb(52, 38, 40), bg: "cave", spikes: "rock",
             top: [rgb(96, 120, 64), rgb(70, 92, 46), rgb(130, 156, 84)], dirt: [rgb(92, 72, 62), rgb(72, 56, 48), rgb(114, 92, 80)] },
   storm:  { sky: [[40, 46, 60], [118, 126, 140]], far: rgb(62, 70, 84), near: rgb(46, 60, 54), bg: "storm", clouds: false, plat: "stone", spikes: "metal",
@@ -674,7 +738,9 @@ const VOICE_LINES = {
   luna_nivel: "¡La Luna! ¡Mira qué saltos!", marte: "¡Marte! ¡Cuidado con las arañas mecánicas!", dragones: "¡Dragones! ¡Que no te quemen!",
   piratas: "¡Al abordaje!", arana: "¡Cuidado! ¡La Araña de Hierro!", dragon_rojo: "¡Cuidado! ¡El Dragón Rojo!", capitan: "¡Cuidado! ¡El Capitán Pata de Palo!",
   mama_osa: "¡Cuidado! ¡Mamá Osa!", oso: "¡Adiós, oso!", chatarra: "¡Chatarra!", dragoncito: "¡Adiós, dragón!", pirata: "¡Al agua, pirata!",
-  loro: "¡Adiós, loro!", acorazado: "¡Todos a sus puestos, capitán! ¡Helicópteros!", heli_boss: "¡Cuidado! ¡El Helicóptero Gigante!", sorpresa: "¡Ataque sorpresa!", aterriza: "¡Está en el suelo! ¡Ataca!",
+  loro: "¡Adiós, loro!", acorazado: "¡Todos a sus puestos, capitán! ¡Helicópteros!", heli_boss: "¡Cuidado! ¡El Helicóptero Gigante!", espadas_nivel: "¡Caballeros de la espada! ¡Usa el escudo!", espadas: "¡Cuidado! ¡El Señor de las Espadas!",
+  caballero: "¡Caballero vencido!", estelar: "¡A las estrellas! ¡Cazas enemigos!", nodriza: "¡Cuidado! ¡La Nave Nodriza!", hiperespacio: "¡Salto al hiperespacio!",
+  templo: "¡Un templo secreto! Busca las llaves", tesoro: "¡Un tesoro! ¡La Gema Antigua!", sorpresa: "¡Ataque sorpresa!", aterriza: "¡Está en el suelo! ¡Ataca!",
   tienda: "¡Bienvenido a la tienda del herrero!", gracias: "¡Gracias, caballero!", nooro: "¡No tienes bastante oro!",
 };
 const AUDIO_RATE = 22050;
@@ -951,7 +1017,7 @@ class Player {
     if (m === "ninja") { this.ninja = true; this.shuriken = 12; this.reach = upg.long ? 0.95 : 0.78; }
     if (m === "sword") { this.sword = true; this.atkTotal = upg.quick ? 12 : 16; this.atkCooldown = upg.quick ? 2 : 4; this.reach = upg.long ? 1.2 : 0.95; }
     if (m === "horse") { this.horse = true; this.w = HORSE_W; this.h = HORSE_H; }
-    if (m === "plane" || m === "ufo") { this.plane = true; this.ufo = m === "ufo"; this.w = PLANE_W; this.h = PLANE_H; this.vx = 3.4; }
+    if (m === "plane" || m === "ufo" || m === "star") { this.plane = true; this.ufo = m === "ufo"; this.star = m === "star"; this.w = PLANE_W; this.h = PLANE_H; this.vx = 3.4; }
     if (m === "car") { this.car = true; this.w = CAR_W; this.h = CAR_H; this.nitroT = 0; this.nitroCd = 0; this.spinT = 0; this.nitroGap = upg.quick ? 110 : 150; }
     if (m === "storm") { this.storm = true; this.umbrella = false; }
     if (m === "sub") { this.sub = true; this.w = SUB_W; this.h = SUB_H; this.assist = false; this.torpCd = 0; this.torpGap = upg.quick ? 80 : 110; this.vx = 1.5; }
@@ -967,7 +1033,7 @@ class Player {
     if (this.knockback > 0) this.knockback--;
     const move = this.knockback ? 0 : (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
     this.vx += ((move > 0 ? 6.4 : move < 0 ? 1.8 : 3.4) - this.vx) * 0.06;
-    this.vy += inp.jumpHeld ? -0.5 : this.ufo ? 0.24 : 0.3; this.vy = Math.max(-4.8, Math.min(this.ufo ? 3.4 : 4, this.vy * 0.97));   // the UFO floats down gently
+    const floaty = this.ufo || this.star; this.vy += inp.jumpHeld ? -0.5 : floaty ? 0.24 : 0.3; this.vy = Math.max(-4.8, Math.min(floaty ? 3.4 : 4, this.vy * 0.97));   // the UFO floats down gently
     this.x += this.vx; this.y += this.vy;
     if (this.y < 46) { this.y = 46; this.vy = Math.max(0, this.vy); }
     if (this.y > 418 - this.h) { this.y = 418 - this.h; this.vy = Math.min(0, this.vy); }
@@ -1139,6 +1205,7 @@ const ROO_STATS = {   // size, hit points, hop strength, pause between hops, poi
   T: { w: 38, h: 56, hp: 3, hopVy: 6.5, hopVx: 1.6, wait: [50, 80], score: 500 },
   j: { w: 26, h: 36, hp: 1, hopVy: 12.0, hopVx: 2.8, wait: [35, 60], score: 150 },
   "2": { w: 34, h: 30, hp: 1, hopVy: 6.5, hopVx: 2.0, wait: [30, 70], score: 150 },   // moon blob
+  _: { w: 32, h: 26, hp: 1, hopVy: 7, hopVx: 1.8, wait: [40, 80], score: 120 },       // temple slime
 };
 class Kangaroo extends Enemy {   // hops along, turning round at walls and ledges
   constructor(kind, tx, ty, mul = 1) {
@@ -2631,6 +2698,187 @@ class GiantHeli extends Enemy {   // El Helicóptero Gigante: a huge twin-rotor 
   draw(cam) { drawHeli(this.x - cam, this.y, this.w, this.dir, this.t, this.tilt, this.colors(), this.flash, true); }
 }
 
+class SwordKnight extends Enemy {   // a knight with a huge sword: he chops when you're close and hurls the sword like a boomerang when you're not. Face it to stop it with your shield!
+  constructor(tx, ty, mul = 1) {
+    super();
+    this.init("(", 40, 70, 3, 450);
+    this.S = 1; this.x = tx; this.y = ty + TILE - this.h; this.mul = mul; this.mode = "walk"; this.modeT = 0; this.dir = -1;
+    this.armed = true; this.dropX = null; this.groundY = 0; this.fetchT = 0; this.slashBox = null; this.throwCd = randInt(30, 80); this.swAng = -2.3; this.invuln = 0;
+  }
+  harmful() { return false; }   // bumping into him is fine: it's the sword that hurts
+  catchSword() { this.armed = true; this.mode = "pickup"; this.modeT = 12; this.throwCd = Math.round(randInt(80, 130) / this.mul); }
+  lost(x, game) {   // the sword was knocked out of the air (or hit a wall): he has to go and fetch it
+    this.armed = false; this.groundY = this.y + this.h; this.fetchT = 0; this.mode = "walk";
+    this.dropX = this.boss ? Math.max(this.minX + 30, Math.min(this.maxX - 30, x)) : x;
+    game.popup(this.x + this.w / 2, this.y - 24, this.boss ? "¡Desarmado! ¡Ataca!" : "¡Desarmado!", GOLD);
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (this.invuln) this.invuln--;
+    this.slashBox = null;
+    const S = this.S, cx = this.x + this.w / 2, dx = player.x + player.w / 2 - cx, d = Math.abs(dx);
+    const same = Math.abs(player.y + player.h - (this.y + this.h)) < 70, face = () => { this.dir = dx > 0 ? 1 : -1; };
+    const awake = !player.dead && (this.boss ? player.x > this.minX - 40 : d < 640);
+    const angry = this.boss && this.hp <= this.maxHp / 2;
+    let target = -2.3;
+    if (this.stun > 0) { this.stun--; this.vx *= 0.8; if (this.mode === "windup") this.mode = "walk"; }
+    else if (this.mode === "walk") {
+      if (this.armed) {
+        if (awake) face();
+        this.vx = awake ? this.dir * 0.9 * this.mul * (this.boss ? 1.3 : 1) : 0;
+        if (this.throwCd > 0) this.throwCd--;
+        if (awake && d < 90 * S && same) { this.mode = "windup"; this.modeT = Math.round((this.boss ? 22 : 26) / this.mul); this.vx = 0; game.sound("shing"); }
+        else if (awake && d > 120 * S && d < (this.boss ? 520 : 340) && Math.abs(player.y - this.y) < 110 && this.throwCd <= 0) { this.mode = "aim"; this.modeT = Math.round(28 / this.mul); this.vx = 0; game.sound("shing"); }
+        else if (this.boss && this.hp <= this.maxHp * 0.66 && Math.random() < 0.006) { this.mode = "spin"; this.modeT = 80; game.sound("swing"); game.popup(cx, this.y - 20, "¡Torbellino!", HEART); }
+      } else {   // walks over to where his sword fell and picks it up
+        const tx = this.dropX - this.w / 2; this.dir = tx > this.x ? 1 : -1; this.vx = this.dir * 1.5 * this.mul;
+        if (Math.abs(tx - this.x) < 6 || ++this.fetchT > 300) { this.armed = true; this.dropX = null; this.mode = "pickup"; this.modeT = 24; this.vx = 0; this.throwCd = Math.round(randInt(60, 110) / this.mul); }
+      }
+    } else if (this.mode === "windup") { this.vx = 0; target = -1.6; if (--this.modeT <= 0) { this.mode = "chop"; this.modeT = 12; game.sound("swing"); } }   // sword raised high...
+    else if (this.mode === "chop") {   // ...and down it comes
+      target = 0.5; const r = this.rect(); this.slashBox = { x: this.dir > 0 ? r.x + r.w - 6 : r.x - 74 * S, y: r.y + 4, w: 80 * S, h: r.h - 4 };
+      if (this.modeT === 12) game.shake = Math.max(game.shake, this.boss ? 8 : 4);
+      if (--this.modeT <= 0) { this.mode = "rest"; this.modeT = Math.round(40 / this.mul); }
+    } else if (this.mode === "aim") {   // pulls the sword right back...
+      this.vx = 0; face(); target = -3.0;
+      if (--this.modeT <= 0) {   // ...and HURLS it
+        const high = angry && Math.random() < 0.5;
+        game.shots.push({ kind: "bsword", enemy: true, nochop: true, owner: this, dir: this.dir, dec: 0.16 * this.mul, len: this.boss ? 92 : 66, spin: 0,
+          x: cx + this.dir * 20, y: this.y + this.h * 0.38 - (high ? 26 : 0), vx: this.dir * (this.boss ? 10.5 : 9.6) * this.mul, vy: 0, t: 0, life: 420, col: rgb(214, 220, 232), dark: GOLD });
+        this.armed = false; this.mode = "wait"; game.sound("swing");
+      }
+    } else if (this.mode === "wait") { this.vx = 0; target = 0.3; }   // empty-handed, waiting for it to come back
+    else if (this.mode === "spin") {   // the whirlwind: he spins across the hall, sword out low — jump over it!
+      target = this.t * 0.6; this.vx = this.dir * 5 * this.mul; const r = this.rect();
+      this.slashBox = { x: r.x - 50, y: r.y + r.h - 52, w: r.w + 100, h: 48 };
+      if (this.t % 8 === 0) game.sound("swing");
+      if (--this.modeT <= 0 || this.x <= this.minX + 2 || this.x >= this.maxX - this.w - 2) { this.mode = "rest"; this.modeT = 60; this.vx = 0; this.swAng = 0.9; game.popup(cx, this.y - 20, "¡Mareado!", GOLD); }
+    } else if (this.mode === "rest" || this.mode === "pickup") { this.vx = 0; target = this.mode === "rest" ? 0.9 : 1.3; if (--this.modeT <= 0) this.mode = "walk"; }
+    if (this.mode === "spin") this.swAng = target; else this.swAng += (target - this.swAng) * 0.3;
+    physicsMove(this, level);
+    if (this.boss) this.x = Math.max(this.minX, Math.min(this.x, this.maxX - this.w));
+    else if (this.mode === "walk" && this.onGround && this.vx && (this.hitWall || ledgeAhead(this, level))) { this.x -= this.vx; this.vx = 0; }
+    if (this.y > level.pxH + 100) this.alive = false;
+  }
+  hit(fromDir, dmg = 1) {
+    if (this.invuln > 0) return false;
+    this.hp -= dmg; this.flash = 8;
+    if (this.boss) this.invuln = 14; else { this.stun = 10; this.vx = fromDir * 2.5; }
+    if (this.hp <= 0) { this.alive = false; return true; }
+    return false;
+  }
+  draw(cam) { drawSwordKnight(this, cam); }
+}
+
+class SwordLord extends SwordKnight {   // El Señor de las Espadas: a giant knight with a giant sword. His sword parries your axe — knock it out of the air with your shield, then attack!
+  constructor(tx, ty, level, mul = 1) {
+    super(tx, ty, mul);
+    this.kind = "{"; this.S = 1.45; this.w = 58; this.h = 102; this.y = ty + TILE - this.h; this.x = tx + TILE - this.w;
+    this.hp = this.maxHp = 18; this.score = 8000; this.boss = true; this.minX = level.arena[0]; this.maxX = level.arena[1]; this.throwCd = 60;
+    this.title = "EL SEÑOR DE LAS ESPADAS"; this.voice = "espadas"; this.intro = "¡El Señor de las Espadas!"; this.blockText = "¡Para su espada con el escudo!";
+  }
+  blocks(fromDir) { return this.armed && (this.mode === "walk" || this.mode === "aim" || this.mode === "pickup") && fromDir === -this.dir; }
+}
+
+class EnemyFighter extends EnemyPlane {   // an enemy starfighter: swoops in firing red lasers; some loop round and chase you
+  constructor(tx, ty, mul = 1, awake = false) { super(tx, ty, mul, awake); this.kind = "/"; }
+  fire(game, player, spread) {
+    const sx = this.x + (this.dir > 0 ? this.w : 0), sy = this.y + 15;
+    const a = Math.atan2(player.y + 17 - sy, player.x + player.w / 2 - sx);
+    for (const o of spread ? [-0.2, 0.2] : [0]) game.shots.push({ kind: "laser", red: true, enemy: true, x: sx, y: sy,
+      vx: Math.cos(a + o) * 5.4 * this.mul, vy: Math.sin(a + o) * 5.4 * this.mul, t: 0, col: rgb(255, 60, 90), dark: rgb(150, 20, 40) });
+    game.sound("pew");
+  }
+  draw(cam) {
+    drawEnemyFighter(this.x - cam, this.y, this.dir, this.flash, this.t, this.chasing ? (this.peel ? -0.4 : 0) : Math.cos(this.t * 0.04 + this.phase) * 0.12);
+    drawCreatureHp(this, cam);
+  }
+}
+
+class Mothership extends Airship {   // La Nave Nodriza: a giant enemy mothership guarding the way home — lasers, rings of energy and squadrons of fighters
+  constructor(tx, ty, level, mul = 1) {
+    super(tx, ty, level, mul);
+    this.kind = "}"; this.w = 300; this.h = 120; this.maxX = level.pxW - this.w - 20; this.hp = this.maxHp = 44; this.score = 9000;
+    this.title = "LA NAVE NODRIZA"; this.voice = "nodriza"; this.intro = "¡La Nave Nodriza!";
+  }
+  update(level, player, game) {
+    this.t++;
+    if (this.flash) this.flash--;
+    if (!this.awake) { if (player.x > this.x - W * 0.8) this.awake = true; else return; }
+    const p2 = this.hp <= this.maxHp / 2;
+    this.x += (Math.min(this.maxX, player.x + 450) - this.x) * 0.03;
+    this.y = this.baseY + Math.sin(this.t * 0.018) * 90;
+    if (player.dead) return;
+    const gx = this.x + 30, gy = this.y + 70;   // the laser cannon under its nose
+    if (--this.gunT <= 0) {
+      const a = Math.atan2(player.y + 17 - gy, player.x + player.w / 2 - gx);
+      for (const o of p2 ? [-0.22, 0, 0.22] : [-0.1, 0.1]) game.shots.push({ kind: "laser", red: true, enemy: true, x: gx, y: gy,
+        vx: Math.cos(a + o) * 5.6 * this.mul, vy: Math.sin(a + o) * 5.6 * this.mul, t: 0, col: rgb(255, 60, 90), dark: rgb(150, 20, 40) });
+      this.gunT = p2 ? 46 : 66; game.sound("pew");
+    }
+    if (p2 && --this.ringT <= 0) {   // angry: a ring of energy in every direction
+      for (let k = 0; k < 12; k++) {
+        const a = k / 12 * Math.PI * 2;
+        game.shots.push({ kind: "ebullet", enemy: true, x: this.x + this.w / 2, y: this.y + 60, vx: Math.cos(a) * 4, vy: Math.sin(a) * 4, t: 0, col: rgb(255, 80, 200), dark: rgb(150, 30, 120) });
+      }
+      this.ringT = 150; game.sound("zap");
+    }
+    if (--this.spawnT <= 0 && level.enemies.length < 6) {   // launches a squadron of fighters from the hangar
+      for (const dy of [-50, 60]) level.enemies.push(new EnemyFighter(this.x + 120, Math.max(50, this.y + 60 + dy), this.mul, true));
+      this.spawnT = p2 ? 260 : 360; game.sound("screech");
+    }
+  }
+  draw(cam) { drawMothership(this, cam); }
+}
+
+class Breakable extends Enemy {   // a bush ('?') or a clay pot (','): chop it and coins fall out
+  constructor(kind, tx, ty) {
+    super();
+    this.init(kind, 34, kind === "?" ? 30 : 32, 1, 10);
+    this.x = tx + 3; this.y = ty + TILE - this.h;
+  }
+  harmful() { return false; }
+  update() { this.t++; if (this.flash) this.flash--; }
+  hit() {
+    this.alive = false;
+    const n = Math.random() < 0.25 ? 3 : Math.random() < 0.6 ? 1 : 2;
+    for (let k = 0; k < n; k++) game.level.coins.push(new Coin(this.x + 17 + (k - (n - 1) / 2) * 16, this.y - 4));
+    game.burst(this.x + 17, this.y + 14, this.kind === "?" ? [rgb(60, 150, 60), rgb(100, 190, 80), rgb(40, 110, 50)] : [rgb(190, 110, 70), rgb(150, 80, 50), rgb(220, 160, 110)], 14, 4);
+    return true;
+  }
+  draw(cam) { drawBreakable(this, cam); }
+}
+
+class KeyItem extends Enemy {   // a little golden key: grab it, then walk into a locked door to open it
+  constructor(tx, ty) { super(); this.init("-", 24, 30, 1, 0); this.x = tx + 8; this.y = ty + 6; this.baseY = this.y; }
+  harmful() { return false; }
+  hittable() { return false; }
+  update(level, player, game) {
+    this.t++; this.y = this.baseY + Math.sin(this.t * 0.08) * 4;
+    if (!player.dead && collide(this.rect(), player.rect())) {
+      this.alive = false; game.keys = (game.keys || 0) + 1; game.sound("secret");
+      game.popup(this.x + 12, this.y - 16, "¡Una llave!", GOLD); game.burst(this.x + 12, this.y + 15, [GOLD, WHITE], 12, 3);
+    }
+  }
+  draw(cam) { drawKey(this.x - cam, this.y, this.t); }
+}
+
+class Chest extends Enemy {   // the treasure chest at the heart of the temple
+  constructor(tx, ty) { super(); this.init("`", 50, 38, 1, 0); this.x = tx - 5; this.y = ty + TILE - this.h; this.opened = false; this.open = 0; }
+  harmful() { return false; }
+  hittable() { return false; }
+  update(level, player, game) {
+    this.t++;
+    if (!this.opened && !player.dead && collide(inflate(this.rect(), 8, 0), player.rect())) {
+      this.opened = true; game.coins += 30; game.sound("win"); say("tesoro", true);
+      game.popup(this.x + 25, this.y - 50, "¡La Gema Antigua! +30", GOLD); game.burst(this.x + 25, this.y, [GOLD, WHITE, rgb(80, 220, 160)], 30, 5);
+    }
+    if (this.opened) this.open = Math.min(1, this.open + 0.04);
+  }
+  draw(cam) { drawChest(this, cam); }
+}
+
 class Boss extends Enemy {   // the Rey Canguro: big hops, shakes the ground, calls little kangaroos
   constructor(tx, ty, level, mul = 1) {
     super();
@@ -2685,7 +2933,7 @@ class Coin {
 class Level {
   constructor(def) {
     const rows = def.map, width = Math.max(...rows.map(r => r.length)), mul = def.speed;
-    this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null; this.tank = null; this.mode = def.mode || null; this.pickups = [];
+    this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null; this.tank = null; this.mode = def.mode || null; this.shield = !!def.shield; this.pickups = [];
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
     this.tiles = new Map(); this.spikes = []; this.coins = []; this.enemies = []; this.lifeups = []; this.door = null; this.revealed = new Set();
@@ -2706,7 +2954,13 @@ class Level {
       else if (ch === "9") this.enemies.push(new PirateGunner(x, y, mul));
       else if (ch === "!") this.enemies.push(new Cannon(x, y, mul));
       else if (ch === "3" || ch === "+") this.enemies.push(new Helicopter(ch, x, y, mul));
-      else if ("%&$*@".includes(ch)) later.push([ch, x, y]);
+      else if (ch === "(") this.enemies.push(new SwordKnight(x, y, mul));
+      else if (ch === "/") this.enemies.push(new EnemyFighter(x, y, mul));
+      else if (ch === "?" || ch === ",") this.enemies.push(new Breakable(ch, x, y));
+      else if (ch === "-") this.enemies.push(new KeyItem(x, y));
+      else if (ch === "`") this.enemies.push(new Chest(x, y));
+      else if (ch === "_") this.enemies.push(new AlienHopper("_", x, y, mul));
+      else if ("%&$*@{}".includes(ch)) later.push([ch, x, y]);
       else if (ROO_STATS[ch]) this.enemies.push(new Kangaroo(ch, x, y, mul));
       else if (FLYER_STATS[ch]) this.enemies.push(new Flyer(ch, x, y, mul));
       else if (LUNGER_STATS[ch]) this.enemies.push(new Lunger(ch, x, y, mul));
@@ -2750,7 +3004,7 @@ class Level {
       if (k === "s") this.enemies.push(new Shark(x, y, this, mul));
       else {
         this.boss = k === "X" ? new BlackKnight(x, y, this, mul) : k === "Z" ? new Airship(x, y, this, mul) : k === "R" ? new TRex(x, y, this, mul) : k === "0" ? new PlantMother(x, y, this, mul) : k === "%" ? new IronSpider(x, y, this, mul) : k === "&" ? new RedDragon(x, y, this, mul) :
-          k === "$" ? new PirateCaptain(x, y, this, mul) : k === "@" ? new GiantHeli(x, y, this, mul) : k === "*" ? new MamaBear(x, y, this, mul) : new Boss(x, y, this, mul);
+          k === "$" ? new PirateCaptain(x, y, this, mul) : k === "@" ? new GiantHeli(x, y, this, mul) : k === "{" ? new SwordLord(x, y, this, mul) : k === "}" ? new Mothership(x, y, this, mul) : k === "*" ? new MamaBear(x, y, this, mul) : new Boss(x, y, this, mul);
         this.enemies.push(this.boss);
       }
     }
@@ -3478,7 +3732,7 @@ function drawBlob(e, cam) {   // a wobbly purple alien blob with one big eye and
   E(col, cx - bw / 2, by - bh, bw, bh + 2); E(dark, cx - bw * 0.4, by - bh * 0.35, bw * 0.8, bh * 0.35);
   E("rgba(255,255,255,0.35)", cx - bw * 0.3, by - bh * 0.9, bw * 0.3, bh * 0.22);
   C(WHITE, cx + e.dir * 3, by - bh * 0.58, 7.5); C(BLACK, cx + e.dir * 5, by - bh * 0.58, 3.6); C(WHITE, cx + e.dir * 6, by - bh * 0.62, 1.2);
-  for (const s of [-1, 1]) { L(dark, cx + s * 6, by - bh + 3, cx + s * 11, by - bh - 9, 2); C(rgb(255, 230, 120), cx + s * 11, by - bh - 10, 3); }
+  if (e.kind !== "_") for (const s of [-1, 1]) { L(dark, cx + s * 6, by - bh + 3, cx + s * 11, by - bh - 9, 2); C(rgb(255, 230, 120), cx + s * 11, by - bh - 10, 3); }
   L(dark, cx + e.dir * 2 - 4, by - bh * 0.25, cx + e.dir * 2 + 4, by - bh * 0.25, 1.6);
 }
 
@@ -3695,6 +3949,120 @@ function drawShip(x, y, t, aim, recoil, vx) {   // the knight's ironclad: a slop
   ctx.fillStyle = "rgba(40,130,196,0.6)"; ctx.fillRect(-4, 47, 160, 14);                           // the river laps at the hull
   ctx.globalAlpha = 0.7; for (let i = 0; i < 4; i++) E(WHITE, -10 - i * 16 - (t * 1.5 % 16), 44 + (i % 2) * 2, 16 - i * 2, 5); E(WHITE, 140, 40, 16, 6); ctx.globalAlpha = 1;   // wake and bow wave
   ctx.restore();
+}
+
+function drawBigSword(x, y, ang, len) {   // a huge two-handed sword; (x, y) is the grip, the blade points along ang
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+  R(rgb(90, 60, 40), -14, -2.5, 16, 5, 2); C(GOLD, -15, 0, 3.5);                                   // grip and pommel
+  R(GOLD, 1, -9, 5, 18, 2);                                                                         // crossguard
+  P(rgb(214, 220, 232), [[6, -5], [len - 12, -4], [len, 0], [len - 12, 4], [6, 5]]);                // blade
+  L(rgb(150, 158, 176), 9, 0, len - 14, 0, 1.6); L("rgba(255,255,255,0.7)", 9, -3, len - 14, -2.5, 1);   // fuller and edge glint
+  ctx.restore();
+}
+
+function drawSwordKnight(e, cam) {   // a knight in plate armour and a great helm, with an enormous sword (the boss is bigger, in black and gold, with a crown)
+  const r = e.rect(), f = e.flash, S = e.S || 1, boss = e.boss;
+  const A = f ? WHITE : boss ? rgb(54, 52, 64) : rgb(150, 156, 170), D = boss ? rgb(30, 28, 36) : rgb(86, 90, 104), TAB = f ? WHITE : boss ? rgb(110, 20, 30) : rgb(40, 80, 60);
+  if (e.dropX != null) drawBigSword(e.dropX - cam, e.groundY - 66 * S, Math.PI / 2 + 0.12, 70 * S);   // his sword stuck in the floor
+  flipAt(r.x - cam, r.y, e.w, e.dir); ctx.scale(S, S);
+  const s = Math.abs(e.vx) > 0.2 && e.mode !== "spin" ? Math.sin(e.t * 0.25) * 4 : 0;
+  L(D, 15, 46, 13 - s, 66, 8); L(A, 25, 46, 27 + s, 66, 8); R(D, 6 - s, 64, 14, 6, 2); R(D, 22 + s, 64, 14, 6, 2);   // legs and sabatons
+  P(TAB, [[8, 22], [32, 22], [34, 52], [6, 52]]); R(A, 9, 20, 22, 14, 5); C(GOLD, 20, 40, 3);                         // tabard, breastplate
+  R(A, 10, 0, 20, 21, 6); R(rgb(20, 20, 26), 13, 9, 14, 3); L(D, 20, 1, 20, 20, 1.5);                                 // great helm with its eye slit
+  if (boss) P(GOLD, [[10, 1], [10, -8], [14, -3], [20, -10], [26, -3], [30, -8], [30, 1]]);                          // a crown
+  else P(rgb(200, 30, 40), [[18, 0], [8, -12], [22, -4], [28, -12], [24, 2]]);                                       // plume
+  L(A, 22, 24, 28, 30, 6); C(D, 28, 30, 4);                                                                          // arm and gauntlet
+  if (e.armed) drawBigSword(28, 30, e.swAng, 66);
+  ctx.restore();
+  const tx = r.x - cam + e.w / 2;
+  if (e.mode === "windup" || e.mode === "aim") T("!", 28, tx, r.y - 30 * S, HEART);
+  if (e.mode === "spin") { ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(tx, r.y + r.h - 28, 80, 16, 0, 0, Math.PI * 2); ctx.stroke(); }
+  if (!boss) drawCreatureHp(e, cam);
+}
+
+function drawKnightShield(p, cam) {   // the knight's kite shield, held on the side he faces; it flashes when it blocks
+  const up = p.blockT > 0, x = p.x + p.w / 2 + p.facing * (up ? 15 : 11) - cam, y = p.y + (up ? 20 : 27);
+  ctx.save(); ctx.translate(x, y); ctx.scale(p.facing, 1); ctx.rotate(up ? -0.15 : 0.08);
+  P(GOLD, [[-9, -13], [9, -13], [10, 2], [0, 17], [-10, 2]]); P(rgb(40, 80, 170), [[-7, -11], [7, -11], [8, 2], [0, 14], [-8, 2]]);
+  L(GOLD, 0, -9, 0, 11, 2); L(GOLD, -6, -3, 6, -3, 2);
+  if (up) { ctx.globalAlpha = p.blockT / 14; C(WHITE, 8, -2, 12); ctx.globalAlpha = 1; }
+  ctx.restore();
+}
+
+function drawStarfighter(x, y, t, tilt) {   // the knight's starfighter: a sleek white dart with swept wings, a bubble canopy and twin blue engines (70 x 34)
+  ctx.save(); ctx.translate(x + 35, y + 17); ctx.rotate(tilt);
+  const fl = 8 + Math.random() * 10;
+  ctx.globalAlpha = 0.7; for (const ey of [-5, 5]) P(rgb(120, 200, 255), [[-32, ey - 3], [-32 - fl, ey], [-32, ey + 3]]); ctx.globalAlpha = 1;   // engine glow
+  P(rgb(176, 184, 200), [[-12, -3], [-28, -17], [-20, -17], [6, -4]]);                                // far wing
+  for (const ey of [-8, 2]) R(rgb(120, 126, 140), -34, ey, 14, 6, 2);                                 // engines
+  P(rgb(238, 242, 250), [[-30, -6], [10, -7], [35, 0], [10, 7], [-30, 6]]);                           // body
+  P(rgb(40, 80, 170), [[-28, -1], [24, -1], [29, 1], [-28, 2]]); L(GOLD, -28, 3, 20, 3, 1.2);          // the knight's colours
+  E(rgb(120, 200, 240), -4, -12, 22, 10); C(ARMOR, 5, -8, 3.6); P(PLUME, [[5, -11], [0, -15], [3, -9]]); E("rgba(255,255,255,0.6)", 2, -11, 6, 3);   // canopy, with the knight inside
+  P(rgb(214, 220, 232), [[-12, 3], [-28, 17], [-18, 17], [8, 4]]);                                    // near wing
+  L(rgb(90, 96, 110), -24, 17, -6, 17, 2.5); L(rgb(90, 96, 110), -22, -17, -6, -17, 2);                // wingtip lasers
+  ctx.restore();
+}
+
+function drawEnemyFighter(x, y, dir, flash, t, tilt) {   // an enemy fighter: dark red, forward-swept wings, a single orange engine (64 x 30)
+  ctx.save(); ctx.translate(x + 32, y + 15); ctx.scale(dir, 1); ctx.rotate(tilt);   // drawn facing right
+  const B = flash ? WHITE : rgb(126, 32, 44), D = flash ? WHITE : rgb(60, 20, 28);
+  ctx.globalAlpha = 0.75; P(rgb(255, 160, 60), [[-26, -3], [-36 - Math.random() * 8, 0], [-26, 3]]); ctx.globalAlpha = 1;
+  P(D, [[-6, -3], [14, -15], [20, -15], [10, -2]]);                                                 // far wing, swept forward
+  P(B, [[-28, -5], [16, -6], [32, 0], [16, 6], [-28, 5]]); R(D, -30, -4, 8, 8, 2);                  // body and engine
+  P(rgb(30, 20, 26), [[6, -4], [22, -2], [22, 2], [6, 4]]); L(rgb(255, 140, 60), 9, 0, 20, 0, 1.5);  // cockpit slit
+  P(B, [[-6, 3], [14, 15], [20, 15], [10, 2]]); L(rgb(40, 40, 46), 12, 15, 26, 15, 2);              // near wing and its gun
+  ctx.restore();
+}
+
+function drawMothership(e, cam) {   // La Nave Nodriza: a huge rounded hull like a deep-sea creature, rows of lights, a glowing red core and a hangar
+  const x = e.x - cam, y = e.y, w = e.w, B = e.flash ? WHITE : rgb(70, 76, 96), D = rgb(40, 44, 58), L1 = rgb(110, 118, 140);
+  for (const ey of [44, 76]) { ctx.globalAlpha = 0.6; E(rgb(120, 200, 255), x + w - 20, y + ey - 8, 40 + Math.random() * 16, 16); ctx.globalAlpha = 1; }   // engines at the back
+  P(D, [[x + 140, y + 26], [x + 190, y - 14], [x + 220, y - 14], [x + 210, y + 26]]);                 // dorsal fin
+  E(B, x, y + 16, w, 92); E(D, x + 20, y + 70, w - 40, 34);                                           // hull and belly
+  E(L1, x + 30, y + 22, w - 60, 20);
+  for (let k = 0; k < 14; k++) { const lit = (k + Math.floor(e.t / 8)) % 5; R(lit ? rgb(150, 220, 255) : rgb(255, 230, 140), x + 50 + k * 15, y + 50, 7, 4, 1); }   // rows of windows
+  for (let k = 0; k < 10; k++) R(rgb(150, 220, 255), x + 80 + k * 15, y + 62, 6, 3, 1);
+  R(rgb(20, 20, 26), x + 110, y + 88, 70, 14, 6); ctx.globalAlpha = 0.5 + 0.3 * Math.sin(e.t * 0.1); R(rgb(255, 200, 120), x + 116, y + 92, 58, 6, 3); ctx.globalAlpha = 1;   // hangar bay
+  const pul = 0.5 + 0.5 * Math.sin(e.t * 0.15);
+  ctx.globalAlpha = 0.3 + pul * 0.3; C(rgb(255, 60, 70), x + 34, y + 60, 22); ctx.globalAlpha = 1; C(rgb(40, 20, 26), x + 34, y + 60, 13); C(rgb(255, 70, 80), x + 34, y + 60, 9);   // the red core at the nose
+  R(D, x + 22, y + 68, 20, 8, 3);                                                                     // laser cannon
+}
+
+function drawBreakable(e, cam) {   // a leafy bush or a clay pot
+  const x = e.x - cam, y = e.y;
+  if (e.kind === "?") {
+    for (const [dx, dy, r] of [[8, 18, 10], [26, 18, 10], [17, 12, 12], [10, 8, 8], [24, 8, 8]]) C(rgb(54, 140, 60), x + dx, y + dy, r);
+    for (const [dx, dy] of [[12, 10], [22, 6], [28, 16], [6, 18]]) C(rgb(110, 196, 90), x + dx, y + dy, 3);
+  } else {
+    E(rgb(170, 96, 60), x + 2, y + 6, 30, 26); R(rgb(150, 80, 50), x + 9, y, 16, 8, 3); R(rgb(196, 124, 80), x + 7, y - 2, 20, 5, 2);
+    L(rgb(110, 60, 36), x + 5, y + 18, x + 29, y + 18, 2); for (let k = 0; k < 3; k++) C(rgb(230, 190, 120), x + 10 + k * 7, y + 24, 2);
+    E("rgba(255,255,255,0.25)", x + 8, y + 9, 6, 10);
+  }
+}
+
+function drawKey(x, y, t) {   // a golden key with a sparkle
+  ctx.save(); ctx.translate(x + 12, y + 15); ctx.rotate(Math.sin(t * 0.05) * 0.2);
+  C(GOLD, 0, -8, 7); C(rgb(120, 90, 20), 0, -8, 3); R(GOLD, -2, -2, 4, 16); R(GOLD, 2, 8, 6, 3); R(GOLD, 2, 12, 4, 3);
+  ctx.restore();
+  if (t % 40 < 10) { ctx.globalAlpha = 0.8; L(WHITE, x + 20, y + 2, x + 20, y + 10, 1.5); L(WHITE, x + 16, y + 6, x + 24, y + 6, 1.5); ctx.globalAlpha = 1; }
+}
+
+function drawLockTile(x, y) {   // a locked stone door: it opens with a key
+  R(rgb(100, 106, 96), x, y, TILE, TILE); R(rgb(80, 86, 76), x + 3, y + 3, TILE - 6, TILE - 6, 3);
+  R(GOLD, x + 11, y + 10, 18, 20, 4); C(rgb(40, 30, 10), x + 20, y + 17, 3.5); P(rgb(40, 30, 10), [[x + 18, y + 18], [x + 22, y + 18], [x + 23, y + 26], [x + 17, y + 26]]);
+}
+
+function drawChest(e, cam) {   // a treasure chest; when it opens, a big shining gem rises out of it
+  const x = e.x - cam, y = e.y, o = e.open;
+  R(rgb(120, 70, 36), x, y + 14, 50, 24, 3); R(GOLD, x, y + 20, 50, 4); R(GOLD, x + 21, y + 14, 8, 24, 2);
+  ctx.save(); ctx.translate(x, y + 14); ctx.rotate(-o * 1.9);
+  R(rgb(140, 84, 44), 0, -14, 50, 14, 6); R(GOLD, 0, -6, 50, 3); R(GOLD, 21, -14, 8, 14, 2); if (!e.opened) C(rgb(60, 40, 20), 25, -3, 2.5);
+  ctx.restore();
+  if (o > 0) {
+    const gy = y + 6 - o * 40;
+    ctx.globalAlpha = 0.35 * o; C(rgb(120, 255, 200), x + 25, gy, 30); ctx.globalAlpha = 1;
+    P(rgb(60, 210, 160), [[x + 25, gy - 14], [x + 37, gy - 2], [x + 25, gy + 14], [x + 13, gy - 2]]); P(rgb(170, 255, 220), [[x + 25, gy - 14], [x + 31, gy - 2], [x + 25, gy + 4], [x + 19, gy - 2]]);
+  }
 }
 
 function drawRocket(x, y, t, roll, flame) {   // the knight's moon rocket, 34 x 74
@@ -4263,6 +4631,11 @@ function drawShot(s, cam) {
     P(rgb(255, 170, 50), [[-10, -3], [-18 - Math.random() * 6, 0], [-10, 3]]); R(s.dark, -10, -3, 18, 6, 2); P(s.col, [[8, -3], [13, 0], [8, 3]]);
     ctx.restore(); return;
   }
+  if (s.kind === "bsword") {   // a huge sword spinning through the air
+    ctx.save(); ctx.translate(x, y); ctx.rotate(s.spin * (s.dir || 1));
+    ctx.globalAlpha = 0.3; ctx.strokeStyle = WHITE; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, s.len * 0.5, 0, Math.PI * 1.3); ctx.stroke(); ctx.globalAlpha = 1;
+    drawBigSword(-s.len * 0.45, 0, 0, s.len); ctx.restore(); return;
+  }
   if (s.kind === "cball") { C(rgb(30, 30, 36), x, y, 9); C(rgb(120, 120, 130), x - 3, y - 3, 2.6); return; }   // cannonball
   if (s.kind === "barrel") {   // a rolling barrel
     ctx.save(); ctx.translate(x, y); ctx.rotate(s.t * 0.18 * (Math.sign(s.vx) || 1));
@@ -4709,6 +5082,44 @@ function drawBackground(theme, cam) {
       for (let k = 0; k < 5; k++) { const a = -Math.PI * 0.9 + k * 0.6; L(theme.near, x + 190, 448, x + 190 + Math.cos(a) * 50, 448 + Math.sin(a) * 40, 6); }
     }
     ctx.fillStyle = theme.near; ctx.fillRect(-20, 440, W + 40, 100);
+  } else if (theme.bg === "galaxy") {   // deep space in battle: coloured nebulas, a ringed planet, stars streaking past
+    for (const [cx, cy, r, col] of [[200, 140, 220, "rgba(160,60,200,0.16)"], [700, 300, 260, "rgba(40,120,220,0.14)"], [520, 90, 160, "rgba(220,80,120,0.12)"]]) {
+      const nx = wrapX(cx - cam * 0.05, W + 600) - 300;
+      const ng = ctx.createRadialGradient(nx, cy, 10, nx, cy, r); ng.addColorStop(0, col); ng.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = ng; ctx.fillRect(nx - r, cy - r, r * 2, r * 2);
+    }
+    const px = wrapX(760 - cam * 0.03, W + 500) - 250, py = 360;   // a ringed planet
+    ctx.strokeStyle = "rgba(230,200,150,0.55)"; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(px, py, 120, 26, -0.25, Math.PI, Math.PI * 2); ctx.stroke();
+    C(rgb(200, 130, 80), px, py, 70); E(rgb(220, 160, 100), px - 60, py - 30, 120, 18); E(rgb(170, 100, 60), px - 64, py + 6, 128, 14);
+    ctx.fillStyle = "rgba(0,0,30,0.4)"; ctx.beginPath(); ctx.arc(px + 22, py + 18, 72, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "rgba(230,200,150,0.7)"; ctx.beginPath(); ctx.ellipse(px, py, 120, 26, -0.25, 0, Math.PI); ctx.stroke();
+    for (const [par, n, sz, len] of [[0.08, 50, 1.5, 0], [0.3, 30, 2, 6], [0.9, 16, 2.2, 26]]) for (let i = 0; i < n; i++) {   // three layers of stars, the nearest ones streaking
+      const x = wrapX(i * 191.7 + n * 11 - cam * par, W + 60) - 30, y = (i * 83.3 + n * 29) % 500 + 6;
+      ctx.globalAlpha = 0.5 + 0.5 * ((i * 7) % 5) / 5;
+      if (len) L(WHITE, x, y, x + len, y, sz); else R(WHITE, x, y, sz, sz);
+    }
+    ctx.globalAlpha = 1;
+  } else if (theme.bg === "temple") {   // inside an ancient temple: big mossy stone blocks, carved pillars, hanging vines and flickering torches
+    for (let x = -wrapX(cam * 0.35, 120) - 120; x < W + 120; x += 120) for (let y = 0; y < 440; y += 60) {
+      const off = (y / 60) % 2 ? 60 : 0;
+      R(theme.far, x + off, y, 116, 56, 4); R("rgba(255,255,255,0.05)", x + off + 4, y + 4, 108, 6, 3);
+      if ((x / 120 + y / 60) % 3 === 0) E("rgba(70,140,70,0.25)", x + off + 20, y + 40, 60, 16);   // moss
+    }
+    const per = 560;
+    for (let x = -wrapX(cam * 0.5, per) - per; x < W + per; x += per) {
+      R(theme.near, x + 80, 60, 56, 380); R("rgba(255,255,255,0.06)", x + 84, 60, 10, 380);         // a carved pillar
+      for (let k = 0; k < 5; k++) R("rgba(0,0,0,0.18)", x + 86, 90 + k * 70, 44, 6);
+      C("rgba(0,0,0,0.25)", x + 108, 120, 14); C(rgb(80, 200, 160), x + 108, 120, 5 + Math.sin(game.t * 0.05) * 1);   // a glowing carved eye
+      for (const tx of [x + 260, x + 440]) {   // torches on the wall
+        R(rgb(90, 60, 40), tx - 4, 200, 8, 30, 2);
+        const fl = Math.sin(game.t * 0.3 + tx) * 2;
+        ctx.globalAlpha = 0.25; C(rgb(255, 170, 60), tx, 190, 34 + fl); ctx.globalAlpha = 1;
+        P(rgb(255, 150, 40), [[tx - 7, 200], [tx + fl, 176], [tx + 7, 200]]); P(rgb(255, 230, 120), [[tx - 3, 200], [tx + fl * 0.5, 186], [tx + 3, 200]]);
+      }
+      for (const [vx, vl] of [[x + 20, 160], [x + 200, 110], [x + 360, 200]]) {   // vines
+        ctx.strokeStyle = rgb(60, 130, 60); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(vx, 0); ctx.quadraticCurveTo(vx + 14, vl * 0.5, vx, vl); ctx.stroke();
+        for (let k = 1; k < 5; k++) E(rgb(80, 160, 70), vx + (k % 2 ? 2 : -10), vl * k / 5, 9, 5);
+      }
+    }
   } else if (theme.bg === "river") {   // a wide river through the desert: golden dunes, an old fort, palm trees on the banks
     for (const [par, top, col, per] of [[0.12, 300, theme.far, 520], [0.3, 350, theme.near, 380]])
       for (let x = -wrapX(cam * par, per) - per; x < W + per; x += per) { E(col, x - 60, top, per * 0.8, 220); E(col, x + per * 0.35, top + 24, per * 0.9, 220); }
@@ -5028,7 +5439,7 @@ class Game {
   }
   startLine() {
     const th = LEVELS[this.levelIndex].theme;
-    return th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
+    return th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
   }
   levelLabel(i = this.levelIndex) { return LEVELS[i].secret ? "NIVEL SECRETO" : `NIVEL ${i + 1}`; }
   afterLevel() { const d = LEVELS[this.levelIndex]; return d.returnTo ?? this.levelIndex + 1; }   // secret levels drop you back into the main game
@@ -5071,6 +5482,7 @@ class Game {
     this.level.lifeups = this.level.lifeups.filter(k => !this.lifeTaken.has(this.levelIndex + ":" + k.x));   // each extra life can only be taken once
     this.player = new Player(...this.level.start, this.upg);
     if (this.level.mode) this.player.setMode(this.level.mode, this.upg);
+    this.player.shield = this.level.shield; this.player.blockT = 0; this.keys = 0;
     this.particles = []; this.popups = []; this.camX = 0; this.shake = 0; this.levelTimer = 0;
     this.bossAnnounced = false; this.flyingAxe = null; this.shots = [];
     this.bees = null; this.rings = []; this.mirrorCd = 0; this.mirrorGlow = 0; this.inCastle = false; this.castleFlag = 0;
@@ -5342,14 +5754,15 @@ class Game {
     this.creditLines = [
       ["EL CABALLERO DEL HACHA", 44, GOLD], gap(24),
       head("PROTAGONISTA"), name("El Caballero del Hacha"), gap(),
-      head("VILLANOS"), name("El Rey Canguro"), name("El Dirigible"), name("El Caballero Negro"), name("El Tiranosaurio Rex"), name("La Araña de Hierro"), name("El Dragón Rojo"), name("Mamá Osa"), name("El Capitán Pata de Palo"), name("El Helicóptero Gigante"), gap(),
+      head("VILLANOS"), name("El Rey Canguro"), name("El Dirigible"), name("El Caballero Negro"), name("El Tiranosaurio Rex"), name("La Araña de Hierro"), name("El Dragón Rojo"), name("Mamá Osa"), name("El Capitán Pata de Palo"), name("El Helicóptero Gigante"), name("El Señor de las Espadas"), name("La Nave Nodriza"), gap(),
       head("REPARTO"), cast("Canguros boxeadores · Cocodrilos de agua salada"), cast("Serpientes taipán · Topos mineros · Tiburones"),
       cast("Ninjas de las sombras · Escorpiones del páramo"), cast("Bailaoras flamencas · Ases del aire"), cast("Jinetes negros · Arqueros del torneo"),
       cast("Raptores · Tricerátops · Pterodáctilos · Marcianos"), cast("Pilotos rivales · Monos espaciales · Osos dormilones"),
       cast("El Tiburón Gigante · La Planta Madre · Granizo y rayos"),
-      cast("Marcianos lunares · Arañas mecánicas · Dragones"), cast("Piratas · Loros · Cañones · Helicópteros"), gap(),
+      cast("Marcianos lunares · Arañas mecánicas · Dragones"), cast("Piratas · Loros · Cañones · Helicópteros"),
+      cast("Caballeros de la espada · Cazas estelares · Gelatinas"), gap(),
       head("MÚSICA Y SONIDO"), cast("Guitarra flamenca, palmas y castañuelas"), gap(),
-      head("HERRERO"), cast("Hachas, paellas, guitarras, abejas y cañones"), gap(),
+      head("HERRERO"), cast("Hachas, flechas, paellas, guitarras, abejas y cañones"), gap(),
       head("IDEA Y DISEÑO"), name("Bub"), gap(),
       head("PROGRAMACIÓN"), name("Claude"), gap(34),
       ["TUS HAZAÑAS", 24, GOLD], name(`Puntos: ${this.score}`), name(`Monedas: ${this.coins}`), name(`Enemigos derrotados: ${this.kills}`),
@@ -5522,6 +5935,15 @@ class Game {
         const m = (lvl.shrooms || []).find(m => m.cy === fy && fx >= m.cx && fx < m.cx + m.n); if (m) m.sq = 14;
       }
     }
+    if (p.blockT > 0) p.blockT--;
+    if (this.keys > 0) {   // walk into a locked door with a key to open it
+      const fx = Math.floor((p.facing > 0 ? p.x + p.w + 4 : p.x - 4) / TILE);
+      for (let cy = Math.floor(p.y / TILE); cy <= Math.floor((p.y + p.h - 1) / TILE); cy++) if (lvl.tile(fx, cy) === "|") {
+        let y0 = cy; while (lvl.tile(fx, y0 - 1) === "|") y0--;
+        for (let y = y0; lvl.tile(fx, y) === "|"; y++) { lvl.tiles.delete(fx + "," + y); this.burst(fx * TILE + 20, y * TILE + 20, [rgb(120, 126, 116), GOLD], 8, 3); }
+        this.keys--; play("door"); this.popup(fx * TILE + 20, y0 * TILE - 10, "¡Abierto!", GOLD); break;
+      }
+    }
     if (p.justNitro) { play("nitro"); this.popup(p.x + p.w / 2, p.y - 20, "¡Turbo!", GOLD); }
     if (p.justUmb) { play("umbrella"); this.popup(p.x + p.w / 2, p.y - 60, p.umbrella ? "☂ ¡Abierto!" : "Cerrado", WHITE); }
     if (this.storm) this.updateStorm();
@@ -5585,6 +6007,10 @@ class Game {
       }
       if (this.upg.knives && this.swings % 2 === 1)   // ninja throwing knife, every other swing
         this.shots.push({ kind: "knife", x: p.x + p.w / 2 + p.facing * 18, y: p.y + 24, vx: p.facing * 11, vy: 0, t: 0, hit: new Set() });
+      if (this.upg.bow && this.swings % 2 === 0) {   // twang: an arrow flies off in a gentle arc
+        this.shots.push({ kind: "arrow", x: p.x + p.w / 2 + p.facing * 16, y: p.y + 20, vx: p.facing * 13 + p.vx * 0.3, vy: -1.8, t: 0, life: 70, hit: new Set() });
+        play("swing");
+      }
       if (this.upg.laser && this.swings % 3 === 2) {   // pew! a laser bolt that goes right through everything in its way
         this.shots.push({ kind: "laser", red: true, pierce: true, x: p.x + p.w / 2 + p.facing * 22, y: p.y + 24, vx: p.facing * 16, vy: 0, t: 0, life: 48, hit: new Set() });
         play("pew");
@@ -5605,12 +6031,12 @@ class Game {
       }
     }
     if (p.plane && p.justFired) {   // rat-a-tat: each press of the attack button fires a burst
-      this.shots.push({ kind: p.ufo ? "laser" : "bullet", x: p.x + p.w + 4, y: p.y + (p.ufo ? 20 : 18) + (p.burstN % 2 ? -2 : 2), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
-      play(p.ufo ? "zap" : "gun");
+      this.shots.push({ kind: p.ufo || p.star ? "laser" : "bullet", x: p.x + p.w + 4, y: p.y + (p.star ? (p.burstN % 2 ? 2 : 32) : (p.ufo ? 20 : 18) + (p.burstN % 2 ? -2 : 2)), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
+      play(p.star ? "pew" : p.ufo ? "zap" : "gun");
     }
     if (p.justRocket) {   // every fourth press: a rocket!
-      this.shots.push({ kind: "shell", rocket: !p.ufo, plasma: p.ufo, x: p.x + p.w, y: p.y + 24, vx: 10 + p.vx, vy: p.ufo ? 0 : 0.2, t: 0, hit: new Set() }); play("rocket");
-      this.popup(p.x + p.w / 2, p.y - 12, p.ufo ? "¡Plasma!" : "¡Cohete!", GOLD);
+      this.shots.push({ kind: "shell", rocket: !p.ufo && !p.star, plasma: p.ufo || p.star, x: p.x + p.w, y: p.y + 24, vx: 10 + p.vx, vy: p.ufo || p.star ? 0 : 0.2, t: 0, hit: new Set() }); play("rocket");
+      this.popup(p.x + p.w / 2, p.y - 12, p.ufo ? "¡Plasma!" : p.star ? "¡Torpedo!" : "¡Cohete!", GOLD);
     }
     if (p.tank && p.justFired) {   // BOOM: the tank fires its cannon
       const mx = p.facing > 0 ? p.x + p.w + 10 : p.x - 10;
@@ -5713,6 +6139,14 @@ class Game {
       if (s.kind === "arrow") s.vy += 0.15;
       if (s.kind === "paella") s.vy += 0.35;
       if (s.kind === "seed") s.vy += 0.18;
+      if (s.kind === "bsword") {   // the thrown sword slows down, turns round and flies back to its owner
+        const o = s.owner; s.spin += 0.42; s.vx -= s.dir * s.dec;
+        if (o && o.alive && s.vx * s.dir < 0) {
+          const hx = o.x + o.w / 2, hy = o.y + o.h * 0.38; s.vy = (hy - s.y) * 0.06;
+          if (Math.abs(s.x - hx) < 28) { s.dead = true; s.caught = true; o.catchSword(); }
+        }
+        if (s.t % 12 === 0) play("swing");
+      }
       if (s.kind === "fire" && s.fall) s.vy += 0.12;
       if (s.kind === "bomb") { s.vy += 0.22; if (s.y > WATER_Y + 6) { s.dead = true; this.splashAt(s.x); this.burst(s.x, WATER_Y, [rgb(255, 200, 80), WHITE], 10, 4); play("splash"); } }
       if (s.kind === "erocket" && s.t % 3 === 0) this.particles.push({ x: s.x, y: s.y, vx: 0, vy: -0.3, color: rgb(200, 200, 200), life: 20, maxLife: 20, size: 4 });
@@ -5722,14 +6156,17 @@ class Game {
         if (lvl.solidAt(Math.floor((s.x + Math.sign(s.vx) * 7) / TILE), Math.floor(s.y / TILE))) s.vx = -s.vx * 0.5;
       }
       const boomy = s.kind === "shell" || s.kind === "paella" || s.kind === "grenade" || s.kind === "torpedo";
-      const sr = s.kind === "wave" ? { x: s.x - 14, y: s.y - 12, w: 28, h: 28 } : { x: s.x - 9, y: s.y - 9, w: 18, h: 18 };
+      const sr = s.kind === "wave" ? { x: s.x - 14, y: s.y - 12, w: 28, h: 28 } : s.kind === "bsword" ? { x: s.x - 18, y: s.y - 18, w: 36, h: 36 } : { x: s.x - 9, y: s.y - 9, w: 18, h: 18 };
       if (s.enemy) {
         if (box && !s.nochop && collide(box, sr)) {   // chop a fan right out of the air
           s.dead = true; this.burst(s.x, s.y, [s.col, WHITE], 10, 3); this.popup(s.x, s.y - 10, "¡Zas!", WHITE); play("hit");
-        } else if (collide(pr, sr) && this.upg.mirror && this.mirrorCd === 0 && p.invuln === 0) {   // the mirror shield sends it straight back
+        } else if (s.kind === "bsword" && p.shield && collide(pr, sr) && (s.x - (p.x + p.w / 2)) * p.facing > -4) {   // CLANG: blocked with the shield!
+          s.dead = true; p.blockT = 14; p.vx = -p.facing * 3; play("clang"); this.shake = Math.max(this.shake, 4);
+          this.burst(s.x, s.y, [WHITE, GOLD, rgb(200, 200, 210)], 14, 4); this.popup(p.x + p.w / 2, p.y - 24, "¡Bloqueado!", ARMOR_LIGHT);
+        } else if (s.kind !== "bsword" && collide(pr, sr) && this.upg.mirror && this.mirrorCd === 0 && p.invuln === 0) {   // the mirror shield sends it straight back
           s.enemy = false; s.vx = -s.vx * 1.4 || -p.facing * 8; s.vy = s.kind === "arrow" ? -Math.abs(s.vy) * 0.5 : -s.vy * 0.5; s.t = 0; s.life = 90; s.hit = new Set();
           this.mirrorCd = 480; this.mirrorGlow = 24; play("clang"); say("reflejo"); this.popup(p.x + p.w / 2, p.y - 20, "¡Reflejado!", ARMOR_LIGHT);
-        } else if (collide(pr, sr)) { ouch(s.x); s.dead = true; }
+        } else if (collide(pr, sr)) { ouch(s.x); if (s.kind !== "bsword") s.dead = true; }
       } else {
         for (const o of this.shots) if (o.enemy && !o.dead && !o.nochop && collide(sr, { x: o.x - 10, y: o.y - 10, w: 20, h: 20 })) {   // shoot fans down
           o.dead = true; this.burst(o.x, o.y, [o.col, WHITE], 10, 3); if (!boomy && !s.pierce) s.dead = true;
@@ -5742,6 +6179,7 @@ class Game {
         this.breakCrates(sr);
       }
       if ((s.kind !== "grenade" && lvl.solidAt(Math.floor(s.x / TILE), Math.floor(s.y / TILE))) || s.t > (s.life || (s.enemy ? 170 : 90))) s.dead = true;
+      if (s.dead && s.kind === "bsword" && !s.caught && s.owner && s.owner.alive) s.owner.lost(s.x, this);   // knocked down: it drops to the floor
       if (s.dead && s.kind === "rock") this.burst(s.x, s.y, [s.col, s.dark, rgb(196, 176, 140)], 12, 4);
       if (s.dead && boomy) {   // explosion (the paella one is bigger, and full of rice)
         const big = s.kind === "paella", huge = s.kind === "grenade";
@@ -5787,6 +6225,7 @@ class Game {
     if ((p.plane || p.sub || p.ship) && lvl.flagOpen() && p.x + p.w > lvl.flag.x) {   // through the finish line in the sky (or out of the sea cave, or into port)
       if (p.sub) this.popup(p.x + p.w / 2, p.y - 30, "¡A salvo!", GOLD);
       if (p.ship) this.popup(p.x + p.w / 2, p.y - 30, "¡A puerto!", GOLD);
+      if (p.star) { this.popup(p.x + p.w / 2, p.y - 30, "¡Salto al hiperespacio!", GOLD); say("hiperespacio", true); }
       play("clear"); this.finishLevel(); return;
     }
     if (p.car && lvl.flag && p.x + p.w > lvl.flag.x) {   // the chequered flag!
@@ -5807,7 +6246,7 @@ class Game {
     if (e.kind === "E") this.burst(ex, ey, [rgb(90, 90, 90), rgb(150, 150, 150), rgb(255, 160, 60)], 18, 4);
     if (boss) {
       this.popup(ex, er.y - 20, `¡Victoria! +${e.score}`); this.shake = 24;
-      play(e.kind === "X" ? "clang" : e.kind === "Z" || e.kind === "%" || e.kind === "@" ? "boom" : e.kind === "R" || e.kind === "&" || e.kind === "*" ? "roar" : "boing_big"); say("victoria", true);
+      play(e.kind === "X" ? "clang" : e.kind === "Z" || e.kind === "%" || e.kind === "@" || e.kind === "}" ? "boom" : e.kind === "{" ? "clang" : e.kind === "R" || e.kind === "&" || e.kind === "*" ? "roar" : "boing_big"); say("victoria", true);
       if (e.kind === "Z") for (let k = 0; k < 6; k++) this.burst(e.x + randInt(20, e.w - 20), e.y + randInt(10, 90), [rgb(255, 200, 80), rgb(255, 120, 40), rgb(90, 90, 90)], 20, 7);
       const f = this.level.flag; if (f) this.burst(f.x, f.y + 40, [GOLD, WHITE, ARMOR_LIGHT], 40, 6);
       return;
@@ -5827,7 +6266,8 @@ class Game {
       r: ["¡Adiós, raptor!", "screech", "raptor"], y: ["¡Toma, tricerátops!", "stomp", "tricera"], q: ["¡Adiós, pterodáctilo!", "screech", "ptero"],
       O: ["¡Pum!", "boom", null], L: ["¡Adiós, oso!", "growl", "oso"], "1": ["¡Adiós, marciano!", "zap", "marciano"], "2": ["¡Plof!", "pop", null],
       "4": ["¡Chatarra!", "clank", "chatarra"], "5": ["¡Chatarra!", "clank", "chatarra"], "6": ["¡Adiós, dragón!", "screech", "dragoncito"], "7": ["¡Adiós, dragón!", "growl", "dragoncito"],
-      "8": ["¡Al agua, pirata!", "splash", "pirata"], "9": ["¡Al agua, pirata!", "splash", "pirata"], ":": ["¡Adiós, loro!", "screech", "loro"], "!": ["¡Cañón roto!", "boom", null], "3": ["¡Derribado!", "boom", "derribado"], "+": ["¡Derribado!", "boom", "derribado"], u: ["¡Adiós, marciano!", "zap", "marciano"],
+      "8": ["¡Al agua, pirata!", "splash", "pirata"], "9": ["¡Al agua, pirata!", "splash", "pirata"], ":": ["¡Adiós, loro!", "screech", "loro"], "!": ["¡Cañón roto!", "boom", null], "3": ["¡Derribado!", "boom", "derribado"], "/": ["¡Derribado!", "boom", "derribado"], "(": ["¡Caballero vencido!", "clang", "caballero"],
+      "?": ["¡Zas!", "rustle", null], ",": ["¡Crac!", "crate", null], _: ["¡Plof!", "pop", null], "+": ["¡Derribado!", "boom", "derribado"], u: ["¡Adiós, marciano!", "zap", "marciano"],
     };
     const [word, snd, line] = WORDS[e.kind] || [null, "boing", pick(["toma", "adios"])];
     this.popup(ex, er.y - 10, `${word || pick(["¡Toma!", "¡Zas!", "¡Adiós!"])} +${e.score}`);
@@ -5861,6 +6301,7 @@ class Game {
     }
     for (let cx = Math.floor(cam / TILE); cx <= Math.floor((cam + W) / TILE) + 1; cx++) for (let cy = 0; cy < lvl.h; cy++) {
       const ch = lvl.tile(cx, cy); if (!ch || ch === "x") continue;
+      if (ch === "|") { drawLockTile(cx * TILE - cam, cy * TILE); continue; }
       if (ch === "l") { drawWreckTile(cx * TILE - cam, cy * TILE, lvl.tile(cx, cy - 1) !== "l", (cx * 7 + cy * 3) % 5 === 0 && cy >= 9 || cx % 6 === 0 && cy < 4); continue; }
       if (ch === "H") {   // hidden block: just a faint shimmer until it's found
         const found = lvl.revealed.has(cx + "," + cy);
@@ -5913,7 +6354,7 @@ class Game {
       drawShuriken(k.x - cam, by, this.t * 0.08, rgb(214, 220, 236), 12);
     }
     const fl = lvl.flag;
-    if (fl && lvl.mode === "ufo") {   // a swirling portal home
+    if (fl && (lvl.mode === "ufo" || lvl.mode === "star")) {   // a swirling portal home
       const x = fl.x - cam;
       for (let k = 0; k < 5; k++) { ctx.globalAlpha = 0.25 + k * 0.12; ES(k % 2 ? rgb(120, 230, 255) : rgb(210, 120, 255), x - 30 + k * 6 + Math.sin(this.t * 0.1 + k) * 3, 80 + k * 22, 60 - k * 12, 300 - k * 44, 5); }
       ctx.globalAlpha = 1; T("PORTAL", 22, x, 60, GOLD);
@@ -5983,11 +6424,12 @@ class Game {
       } else if (p.tank) { flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing); drawTank(p.x / 9, Math.max(0, p.recoil), true, this.t); ctx.restore(); }
       else if (p.sub) drawSub(p.x - cam, p.y + Math.sin(this.t * 0.06) * 1.5, this.t, p.vy * 0.04);
       else if (p.ship) drawShip(p.x - cam, p.y, this.t, p.aim, p.recoil, p.vx);
+      else if (p.star) drawStarfighter(p.x - cam, p.y + Math.sin(this.t * 0.1) * 1.5, this.t, p.vy * 0.05);
       else if (p.ufo) drawUFO(p.x - cam, p.y + Math.sin(this.t * 0.1) * 2, this.t, p.vy * 0.04, false, false);
       else if (p.plane) drawPlane(p.x - cam, p.y, 1, PLAYER_PLANE, true, this.t, p.vy * 0.06);
       else if (p.horse) drawJoust(p, cam, this.upg, this.t);
       else if (p.ninja) drawNinja(p, cam, this.upg, this.t);
-      else drawKnight(p, cam, this.upg, this.t);
+      else { drawKnight(p, cam, this.upg, this.t); if (p.shield) drawKnightShield(p, cam); }
     }
     if (p.storm && p.umbrella && !p.eaten && !this.inCastle && !inDoor) drawUmbrella(p, cam, this.storm ? this.storm.wind : 0);
     if (this.caught) this.caught.plant.draw(cam, true);   // the jaws close over the knight
@@ -6064,6 +6506,7 @@ class Game {
         T(p.umbrella ? "☂ PARAGUAS: ABIERTO" : "☂ PARAGUAS: CERRADO", 16, 16, 118, p.umbrella ? GOLD : WHITE, "left", "top");
         if (this.storm && this.storm.still > 20) { const k = Math.min(1, this.storm.still / 125); T("⚡", 16, 16, 142, GOLD, "left", "top"); R(HEART_EMPTY, 40, 144, 100, 12, 3); R(k > 0.6 ? HEART : GOLD, 40, 144, 100 * k, 12, 3); }
       }
+      if (this.keys > 0) T("🔑 x" + this.keys, 18, 16, 118, GOLD, "left", "top");
       if (p.ship) {
         T("CAÑÓN", 16, 16, 118, WHITE, "left", "top"); R(HEART_EMPTY, 84, 120, 60, 12, 3); R(p.canT ? GOLD : GRASS_LIGHT, 84, 120, 60 * (1 - p.canT / p.canGap), 12, 3);
       }
@@ -6090,7 +6533,7 @@ class Game {
       }
       if (p.plane) {   // rocket meter: every 4th shot launches a rocket
         const n = (p.presses || 0) % 4;
-        T(p.ufo ? "PLASMA" : "COHETE", 16, 16, 118, WHITE, "left", "top");
+        T(p.ufo ? "PLASMA" : p.star ? "TORPEDO" : "COHETE", 16, 16, 118, WHITE, "left", "top");
         for (let i = 0; i < 4; i++) R(i < n ? GOLD : i === 3 ? rgb(210, 40, 40) : HEART_EMPTY, 92 + i * 16, 119, 12, 14, 3);
       }
       T(`MONEDAS ${this.coins}`, 20, W / 2, 14, WHITE, "center", "top");
