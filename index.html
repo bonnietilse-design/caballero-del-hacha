@@ -1227,9 +1227,9 @@ class Player {
     if (this.wallLock > 0) { this.wallLock--; move = 0; }   // just kicked off a wall
     const bike = this.bike || this.car, horse = this.horse, ninja = this.ninja;   // vehicles and the ninja move differently
     this.skates = !!(game.upg && game.upg.skates && this === game.player && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship));   // roller skates: faster, and you glide
-    let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (this.nitroT ? 1.2 : bike ? 0.65 : this.tank ? 0.4 : horse ? 0.6 : 1);
+    let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (this.skates && !this.sneak ? 1.25 : 1) * (this.nitroT ? 1.2 : bike ? 0.65 : this.tank ? 0.4 : horse ? 0.6 : 1);
     if ((bike || horse) && this.onGround && move && Math.sign(this.vx) === -move) accel = 0.9;   // brakes
-    const top = (this.car ? (this.nitroT ? 13.5 : 10) : bike ? 8.5 : this.tank ? 3.4 : horse ? 7.2 : ninja ? 5.6 : this.sneak ? 3.2 : this.skates ? MAX_RUN * 1.45 : MAX_RUN) * (!bike && !horse && this.attackTimer && this.onGround ? 0.6 : 1) * (this.umbrella ? 0.8 : 1);
+    const top = (this.car ? (this.nitroT ? 13.5 : 10) : bike ? 8.5 : this.tank ? 3.4 : horse ? 7.2 : ninja ? 5.6 : this.sneak ? 3.2 : this.skates ? MAX_RUN * 1.9 : MAX_RUN) * (!bike && !horse && this.attackTimer && this.onGround ? 0.6 : 1) * (this.umbrella ? 0.8 : 1);
     if (this.nitroT && this.onGround) this.vx = Math.max(this.vx, Math.min(13.5, this.vx + 0.6));
     if (this.onGround) this.fling = false;
     if (move) {
@@ -3374,7 +3374,7 @@ function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
 }
 
 function drawKnight(p, cam, upg, t) {
-  const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving ? Math.sin(p.anim * 1.4) * 4 : 0;
+  const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving && !p.skates ? Math.sin(p.anim * 1.4) * 4 : 0;   // on skates he glides: no walking steps
   flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing);
   if (p.bike) ctx.translate(7, 0);   // the knight sits in the middle of the wider bike
   const sh = [24, 19], k = p.reach, rad = axeAngle(p) * Math.PI / 180, d = [Math.sin(rad), -Math.cos(rad)];
@@ -3412,13 +3412,13 @@ function drawKnight(p, cam, upg, t) {
     ctx.save(); ctx.translate(-7, 0); drawBike(p.x / 11, Math.abs(p.vx) > 6); ctx.restore();
     L(STEEL_DARK, 12, 36, 24, 38, 9); C(ARMOR, 24, 38, 5); L(STEEL_DARK, 24, 38, 26, 47, 8); R(BOOT, 21, 45, 13, 5, 2);
   } else {        // long legs: thigh, knee guard, shin, boot
-    const sk = p.skates, glide = sk && moving ? Math.sin(p.anim * 0.55) * 7 : 0;
-    const legs = p.onGround ? (sk ? [[7 + glide, 35 - Math.max(0, glide) * 0.3], [16 - glide, 35 - Math.max(0, -glide) * 0.3]] : [[7 + step, 35], [16 - step, 35]]) : [[4, 32], [18, 35]];
+    const sk = p.skates, push = sk && moving && Math.abs(p.vx) < 7.5 ? Math.max(0, Math.sin(p.anim * 0.18)) * 6 : 0;   // feet together, rolling; now and then a push with the back foot
+    const legs = p.onGround ? (sk ? [[5 - push, 35 - push * 0.5], [15, 35]] : [[7 + step, 35], [16 - step, 35]]) : [[4, 32], [18, 35]];
     for (const [lx, ly] of legs) {
       R(STEEL_DARK, lx, ly, 9, 17, 3); R(ARMOR, lx - 1, ly + 7, 11, 5, 2);
       if (sk) {   // the roller skates: a red boot on a steel plate with four wheels
         R(rgb(200, 50, 50), lx - 1, ly + 13, 13, 8, 3); R(WHITE, lx + 1, ly + 15, 8, 2, 1); R(STEEL, lx - 2, ly + 20, 15, 2, 1);
-        for (let k = 0; k < 4; k++) { const wx = lx - 1 + k * 4.2; C(rgb(30, 30, 34), wx, ly + 23, 2.4); C(GOLD, wx, ly + 23, 1); }
+        for (let k = 0; k < 4; k++) { const wx = lx - 1 + k * 4.2, a = p.x * 0.35 * p.facing; C(rgb(30, 30, 34), wx, ly + 23, 2.6); L(GOLD, wx - Math.cos(a) * 2, ly + 23 - Math.sin(a) * 2, wx + Math.cos(a) * 2, ly + 23 + Math.sin(a) * 2, 1.2); }   // the wheels spin as he rolls
       } else R(BOOT, lx - 1, ly + 16, 13, 5, 2);
     }
   }
@@ -5770,21 +5770,22 @@ function drawShop(g) {
   T(`Tus monedas: ${g.coins}`, 22, W / 2, 80, WHITE);
   const lay = shopLayout();
   SHOP.forEach((item, i) => {
-    const c = lay.cards[i], owned = g.upg[item.id], sel = g.shopSel === i, afford = g.coins >= item.price;
-    R(owned ? rgb(52, 92, 58) : rgb(96, 64, 40), c.x, c.y, c.w, c.h, 12);
+    const c = lay.cards[i], owned = g.owned && g.owned[item.id], on = owned && g.upg[item.id], sel = g.shopSel === i, afford = g.coins >= item.price;
+    R(on ? rgb(52, 92, 58) : owned ? rgb(70, 66, 62) : rgb(96, 64, 40), c.x, c.y, c.w, c.h, 12);
     RS(sel ? GOLD : rgb(150, 108, 66), c.x, c.y, c.w, c.h, sel ? 4 : 2, 12);
     emoji(item.icon, 34, c.x + c.w / 2, c.y + 28);
     T(item.name, item.name.length > 15 ? 12 : 14, c.x + c.w / 2, c.y + 62, WHITE);
     item.desc.forEach((line, k) => T(line, line.length > 18 ? 10.5 : 12, c.x + c.w / 2, c.y + 84 + k * 16, rgb(236, 220, 196)));
-    T(owned ? "¡TUYO!" : `${item.price} monedas`, 16, c.x + c.w / 2, c.y + 122,
-      owned ? GRASS_LIGHT : afford ? GOLD : rgb(240, 120, 110));
+    if (owned && !on) { ctx.globalAlpha = 0.45; R(rgb(30, 26, 22), c.x, c.y, c.w, 110, 12); ctx.globalAlpha = 1; }   // switched off: greyed out
+    T(on ? "✓ PUESTO" : owned ? "QUITADO" : `${item.price} monedas`, 16, c.x + c.w / 2, c.y + 122,
+      on ? GRASS_LIGHT : owned ? rgb(200, 190, 180) : afford ? GOLD : rgb(240, 120, 110));
   });
   const b = lay.button, bsel = g.shopSel === SHOP.length;
   R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14);
   RS(bsel ? GOLD : rgb(40, 80, 36), b.x, b.y, b.w, b.h, 3, 14);
   T("¡Al mapa! ▶", 24, W / 2, b.y + b.h / 2, WHITE);
   if (g.shopMsg && g.shopMsgT > 0) T(g.shopMsg, 20, W / 2, 492, g.shopMsgCol);
-  else T(isTouch ? "Toca una mejora para comprarla" : "← → ↑ ↓ elegir     ENTER comprar", 17, W / 2, 494, rgb(220, 200, 170));
+  else T(isTouch ? "Toca una mejora para comprarla · toca lo tuyo para quitarlo o ponerlo" : "← → ↑ ↓ elegir     ENTER comprar · quitar · poner", 17, W / 2, 494, rgb(220, 200, 170));
 }
 
 // ------------------------------------------------------------------ game
@@ -6007,7 +6008,7 @@ function drawMap(g) {   // the world map: four lands side by side, the road betw
 class Game {
   constructor() {
     this.t = 0; this.state = "title"; this.stateTimer = 0; this.paused = false;
-    this.lives = START_LIVES; this.score = 0; this.coins = 0; this.levelIndex = 0; this.upg = {};
+    this.lives = START_LIVES; this.score = 0; this.coins = 0; this.levelIndex = 0; this.upg = {}; this.owned = {};
     this.kills = 0; this.deaths = 0; this.runFrames = 0; this.swings = 0; this.secrets = new Set(); this.noDoors = false; this.lifeTaken = new Set();
     this.shopSel = 0; this.shopMsg = ""; this.shopMsgT = 0; this.shopMsgCol = WHITE;
     this.tileSets = {};
@@ -6024,7 +6025,7 @@ class Game {
   }
   newGame(levelIndex = 0) {   // from the title: fresh start; after game over: carry on in the same level
     this.paused = false; this.levelIndex = levelIndex;
-    if (levelIndex === 0) { this.upg = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.secrets = new Set(); this.lifeTaken = new Set(); }
+    if (levelIndex === 0) { this.upg = {}; this.owned = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.secrets = new Set(); this.lifeTaken = new Set(); }
     this.lives = START_LIVES; this.score = 0;
     this.resetLevel(); this.state = "play"; say(this.startLine(), true);
   }
@@ -6043,7 +6044,7 @@ class Game {
     return r;
   }
   startGame() {   // from the title: fresh lives, coins and upgrades, then the map (beaten levels and found secrets are remembered)
-    this.upg = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.lifeTaken = new Set(); this.lives = START_LIVES; this.score = 0;
+    this.upg = {}; this.owned = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.lifeTaken = new Set(); this.lives = START_LIVES; this.score = 0;
     this.loadProgress();
     const first = Array.from({ length: MAIN_LEVELS }, (_, i) => i).find(i => !this.done.has(LEVELS[i].name)) ?? 0;
     this.openMap(first);
@@ -6100,12 +6101,17 @@ class Game {
   nextLevel() { this.levelIndex = this.afterLevel(); this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
   buy(i) {
     const item = SHOP[i];
-    if (this.upg[item.id]) { this.shopMessage("¡Ya lo tienes!", WHITE); return; }
+    if (!this.owned) this.owned = {};
+    if (this.owned[item.id]) {   // already yours: take it off, or put it back on
+      this.upg[item.id] = !this.upg[item.id];
+      this.shopMessage(this.upg[item.id] ? `¡${item.name}: puesto!` : `${item.name}: quitado`, this.upg[item.id] ? GRASS_LIGHT : rgb(220, 200, 170));
+      play(this.upg[item.id] ? "clang" : "click"); return;
+    }
     if (this.coins < item.price) {
       this.shopMessage(`¡No tienes bastante oro! Te faltan ${item.price - this.coins} monedas.`, rgb(255, 140, 120));
       play("nope"); say("nooro", true); return;
     }
-    this.coins -= item.price; this.upg[item.id] = true;
+    this.coins -= item.price; this.upg[item.id] = true; this.owned[item.id] = true;
     this.shopMessage(`¡${item.name} comprado!`, GRASS_LIGHT);
     const c = shopLayout().cards[i];
     this.burst(c.x + c.w / 2, c.y + 30, [GOLD, WHITE, rgb(255, 150, 60)], 26, 6);
