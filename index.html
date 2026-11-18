@@ -80,7 +80,7 @@
 //              d  flamenco dancer   K  the tank
 //              B  Rey Canguro (boss)   [ ]  edges of the boss arena
 const LEVELS = [
-  { name: "La Pradera", theme: "meadow", speed: 1,
+  { name: "La Pradera", door: 39, theme: "meadow", speed: 1,
     map: [
       "..................................................................................................................................",
       "..................................................................................................................................",
@@ -88,15 +88,15 @@ const LEVELS = [
       "..................................................................................................................................",
       "...................................................................................j..............................................",
       ".....................................................................................oooo.........................................",
-      ".................................j.................ooo...............................====......................j..................",
+      ".................................j.................ooo...............................====......................j.....D............",
       "..........................ooooo.............................ooooo.............ooooo..................................#............",
-      "......ooo.................=====...........oo........#.......=====.......oo....=====...................oo............##.oooo.......",
+      "......ooo.................=====...........Ço........#.......=====.......oo....=====...................oo............##.oooo.......",
       "....................................C.....==.......##...................==.................C..........==...........###............",
       "..P...........t....................CC..t..........###.....T....t...t............c...t.....CC...T..t.........t.....####.......F....",
       "####################..###################....##########################....##########################....#########################",
       "####################..###################....##########################....##########################....#########################"
     ] },
-  { name: "El Bosque", theme: "forest", speed: 1.1, door: 31, hint: "¡Ojo con las serpientes taipán!",
+  { name: "El Bosque", theme: "forest", speed: 1.1, door: 34, hint: "¡Ojo con las serpientes taipán!",
     map: [
       "......................................................................................................................................................",
       "......................................................................................................................................................",
@@ -105,7 +105,7 @@ const LEVELS = [
       "............................................................HH........................................................................................",
       "..............................w.................w.......oo............w...........................w.....................w...................w.........",
       "...................................................ooo..HH............................................................................................",
-      "............................ooooo...............................................ooooo.................................oooo............................",
+      "............................ooooo...............................................ooÇoo.................................oooo............................",
       ".....ooo....................=====........oo.........##.........oo...............=====......oo....................oo...====...................oooo.....",
       ".........................................==...C....###.........==..........................==....................==...................................",
       "..P.........t............n.....c...^^.t.......C...####...n................j.^^.....t...n........c...^^..T...^^..............n...j...^^...t...c....F...",
@@ -144,7 +144,7 @@ const LEVELS = [
       "##############################.......###############.........###############............################........##############..............##################.........#####################################",
       "##############################.......###############.........###############............################........##############..............##################.........#####################################"
     ] },
-  { name: "La Mina", theme: "mine", speed: 1.15, door: 32, hint: "¡Cuidado con los topos!",
+  { name: "La Mina", theme: "mine", speed: 1.15, door: 35, hint: "¡Cuidado con los topos!",
     map: [
       "#########################################################################################################################################################################",
       "#########################################################################################################################################################################",
@@ -168,7 +168,7 @@ const LEVELS = [
       "........................................................................................................................................................................................................................................",
       ".............................................v..................................v...................................v..........................v......................................v.................................................",
       "........................................................................................................................................................................................................................................",
-      "..........ooooo.........................................................................ooooo.................................................ooooo...............................................................oooo..................",
+      "..........ooooo.........................................................................ooooÇ.................................................ooooo...............................................................oooo..................",
       "..........=====................ooooo.........................ooooo......................=====...ooooo..........................ooooo..........=====..............ooooo...................................oooo.....====..................",
       "........................................................................................................................................................................................................................................",
       "........................................................................................................................................................................................................................................",
@@ -192,7 +192,7 @@ const LEVELS = [
       "########################",
       "########################"
     ] },
-  { name: "La Ruta del Rock", theme: "rock", speed: 1.1, hint: "¡Dale hachazos a las camionetas! Cuando hagan ¡BRUM BRUM!, salta por encima o súbete a una roca",
+  { name: "La Ruta del Rock", door: 38, theme: "rock", speed: 1.1, hint: "¡Dale hachazos a las camionetas! Cuando hagan ¡BRUM BRUM!, salta por encima o súbete a una roca",
     map: [
       "......................................................................................................................................................................................................................",
       "......................................................................................................................................................................................................................",
@@ -202,13 +202,29 @@ const LEVELS = [
       "......................................................................................................................................................................................................................",
       "......................................................................................................................................................................................................................",
       "............................ooooo.................ooooo...................ooooo.................ooooo.................ooooo...........................................................................................",
-      "................oooo....................oooo..........................................oooo......................U...................oooo....ooooo.....................................................................",
-      "........................................====..........................................====..........................................====..............................................................................",
+      "................oooo....................oooo..........................................oooo......................U...................Çooo....ooooo.....................................................................",
+      "........................................====..........................................====..........................................====............D.................................................................",
       "..P......#............<.............k...................<.....k.....#.........<...............k.......<.........#...........<...k...................#.....k.....[.................»....................]......F.......",
       "########################################....##########################################....##########################################....##############################################################################",
       "########################################....##########################################....##########################################....##############################################################################",
     ] },
   { name: "Locura de Monstruos", theme: "desert", speed: 1.1, mode: "monster", hint: "◀ ▶ conducir · SALTA saltar · 🪓 turbo · ¡Cae encima de los 8 camiones para aplastarlos!",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "El Derbi de Choques", theme: "desert", speed: 1.05, mode: "derby", garage: true, hint: "◀ ▶ girar · SALTA marcha atrás · 🪓 turbo · ¡Choca por los lados! El parachoques delantero es fuerte",
     map: [
       "........................",
       "........................",
@@ -410,13 +426,45 @@ const LEVELS = [
       "......................................................b..........................................................b..............................................b.....................",
       "......................................................................................................................................................................................",
       "......................................................................................................................................................................................",
-      "....................ooooo...................................ooooo...................................ooooo.............................................ooooo...........................",
+      "....................ooooo...................................ooooo...................................Çoooo.............................................ooooo...........................",
       "............ooo.....=====....................ooo............=====.........................ooo.......=====..............................ooo............=====...............oo..........",
       "..P...K............d..........C....d..............d.......d...........d.....C.....d............d............d.......d....C......d.............d...............d.......d...........F...",
       "########################################.#############################################.############################################.##################################################",
       "########################################.#############################################.############################################.##################################################"
     ] },
-  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 33, hint: "¡Salta de pared en pared y lanza shuriken!",
+  { name: "La Persecución", theme: "night", speed: 1.05, mode: "police", hint: "▶ acelerar · ◀ frenar · SALTA saltar · 🪓 sirena turbo · ¡Alcanza a los 5 ladrones!",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "Los Bomberos", theme: "meadow", speed: 1.05, mode: "fire", hint: "◀ ▶ conducir · 🪓 (mantener) agua · SALTA escalera para los gatitos · rellena en las bocas de incendios",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 36, hint: "¡Salta de pared en pared y lanza shuriken!",
     map: [
       "................................................................................................................................................................................",
       "................................................................................................................................................................................",
@@ -512,7 +560,7 @@ const LEVELS = [
       "########################################################################",
       "########################################################################"
     ] },
-  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 34, hint: "¡No te caigas al agua!",
+  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 37, hint: "¡No te caigas al agua!",
     map: [
       "............................................................................................................................................................................",
       "............................................................................................................................................................................",
@@ -522,7 +570,7 @@ const LEVELS = [
       "............................................g.........................................g.................................g...............................g...................",
       "............................................................................................................................................................................",
       "................oooo....oooo......oooo..............................oooo....oooo..........oooo..................oooo........oooo................................oooo........",
-      "........................====........................oo......................====..........................oo....====..........................oo................====........",
+      "........................====........................oÇ......................====..........................oo....====..........................oo................====........",
       "....................................................==....................................................==..................................==............................",
       "..P.......................c........s...........................c.....s.............................^.....s...........c.......s...............s........^.....c.....D.....F...",
       "################....##############....############.....#############....##################....##########.....###############....############.....###########################",
@@ -639,7 +687,39 @@ const LEVELS = [
       "..P.....?.?.?.....,,......?..._.........n...?.?.........,,...._.............|......._...................?.?...n.....,......._.......|.......?..###....,,......_.....`.....F.....",
       "##################################....######################################################....################################################################################",
       "##################################....######################################################....################################################################################"
-    ] }
+    ] },
+  { name: "El Gran Show", theme: "desert", speed: 1.05, mode: "stunt", secret: true, hint: "▶ acelerar · en el aire ◀ ▶ dar volteretas · 🪓 turbo · ¡Aterriza con las ruedas!",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "El Cuarto de los Juguetes", theme: "meadow", speed: 1.05, mode: "toy", secret: true, hint: "◀ ▶ conducir · SALTA saltar · 🪓 turbo · ¡Despacio junto al perro!",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
 ];
 
 // Upgrades sold in the blacksmith's shop between levels (price in coins)
@@ -674,11 +754,11 @@ const WATER_Y = 11 * TILE + 14;   // surface of the sea in water levels
 const SOLID = "#=CHQxl|";   // ground, platforms, crates, hidden blocks, cracked stone
 const MAIN_LEVELS = LEVELS.filter(l => !l.secret).length;   // the secret levels come after these
 const WORLDS = [
-  { name: "LA TIERRA", lv: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
-  { name: "EL HIELO", lv: [11, 12, 13, 14] },
-  { name: "EL CIELO Y EL ESPACIO", lv: [15, 16, 17, 18, 19] },
-  { name: "EL REINO", lv: [20, 21, 22, 23, 24, 25, 26] },
-  { name: "LOS MARES", lv: [27, 28, 29, 30] },
+  { name: "LA TIERRA", lv: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { name: "EL HIELO", lv: [12, 13, 14, 15] },
+  { name: "EL CIELO Y EL ESPACIO", lv: [16, 17, 18, 19, 20] },
+  { name: "EL REINO", lv: [21, 22, 23, 24, 25, 26, 27, 28, 29] },
+  { name: "LOS MARES", lv: [30, 31, 32, 33] },
 ];
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
@@ -752,6 +832,7 @@ const ACE_PLANE = [rgb(200, 30, 40), rgb(140, 16, 24), WHITE];
 const ENEMY_PLANES = [[rgb(96, 96, 104), rgb(64, 64, 72), rgb(210, 44, 44)], [rgb(130, 40, 40), rgb(86, 24, 24), rgb(250, 200, 40)],
                       [rgb(74, 96, 62), rgb(48, 64, 42), rgb(240, 240, 240)]];
 const ENEMY_COLORS = {
+  "Ç": [GOLD, WHITE, GOLD],
   "¿": [WHITE, rgb(30, 30, 40), rgb(250, 160, 40)], "¡": [WHITE, rgb(200, 220, 240), rgb(240, 130, 40)], "¢": [WHITE, rgb(200, 220, 240), rgb(30, 30, 40)],
   "<": [rgb(200, 40, 40), rgb(40, 36, 44), rgb(255, 170, 60)], "»": [rgb(40, 40, 50), rgb(200, 40, 40), rgb(255, 200, 60)],   // pickup trucks
   h: [rgb(18, 16, 26), rgb(150, 20, 40), WHITE],                    // shadow ninja
@@ -914,6 +995,9 @@ function seeded(a) {   // small repeatable random number generator
 
 // ------------------------------------------------------------------ sound (generated, no files needed)
 const VOICE_LINES = {
+  show: "¡Bienvenidos al Gran Show! ¡Volteretas!", derbi: "¡El derbi de choques! ¡Que gane el más duro!", derbi_ya: "¡Ya!", eliminado: "¡Fuera de combate!", campeon: "¡Campeón!",
+  policia: "¡Alto, policía! ¡A por los ladrones!", ladron: "¡Ahí va un ladrón!", detenido: "¡Detenido!", bomberos: "¡Bomberos al rescate!", apagado: "¡Fuego apagado!", gatito: "¡Gatito a salvo!",
+  juguetes: "¡Me he encogido! ¡Qué grande es todo!", guau: "¡Guau, guau!", coche: "¡Coche blindado!",
   avalancha: "¡Avalancha! ¡Escóndete!", yeti: "¡Un yeti! ¡Corre, sube!", guerra_nieve: "¡Guerra de bolas de nieve!", muneco: "¡El Muñeco de Nieve Gigante!", fuerte: "¡Fuerte roto!",
   monstruos: "¡Locura de monstruos! ¡Aplástalos a todos!", crunch: "¡Crunch!", aplastados: "¡Todos aplastados!",
   rock_nivel: "¡Rock and roll! ¡Cuidado con las camionetas!", monstruo: "¡El Monstruo del Rock!", camioneta: "¡Adiós, rockero!",
@@ -1108,6 +1192,11 @@ function buildSounds(rate) {
     door: mixAll(lowpass(synth(rate, 0.55, 210, 140, "square", 0.12, 34, 0.03, 0.5), 0.2), synth(rate, 0.18, 90, 60, "sine", 0.5, 0, 0.002, 2)),
     secret: jingle([784, 988, 1175, 1568, 1319, 1760], 0.08, 0.3),
     oneup: jingle([659, 784, 1319, 1047, 1175, 1568], 0.09, 0.35),
+    siren: concat(synth(rate, 0.32, 640, 980, "square", 0.1, 0, 0.01, 1), synth(rate, 0.32, 980, 640, "square", 0.1, 0, 0.01, 1), synth(rate, 0.32, 640, 980, "square", 0.1, 0, 0.01, 1), synth(rate, 0.32, 980, 640, "square", 0.1, 0, 0.01, 1)),
+    horn_clasica: (() => { const a = mixAll(synth(rate, 0.16, 440, 440, "square", 0.13, 0, 0.005, 1), synth(rate, 0.16, 554, 554, "square", 0.1, 0, 0.005, 1)); return concat(a, silence(rate, 0.06), a); })(),
+    horn_pato: concat(synth(rate, 0.2, 760, 420, "square", 0.14, 0, 0.005, 1.5), silence(rate, 0.05), synth(rate, 0.26, 760, 380, "square", 0.14, 0, 0.005, 1.5)),
+    horn_camion: mixAll(synth(rate, 0.8, 146, 146, "square", 0.16, 0, 0.02, 0.6), synth(rate, 0.8, 185, 185, "square", 0.13, 0, 0.02, 0.6), synth(rate, 0.8, 220, 220, "square", 0.1, 0, 0.02, 0.6)),
+    horn_melodia: concat(...[523, 659, 784, 659, 784, 1047].map((f, i) => synth(rate, i === 5 ? 0.32 : 0.1, f, f, "square", 0.11, 0, 0.005, 1))),
     rock: rockLoop(rate), riff: mixAll(distGtr(rate, 110, 0.4, false), distGtr(rate, 164.8, 0.4, false)),
     chord: (() => { const rnd = seeded(5);
       return mixAll(...[164.8, 207.7, 246.9, 329.6, 415.3, 493.9].map((fr, k) => concat(silence(rate, k * 0.014), pluck(rate, fr, 0.9, 0.24, rnd)))); })(),
@@ -1251,7 +1340,7 @@ class Player {
     this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
     this.bike = false; this.rideHits = new Set();
     this.tank = false; this.recoil = 0; this.justFired = false; this.fireCd = upg.quick ? 18 : 26;
-    this.assist = true; this.mode = null; this.snowball = false; this.shuriken = 0; this.wallT = 0; this.wallDir = 1; this.wallLock = 0;
+    this.assist = true; this.mode = null; this.snowball = false; this.carT = 0; this.shuriken = 0; this.wallT = 0; this.wallDir = 1; this.wallLock = 0;
     this.gunT = 0; this.gunCd = upg.quick ? 6 : 9; this.justRocket = false;
   }
   setMode(m, upg) {   // special levels: ninja, biplane, warhorse or broadsword
@@ -1347,7 +1436,7 @@ class Player {
     return { x: this.facing > 0 ? cx : cx - w, y: r.y - Math.round(44 * k), w, h: Math.round(56 + 56 * k) };
   }
   hurt(srcX) {
-    if (this.invuln > 0 || this.dead) return false;
+    if (this.invuln > 0 || this.dead || this.carT > 0) return false;   // (nothing hurts the armoured car)
     this.hearts--; this.invuln = INVULN_FRAMES; this.knockback = 12;
     this.vx = srcX > this.x + this.w / 2 ? -6 : 6; this.vy = -6;
     return true;
@@ -1383,7 +1472,7 @@ class Player {
     this.skates = !!(game.upg && game.upg.skates && this === game.player && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship));   // roller skates: faster, and you glide
     let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (this.skates && !this.sneak ? 1.25 : 1) * (this.nitroT ? 1.2 : bike ? 0.65 : this.tank ? 0.4 : horse ? 0.6 : 1);
     if ((bike || horse) && this.onGround && move && Math.sign(this.vx) === -move) accel = 0.9;   // brakes
-    const top = (this.car ? (this.nitroT ? 13.5 : 10) : bike ? 8.5 : this.tank ? 3.4 : horse ? 7.2 : ninja ? 5.6 : this.sneak ? 3.2 : this.skates ? MAX_RUN * 1.9 : MAX_RUN) * (!bike && !horse && this.attackTimer && this.onGround ? 0.6 : 1) * (this.umbrella ? 0.8 : 1);
+    const top = (this.car ? (this.nitroT ? 13.5 : 10) : bike ? 8.5 : this.tank ? 3.4 : horse ? 7.2 : ninja ? 5.6 : this.sneak ? 3.2 : this.carT > 0 ? MAX_RUN * 1.8 : this.skates ? MAX_RUN * 1.9 : MAX_RUN) * (!bike && !horse && this.attackTimer && this.onGround ? 0.6 : 1) * (this.umbrella ? 0.8 : 1);
     if (this.nitroT && this.onGround) this.vx = Math.max(this.vx, Math.min(13.5, this.vx + 0.6));
     if (this.onGround) this.fling = false;
     if (move) {
@@ -3344,7 +3433,7 @@ class Level {
     this.name = def.name; this.hint = def.hint || ""; this.theme = THEMES[def.theme]; this.bike = null; this.tank = null; this.mode = def.mode || null; this.shield = !!def.shield; this.pickups = [];
     this.rows = rows.map(r => r.padEnd(width, "."));
     this.w = width; this.h = rows.length; this.pxW = this.w * TILE; this.pxH = this.h * TILE;
-    this.tiles = new Map(); this.vines = []; this.spikes = []; this.coins = []; this.enemies = []; this.lifeups = []; this.door = null; this.revealed = new Set();
+    this.tiles = new Map(); this.vines = []; this.spikes = []; this.coins = []; this.enemies = []; this.lifeups = []; this.carups = []; this.door = null; this.revealed = new Set();
     this.oils = []; this.boosts = []; this.clocks = []; this.leaves = [];
     this.grav = def.grav || 1; this.start = [TILE * 2, TILE * 9]; this.flag = null; this.boss = null; this.arena = [0, this.pxW];
     const later = [];
@@ -3389,6 +3478,7 @@ class Level {
       else if (ch === "O") this.enemies.push(new Asteroid(x + TILE / 2, y + TILE / 2, Math.random() < 0.45 ? 2 : 1, mul));
       else if (ch === "u") this.enemies.push(new Alien(x, y, mul));
       else if (ch === "U") this.lifeups.push({ x: x + TILE / 2, y: y + TILE / 2 });
+      else if (ch === "Ç") this.carups.push({ x: x + TILE / 2, y: y + TILE / 2 });
       else if (ch === "D") this.door = { x: x + 4, y: y + TILE - 64, w: 32, h: 64, to: def.door };
       else if (ch === "R") later.push(["R", x, y]);
       else if (ch === "Y") this.enemies.push(new Rival(x, y, mul));
@@ -3881,6 +3971,429 @@ function drawGiantSnowman(e, cam) {   // El Muñeco de Nieve Gigante
   for (const s of [-1, 1]) { L(rgb(110, 76, 40), x + s * 34, y - 130, x + s * 84, y - 150 + (s === e.dir ? ay : 0), 6); L(rgb(110, 76, 40), x + s * 70, y - 145 + (s === e.dir ? ay * 0.8 : 0), x + s * 80, y - 170 + (s === e.dir ? ay : 0), 4); }
   if (e.arm > 0) C(WHITE, x + e.dir * 86, y - 156 + ay, 12);
 }
+// ================================================================ cars, cars, cars: the garage, the derby, the stunt show, the town and the toy room
+const STUNT_G = 0.3;
+const CAR_BODIES = [
+  { id: "clasico", name: "Clásico", hp: 1, mass: 1, speed: 1, len: 58, wid: 30 },
+  { id: "camioneta", name: "Camioneta", hp: 1.2, mass: 1.25, speed: 0.95, len: 66, wid: 32 },
+  { id: "furgoneta", name: "Furgoneta", hp: 1.4, mass: 1.45, speed: 0.86, len: 62, wid: 34 },
+  { id: "taxi", name: "Taxi", hp: 0.95, mass: 0.95, speed: 1.05, len: 58, wid: 30 },
+  { id: "deportivo", name: "Deportivo", hp: 0.8, mass: 0.85, speed: 1.18, len: 62, wid: 28 },
+];
+const CAR_COLS = [["Rojo", [210, 40, 40]], ["Azul", [40, 100, 220]], ["Verde", [40, 160, 70]], ["Amarillo", [240, 200, 30]], ["Naranja", [240, 130, 30]], ["Morado", [130, 60, 190]], ["Rosa", [236, 100, 170]], ["Negro", [40, 40, 50]], ["Blanco", [230, 232, 238]]].map(([name, c]) => ({ id: name.toLowerCase(), name, c }));
+const CAR_WHEELS = [{ id: "normal", name: "Normales", hp: 0, speed: 0, grip: 0 }, { id: "gordas", name: "Gordas", hp: 10, speed: -0.02, grip: 0.06 }, { id: "monstruo", name: "¡Monstruo!", hp: 25, speed: -0.06, grip: 0.03 }];
+const CAR_DECOS = [{ id: "llamas", name: "Llamas" }, { id: "rayas", name: "Rayas" }, { id: "estrellas", name: "Estrellas" }, { id: "rayos", name: "Rayos" }, { id: "nada", name: "Sin adornos" }];
+const CAR_HORNS = [{ id: "clasica", name: "¡Mec mec!" }, { id: "pato", name: "Pato" }, { id: "camion", name: "Camión" }, { id: "melodia", name: "Melodía" }];
+const GARAGE_ROWS = [["body", "CARROCERÍA", CAR_BODIES], ["color", "COLOR", CAR_COLS], ["wheels", "RUEDAS", CAR_WHEELS], ["deco", "ADORNOS", CAR_DECOS], ["horn", "BOCINA", CAR_HORNS]];
+let GARAGE = { body: "clasico", color: "rojo", wheels: "gordas", deco: "llamas", horn: "clasica", num: 7 };
+try { const sv = JSON.parse(localStorage.getItem("caballero_coche") || "null"); if (sv) { for (const [k, , list] of GARAGE_ROWS) if (list.some(o => o.id === sv[k])) GARAGE[k] = sv[k]; if (sv.num > 0 && sv.num < 100) GARAGE.num = sv.num; } } catch (e) {}
+function saveGarage() { try { localStorage.setItem("caballero_coche", JSON.stringify(GARAGE)); } catch (e) {} }
+function garageStats() {
+  const b = CAR_BODIES.find(o => o.id === GARAGE.body), w = CAR_WHEELS.find(o => o.id === GARAGE.wheels);
+  return { hp: Math.round(100 * b.hp + w.hp), mass: b.mass + (w.id === "monstruo" ? 0.15 : 0), speed: b.speed + w.speed, grip: 0.18 + w.grip };
+}
+const garageCol = () => rgb(...CAR_COLS.find(o => o.id === GARAGE.color).c);
+function stuntY(T, x) {
+  let h = 0;
+  for (const f of T.feats) if (x >= f.x0 && x < f.x1) h = Math.max(h, f.h0 + (f.h1 - f.h0) * (x - f.x0) / (f.x1 - f.x0));
+  return 440 - h;
+}
+function roadY(T, x) { return T.kind === "police" ? 440 + Math.sin(x * 0.0021) * 10 + Math.sin(x * 0.0007) * 14 : 440; }
+function toyY(T, x) {
+  const P2 = T.pts;
+  for (let i = 0; i < P2.length - 1; i++) if (x >= P2[i][0] && x < P2[i + 1][0]) return 440 - (P2[i][1] + (P2[i + 1][1] - P2[i][1]) * (x - P2[i][0]) / (P2[i + 1][0] - P2[i][0]));
+  return 440;
+}
+
+// ---------------------------------------------------------------- a top-down derby car
+function drawDerbyCar(x, y, a, c, t, scale = 1) {
+  const look = c.look, b = CAR_BODIES.find(o => o.id === look.body) || CAR_BODIES[0];
+  const col = look.col || rgb(...(CAR_COLS.find(o => o.id === look.color) || CAR_COLS[0]).c), L = b.len, Wd = b.wid, wh = look.wheels;
+  const fl = c.lastHit && game.t - c.lastHit < 6;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.scale(scale, scale);
+  ctx.globalAlpha = 0.3; E(BLACK, -L / 2 + 2, -Wd / 2 + 4, L, Wd); ctx.globalAlpha = 1;
+  const ww = wh === "monstruo" ? 16 : wh === "gordas" ? 12 : 9, wl = wh === "monstruo" ? 20 : 15, wo = wh === "monstruo" ? 6 : wh === "gordas" ? 3 : 1;
+  for (const sx of [-L / 2 + 13, L / 2 - 13]) for (const sy of [-1, 1]) {   // tyres
+    R(rgb(24, 24, 28), sx - wl / 2, sy * (Wd / 2 + wo) - ww / 2, wl, ww, 3);
+    for (let k = 0; k < 3; k++) L2(rgb(60, 60, 66), sx - wl / 2 + ((c.wheel * 3 + k * 5) % wl), sy * (Wd / 2 + wo) - ww / 2 + 1, sx - wl / 2 + ((c.wheel * 3 + k * 5) % wl), sy * (Wd / 2 + wo) + ww / 2 - 1, 1.5);
+  }
+  const body = c.dead ? rgb(60, 56, 54) : fl ? WHITE : col, dark = "rgba(0,0,0,0.28)";
+  if (b.id === "camioneta") { R(body, -L / 2, -Wd / 2, L, Wd, 6); R(dark, -L / 2 + 4, -Wd / 2 + 4, L * 0.42, Wd - 8, 3); R(rgb(150, 200, 230), L * 0.02, -Wd / 2 + 4, 9, Wd - 8, 2); }
+  else if (b.id === "furgoneta") { R(body, -L / 2, -Wd / 2, L, Wd, 5); R("rgba(255,255,255,0.18)", -L / 2 + 6, -Wd / 2 + 4, L * 0.62, Wd - 8, 3); R(rgb(150, 200, 230), L / 2 - 15, -Wd / 2 + 4, 8, Wd - 8, 2); }
+  else if (b.id === "deportivo") { P(body, [[-L / 2, -Wd / 2 + 2], [L / 2 - 8, -Wd / 2], [L / 2, -Wd / 2 + 6], [L / 2, Wd / 2 - 6], [L / 2 - 8, Wd / 2], [-L / 2, Wd / 2 - 2]]); R(rgb(150, 200, 230), -2, -Wd / 2 + 5, 12, Wd - 10, 3); R(rgb(30, 30, 34), -L / 2 - 4, -Wd / 2 + 1, 6, Wd - 2, 2); }
+  else { R(body, -L / 2, -Wd / 2, L, Wd, 9); R(rgb(150, 200, 230), 4, -Wd / 2 + 5, 9, Wd - 10, 3); R(rgb(130, 180, 210), -L / 2 + 9, -Wd / 2 + 5, 7, Wd - 10, 3); R(dark, -4, -Wd / 2 + 5, 8, Wd - 10, 2); }
+  if (b.id === "taxi") { R(rgb(40, 40, 44), -6, -6, 12, 12, 2); R(GOLD, -5, -5, 10, 10, 2); }
+  if (!c.dead) {   // decoration
+    const d = look.deco;
+    if (d === "rayas") { R("rgba(255,255,255,0.85)", -L / 2, -4, L, 3); R("rgba(255,255,255,0.85)", -L / 2, 1, L, 3); }
+    else if (d === "llamas") for (const s of [-1, 1]) P(rgb(255, 170, 30), [[L / 2 - 4, s * (Wd / 2 - 2)], [L / 2 - 22, s * (Wd / 2 - 7)], [L / 2 - 16, s * (Wd / 2 - 3)], [L / 2 - 30, s * (Wd / 2 - 6)], [L / 2 - 18, s * (Wd / 2 - 1)]]);
+    else if (d === "estrellas") for (const [sx, sy] of [[-L / 4, -Wd / 4], [L / 5, Wd / 4], [-L / 3, Wd / 4]]) T("★", 9, sx, sy, WHITE);
+    else if (d === "rayos") for (const s of [-1, 1]) P(GOLD, [[-L / 2 + 6, s * (Wd / 2 - 3)], [-4, s * (Wd / 2 - 6)], [-8, s * (Wd / 2 - 3)], [L / 2 - 10, s * (Wd / 2 - 5)]]);
+    C(WHITE, -L / 2 + 16, 0, 7); ctx.font = `bold 9px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = BLACK; ctx.fillText(String(c.num || ""), -L / 2 + 16, 1);   // the racing number
+    R(rgb(255, 240, 170), L / 2 - 3, -Wd / 2 + 3, 3, 5); R(rgb(255, 240, 170), L / 2 - 3, Wd / 2 - 8, 3, 5);   // headlights
+    R(HEART, -L / 2, -Wd / 2 + 3, 2, 5); R(HEART, -L / 2, Wd / 2 - 8, 2, 5);
+  }
+  if (c.dent > 0.1 || c.dead) { ctx.globalAlpha = Math.min(0.7, (c.dead ? 1 : c.dent) * 0.8); for (const [dx, dy, r] of [[L / 3, -Wd / 4, 6], [-L / 4, Wd / 4, 7], [0, -Wd / 3, 5], [-L / 3, -Wd / 5, 5]]) C(rgb(40, 36, 34), dx, dy, r); ctx.globalAlpha = 1; }
+  if (!c.dead && c.hp < c.maxHp * 0.5) R(rgb(120, 120, 120), L / 2 - 2, -Wd / 2 + 2, 2, Wd - 4);   // lost the front bumper
+  ctx.restore();
+}
+function L2(col, x1, y1, x2, y2, w) { L(col, x1, y1, x2, y2, w); }
+
+function drawDerbyWorld(g) {
+  const TV = g.tv, cx = TV.camX, cy = TV.camY;
+  ctx.fillStyle = rgb(30, 28, 40); ctx.fillRect(-20, -20, W + 40, H + 40);
+  ctx.save(); ctx.translate(-cx, -cy);
+  // the crowd in the stands round the arena
+  for (let ring = 0; ring < 4; ring++) {
+    const rx = TV.rx + 120 + ring * 40, ry = TV.ry + 120 + ring * 40, n = Math.round((rx + ry) * 0.14);
+    for (let k = 0; k < n; k++) {
+      const an = k / n * Math.PI * 2, x = TV.cx + Math.cos(an) * rx, y = TV.cy + Math.sin(an) * ry;
+      if (x < cx - 20 || x > cx + W + 20 || y < cy - 20 || y > cy + H + 20) continue;
+      const hop = Math.floor(g.t / 12 + k) % 5 === 0 ? 2 : 0;
+      C([rgb(240, 200, 160), rgb(200, 140, 100), rgb(140, 90, 60)][(k + ring) % 3], x, y - hop, 6); C([HEART, rgb(60, 120, 220), GOLD, rgb(60, 180, 90)][(k * 3 + ring) % 4], x, y + 7 - hop, 7);
+    }
+  }
+  // the dirt floor, with tyre tracks
+  ctx.fillStyle = rgb(150, 104, 64); ctx.beginPath(); ctx.ellipse(TV.cx, TV.cy, TV.rx + 30, TV.ry + 30, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "rgba(90,60,30,0.35)"; ctx.lineWidth = 10;
+  for (const k of [0.35, 0.55, 0.75]) { ctx.beginPath(); ctx.ellipse(TV.cx, TV.cy, TV.rx * k, TV.ry * k, 0.2, 0, Math.PI * 2); ctx.stroke(); }
+  ctx.strokeStyle = "rgba(255,255,255,0.12)"; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(TV.cx, TV.cy, 120, 120, 0, 0, Math.PI * 2); ctx.stroke();
+  // the wall: a ring of stacked tyres
+  const nT = 120;
+  for (let k = 0; k < nT; k++) { const an = k / nT * Math.PI * 2, x = TV.cx + Math.cos(an) * (TV.rx + 46), y = TV.cy + Math.sin(an) * (TV.ry + 46); C(rgb(22, 22, 26), x, y, 22); C(k % 2 ? rgb(230, 60, 50) : rgb(240, 240, 240), x, y, 9); C(rgb(22, 22, 26), x, y, 5); }
+  for (const ty of TV.tyres) for (const [ox, oy] of [[0, 0], [-16, 10], [16, 10], [0, -16]]) { C(rgb(22, 22, 26), ty.x + ox, ty.y + oy, 18); C(rgb(70, 70, 76), ty.x + ox, ty.y + oy, 7); }
+  for (const b of TV.bits) {   // bits of cars, smoke and flames
+    if (b.smoke) { ctx.globalAlpha = Math.max(0, 0.55 - b.t / 80); C(b.col, b.x, b.y - b.t * 0.5, 6 + b.t * 0.25); ctx.globalAlpha = 1; b.t += 0.5; }
+    else if (b.fire) { ctx.globalAlpha = Math.max(0, 1 - (b.t - 30) / 12); C(b.col, b.x, b.y, 6); ctx.globalAlpha = 1; }
+    else if (b.cap) { C(rgb(210, 210, 220), b.x, b.y, 7); C(rgb(150, 150, 160), b.x, b.y, 3); }
+    else { ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.spin); R(b.col, -b.sz / 2, -b.sz / 3, b.sz, b.sz * 0.66); ctx.restore(); }
+  }
+  if (TV.wrench) { const w = TV.wrench, bob = Math.sin(w.t * 0.12) * 4; glow(w.x, w.y, 34, "120,255,140", 0.4); T("🔧", 30, w.x, w.y + bob, WHITE); }
+  for (const c of TV.cars) if (c.dead) drawDerbyCar(c.x, c.y, c.a, c, g.t);
+  for (const c of TV.cars) if (!c.dead) drawDerbyCar(c.x, c.y, c.a, c, g.t);
+  const me = TV.cars[0];
+  if (!me.dead) { ctx.globalAlpha = 0.5 + 0.3 * Math.sin(g.t * 0.2); P(GOLD, [[me.x, me.y - 42], [me.x - 8, me.y - 54], [me.x + 8, me.y - 54]]); ctx.globalAlpha = 1; }
+  for (const c of TV.cars) if (!c.dead && !c.player) { const f = c.hp / c.maxHp; R(rgb(40, 30, 30), c.x - 22, c.y - 34, 44, 5, 2); R(f > 0.5 ? GRASS_LIGHT : f > 0.25 ? GOLD : HEART, c.x - 22, c.y - 34, 44 * f, 5, 2); }
+  ctx.restore();
+  if (TV.count > 0) { const n = Math.ceil(TV.count / 40) - 1; T(n > 0 ? String(n) : "¡YA!", 90, W / 2, H / 2 - 40, n > 0 ? WHITE : GOLD); }
+  for (const c of TV.cars) if (!c.dead && !c.player) {   // arrows at rivals off screen
+    const sx = c.x - cx, sy = c.y - cy;
+    if (sx > -10 && sx < W + 10 && sy > -10 && sy < H + 10) continue;
+    const an = Math.atan2(sy - H / 2, sx - W / 2), ax = W / 2 + Math.cos(an) * (W / 2 - 40), ay = H / 2 + Math.sin(an) * (H / 2 - 40);
+    ctx.save(); ctx.translate(Math.max(30, Math.min(W - 30, ax)), Math.max(70, Math.min(H - 30, ay))); ctx.rotate(an); P(c.look.col, [[14, 0], [-8, -9], [-8, 9]]); ctx.restore();
+  }
+}
+
+// ---------------------------------------------------------------- the stunt show
+function drawBus(x, y, w) {   // a yellow school bus, side view; (x, y) = its bottom left
+  const h = 74;
+  R(rgb(240, 190, 30), x, y - h + 6, w, h - 16, 8); R(rgb(200, 150, 20), x, y - 22, w, 6);
+  for (let k = 0; k < 4; k++) R(rgb(150, 200, 230), x + 10 + k * (w - 20) / 4, y - h + 14, (w - 20) / 4 - 6, 20, 3);
+  R(BLACK, x + 6, y - 34, w - 12, 4); C(rgb(30, 30, 30), x + 22, y - 10, 12); C(rgb(30, 30, 30), x + w - 22, y - 10, 12); C(rgb(160, 160, 160), x + 22, y - 10, 5); C(rgb(160, 160, 160), x + w - 22, y - 10, 5);
+  R(HEART, x + w - 6, y - 50, 6, 10, 2);
+}
+function drawStuntWorld(g) {
+  const TV = g.tv, cam = Math.round(g.camX), gy = x => stuntY(TV, x);
+  const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, rgb(18, 16, 50)); sky.addColorStop(1, rgb(70, 40, 100));
+  ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (let i = 0; i < 40; i++) C(WHITE, (i * 173) % W, (i * 61) % 180, (i % 3) * 0.5 + 0.6);
+  for (const f of TV.fireworks) {   // fireworks over the stadium
+    const fx = f.x - cam, k = f.t / 70;
+    for (let s = 0; s < 14; s++) { const an = s / 14 * Math.PI * 2; ctx.globalAlpha = 1 - k; C(f.col, fx + Math.cos(an) * k * 70, f.y + Math.sin(an) * k * 70 + k * k * 20, 3); }
+    ctx.globalAlpha = 1;
+  }
+  for (const [bx, sp] of [[180, 0.011], [760, 0.008]]) {   // spotlights sweeping the sky
+    const an = Math.sin(g.t * sp) * 0.5; ctx.globalAlpha = 0.12;
+    P(rgb(255, 250, 200), [[bx, 330], [bx + Math.sin(an) * 900 - 60, -40], [bx + Math.sin(an) * 900 + 60, -40]]); ctx.globalAlpha = 1;
+  }
+  const sx0 = -((cam * 0.4) % 240) - 240;   // grandstands full of cheering fans
+  for (let x = sx0; x < W + 240; x += 240) {
+    P(rgb(60, 50, 80), [[x, 380], [x + 30, 240], [x + 230, 240], [x + 240, 380]]);
+    for (let r = 0; r < 6; r++) for (let k = 0; k < 18; k++) { const fx = x + 36 + k * 11 + r * 2, fy = 252 + r * 21 + (Math.floor(g.t / 14 + k + r) % 4 === 0 ? -3 : 0); C([rgb(240, 200, 160), rgb(200, 140, 100), rgb(140, 90, 60)][(k + r) % 3], fx, fy, 3.5); C([HEART, rgb(60, 120, 220), GOLD, rgb(60, 180, 90)][(k * 3 + r) % 4], fx, fy + 6, 4); }
+  }
+  const gr = ctx.createLinearGradient(0, 300, 0, H); gr.addColorStop(0, rgb(170, 110, 60)); gr.addColorStop(1, rgb(100, 60, 30));
+  ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(0, H + 10);
+  for (let sx = 0; sx <= W + 4; sx += 4) ctx.lineTo(sx, gy(sx + cam)); ctx.lineTo(W + 4, H + 10); ctx.fill();
+  for (const f of TV.feats) {   // ramps: steel kickers with hazard stripes, and wooden landing ramps
+    if (f.x1 < cam - 20 || f.x0 > cam + W + 20 || f.t === "bus") continue;
+    const y0 = 440 - f.h0, y1 = 440 - f.h1, x0 = f.x0 - cam, x1 = f.x1 - cam;
+    if (f.t === "kick") {
+      P(rgb(120, 130, 150), [[x0, 440], [x1, y1], [x1, 440]]);
+      for (let k = 1; k < 6; k++) { const xx = x0 + (x1 - x0) * k / 6; L(rgb(80, 90, 110), xx, 440, xx, 440 - (440 - y1) * k / 6, 3); }
+      for (let k = 0; k < 8; k++) { const a0 = k / 8, a1 = (k + 0.5) / 8; L(k % 2 ? GOLD : BLACK, x0 + (x1 - x0) * a0, 440 - (440 - y1) * a0, x0 + (x1 - x0) * a1, 440 - (440 - y1) * a1, 6); }
+      L(GOLD, x1, y1, x1, 440, 4);
+    } else if (f.t === "land" || f.t === "back") {
+      P(rgb(160, 110, 60), [[x0, 440], [x0, y0], [x1, y1], [x1, 440]]);
+      L(rgb(210, 160, 100), x0, y0, x1, y1, 4);
+      for (let k = 1; k < 5; k++) { const xx = x0 + (x1 - x0) * k / 5; L(rgb(120, 80, 40), xx, 440, xx, y0 + (y1 - y0) * k / 5, 2); }
+    }
+  }
+  for (const b of TV.buses) if (b.x + b.w > cam - 20 && b.x < cam + W + 20) drawBus(b.x - cam, 440, b.w);
+  for (const b of TV.boosts) for (let k = 0; k < 5; k++) { const ax = b.x0 + 40 + k * 60; if (ax > cam - 20 && ax < cam + W + 20 && ax < b.x1 - 20) T("»", 22, ax - cam, gy(ax) - 12, Math.floor(g.t / 5) % 5 === k ? GOLD : rgb(255, 140, 40)); }
+  for (const c of TV.cars) if (c.x > cam - 60 && c.x < cam + W + 60) drawJunkCar(c.x - cam, gy(c.x), c.col, c.flat);
+  for (const r of TV.rings) {   // rings of fire
+    const x = r.x - cam; if (x < -80 || x > W + 80) continue;
+    L(rgb(120, 120, 130), x, r.y + r.r, x, 440, 5);
+    ctx.lineWidth = 10; ctx.strokeStyle = r.done ? GOLD : rgb(255, 120, 30); ctx.beginPath(); ctx.ellipse(x, r.y, r.r * 0.35, r.r, 0, 0, Math.PI * 2); ctx.stroke();
+    if (!r.done) for (let k = 0; k < 12; k++) { const an = k / 12 * Math.PI * 2 + g.t * 0.05, fy = r.y + Math.sin(an) * r.r, fx = x + Math.cos(an) * r.r * 0.35; P(k % 2 ? rgb(255, 200, 60) : rgb(255, 90, 30), [[fx - 5, fy], [fx + (Math.random() - 0.5) * 6, fy - 14 - Math.random() * 8], [fx + 5, fy]]); }
+  }
+  const p = g.player;
+  if (!(p.invuln > 0 && Math.floor(g.t / 4) % 2)) drawMonsterTruck(TV.x - cam, TV.y, TV.ang, TV.wheel, g.t, TV.face, ARMOR, { knight: true });
+  if (TV.nitro > 0) for (let k = 0; k < 3; k++) C(pick([rgb(255, 200, 60), rgb(255, 120, 40)]), TV.x - cam - 70 - k * 8, TV.y - 60 + randInt(-4, 4), 6 - k);
+  if (TV.x > TV.len - 900) { const fx = TV.len - 360 - cam; for (let k = 0; k < 10; k++) R(k % 2 ? WHITE : BLACK, fx, 300 + k * 14, 14, 14); L(rgb(200, 200, 210), fx, 300, fx, 440, 3); }
+}
+
+// ---------------------------------------------------------------- town streets: the police chase and the fire brigade
+function drawPoliceCar(x, y, ang, wheel, t, opts = {}) {   // the knight's police car, lights flashing
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+  ctx.globalAlpha = 0.3; E(BLACK, -60, -6, 120, 10); ctx.globalAlpha = 1;
+  P(WHITE, [[-60, -14], [-60, -36], [-30, -38], [-16, -58], [26, -58], [40, -38], [62, -34], [62, -14]]);
+  R(rgb(30, 40, 80), -60, -30, 122, 12); T("POLICÍA", 11, 0, -23, WHITE);
+  P(rgb(150, 200, 235), [[-12, -40], [-4, -54], [12, -54], [12, -40]]); P(rgb(150, 200, 235), [[16, -40], [16, -54], [24, -54], [34, -40]]);
+  ctx.save(); ctx.translate(-4, -48); ctx.scale(0.7, 0.7); drawDriver(t); ctx.restore();
+  const on = Math.floor(t / 6) % 2;
+  R(rgb(60, 60, 70), -2, -64, 22, 6, 2); R(on ? rgb(255, 40, 40) : rgb(120, 20, 20), -2, -66, 10, 6, 2); R(on ? rgb(40, 60, 120) : rgb(60, 140, 255), 10, -66, 10, 6, 2);
+  glow(on ? 2 : 16, -64, 46, on ? "255,60,60" : "60,140,255", 0.5);
+  R(rgb(255, 240, 170), 58, -32, 5, 6, 2); R(HEART, -61, -32, 4, 6, 2);
+  for (const wx of [-36, 38]) { C(rgb(24, 24, 28), wx, -12, 13); C(rgb(180, 180, 190), wx, -12, 6); L(rgb(80, 80, 90), wx, -12, wx + Math.cos(wheel) * 6, -12 + Math.sin(wheel) * 6, 2); }
+  ctx.restore();
+}
+function drawRobberCar(x, y, wheel, t) {   // the getaway car: black, with a masked robber and a bag of money
+  ctx.save(); ctx.translate(x, y);
+  ctx.globalAlpha = 0.3; E(BLACK, -60, -6, 120, 10); ctx.globalAlpha = 1;
+  P(rgb(36, 36, 44), [[-62, -14], [-62, -36], [-34, -38], [-20, -56], [22, -56], [36, -38], [62, -34], [62, -14]]);
+  P(rgb(110, 140, 170), [[-16, -40], [-8, -52], [8, -52], [8, -40]]);
+  C(SKIN, 0, -46, 6); R(BLACK, -6, -50, 12, 4); C(WHITE, -2, -48, 1.4); C(WHITE, 3, -48, 1.4);   // a robber in a mask
+  C(rgb(120, 90, 50), -40, -42, 10); T("$", 12, -40, -41, GOLD);
+  for (const wx of [-36, 38]) { C(rgb(24, 24, 28), wx, -12, 13); C(rgb(140, 140, 150), wx, -12, 6); L(rgb(60, 60, 70), wx, -12, wx + Math.cos(wheel) * 6, -12 + Math.sin(wheel) * 6, 2); }
+  ctx.restore();
+}
+function drawCivCar(c, x, y) {   // ordinary traffic: a car, a van or a bus
+  ctx.save(); ctx.translate(x, y);
+  if (c.kind === "bus") { R(c.col, -110, -84, 220, 70, 8); for (let k = 0; k < 6; k++) R(rgb(150, 200, 230), -100 + k * 34, -76, 26, 22, 3); for (const wx of [-80, 80]) { C(rgb(24, 24, 28), wx, -12, 14); C(rgb(150, 150, 150), wx, -12, 6); } }
+  else if (c.kind === "van") { R(c.col, -70, -66, 140, 52, 7); R(rgb(150, 200, 230), 40, -60, 24, 20, 3); for (const wx of [-44, 44]) { C(rgb(24, 24, 28), wx, -12, 13); C(rgb(150, 150, 150), wx, -12, 6); } }
+  else { P(c.col, [[-60, -14], [-60, -34], [-30, -36], [-18, -50], [22, -50], [34, -36], [60, -32], [60, -14]]); P(rgb(150, 200, 230), [[-14, -38], [-8, -46], [18, -46], [26, -38]]); for (const wx of [-36, 38]) { C(rgb(24, 24, 28), wx, -12, 13); C(rgb(150, 150, 150), wx, -12, 6); } }
+  ctx.restore();
+}
+function drawFireTruck(x, y, wheel, t, face, ladder, opts = {}) {   // the fire engine with its ladder and water cannon
+  ctx.save(); ctx.translate(x, y); if (face < 0) ctx.scale(-1, 1);
+  ctx.globalAlpha = 0.3; E(BLACK, -70, -6, 140, 10); ctx.globalAlpha = 1;
+  R(rgb(210, 30, 30), -70, -60, 100, 48, 5); P(rgb(210, 30, 30), [[30, -12], [30, -70], [56, -70], [72, -44], [72, -12]]);
+  P(rgb(150, 200, 235), [[36, -48], [36, -64], [52, -64], [64, -48]]);
+  ctx.save(); ctx.translate(44, -54); ctx.scale(0.7, 0.7); drawDriver(t); ctx.restore();
+  R(WHITE, -70, -30, 142, 5); R(GOLD, -62, -54, 86, 4);
+  for (let k = 0; k < 4; k++) R(rgb(170, 20, 20), -62 + k * 22, -48, 16, 14, 2);   // lockers
+  C(rgb(200, 200, 210), 20, -64, 6);   // the water cannon
+  const lu = Math.min(1, ladder / 50), la = -lu * 1.1, ll = 70 + lu * 170;   // the ladder
+  ctx.save(); ctx.translate(-50, -66); ctx.rotate(la);
+  R(rgb(200, 200, 210), 0, -5, ll, 4); R(rgb(200, 200, 210), 0, 3, ll, 4); for (let k = 8; k < ll; k += 14) R(rgb(200, 200, 210), k, -3, 3, 8);
+  ctx.restore();
+  const on = Math.floor(t / 7) % 2; R(on ? rgb(255, 60, 60) : rgb(60, 140, 255), 36, -76, 14, 6, 2);
+  for (const wx of [-46, 48]) { C(rgb(24, 24, 28), wx, -12, 14); C(rgb(190, 190, 200), wx, -12, 6); L(rgb(80, 80, 90), wx, -12, wx + Math.cos(wheel) * 6, -12 + Math.sin(wheel) * 6, 2); }
+  ctx.restore();
+}
+function drawFire(x, y, size, t) {   // flames licking out of a window
+  for (let k = 0; k < 6; k++) {
+    const fx = x + (k - 2.5) * size * 0.18, h = size * (0.6 + 0.4 * Math.sin(t * 0.3 + k * 1.7));
+    P(k % 2 ? rgb(255, 200, 60) : rgb(255, 100, 30), [[fx - size * 0.14, y + size * 0.3], [fx + Math.sin(t * 0.2 + k) * 5, y + size * 0.3 - h], [fx + size * 0.14, y + size * 0.3]]);
+  }
+  ctx.globalAlpha = 0.35; C(rgb(90, 90, 90), x + Math.sin(t * 0.05) * 10, y - size * 0.9, size * 0.5); ctx.globalAlpha = 1;
+}
+function drawCat(x, y, t) { E(rgb(240, 150, 60), x - 9, y - 12, 18, 12); C(rgb(240, 150, 60), x + 9, y - 14, 6); P(rgb(240, 150, 60), [[x + 5, y - 18], [x + 7, y - 24], [x + 10, y - 19]]); P(rgb(240, 150, 60), [[x + 10, y - 19], [x + 13, y - 24], [x + 14, y - 17]]); L(rgb(240, 150, 60), x - 9, y - 6, x - 16, y - 18 + Math.sin(t * 0.1) * 3, 3); C(BLACK, x + 11, y - 15, 1.2); }
+function drawRoadWorld(g) {
+  const TV = g.tv, cam = Math.round(g.camX), police = TV.kind === "police", gy = x => roadY(TV, x);
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  if (police) { sky.addColorStop(0, rgb(12, 14, 40)); sky.addColorStop(1, rgb(50, 40, 90)); } else { sky.addColorStop(0, rgb(110, 170, 230)); sky.addColorStop(1, rgb(200, 225, 245)); }
+  ctx.fillStyle = sky; ctx.fillRect(-20, -20, W + 40, H + 40);
+  if (police) { C(rgb(250, 245, 220), 820, 70, 26); for (let i = 0; i < 30; i++) C(WHITE, (i * 197) % W, (i * 53) % 160, 0.8); }
+  for (const [par, base, hgt, col] of police ? [[0.2, 380, 160, rgb(30, 30, 60)], [0.45, 400, 120, rgb(44, 40, 76)]] : [[0.25, 400, 120, rgb(170, 190, 210)]]) {   // far-off skyline
+    const per = 90;
+    for (let x = -((cam * par) % per) - per; x < W + per; x += per) {
+      const k = Math.abs(Math.floor((x + cam * par) / per)) % 5, h = hgt * (0.5 + k * 0.13);
+      R(col, x, base - h, per - 10, h + 60);
+      if (police) for (let wy = base - h + 10; wy < base; wy += 18) for (let wx = x + 8; wx < x + per - 18; wx += 16) if ((wx * 7 + wy * 3 + k) % 5 < 2) R(rgb(255, 220, 120), wx, wy, 6, 8);
+    }
+  }
+  if (!police) for (const b of TV.blds) {   // the burning street
+    const x = b.x - cam; if (x > W + 20 || x + b.w < -20) continue;
+    R(b.col, x, 440 - b.h, b.w, b.h); R("rgba(0,0,0,0.12)", x, 440 - b.h, b.w, 10); R(rgb(120, 80, 60), x - 6, 440 - b.h - 10, b.w + 12, 12, 3);
+    for (let wy = 440 - b.h + 30; wy < 400; wy += 54) for (let wx = x + 22; wx < x + b.w - 40; wx += 60) { R(rgb(80, 110, 140), wx, wy, 34, 34, 3); R(WHITE, wx + 15, wy, 4, 34); R(WHITE, wx, wy + 15, 34, 4); }
+    R(rgb(110, 70, 50), x + b.w / 2 - 20, 380, 40, 60, 4);
+    if (b.fire && b.fire.hp > 0) {
+      const f = b.fire, sz = 30 + f.hp * 0.4; glow(f.x - cam, f.y, sz * 1.6, "255,150,60", 0.5); drawFire(f.x - cam, f.y, sz, g.t);
+      R(rgb(40, 30, 30), f.x - cam - 40, f.y + 48, 80, 6, 3); R(HEART, f.x - cam - 40, f.y + 48, 80 * f.hp / 100, 6, 3);
+    } else if (b.fire) { ctx.globalAlpha = 0.4; C(rgb(80, 80, 80), b.fire.x - cam, b.fire.y - 30 - (g.t % 60), 14); ctx.globalAlpha = 1; R(rgb(50, 40, 40), b.fire.x - cam - 22, b.fire.y - 18, 44, 36, 3); }
+    if (b.cat) {
+      const c = b.cat, roofY = 440 - b.h - 10;
+      if (!c.saved) { const cy = roofY + c.down * (b.h - 20); drawCat(c.x - cam, cy, g.t); if (!c.down && Math.floor(g.t / 30) % 3 === 0) T("¡Miau!", 14, c.x - cam + 20, roofY - 30, WHITE); }
+      else drawCat(c.x - cam + 30, 440, g.t);
+    }
+  }
+  R(rgb(150, 150, 160), 0, 430, W, 14); // the pavement
+  ctx.fillStyle = police ? rgb(50, 50, 58) : rgb(80, 80, 88); ctx.beginPath(); ctx.moveTo(0, H + 10);
+  for (let sx = 0; sx <= W + 6; sx += 6) ctx.lineTo(sx, gy(sx + cam)); ctx.lineTo(W + 6, H + 10); ctx.fill();
+  for (let x = -((cam) % 80); x < W; x += 80) R(rgb(240, 220, 120), x, gy(x + cam) + 36, 40, 5);   // road markings
+  if (police) for (let x = -((cam * 1) % 300); x < W + 300; x += 300) { L(rgb(90, 90, 100), x, gy(x + cam), x, gy(x + cam) - 150, 4); C(rgb(255, 230, 150), x + 14, gy(x + cam) - 150, 7); glow(x + 14, gy(x + cam) - 150, 50, "255,230,150", 0.25); }   // street lamps
+  if (!police) for (const h of TV.hydrants) { const x = h.x - cam; R(HEART, x - 8, 410, 16, 30, 4); R(rgb(180, 20, 20), x - 12, 416, 24, 6, 2); if (h.on) for (let k = 0; k < 4; k++) C(rgb(120, 180, 255), x + 14 + k * 6, 418 - k * 4 + Math.random() * 4, 3); }
+  if (police) {
+    for (const c of TV.cones) { const x = c.x - cam, y = gy(c.x) + c.y; ctx.save(); ctx.translate(x, y); if (c.down) ctx.rotate(Math.min(1.5, c.down * 0.2)); P(rgb(255, 130, 30), [[-9, 0], [0, -28], [9, 0]]); R(WHITE, -5, -16, 10, 4); ctx.restore(); }
+    for (const o of TV.obs) if (!o.hit || o.kind === "oil") {
+      const x = o.x - cam, y = o.y;
+      if (o.kind === "oil") { E(rgb(20, 20, 26), x - 30, y - 4, 60, 10); E("rgba(140,120,255,0.4)", x - 18, y - 3, 22, 5); }
+      else if (o.kind === "barrel") { ctx.save(); ctx.translate(x, y - 16); ctx.rotate(o.t * -0.08); R(rgb(150, 90, 40), -14, -16, 28, 32, 5); R(rgb(90, 60, 30), -14, -6, 28, 4); R(rgb(90, 60, 30), -14, 4, 28, 4); ctx.restore(); }
+      else { C(rgb(120, 150, 70), x, y - 12, 12); T("$", 14, x, y - 11, GOLD); }
+    }
+    for (const c of TV.traffic) drawCivCar(c, c.x - cam, gy(c.x));
+    for (const q of TV.pulled) { drawRobberCar(q.x - cam, gy(q.x), 0, g.t); T("¡Me rindo!", 13, q.x - cam, gy(q.x) - 76, WHITE); }
+    if (TV.rob) { const r = TV.rob; drawRobberCar(r.x - cam, r.y, r.wheel, g.t); if (r.x - cam > W + 40) { T("▶ ¡LADRÓN!", 22, W - 80, 200, HEART); T(`${Math.round((r.x - TV.x) / 10)} m`, 16, W - 80, 224, WHITE); } }
+  }
+  const p = g.player;
+  if (!(p.invuln > 0 && Math.floor(g.t / 4) % 2)) {
+    if (police) { ctx.save(); if (TV.spin) { ctx.translate(TV.x - cam, TV.y - 30); ctx.rotate(Math.sin(TV.spin * 0.5) * 0.3); ctx.translate(-(TV.x - cam), -(TV.y - 30)); } drawPoliceCar(TV.x - cam, TV.y, TV.ang, TV.wheel, g.t); ctx.restore(); }
+    else drawFireTruck(TV.x - cam, TV.y, TV.wheel, g.t, TV.face, TV.ladder);
+  }
+  if (police && TV.nitro) for (let k = 0; k < 3; k++) C(pick([rgb(255, 200, 60), rgb(255, 120, 40)]), TV.x - cam - 66 - k * 8, TV.y - 20 + randInt(-3, 3), 6 - k);
+  if (!police) {
+    for (const d of TV.drops) { C(rgb(120, 180, 255), d.x - cam, d.y, 4); C(rgb(220, 240, 255), d.x - cam - 1, d.y - 1, 1.6); }
+    for (const e of TV.embers) { C(rgb(255, 140, 40), e.x - cam, e.y, 4); C(GOLD, e.x - cam, e.y, 2); }
+    for (const b of TV.blds) if (b.fire && b.fire.hp > 0 && (b.fire.x - cam < -40 || b.fire.x - cam > W + 40)) { const left = b.fire.x - cam < 0; T(left ? "◀ 🔥" : "🔥 ▶", 22, left ? 50 : W - 50, 210, rgb(255, 150, 60)); }
+  }
+}
+
+// ---------------------------------------------------------------- the toy room
+function drawToyCar(x, y, ang, wheel, t, face) {   // a little red wind-up racing car with the (shrunk!) knight at the wheel
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang); if (face < 0) ctx.scale(-1, 1);
+  ctx.globalAlpha = 0.3; E(BLACK, -34, -4, 68, 7); ctx.globalAlpha = 1;
+  P(rgb(220, 30, 40), [[-34, -10], [-34, -24], [-12, -26], [-4, -36], [14, -36], [22, -26], [36, -22], [36, -10]]);
+  R(WHITE, -34, -20, 70, 3); T("7", 10, -18, -16, WHITE);
+  ctx.save(); ctx.translate(4, -30); ctx.scale(0.5, 0.5); drawDriver(t); ctx.restore();
+  ctx.save(); ctx.translate(-36, -24); ctx.rotate(t * 0.15); R(GOLD, -2, -9, 4, 18, 2); R(GOLD, -7, -9, 14, 4, 2); R(GOLD, -7, 5, 14, 4, 2); ctx.restore();   // wind-up key
+  for (const wx of [-20, 22]) { C(rgb(24, 24, 28), wx, -9, 9); C(GOLD, wx, -9, 4); L(rgb(150, 110, 20), wx, -9, wx + Math.cos(wheel) * 4, -9 + Math.sin(wheel) * 4, 1.5); }
+  ctx.restore();
+}
+function drawToyWorld(g) {
+  const TV = g.tv, cam = Math.round(g.camX), gy = x => toyY(TV, x);
+  ctx.fillStyle = rgb(250, 232, 200); ctx.fillRect(-20, -20, W + 40, H + 40);   // wallpaper with stars and stripes
+  for (let x = -((cam * 0.3) % 80) - 80; x < W + 80; x += 80) R(rgb(244, 220, 186), x, 0, 40, 400);
+  for (let i = 0; i < 18; i++) T("★", 18, (i * 157 - cam * 0.3) % (W + 100) + (((i * 157 - cam * 0.3) % (W + 100)) < -50 ? W + 100 : 0), 40 + (i * 61) % 260, rgb(240, 190, 120));
+  const fx = 300 - cam * 0.5, sx2 = 1400 - cam * 0.5, bx = 2600 - cam * 0.5;
+  R(rgb(150, 200, 240), fx, 60, 220, 170, 6); R(WHITE, fx + 105, 60, 10, 170); R(WHITE, fx, 140, 220, 10); R(rgb(240, 110, 130), fx - 30, 50, 40, 230, 8); R(rgb(240, 110, 130), fx + 210, 50, 40, 230, 8);   // a window with curtains
+  C(rgb(255, 240, 180), fx + 60, 110, 22);
+  R(rgb(170, 110, 70), sx2, 120, 300, 14, 3); for (let k = 0; k < 6; k++) { R([HEART, rgb(60, 120, 220), GOLD, rgb(60, 180, 80), rgb(150, 80, 200), rgb(240, 140, 40)][k], sx2 + 12 + k * 46, 70, 36, 50, 5); }   // a toy shelf
+  R(rgb(60, 120, 220), bx, 200, 520, 200, 20); R(WHITE, bx + 20, 180, 140, 60, 14); R(rgb(240, 200, 60), bx, 250, 520, 30);   // the giant bed
+  R(rgb(170, 110, 70), 4200 - cam * 0.5, 230, 18, 170); R(rgb(170, 110, 70), 4420 - cam * 0.5, 230, 18, 170); R(rgb(190, 130, 80), 4180 - cam * 0.5, 210, 280, 26, 4);   // a giant table
+  // the floor: wooden boards
+  ctx.fillStyle = rgb(196, 140, 86); ctx.fillRect(0, 440, W, H - 440);
+  for (let x = -(cam % 120); x < W; x += 120) L(rgb(160, 110, 66), x, 440, x - 30, H, 2);
+  L(rgb(160, 110, 66), 0, 470, W, 470, 2);
+  // the rug for the dog
+  const D = TV.dog; E(rgb(200, 80, 90), D.zone[0] - cam - 40, 444, D.zone[1] - D.zone[0] + 80, 26); E(rgb(230, 140, 120), D.zone[0] - cam, 448, D.zone[1] - D.zone[0], 16);
+  // books, rulers and the orange track
+  const P2 = TV.pts;
+  for (let i = 0; i < P2.length - 1; i++) {
+    const [x0, h0] = P2[i], [x1, h1] = P2[i + 1]; if (x1 < cam - 20 || x0 > cam + W + 20) continue;
+    if (h0 === h1 && h0 > 0) {   // a pile of books (or the track)
+      if (h0 === 44) { R(rgb(255, 130, 30), x0 - cam, 440 - h0, x1 - x0, 8, 2); for (let x = x0; x < x1; x += 90) R(rgb(200, 90, 20), x - cam, 440 - h0 + 8, 8, h0 - 8); }
+      else { const n = Math.round(h0 / 30); for (let k = 0; k < n; k++) { const bh = h0 / n; R([rgb(60, 120, 200), HEART, rgb(60, 170, 90), GOLD, rgb(150, 80, 200)][(k + i) % 5], x0 - cam - 10 + (k % 2) * 8, 440 - (k + 1) * bh, x1 - x0 + 20 - (k % 2) * 16, bh - 2, 3); R("rgba(255,255,255,0.6)", x0 - cam - 4 + (k % 2) * 8, 440 - (k + 1) * bh + bh * 0.4, 30, 3); } }
+    } else if (h0 !== h1 && Math.abs(x1 - x0) > 2) {   // a ruler (or the orange track ramp) leaning up
+      const tr = h0 === 44 || h1 === 44;
+      L(tr ? rgb(255, 130, 30) : rgb(240, 220, 120), x0 - cam, 440 - h0, x1 - cam, 440 - h1, tr ? 8 : 10);
+      if (!tr) for (let k = 1; k < 12; k++) { const xx = x0 + (x1 - x0) * k / 12, yy = 440 - (h0 + (h1 - h0) * k / 12); L(rgb(120, 100, 50), xx - cam, yy, xx - cam, yy + 5, 1); }
+    }
+  }
+  const Lp = TV.loop, lx = Lp.x - cam, ly = 440 - 44 - Lp.r;   // the loop-the-loop
+  ctx.lineWidth = 9; ctx.strokeStyle = rgb(255, 130, 30); ctx.beginPath(); ctx.arc(lx, ly, Lp.r + 4, 0, Math.PI * 2); ctx.stroke();
+  for (let k = 0; k < 5; k++) { const ax = TV.boost.x0 + 40 + k * 70; if (ax < TV.boost.x1) T("»", 20, ax - cam, 440 - 44 - 12, Math.floor(g.t / 5) % 5 === k ? GOLD : rgb(255, 80, 40)); }
+  for (const l of TV.legos) { const x = l.x - cam, y = gy(l.x); if (x < -40 || x > W + 40) continue; R(l.col, x - 17, y - 20, 34, 20, 2); for (const k of [-9, 9]) { R(l.col, x + k - 5, y - 26, 10, 7, 2); R("rgba(255,255,255,0.35)", x + k - 4, y - 25, 4, 2); } }
+  // the sleeping dog
+  const dx = D.x - cam, aw = D.awake > 0, br = Math.sin(g.t * 0.05) * 3;
+  E(rgb(180, 120, 60), dx - 110, 380 - br, 220, 70); C(rgb(180, 120, 60), dx + 110, 380, 40); E(rgb(150, 90, 40), dx + 84, 364, 24, 40); E(rgb(150, 90, 40), dx + 120, 362, 24, 40);
+  if (aw) { C(WHITE, dx + 104, 372, 7); C(WHITE, dx + 124, 372, 7); C(BLACK, dx + 106, 372, 3); C(BLACK, dx + 126, 372, 3); E(rgb(230, 90, 110), dx + 106, 396, 18, 20); T("¡GUAU!", 30, dx + 120, 300, HEART); }
+  else { L(BLACK, dx + 98, 374, dx + 110, 374, 2); L(BLACK, dx + 118, 374, dx + 130, 374, 2); T("Z", 16 + (g.t % 60) / 6, dx + 150 + (g.t % 60) * 0.5, 330 - (g.t % 60), rgb(120, 120, 200)); }
+  C(BLACK, dx + 136, 388, 5); E(rgb(160, 100, 50), dx - 130, 400, 40, 14);
+  if (g.tv.x > D.zone[0] && g.tv.x < D.zone[1]) {   // the noise meter
+    R("rgba(0,0,0,0.55)", W / 2 - 120, 88, 240, 44, 10); T("🤫 ¡Shhh! Despacio...", 17, W / 2, 102, WHITE); R(rgb(90, 80, 80), W / 2 - 90, 116, 180, 10, 4); R(D.noise > 70 ? HEART : GOLD, W / 2 - 90, 116, 180 * D.noise / 100, 10, 4);
+  }
+  // the toy train and its track
+  for (let x = Math.max(TV.trainZone[0], cam - 40); x < Math.min(TV.trainZone[1] + 400, cam + W + 40); x += 30) R(rgb(140, 90, 50), x - cam, 442, 18, 5);
+  if (TV.train.on) { const tx = TV.train.x - cam; for (let k = 0; k < TV.train.cars; k++) { const cx = tx + k * 70; R(k ? [rgb(60, 120, 220), rgb(60, 180, 80), GOLD][k % 3] : HEART, cx, 392, 62, 44, 6); if (!k) { R(rgb(40, 40, 50), cx + 6, 372, 14, 22, 3); R(rgb(240, 200, 60), cx + 36, 380, 22, 14, 3); } for (const wx of [14, 48]) C(rgb(30, 30, 30), cx + wx, 436, 9); } }
+  T("🎁", 70, TV.len - 360 - cam, 400, WHITE); T("META", 18, TV.len - 360 - cam, 340, GOLD);
+  const p = g.player;
+  if (!(p.invuln > 0 && Math.floor(g.t / 4) % 2)) drawToyCar(TV.x - cam, TV.y, TV.ang, TV.wheel, g.t, TV.face);
+}
+
+// ---------------------------------------------------------------- the garage screen
+function garageLayout() {
+  const rows = GARAGE_ROWS.map((_, r) => { const y = 84 + r * 57; return { y, left: { x: 520, y, w: 48, h: 48 }, box: { x: 572, y, w: 266, h: 48 }, right: { x: 842, y, w: 48, h: 48 } }; });
+  return { rows, horn: { x: 140, y: 330, w: 170, h: 40 }, num: { x: 320, y: 330, w: 120, h: 40 }, button: { x: W / 2 - 170, y: 410, w: 340, h: 56 } };
+}
+function drawGarage(g) {
+  ctx.fillStyle = rgb(50, 54, 64); ctx.fillRect(-20, -20, W + 40, H + 40);
+  for (let x = 0; x < W; x += 80) R(rgb(60, 64, 76), x, 0, 40, 300);
+  R(rgb(80, 84, 96), 0, 300, W, H - 300); for (let x = -20; x < W; x += 120) L(rgb(110, 114, 126), x, 300, x + 60, H, 2);
+  for (let k = 0; k < 6; k++) { R(rgb(190, 60, 50), 30 + k * 60, 30, 46, 80, 4); T(["🔧", "🔩", "⚙️", "🛞", "🪛", "🔋"][k], 22, 53 + k * 60, 70, WHITE); }
+  T("¡EL TALLER!", 40, W / 2, 40, GOLD); T("Prepara tu coche para el derbi", 17, W / 2, 70, WHITE);
+  ctx.globalAlpha = 0.35; E(BLACK, 110, 290, 340, 40); ctx.globalAlpha = 1;
+  const st = garageStats(), car = { look: { ...GARAGE, col: garageCol() }, num: GARAGE.num, wheel: g.t * 0.2, hp: 1, maxHp: 1, dent: 0 };
+  drawDerbyCar(280, 220, -0.35 + Math.sin(g.t * 0.02) * 0.12, car, g.t, 3.1);
+  const lay = garageLayout();
+  GARAGE_ROWS.forEach(([key, label, list], r) => {
+    const L0 = lay.rows[r], sel = g.gaSel === r, opt = list.find(o => o.id === GARAGE[key]);
+    T(label, 16, 510, L0.y + 24, sel ? GOLD : rgb(200, 205, 220), "right", "middle");
+    for (const [b, ch] of [[L0.left, "◀"], [L0.right, "▶"]]) { R(sel ? rgb(100, 110, 150) : rgb(70, 76, 100), b.x, b.y, b.w, b.h, 12); T(ch, 20, b.x + b.w / 2, b.y + b.h / 2 + 1, WHITE, "center", "middle"); }
+    R(sel ? rgb(80, 90, 130) : rgb(56, 60, 80), L0.box.x, L0.box.y, L0.box.w, L0.box.h, 12); RS(sel ? GOLD : rgb(110, 116, 150), L0.box.x, L0.box.y, L0.box.w, L0.box.h, sel ? 3 : 2, 12);
+    if (opt.c) C(rgb(...opt.c), L0.box.x + 26, L0.box.y + 24, 10);
+    T(opt.name, 20, L0.box.x + L0.box.w / 2 + (opt.c ? 14 : 0), L0.box.y + 25, WHITE, "center", "middle");
+  });
+  const bars = [["FUERZA", st.hp / 165], ["RAPIDEZ", st.speed / 1.2], ["PESO", st.mass / 1.6]];
+  bars.forEach(([n, v], i) => { const x = 560 + i * 116, y = 392; T(n, 12, x, y - 10, rgb(200, 205, 220), "left", "middle"); R(rgb(40, 42, 56), x, y - 2, 100, 9, 4); R(i === 0 ? HEART : i === 1 ? GRASS_LIGHT : rgb(90, 170, 255), x, y - 2, 100 * Math.min(1, v), 9, 4); });
+  const hb = lay.horn; R(rgb(70, 76, 100), hb.x, hb.y, hb.w, hb.h, 10); T("📢 Probar bocina", 15, hb.x + hb.w / 2, hb.y + hb.h / 2 + 1, WHITE, "center", "middle");
+  const nb = lay.num; R(rgb(70, 76, 100), nb.x, nb.y, nb.w, nb.h, 10); T(`Número: ${GARAGE.num}`, 15, nb.x + nb.w / 2, nb.y + nb.h / 2 + 1, WHITE, "center", "middle");
+  const b = lay.button, bsel = g.gaSel === GARAGE_ROWS.length;
+  R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14); RS(bsel ? GOLD : rgb(130, 200, 110), b.x, b.y, b.w, b.h, bsel ? 4 : 2, 14);
+  T("¡A la arena! ▶", 28, W / 2, b.y + b.h / 2 + 1, WHITE, "center", "middle");
+  T(isTouch ? "Toca ◀ ▶ para cambiar" : "↑ ↓ elegir     ← → cambiar     B bocina     N número     ENTER ¡a la arena!", 15, W / 2, 494, rgb(200, 205, 220));
+}
+
+// ---------------------------------------------------------------- the golden car power-up and the armoured car
+function drawCarUp(x, y, t) {   // the golden car icon, floating
+  const bob = Math.sin(t * 0.08) * 4;
+  glow(x, y + bob, 34, "255,210,80", 0.45);
+  ctx.save(); ctx.translate(x, y + bob);
+  P(GOLD, [[-18, 6], [-18, -4], [-8, -6], [-3, -14], [9, -14], [14, -6], [19, -4], [19, 6]]); PS(GOLD_DARK, [[-18, 6], [-18, -4], [-8, -6], [-3, -14], [9, -14], [14, -6], [19, -4], [19, 6]], 1.5);
+  C(rgb(80, 60, 20), -9, 7, 5); C(rgb(80, 60, 20), 10, 7, 5); R(rgb(255, 250, 220), -1, -12, 7, 5, 1);
+  if (Math.floor(t / 10) % 3 === 0) T("✦", 12, 16, -14, WHITE);
+  ctx.restore();
+}
+function drawArmorCar(p, cam, t) {   // the knight turned into a little armoured car with spikes on the front
+  const x = Math.round(p.x + p.w / 2) - cam, y = Math.round(p.y + p.h), fl = p.carT < 90 && Math.floor(p.carT / 6) % 2;
+  ctx.save(); ctx.translate(x, y); if (p.facing < 0) ctx.scale(-1, 1);
+  ctx.globalAlpha = 0.3; E(BLACK, -36, -4, 72, 8); ctx.globalAlpha = 1;
+  const body = fl ? WHITE : ARMOR;
+  P(body, [[-36, -10], [-36, -30], [-22, -34], [-14, -44], [16, -44], [24, -32], [38, -28], [38, -10]]); PS(ARMOR_DARK, [[-36, -10], [-36, -30], [-22, -34], [-14, -44], [16, -44], [24, -32], [38, -28], [38, -10]], 2);
+  R(GOLD, -36, -24, 74, 4); for (const rx of [-28, -12, 4, 20]) C(GOLD, rx, -16, 2);
+  for (let k = 0; k < 3; k++) P(rgb(210, 214, 222), [[38, -28 + k * 6], [48, -25 + k * 6], [38, -22 + k * 6]]);   // spikes
+  C(ARMOR_MID, 0, -46, 9); R(rgb(30, 34, 44), 2, -48, 8, 3);   // the knight's helmet poking out of the hatch
+  P(PLUME, [[-4, -52], [-14, -60], [-20, -50]]);
+  for (const wx of [-22, 24]) { C(rgb(24, 24, 28), wx, -9, 10); C(GOLD, wx, -9, 4); L(GOLD_DARK, wx, -9, wx + Math.cos(t * 0.5) * 4, -9 + Math.sin(t * 0.5) * 4, 2); }
+  ctx.restore();
+}
+
+// ---------------------------------------------------------------- extra HUD for the car levels
+function drawKindHud(g) {
+  const TV = g.tv; if (!TV) return;
+  if (TV.kind === "stunt") { T(`ACROBACIAS ${TV.tp}`, 22, W - 16, 52, GOLD, "right", "top"); T("Oro 14000 · Plata 8000 · Bronce 3500", 12, W - 16, 78, WHITE, "right", "top"); }
+  else if (TV.kind === "derby") {
+    const me = TV.cars[0], f = Math.max(0, me.hp / me.maxHp);
+    T("TU COCHE", 14, 16, 140, WHITE, "left", "top"); R(HEART_EMPTY, 100, 142, 160, 12, 4); R(f > 0.5 ? GRASS_LIGHT : f > 0.25 ? GOLD : HEART, 100, 142, 160 * f, 12, 4);
+    T(`RIVALES ${TV.cars.filter(c => !c.dead && !c.player).length}`, 20, W - 16, 52, WHITE, "right", "top");
+  } else if (TV.kind === "police") T(`LADRONES ${TV.caught}/${TV.goal}`, 20, W - 16, 52, WHITE, "right", "top");
+  else if (TV.kind === "fire") {
+    T("AGUA", 14, 16, 140, WHITE, "left", "top"); R(HEART_EMPTY, 70, 142, 140, 12, 4); R(rgb(90, 170, 255), 70, 142, 140 * TV.water / 100, 12, 4);
+    T(`🔥 ${TV.blds.filter(b => b.fire && b.fire.hp > 0).length}   🐱 ${TV.blds.filter(b => b.cat && !b.cat.saved).length}`, 20, W - 16, 52, WHITE, "right", "top");
+  }
+}
+
 function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
   ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.scale(0.62, 0.62);
   drawAxe([0, 26], [0, -1], 0.55, gold);
@@ -3888,6 +4401,7 @@ function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
 }
 
 function drawKnight(p, cam, upg, t) {
+  if (p.carT > 0) { drawArmorCar(p, cam, t); return; }
   const moving = p.onGround && Math.abs(p.vx) > 0.5, step = moving && !p.skates ? Math.sin(p.anim * 1.4) * 4 : 0;   // on skates he glides: no walking steps
   flipAt(Math.round(p.x) - cam, Math.round(p.y), p.w, p.facing);
   if (p.bike) ctx.translate(7, 0);   // the knight sits in the middle of the wider bike
@@ -6677,7 +7191,7 @@ class Game {
   }
   startLine() {
     const th = LEVELS[this.levelIndex].theme;
-    return th === "rock" ? "rock_nivel" : th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "jungle" ? "lianas" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { snowball: "guerra_nieve", monster: "monstruos", buggy: "dunas", skidoo: "motonieve", climb: "escalada", ski: "descenso", ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
+    return th === "rock" ? "rock_nivel" : th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "jungle" ? "lianas" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { snowball: "guerra_nieve", monster: "monstruos", stunt: "show", derby: "derbi", police: "policia", fire: "bomberos", toy: "juguetes", buggy: "dunas", skidoo: "motonieve", climb: "escalada", ski: "descenso", ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
   }
   levelLabel(i = this.levelIndex) { const n = MAP_NODES[i]; return LEVELS[i].secret ? "NIVEL SECRETO" : `NIVEL ${n.world + 1}-${n.num}`; }
   loadProgress() {   // which levels are beaten and which secrets are found, remembered between visits
@@ -6749,7 +7263,7 @@ class Game {
     } else K.moving = false;
     this.mapCam += (Math.max(0, Math.min(MAP_W - W, K.x - W / 2)) - this.mapCam) * 0.12;
   }
-  playLevel(i) { this.levelIndex = i; this.mapSel = i; this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
+  playLevel(i) { if (LEVELS[i].garage && this.state !== "garage") { this.openGarage(i); return; } this.levelIndex = i; this.mapSel = i; this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
   mapTap(x, y) {   // tap a level on the map to walk there; tap the one the knight is on to play it
     const wx = x + this.mapCam, r = this.mapRoute();
     const i = r.find(k => Math.hypot(MAP_NODES[k].x - wx, MAP_NODES[k].y - y) < 36);
@@ -6814,7 +7328,8 @@ class Game {
     if (this.level.theme.bg === "cave") this.player.sneak = true;
     this.rk = this.level.mode === "rocket" ? this.initRocket() : null;
     const md = this.level.mode; this.vineTold = false;
-    this.tv = md === "buggy" || md === "skidoo" ? this.initTerrain(md) : md === "monster" ? this.initMonster() : null;
+    this.tv = md === "buggy" || md === "skidoo" ? this.initTerrain(md) : md === "monster" ? this.initMonster() : md === "stunt" ? this.initStunt() : md === "derby" ? this.initDerby()
+      : md === "police" || md === "fire" ? this.initRoad(md) : md === "toy" ? this.initToy() : null;
     this.cl = md === "climb" ? this.initClimb() : null;
     this.sk = md === "ski" ? this.initSki() : null;
     this.storm = this.level.theme.bg === "storm" ? { still: 0, hail: [], phase: "calm", phaseT: 260, wind: 0, windTo: 0, windT: 140, flash: 0, bolts: [], bgBolt: 200, bgFlash: null, thunderIn: 0 } : null;
@@ -6934,6 +7449,485 @@ class Game {
     return true;
   }
   // ---------------------------------------------------------------- the dune buggy and the skidoo: rolling hills, jumps, things to dodge
+  // ================================================================ El Gran Show (secret): a monster truck stunt course
+  initStunt() {
+    const g = STUNT_G, feats = [], rings = [], buses = [], cars = [], boosts = [];
+    const kicker = (x, w, h, dist, opt = {}) => {   // a steep ramp: the boost strip before it gives exactly the speed to fly 'dist'
+      const s = h / w, vx = Math.sqrt(dist * g / (2 * s)), vy = vx * s, top = x + w;
+      feats.push({ t: "kick", x0: x, x1: top, h0: 0, h1: h });
+      boosts.push({ x0: x - 420, x1: top, v: vx });
+      let landX, landH = opt.landH ?? h, landW = opt.landW ?? Math.max(300, h * 3);
+      if (opt.buses) {
+        const bx = top + 70, bw = 110;
+        for (let k = 0; k < opt.buses; k++) buses.push({ x: bx + k * bw, w: bw - 8 });
+        feats.push({ t: "bus", x0: bx - 4, x1: bx + opt.buses * bw, h0: 74, h1: 74 });
+        landX = bx + opt.buses * bw; landH = 74;
+      } else landX = top + dist - landW * 0.3;
+      feats.push({ t: "back", x0: landX - landH * 2.2, x1: landX, h0: 0, h1: landH });   // the back of the landing mound (if you fall short)
+      feats.push({ t: "land", x0: landX, x1: landX + landW, h0: landH, h1: 0 });
+      if (opt.ring) rings.push({ x: top + dist * 0.45, y: 440 - h - (vy * vy) / (2 * g) + 26, r: 50, done: false, burn: 0 });
+      return landX + landW;
+    };
+    let x = 760;
+    x = kicker(x, 220, 60, 380) + 460;
+    const cx0 = x; for (let k = 0; k < 6; k++) cars.push({ x: cx0 + k * 58, flat: false, col: pick([rgb(70, 110, 170), rgb(150, 60, 50), rgb(90, 130, 80), rgb(170, 150, 60)]) }); x += 6 * 58 + 520;
+    x = kicker(x, 300, 120, 600, { ring: true }) + 620;
+    x = kicker(x, 300, 110, 5 * 110 + 240, { buses: 5, landW: 360 }) + 640;
+    const mega = x; x = kicker(x, 400, 190, 900, { landW: 600 }) + 720;
+    x = kicker(x, 260, 100, 500, { ring: true }) + 380;
+    x = kicker(x, 260, 100, 500, { ring: true }) + 720;
+    x = kicker(x, 420, 170, 8 * 110 + 260, { buses: 8, landW: 460 }) + 700;
+    const len = x + 700;
+    const T = { kind: "stunt", len, feats, rings, buses, cars, boosts, mega, x: 300, y: 0, vx: 0, vy: 0, ang: 0, air: false, airT: 0, face: 1, nitro: 0, nitroCd: 0, wheel: 0,
+      rot: 0, crash: 0, tp: 0, jump: null, combo: [], fireworks: [] };
+    T.y = stuntY(T, T.x);
+    return T;
+  }
+  updateStunt() {
+    const p = this.player, T = this.tv, gy = x => stuntY(T, x), slope = x => Math.max(-1.6, Math.min(1.6, (gy(x) - gy(x - 6)) / 6));
+    const cam = () => { const want = Math.max(0, Math.min(T.len - W, T.x - 300)); this.camX += (want - this.camX) * 0.25; };
+    if (this.levelTimer < 90) { T.y = gy(T.x); this.syncMT(); this.camX = 0; return; }
+    if (p.invuln > 0) p.invuln--;
+    if (T.nitroCd > 0) T.nitroCd--;
+    if (T.nitro > 0) T.nitro--;
+    for (const f of T.fireworks) f.t++; T.fireworks = T.fireworks.filter(f => f.t < 70);
+    if (this.t % 50 === 0) T.fireworks.push({ x: this.camX + randInt(80, W - 80), y: randInt(60, 200), t: 0, col: pick([GOLD, HEART, rgb(90, 200, 255), rgb(140, 255, 140)]) });
+    if (T.crash > 0) {   // tumbling after a bad landing
+      T.crash--; T.vx *= 0.94; T.ang += 0.22 * (T.crash > 30 ? 1 : 0); T.x += T.vx; T.y = gy(T.x); T.wheel += T.vx * 0.06;
+      if (T.crash === 0) { T.ang = Math.atan(slope(T.x)); T.air = false; }
+      this.syncMT(); cam(); return;
+    }
+    if (inp.attack && T.nitroCd === 0) { T.nitro = 60; T.nitroCd = 200; play("nitro"); this.popup(p.x + p.w / 2, p.y - 20, "¡Turbo!", GOLD); }
+    const thr = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    if (!T.air) {
+      const sl = slope(T.x), ga = Math.atan(sl);
+      T.vx += thr * (T.nitro ? 0.34 : 0.22) + (thr ? 0 : -Math.sign(T.vx) * 0.05);
+      const top = T.nitro ? 12.5 : 9; T.vx = Math.max(-4, Math.min(top, T.vx));
+      for (const b of T.boosts) if (T.x > b.x0 && T.x < b.x1 && T.vx > -1) { if (T.vx < b.v) { T.vx = b.v; if (this.t % 8 === 0) play("nitro"); } }   // the boost strip and the ramp launch you at just the right speed
+      T.ang += (ga - T.ang) * 0.4;
+      if (inp.jumpPressed) { T.vy = T.vx * sl - 7; T.air = true; T.airT = 0; T.rot = 0; T.jump = { x: T.x, rings: 0 }; T.held = { r: inp.right, l: inp.left }; play("boing_big"); } else T.vy = T.vx * sl;
+    } else {
+      T.vy += STUNT_G; T.airT++;
+      if (!T.held) T.held = { r: inp.right, l: inp.left };   // a key you were already holding at take-off doesn't spin you (so holding ▶ to speed up is safe)
+      if (!inp.right) T.held.r = false; if (!inp.left) T.held.l = false;
+      const spin = (inp.right && !T.held.r ? 1 : 0) - (inp.left && !T.held.l ? 1 : 0), high = gy(T.x) - T.y > 45;
+      if (spin && high && T.airT > 4) { T.ang += spin * 0.2; T.rot += spin * 0.2; }   // spin in the air: ◀ backflip, ▶ frontflip
+      else if (!spin) { let d = Math.atan(slope(T.x)) - T.ang; d = Math.atan2(Math.sin(d), Math.cos(d)); if (Math.abs(d) < 0.9) T.ang += d * (high ? 0.03 : 0.15); }   // not spinning: straighten up
+    }
+    const ox = T.x; T.x += T.vx; T.y += T.vy; T.wheel += T.vx * 0.06;
+    if (gy(T.x) < T.y - 28) { T.x = ox; T.vx = -T.vx * 0.3; play("stomp"); this.shake = 6; this.popup(T.x, T.y - 120, "¡Te quedaste corto!", WHITE); }   // hit the front of a mound
+    if (T.x < 120) { T.x = 120; T.vx = 0; }
+    for (const r of T.rings) if (!r.done && Math.abs(T.x - r.x) < Math.abs(T.vx) + 3) {   // flew through a ring of fire?
+      const dy = Math.abs(T.y - 55 - r.y);
+      if (dy < r.r * 0.85) { r.done = true; this.score += 1000; T.tp += 1000; if (T.jump) T.jump.rings++; this.popup(r.x, r.y - 70, "¡ARO DE FUEGO! +1000", GOLD); play("fire"); this.burst(r.x, r.y, [rgb(255, 200, 60), rgb(255, 120, 40)], 20, 5); }
+      else if (dy < r.r * 1.4 && !r.burn) { r.burn = 40; this.popup(r.x, r.y - 70, "¡Uy, por poco!", WHITE); }
+    }
+    for (const r of T.rings) if (r.burn > 0) r.burn--;
+    const g = gy(T.x);
+    if (T.y >= g) {
+      if (T.air) {   // landing: was it clean? count the tricks
+        let d = T.ang - Math.atan(slope(T.x)); d = Math.atan2(Math.sin(d), Math.cos(d));
+        if (Math.abs(d) > 1.05) {
+          T.crash = 70; T.rot = 0; play("boom"); this.shake = 14; this.burst(T.x, g - 30, [rgb(200, 150, 90), rgb(90, 90, 90)], 20, 5);
+          this.popup(T.x, g - 140, "¡CHOQUE! Aterriza con las ruedas", HEART); p.hearts--; if (p.hearts <= 0) { this.loseLife(); return; }
+        } else {
+          const flips = Math.floor((Math.abs(T.rot) + 0.9) / (Math.PI * 2)), parts = [];
+          let pts = 0;
+          if (flips > 0) { pts += 1500 * flips; parts.push((T.rot < 0 ? "Mortal atrás" : "Mortal adelante") + (flips > 1 ? ` x${flips}` : "")); }
+          if (T.airT > 55) { pts += T.airT * 6; parts.push("Gran vuelo"); }
+          if (T.jump) {
+            const cleared = T.buses.filter(b => b.x > T.jump.x && b.x + b.w < T.x).length;
+            if (cleared) { pts += 400 * cleared; parts.push(`¡${cleared} autobuses!`); }
+          }
+          if (pts) { if (Math.abs(d) < 0.25) { pts = Math.round(pts * 1.5); parts.push("¡Aterrizaje perfecto!"); } this.score += pts; T.tp += pts; this.popup(T.x, g - 150, `${parts.join(" + ")}  +${pts}`, GOLD); play(flips ? "clear" : "coin"); }
+          play("stomp"); this.shake = Math.max(this.shake, 5); this.burst(T.x, g, [rgb(200, 150, 90), rgb(150, 100, 60)], 12, 4);
+          T.ang = Math.atan(slope(T.x));
+        }
+        T.rot = 0; T.jump = null;
+      }
+      T.y = g; T.air = false; T.held = null;
+    } else if (T.y < g - 2 && !T.air) { T.air = true; T.airT = 0; T.rot = 0; T.jump = { x: T.x, rings: 0 }; T.held = { r: inp.right, l: inp.left }; }
+    for (const c of T.cars) if (!c.flat && Math.abs(c.x - T.x) < 58 && T.y > gy(c.x) - 34) {
+      c.flat = true; this.score += 100; T.tp += 100; this.popup(c.x, gy(c.x) - 60, "¡Crunch! +100", GOLD); play("crate"); this.shake = Math.max(this.shake, 5);
+      this.burst(c.x, gy(c.x) - 14, [c.col, rgb(200, 220, 240)], 10, 4); if (!T.air) { T.vy = -3; T.air = true; T.airT = 0; T.rot = 0; T.jump = { x: T.x, rings: 0 }; }
+    }
+    if (!T.air && Math.abs(T.vx) > 3 && this.t % 3 === 0) this.particles.push({ x: T.x - T.face * 50, y: T.y - 4, vx: -T.vx * 0.2, vy: -1.2, color: rgb(200, 160, 110), life: 24, maxLife: 24, size: 6 });
+    this.syncMT(); cam();
+    if (T.x > T.len - 360 && this.state === "play") {
+      const medal = T.tp >= 14000 ? ["¡MEDALLA DE ORO!", 3000] : T.tp >= 8000 ? ["¡Medalla de plata!", 1500] : T.tp >= 3500 ? ["Medalla de bronce", 600] : ["¡Show terminado!", 0];
+      this.score += medal[1]; this.popup(T.x, T.y - 160, `${medal[0]}  (${T.tp} puntos de acrobacias)`, GOLD); play("clear"); this.finishLevel();
+    }
+  }
+
+  // ================================================================ El Derbi de Choques: top-down demolition derby in your own car
+  initDerby() {
+    const AW = 2000, AH = 1300, cx = AW / 2, cy = AH / 2, rx = AW / 2 - 80, ry = AH / 2 - 80;
+    const st = garageStats();
+    const mk = (x, y, a, o) => Object.assign({ x, y, a, vx: 0, vy: 0, hp: 100, maxHp: 100, mass: 1, speed: 1, grip: 0.18, dead: false, hitCd: 0, stuck: 0, rev: 0, turbo: 0, turboCd: 90, wheel: 0, dent: 0, lastHit: 0 }, o);
+    const T = { kind: "derby", AW, AH, cx, cy, rx, ry, cars: [], tyres: [], bits: [], wrench: null, wrenchT: 420, nitro: 0, nitroCd: 0, camX: 0, camY: 0, count: 150, win: 0, lose: 0, x: cx };
+    T.cars.push(mk(cx - rx * 0.62, cy, 0, { player: true, look: { ...GARAGE }, hp: Math.round(st.hp * 1.3), maxHp: Math.round(st.hp * 1.3), mass: st.mass, speed: st.speed, grip: st.grip, num: GARAGE.num }));
+    const rivals = [["clasico", rgb(60, 150, 80)], ["camioneta", rgb(230, 140, 30)], ["furgoneta", rgb(120, 70, 180)], ["taxi", rgb(240, 200, 40)], ["deportivo", rgb(40, 140, 220)], ["clasico", rgb(220, 70, 150)]];
+    rivals.forEach(([body, col], i) => {
+      const ang = (i + 1) / (rivals.length + 1) * Math.PI * 2 + Math.PI, bs = CAR_BODIES.find(b => b.id === body);
+      const x = cx + Math.cos(ang) * rx * 0.62, y = cy + Math.sin(ang) * ry * 0.62;
+      T.cars.push(mk(x, y, Math.atan2(cy - y, cx - x), { look: { body, col, wheels: "normal", deco: pick(["llamas", "rayas", "estrellas", "nada"]) }, num: i + 2, hp: 56 * bs.hp, maxHp: 56 * bs.hp, mass: bs.mass, speed: bs.speed * 0.92, grip: 0.18 }));
+    });
+    for (const [ox, oy] of [[-260, -120], [260, 120], [0, 0], [-300, 200], [300, -200]]) T.tyres.push({ x: cx + ox, y: cy + oy, r: 36 });
+    return T;
+  }
+  updateDerby() {
+    const T = this.tv, p = this.player, me = T.cars[0], mul = LEVELS[this.levelIndex].speed;
+    const wpop = (x, y, txt, col) => this.popup(x - T.camX, y - T.camY, txt, col);
+    const camTo = (snap) => { const tx = Math.max(-200, Math.min(T.AW - W + 200, me.x - W / 2)), ty = Math.max(-140, Math.min(T.AH - H + 140, me.y - H / 2)); T.camX += (tx - T.camX) * (snap ? 1 : 0.15); T.camY += (ty - T.camY) * (snap ? 1 : 0.15); };
+    this.camX = 0; p.x = me.x - T.camX - 20; p.y = me.y - T.camY - 30; p.w = 40; p.h = 40;
+    if (T.count > 0) {   // 3, 2, 1, ¡YA!
+      T.count--; camTo(true);
+      if (T.count % 40 === 0 && T.count > 0) play("beep");
+      if (T.count === 0) { play(GARAGE.horn ? "horn_" + GARAGE.horn : "horn_clasica"); say("derbi_ya", true); }
+      return;
+    }
+    if (T.nitroCd > 0) T.nitroCd--;
+    for (const b of T.bits) { b.x += b.vx; b.y += b.vy; b.vx *= 0.93; b.vy *= 0.93; b.t++; b.spin += b.vs; }
+    T.bits = T.bits.filter(b => b.t < (b.stay ? 900 : 60));
+    if (T.bits.length > 260) T.bits.splice(0, T.bits.length - 260);
+    const alive = T.cars.filter(c => !c.dead);
+    for (const c of T.cars) {
+      if (c.hitCd > 0) c.hitCd--;
+      if (c.dead) { c.vx *= 0.9; c.vy *= 0.9; c.x += c.vx; c.y += c.vy; if (this.t % 6 === 0) T.bits.push({ x: c.x + randInt(-10, 10), y: c.y + randInt(-8, 8), vx: 0.3, vy: -0.6, t: 0, smoke: true, col: rgb(70, 70, 70), spin: 0, vs: 0 }); continue; }
+      let steer = 0, target;
+      if (c.player) {
+        steer = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+        if (inp.attack && T.nitroCd === 0) { c.turbo = 55; T.nitroCd = 200; play("nitro"); wpop(c.x, c.y - 40, "¡Turbo!", GOLD); }
+        target = inp.jumpHeld ? -2.8 : (c.turbo > 0 ? 8 : 4.8) * c.speed;
+      } else {   // the rivals go for the nearest car (they like going for you)
+        let best = null, bd = 1e9;
+        for (const o of alive) if (o !== c) { const d = Math.hypot(o.x - c.x, o.y - c.y) * (o.player ? 1.05 : 1) + (o === c.avoid ? 400 : 0); if (d < bd) { bd = d; best = o; } }
+        if (best) {
+          const ax = best.x + best.vx * 14 - c.x, ay = best.y + best.vy * 14 - c.y;
+          let df = Math.atan2(ay, ax) - c.a; df = Math.atan2(Math.sin(df), Math.cos(df));
+          steer = Math.max(-1, Math.min(1, df * 2.2));
+          if (--c.turboCd <= 0 && Math.abs(df) < 0.18 && bd < 460) { c.turbo = 40; c.turboCd = randInt(220, 340); }
+        }
+        target = (c.turbo > 0 ? 6.8 : 4.1) * c.speed * mul;
+        if (c.rev > 0) { c.rev--; steer = -steer; target = -2.8; }
+        else {   // stuck against a wall, or locked bumper to bumper? back off and come again
+          const sp = Math.hypot(c.vx, c.vy); if (sp < 1.2) c.stuck++; else c.stuck = Math.max(0, c.stuck - 2);
+          if (best && bd < 75) c.push = (c.push || 0) + 1; else c.push = 0;
+          if (c.stuck > 40 || c.push > 50) { c.rev = 38; c.stuck = 0; c.push = 0; c.avoid = best; c.avoidT = 120; }
+        }
+        if (c.avoidT > 0 && --c.avoidT === 0) c.avoid = null;
+      }
+      if (c.turbo > 0) { c.turbo--; if (this.t % 2 === 0) T.bits.push({ x: c.x - Math.cos(c.a) * 34, y: c.y - Math.sin(c.a) * 34, vx: -Math.cos(c.a) * 2, vy: -Math.sin(c.a) * 2, t: 30, fire: true, col: pick([GOLD, rgb(255, 120, 40)]), spin: 0, vs: 0 }); }
+      const fx = Math.cos(c.a), fy = Math.sin(c.a);
+      let along = c.vx * fx + c.vy * fy, side = -c.vx * fy + c.vy * fx;
+      c.a += steer * 0.065 * Math.max(0.35, Math.min(1, Math.abs(along) / 3)) * (along < -0.2 ? -1 : 1);
+      along += (target - along) * 0.06; side *= 1 - c.grip;
+      const nx = Math.cos(c.a), ny = Math.sin(c.a);
+      c.vx = nx * along - ny * side; c.vy = ny * along + nx * side;
+      c.x += c.vx; c.y += c.vy; c.wheel += along * 0.2;
+      if (c.hp < c.maxHp * 0.45 && this.t % (c.hp < c.maxHp * 0.2 ? 2 : 5) === 0) T.bits.push({ x: c.x + randInt(-8, 8), y: c.y + randInt(-6, 6), vx: -c.vx * 0.2, vy: -c.vy * 0.2 - 0.3, t: 0, smoke: true, col: c.hp < c.maxHp * 0.2 ? pick([rgb(255, 140, 40), rgb(80, 80, 80)]) : rgb(120, 120, 120), spin: 0, vs: 0 });
+    }
+    const R = 27;
+    for (const c of T.cars) {   // the arena wall (a ring of tyres) and the tyre piles
+      const q = ((c.x - T.cx) / T.rx) ** 2 + ((c.y - T.cy) / T.ry) ** 2;
+      if (q > 1) {
+        let nx = (c.x - T.cx) / (T.rx * T.rx), ny = (c.y - T.cy) / (T.ry * T.ry); const nl = Math.hypot(nx, ny); nx /= nl; ny /= nl;
+        const s = 1 / Math.sqrt(q); c.x = T.cx + (c.x - T.cx) * s; c.y = T.cy + (c.y - T.cy) * s;
+        const vn = c.vx * nx + c.vy * ny;
+        if (vn > 0) { c.vx -= 1.5 * vn * nx; c.vy -= 1.5 * vn * ny; if (vn > 3.5 && !c.dead) { c.hp -= vn * 1.2; if (c.player || Math.random() < 0.3) play("stomp"); } }
+      }
+      for (const ty of T.tyres) {
+        const dx = c.x - ty.x, dy = c.y - ty.y, d = Math.hypot(dx, dy);
+        if (d < ty.r + R - 4) { const nx = dx / d, ny = dy / d; c.x = ty.x + nx * (ty.r + R - 4); c.y = ty.y + ny * (ty.r + R - 4); const vn = c.vx * nx + c.vy * ny; if (vn < 0) { c.vx -= 1.5 * vn * nx; c.vy -= 1.5 * vn * ny; } }
+      }
+    }
+    for (let i = 0; i < T.cars.length; i++) for (let j = i + 1; j < T.cars.length; j++) {   // CRASH!
+      const A = T.cars[i], B = T.cars[j], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy);
+      if (d >= 2 * R || d === 0) continue;
+      const nx = dx / d, ny = dy / d, mA = A.dead ? 3 : A.mass, mB = B.dead ? 3 : B.mass, ov = 2 * R - d;
+      A.x -= nx * ov * mB / (mA + mB); A.y -= ny * ov * mB / (mA + mB); B.x += nx * ov * mA / (mA + mB); B.y += ny * ov * mA / (mA + mB);
+      const vrel = (A.vx - B.vx) * nx + (A.vy - B.vy) * ny;
+      if (vrel <= 0.3) continue;
+      const jI = 1.35 * vrel / (1 / mA + 1 / mB);
+      A.vx -= jI / mA * nx; A.vy -= jI / mA * ny; B.vx += jI / mB * nx; B.vy += jI / mB * ny;
+      if (vrel < 1.6) continue;
+      // the front bumper is strong: getting hit in the side or the back hurts much more
+      const fA = Math.max(0, Math.cos(A.a) * nx + Math.sin(A.a) * ny), fB = Math.max(0, -(Math.cos(B.a) * nx + Math.sin(B.a) * ny));
+      const k = 2.6, dA = vrel * k * (1.6 - 1.0 * fA) * (B.dead ? 0.3 : 1), dB = vrel * k * (1.6 - 1.0 * fB) * (A.dead ? 0.3 : 1);
+      const px = A.x + nx * R, py = A.y + ny * R;
+      for (const [C2, dm] of [[A, dA], [B, dB]]) if (!C2.dead && dm > 0) {
+        C2.hp -= dm; C2.dent = Math.min(1, C2.dent + dm / 120); C2.lastHit = this.t;
+        const n = Math.min(10, Math.round(dm / 3));
+        for (let q = 0; q < n; q++) T.bits.push({ x: px, y: py, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, t: 0, stay: Math.random() < 0.4, col: q % 3 === 0 ? rgb(200, 200, 210) : C2.look.col, sz: randInt(3, 7), spin: Math.random() * 6, vs: (Math.random() - 0.5) * 0.5 });
+        if (dm > 14 && Math.random() < 0.5) T.bits.push({ x: px, y: py, vx: (Math.random() - 0.5) * 9, vy: (Math.random() - 0.5) * 9, t: 0, stay: true, cap: true, col: rgb(210, 210, 220), spin: 0, vs: 0.3 });   // a hubcap!
+      }
+      const big = Math.max(dA, dB);
+      if (A.player || B.player) {
+        this.shake = Math.max(this.shake, Math.min(14, big * 0.5));
+        const other = A.player ? B : A, mine = A.player ? dA : dB, theirs = A.player ? dB : dA;
+        if (theirs > 12) { wpop(other.x, other.y - 40, theirs > 24 ? "¡PUMBA!" : "¡PUM!", GOLD); this.score += Math.round(theirs * 5); if (theirs > 22) play(GARAGE.horn ? "horn_" + GARAGE.horn : "horn_clasica"); }
+        if (mine > 12) wpop(me.x, me.y - 50, "¡Ay, mi coche!", HEART);
+        play(big > 20 ? "boom" : "crate");
+      } else if (big > 10 && Math.hypot(A.x - me.x, A.y - me.y) < 700) play("crate");
+    }
+    for (const c of T.cars) if (!c.dead && c.hp <= 0) {   // knocked out
+      c.dead = true; c.hp = 0; this.burst(c.x - T.camX, c.y - T.camY, [rgb(255, 200, 80), rgb(255, 110, 40), rgb(80, 80, 80)], 26, 6); play("boom");
+      if (c.player) { wpop(c.x, c.y - 50, "¡Tu coche está destrozado!", HEART); T.lose = 90; }
+      else { const left = T.cars.filter(o => !o.dead && !o.player).length; wpop(c.x, c.y - 50, left ? `¡El nº ${c.num} está fuera! Quedan ${left}` : "¡El último!", GOLD); this.score += 800; say(left ? "eliminado" : "campeon", true); }
+    }
+    if (!T.wrench && --T.wrenchT <= 0) { const a = Math.random() * Math.PI * 2, r = 0.25 + Math.random() * 0.45; T.wrench = { x: T.cx + Math.cos(a) * T.rx * r, y: T.cy + Math.sin(a) * T.ry * r, t: 0 }; }
+    if (T.wrench) { T.wrench.t++; if (Math.hypot(T.wrench.x - me.x, T.wrench.y - me.y) < 46 && !me.dead) { me.hp = Math.min(me.maxHp, me.hp + me.maxHp * 0.35); me.dent = Math.max(0, me.dent - 0.35); wpop(me.x, me.y - 50, "¡Reparado! 🔧", GRASS_LIGHT); play("oneup"); T.wrench = null; T.wrenchT = randInt(600, 900); } }
+    p.vx = Math.hypot(me.vx, me.vy) * 1.3;
+    camTo(false);
+    if (T.lose > 0 && --T.lose === 0) { this.loseLife(); return; }
+    if (!me.dead && T.cars.every(c => c.player || c.dead) && this.state === "play") { this.score += Math.round(me.hp * 20); wpop(me.x, me.y - 70, "¡CAMPEÓN DEL DERBI!", GOLD); play("clear"); this.finishLevel(); }
+  }
+
+  // ================================================================ La Persecución and Los Bomberos: side-view town streets
+  initRoad(kind) {
+    const T = { kind, x: 220, y: 440, vx: 0, vy: 0, air: false, airT: 0, face: 1, ang: 0, wheel: 0, nitro: 0, nitroCd: 0, spin: 0, len: 1e9 };
+    if (kind === "police") Object.assign(T, { goal: 5, caught: 0, rob: null, robT: 60, robN: 0, traffic: [], obs: [], cones: [], nextTraffic: 900, nextCone: 600, pulled: [] });
+    else {
+      const rnd = seeded(31), blds = []; let x = 360;
+      const fireAt = new Set([1, 2, 4, 6, 7, 9]), catAt = new Set([2, 5, 8]);
+      for (let i = 0; i < 11; i++) {
+        const w = 260 + Math.floor(rnd() * 120), h = 190 + Math.floor(rnd() * 120);
+        blds.push({ x, w, h, col: pick([rgb(196, 120, 90), rgb(214, 190, 150), rgb(150, 160, 180), rgb(200, 150, 120), rgb(170, 190, 150)]), fire: fireAt.has(i) ? { hp: 100, x: x + w * (0.3 + rnd() * 0.4), y: 440 - h * (0.45 + rnd() * 0.3) } : null, cat: catAt.has(i) ? { x: x + w * 0.5, saved: false, down: 0 } : null });
+        x += w + 70 + Math.floor(rnd() * 60);
+      }
+      Object.assign(T, { len: x + 300, blds, hydrants: [blds[0].x - 60, blds[3].x - 40, blds[6].x - 40, blds[9].x - 40].map(hx => ({ x: hx })), water: 100, drops: [], embers: [], ladder: 0, ladderCat: null, sprayT: 0 });
+    }
+    return T;
+  }
+  syncRoad() { const p = this.player, T = this.tv; p.w = 120; p.h = 70; p.x = T.x - 60; p.y = T.y - 70; p.vx = T.vx; p.facing = T.face; }
+  updateRoad() {
+    const p = this.player, T = this.tv, mul = LEVELS[this.levelIndex].speed, police = T.kind === "police";
+    const gy = x => roadY(T, x), slope = x => Math.max(-1.6, Math.min(1.6, (gy(x) - gy(x - 6)) / 6));
+    const cam = () => { const want = Math.max(0, Math.min(T.len - W, T.x - (police ? 260 : W / 2 - T.face * 120))); this.camX += (want - this.camX) * 0.12; };
+    if (this.levelTimer < 90) { T.y = gy(T.x); this.syncRoad(); this.camX = Math.max(0, T.x - 260); if (police && this.levelTimer === 60) play("siren"); return; }
+    if (p.invuln > 0) p.invuln--;
+    if (T.nitroCd > 0) T.nitroCd--;
+    if (T.nitro > 0) T.nitro--;
+    if (T.spin > 0) T.spin--;
+    const hurtCar = (msg) => { if (p.invuln > 0) return; p.hearts--; p.invuln = 70; play("hurt"); this.shake = 10; this.popup(T.x, T.y - 100, msg, HEART); if (p.hearts <= 0) this.loseLife(); };
+    const thr = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    if (police) {
+      if (inp.attack && T.nitroCd === 0) { T.nitro = 70; T.nitroCd = 220; play("siren"); this.popup(T.x, T.y - 100, "¡Sirena a tope!", rgb(120, 180, 255)); }
+      const top = (T.nitro ? 13.5 : 10) * (T.spin ? 0.5 : 1);
+      if (!T.air) T.vx += thr > 0 ? 0.26 : thr < 0 ? -0.4 : -0.04;
+      T.vx = Math.max(0, Math.min(top, T.vx));
+    } else {
+      if (thr) T.face = thr;
+      const top = 6.5;
+      if (!T.air) T.vx += thr * 0.2 - (thr ? 0 : Math.sign(T.vx) * Math.min(Math.abs(T.vx), 0.15));
+      T.vx = Math.max(-top, Math.min(top, T.vx));
+    }
+    if (!T.air) {
+      const sl = slope(T.x); T.ang += (Math.atan(sl) - T.ang) * 0.3;
+      if (police && inp.jumpPressed) { T.vy = -9.5; T.air = true; T.airT = 0; play("boing_big"); } else T.vy = T.vx * sl;
+    } else { T.vy += 0.5; T.airT++; T.ang *= 0.95; }
+    T.x += T.vx; T.y += T.vy; T.wheel += T.vx * 0.08;
+    if (T.x < 140) { T.x = 140; T.vx = 0; } if (T.x > T.len - 140) { T.x = T.len - 140; T.vx = 0; }
+    const g = gy(T.x);
+    if (T.y >= g) { if (T.air) { play("stomp"); this.dust(T.x, g); } T.y = g; T.air = false; } else if (T.y < g - 2) T.air = true;
+    const front = T.x + 62, back = T.x - 62, bottom = T.y;
+    if (police) {
+      // --- the robbers' getaway cars
+      if (!T.rob && T.caught + T.pulled.filter(r => !r.counted).length < T.goal && --T.robT <= 0) {
+        T.robN++; T.rob = { x: T.x + 1000, y: 440, vx: 6, vy: 0, air: false, sp: (7 + T.robN * 0.25) * mul, dropT: 120, wheel: 0, n: T.robN };
+        this.popup(W / 2 + this.camX, 150, T.robN === 1 ? "¡Persigue a los ladrones! Choca con su coche" : "¡Otro ladrón a la fuga!", GOLD); say("ladron", true);
+      }
+      const r = T.rob;
+      if (r) {
+        const gap = r.x - T.x;
+        const want = gap > 1400 ? r.sp * 0.3 : gap > 700 ? r.sp * 0.6 : gap < 260 ? r.sp * 0.92 : r.sp;   // they never get too far ahead
+        r.vx += (want - r.vx) * 0.05;
+        const blocking = T.traffic.find(c => c.x > r.x + 40 && c.x < r.x + 220);
+        if (!r.air && blocking) { r.vy = -9; r.air = true; }
+        if (r.air) { r.vy += 0.5; r.y += r.vy; if (r.y >= gy(r.x)) { r.y = gy(r.x); r.air = false; } } else r.y = gy(r.x);
+        r.x += r.vx; r.wheel += r.vx * 0.08;
+        if (gap < 900 && --r.dropT <= 0) {   // the robbers throw things out of the back
+          r.dropT = Math.round(randInt(95, 150) / mul);
+          const k = pick(["oil", "barrel", "bag", "oil", "bag"]);
+          T.obs.push({ kind: k, x: r.x - 70, y: gy(r.x - 70), vx: 0, t: 0, hit: false });
+          if (k === "bag") this.popup(r.x - 80 - this.camX + this.camX, r.y - 90, "¡Se le cae el dinero!", GOLD);
+        }
+        if (front > r.x - 64 && back < r.x + 64 && Math.abs(bottom - r.y) < 46) {   // caught them!
+          T.caught++; this.score += 600; play("clear"); this.shake = 10; this.popup(r.x, r.y - 110, `¡DETENIDO! (${T.caught}/${T.goal})  +600`, GOLD); say("detenido", true);
+          T.pulled.push({ x: r.x + 40, y: r.y, n: r.n, t: 0 }); T.vx = Math.min(T.vx, r.vx * 0.8);
+          T.rob = null; T.robT = 110;
+          if (T.caught >= T.goal) { this.popup(T.x, T.y - 150, "¡TODOS LOS LADRONES DETENIDOS!", GOLD); this.finishLevel(); return; }
+        }
+      }
+      for (const q of T.pulled) q.t++;
+      T.pulled = T.pulled.filter(q => q.x > this.camX - 300);
+      // --- traffic driving slowly in the same direction: jump over it
+      if (T.x > T.nextTraffic) { T.nextTraffic = T.x + randInt(700, 1100); T.traffic.push({ x: T.x + W + 260, vx: 2.5 + Math.random() * 1.8, col: pick([rgb(90, 160, 90), rgb(200, 200, 210), rgb(200, 120, 60), rgb(110, 110, 200), rgb(230, 210, 80)]), kind: pick(["car", "car", "van", "bus"]), wheel: 0, hit: false }); }
+      for (const c of T.traffic) {
+        c.x += c.vx; c.wheel += c.vx * 0.08;
+        const half = c.kind === "bus" ? 110 : c.kind === "van" ? 70 : 60, top = gy(c.x) - (c.kind === "bus" ? 84 : c.kind === "van" ? 66 : 50);
+        if (!c.hit && front > c.x - half && back < c.x + half && bottom > top + 8) {
+          if (c.bounced) { }   // already bounced off this one: let it pass under
+          else if (T.air && T.vy > 0 && bottom < top + 26) { c.bounced = true; T.vy = -8; T.vx = Math.max(T.vx, 8); play("boing"); this.popup(c.x, top - 20, "¡Boing!", GOLD); }   // bounced off its roof
+          else { c.hit = true; T.vx = Math.min(T.vx, c.vx) * 0.6; T.x = Math.min(T.x, c.x - half - 63); play("horn_clasica"); this.shake = 6; this.popup(c.x, top - 20, "¡Mec mec! ¡Salta los coches!", WHITE); }   // bumping traffic just slows you down
+        }
+        if (c.hit && T.x > c.x + 200) c.hit = false;
+      }
+      T.traffic = T.traffic.filter(c => c.x > this.camX - 400);
+      // --- things the robbers dropped
+      for (const o of T.obs) {
+        o.t++; o.x += o.vx;
+        if (o.hit) continue;
+        if (front > o.x - 22 && back < o.x + 22 && bottom > o.y - (o.kind === "barrel" ? 30 : 6) + (T.air ? 0 : 0) && !(T.air && bottom < o.y - (o.kind === "barrel" ? 34 : 8))) {
+          o.hit = true;
+          if (o.kind === "oil") { T.spin = 60; T.vx *= 0.5; play("slide"); this.popup(o.x, o.y - 80, "¡Aceite! ¡Patinas!", WHITE); }
+          else if (o.kind === "barrel") { hurtCar("¡Un barril!"); T.vx *= 0.5; this.burst(o.x - this.camX + this.camX, o.y - 20, [rgb(140, 90, 50), rgb(90, 60, 30)], 12, 4); }
+          else { this.score += 200; this.coins++; play("coin"); this.popup(o.x, o.y - 60, "¡Dinero recuperado! +200", GOLD); }
+        }
+      }
+      T.obs = T.obs.filter(o => o.x > this.camX - 200 && o.t < 1800);
+      if (T.x > T.nextCone) { T.nextCone = T.x + randInt(500, 900); const cx = T.x + W + 100; for (let k = 0; k < 3; k++) T.cones.push({ x: cx + k * 34, down: 0, vx: 0, vy: 0, y: 0 }); }
+      for (const c of T.cones) { if (!c.down && front > c.x - 10 && back < c.x + 10 && bottom > gy(c.x) - 30) { c.down = 1; c.vx = T.vx * 0.8 + 2; c.vy = -5; this.score += 10; play("click"); } if (c.down) { c.down++; c.x += c.vx; c.y += c.vy; c.vy += 0.4; if (c.y > 0) { c.y = 0; c.vy = 0; c.vx *= 0.8; } } }
+      T.cones = T.cones.filter(c => c.x > this.camX - 100);
+      if (this.t % 40 === 0 && T.nitro) play("siren");
+    } else {
+      // --- Los Bomberos: spray water at the fires, rescue the cats with the ladder, refill at the hydrants
+      const burning = T.blds.filter(b => b.fire && b.fire.hp > 0), cats = T.blds.filter(b => b.cat && !b.cat.saved);
+      const nozzle = { x: T.x + T.face * 10, y: T.y - 86 };
+      if (inp.attack && T.water > 0 && !T.ladder) {
+        T.water = Math.max(0, T.water - 0.35); T.sprayT++;
+        if (T.sprayT % 2 === 0) {
+          const tg = burning.filter(b => (b.fire.x - nozzle.x) * T.face > 30 && Math.abs(b.fire.x - nozzle.x) < 720).sort((a, b) => Math.abs(a.fire.x - nozzle.x) - Math.abs(b.fire.x - nozzle.x))[0];
+          const tx = tg ? tg.fire.x + randInt(-14, 14) : nozzle.x + T.face * 360, ty = tg ? tg.fire.y + randInt(-14, 14) : nozzle.y + 40;
+          const dx = tx - nozzle.x, tt = Math.max(18, Math.abs(dx) / 9), gr = 0.3;
+          T.drops.push({ x: nozzle.x, y: nozzle.y, vx: dx / tt, vy: (ty - nozzle.y - 0.5 * gr * tt * tt) / tt, t: 0 });
+          if (T.sprayT % 10 === 0) play("slide");
+        }
+        if (T.water <= 0) { this.popup(T.x, T.y - 110, "¡Sin agua! Rellena en una boca de incendios", rgb(120, 180, 255)); play("nope"); }
+      } else T.sprayT = 0;
+      for (const d of T.drops) {
+        d.vy += 0.3; d.x += d.vx; d.y += d.vy; d.t++;
+        for (const b of burning) if (Math.abs(d.x - b.fire.x) < 34 && Math.abs(d.y - b.fire.y) < 34) { b.fire.hp -= 1.6; d.dead = true; if (Math.random() < 0.3) this.particles.push({ x: d.x - this.camX + this.camX, y: d.y, vx: 0, vy: -1.5, color: rgb(230, 230, 240), life: 30, maxLife: 30, size: 6 }); break; }
+        if (d.y > 440) d.dead = true;
+      }
+      T.drops = T.drops.filter(d => !d.dead && d.t < 120);
+      for (const b of T.blds) if (b.fire) {
+        if (b.fire.hp > 0 && b.fire.hp < 100) b.fire.hp = Math.min(100, b.fire.hp + 0.04);   // fires creep back if you leave them
+        if (b.fire.hp <= 0 && !b.fire.out) { b.fire.out = true; this.score += 400; play("clear"); this.popup(b.fire.x, b.fire.y - 50, "¡Fuego apagado! +400", GOLD); say("apagado", true); }
+        if (b.fire.hp > 0 && Math.abs(b.fire.x - T.x) < 260 && Math.random() < 0.012) T.embers.push({ x: b.fire.x + randInt(-30, 30), y: b.fire.y + 10, vx: (T.x - b.fire.x) * 0.004 + (Math.random() - 0.5), vy: 0, t: 0 });
+      }
+      for (const e of T.embers) {
+        e.vy += 0.2; e.x += e.vx; e.y += e.vy; e.t++;
+        if (Math.abs(e.x - T.x) < 60 && e.y > T.y - 80 && e.y < T.y) { e.dead = true; hurtCar("¡Una brasa!"); }
+        if (e.y > 440) e.dead = true;
+      }
+      T.embers = T.embers.filter(e => !e.dead);
+      const hyd = T.hydrants.find(h => Math.abs(h.x - T.x) < 80);
+      if (hyd && Math.abs(T.vx) < 1 && T.water < 100) { T.water = Math.min(100, T.water + 1.2); hyd.on = 6; if (this.t % 30 === 0) this.popup(T.x, T.y - 110, "¡Rellenando agua!", rgb(120, 180, 255)); }
+      for (const h of T.hydrants) if (h.on > 0) h.on--;
+      const near = cats.find(b => Math.abs(b.cat.x - T.x) < 80);
+      if (inp.jumpPressed && !T.ladder) {
+        if (near && Math.abs(T.vx) < 1.2) {
+          if (near.fire && near.fire.hp > 0) { this.popup(T.x, T.y - 120, "¡Primero apaga el fuego!", HEART); play("nope"); }
+          else { T.ladder = 1; T.ladderCat = near; T.vx = 0; play("click"); }
+        } else if (near) this.popup(T.x, T.y - 110, "Para el camión para subir la escalera", WHITE);
+        else play("horn_camion");
+      }
+      if (T.ladder) {   // the ladder goes up, the cat climbs down
+        T.vx = 0; const c = T.ladderCat.cat;
+        if (!T.retract) {
+          if (T.ladder < 50) T.ladder++;
+          else { c.down = Math.min(1, c.down + 0.02); if (c.down >= 1 && !c.saved) { c.saved = true; T.retract = true; this.score += 500; play("oneup"); this.popup(T.x, T.y - 140, "¡Gatito a salvo! +500", GOLD); say("gatito", true); } }
+        } else { T.ladder -= 2; if (T.ladder <= 0) { T.ladder = 0; T.retract = false; } }
+      }
+      if (!burning.length && !cats.length && this.state === "play") { this.popup(T.x, T.y - 160, "¡LA CIUDAD ESTÁ A SALVO!", GOLD); this.finishLevel(); return; }
+    }
+    this.syncRoad(); cam();
+  }
+
+  // ================================================================ El Cuarto de los Juguetes (secret): a toy car in a giant bedroom
+  initToy() {
+    const pts = [[0, 0], [700, 0], [950, 90], [1180, 90], [1400, 0], [2380, 0], [2600, 44], [3600, 44], [3800, 0], [5000, 0], [5260, 120], [5420, 120], [5421, 0], [7800, 0]];
+    const T = { kind: "toy", pts, len: 7800, x: 200, y: 0, vx: 0, vy: 0, air: false, airT: 0, face: 1, ang: 0, wheel: 0, nitro: 0, nitroCd: 0,
+      legos: [1650, 1900, 2060, 4900, 6250].map((x, i) => ({ x, col: [HEART, rgb(60, 120, 230), GOLD, rgb(60, 180, 80), HEART][i] })),
+      loop: { x: 3100, r: 105, done: 0 }, loopT: -1, boost: { x0: 2700, x1: 3090, v: 10 },
+      dog: { x: 4350, zone: [3950, 4800], noise: 0, awake: 0 }, train: { x: 9000, on: false, t: 260, cars: 4 }, trainZone: [5800, 7200], bumped: 0 };
+    T.y = toyY(T, T.x);
+    return T;
+  }
+  updateToy() {
+    const p = this.player, T = this.tv, gy = x => toyY(T, x), slope = x => Math.max(-1.6, Math.min(1.6, (gy(x) - gy(x - 6)) / 6));
+    const cam = () => { const want = Math.max(0, Math.min(T.len - W, T.x - 280)); this.camX += (want - this.camX) * 0.14; };
+    const hurtCar = (msg) => { if (p.invuln > 0) return; p.hearts--; p.invuln = 70; play("hurt"); this.shake = 8; this.popup(T.x, T.y - 70, msg, HEART); if (p.hearts <= 0) this.loseLife(); };
+    if (this.levelTimer < 90) { T.y = gy(T.x); this.syncToy(); this.camX = 0; return; }
+    if (p.invuln > 0) p.invuln--;
+    if (T.nitroCd > 0) T.nitroCd--;
+    if (T.nitro > 0) T.nitro--;
+    if (T.loopT >= 0) {   // round the loop-the-loop!
+      const L = T.loop, base = 440 - 44, n = Math.round(2 * Math.PI * L.r / Math.max(9, T.vx));
+      T.loopT++; const th = T.loopT / n * Math.PI * 2;
+      T.x = L.x + Math.sin(th) * L.r; T.y = base - L.r + Math.cos(th) * L.r; T.ang = -th; T.wheel += T.vx * 0.1;
+      if (T.loopT >= n) { T.loopT = -1; T.x = L.x + 4; T.y = base; T.ang = 0; if (!L.done) { L.done = 1; this.score += 1500; this.popup(T.x, T.y - 160, "¡LOOPING! +1500", GOLD); play("clear"); } }
+      this.syncToy(); cam(); return;
+    }
+    if (inp.attack && T.nitroCd === 0) { T.nitro = 60; T.nitroCd = 200; play("nitro"); this.popup(T.x, T.y - 60, "¡Turbo!", GOLD); }
+    const thr = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    if (thr) T.face = thr;
+    const D = T.dog, inZone = T.x > D.zone[0] && T.x < D.zone[1];
+    if (!T.air) {
+      const sl = slope(T.x), ga = Math.atan(sl);
+      T.vx += thr * (T.nitro ? 0.32 : 0.2) + 0.5 * Math.sin(ga) * Math.cos(ga) * 0.6 - (thr ? 0 : Math.sign(T.vx) * Math.min(Math.abs(T.vx), 0.06));
+      const top = T.nitro ? 12 : 8.5; T.vx = Math.max(-5, Math.min(top, T.vx));
+      if (T.x > T.boost.x0 && T.x < T.boost.x1 && T.vx > 0 && T.vx < T.boost.v) { T.vx = T.boost.v; if (this.t % 8 === 0) play("nitro"); }
+      T.ang += (ga - T.ang) * 0.35;
+      if (inp.jumpPressed) { T.vy = T.vx * sl - 8.5; T.air = true; T.airT = 0; play("boing"); } else T.vy = T.vx * sl;
+    } else { T.vy += 0.45; T.airT++; T.ang += (Math.atan(slope(T.x)) - T.ang) * 0.06; }
+    const ox = T.x; T.x += T.vx; T.y += T.vy; T.wheel += T.vx * 0.12;
+    if (gy(T.x) < T.y - 24) { T.x = ox; T.vx = -T.vx * 0.3; play("stomp"); }
+    if (T.x < 120) { T.x = 120; T.vx = 0; }
+    const g = gy(T.x);
+    if (T.y >= g) { if (T.air) { play("stomp"); this.dust(T.x, g); } T.y = g; T.air = false; } else if (T.y < g - 2) T.air = true;
+    if (ox < T.loop.x && T.x >= T.loop.x && !T.air) {
+      if (T.vx >= 7) { T.vx = Math.max(T.vx, 9); T.loopT = 0; play("nitro"); }
+      else { T.x = T.boost.x0 - 80; T.vx = 0; T.y = gy(T.x); this.popup(T.x, T.y - 80, "¡Más velocidad! Pasa por las flechas", WHITE); }   // too slow: roll back before the speed arrows
+    }
+    for (const l of T.legos) if (Math.abs(T.x - l.x) < 40 && T.y > gy(l.x) - 22) { const from = T.x < l.x ? -1 : 1; hurtCar("¡Ay! ¡Un Lego!"); T.vx = from * 3; T.x = l.x + from * 44; }   // treading on a Lego hurts!
+    // the sleeping dog: drive slowly past it, or it wakes up and licks you!
+    if (D.awake > 0) { D.awake--; }
+    else if (inZone) {
+      D.noise = Math.max(0, D.noise + Math.max(0, Math.abs(T.vx) - 3.6) * 0.55 + (T.nitro ? 1.5 : 0) - 0.4);
+      if (!thr && !T.air) T.vx *= 0.96;   // the soft rug slows you down
+      if (D.noise >= 100) { D.awake = 110; D.noise = 0; play("roar"); say("guau", true); this.popup(D.x, 300, "¡GUAU! ¡Lametazo!", HEART); hurtCar("¡Puaj, babas!"); T.x = D.zone[0] - 40; T.vx = 0; T.y = gy(T.x); }
+    } else D.noise = Math.max(0, D.noise - 2);
+    // the toy train goes round the floor: jump over it
+    const TR = T.train;
+    if (!TR.on && T.x > T.trainZone[0] - 300 && T.x < T.trainZone[1] && --TR.t <= 0) { TR.on = true; TR.x = T.x + W; play("beep"); this.popup(T.x + 300, 260, "¡Chu-chuuu! ¡Salta el tren!", GOLD); }
+    if (TR.on) {
+      TR.x -= 4.5;
+      const tl = TR.x, tr = TR.x + TR.cars * 70;
+      if (T.x + 34 > tl && T.x - 34 < tr && T.y > 440 - 52) { hurtCar("¡Te atropelló el tren!"); T.vx = -3; T.vy = -6; T.air = true; }
+      if (tr < this.camX - 100) { TR.on = false; TR.t = randInt(220, 320); }
+    }
+    this.syncToy(); cam();
+    if (T.x > T.len - 380 && this.state === "play") { this.popup(T.x, T.y - 100, "¡A la caja de juguetes!", GOLD); this.finishLevel(); }
+  }
+  syncToy() { const p = this.player, T = this.tv; p.w = 70; p.h = 40; p.x = T.x - 35; p.y = T.y - 40; p.vx = T.vx; p.facing = T.face; }
+
+  // ================================================================ the garage (before the derby)
+  openGarage(i) { this.state = "garage"; this.garageFor = i; this.gaSel = 0; this.gaT = 0; this.particles = []; play("anvil"); }
+  gaChange(row, dir) {
+    const [key, , list] = GARAGE_ROWS[row], i = list.findIndex(o => o.id === GARAGE[key]);
+    GARAGE[key] = list[(i + dir + list.length) % list.length].id; saveGarage(); play(key === "horn" ? "horn_" + GARAGE.horn : "click");
+  }
+  gaTap(x, y) {
+    const lay = garageLayout();
+    for (let r = 0; r < lay.rows.length; r++) { const R0 = lay.rows[r]; if (inside(x, y, R0.left)) { this.gaSel = r; this.gaChange(r, -1); return; } if (inside(x, y, R0.right) || inside(x, y, R0.box)) { this.gaSel = r; this.gaChange(r, 1); return; } }
+    if (inside(x, y, lay.horn)) { play("horn_" + GARAGE.horn); return; }
+    if (inside(x, y, lay.num)) { GARAGE.num = GARAGE.num % 99 + 1; saveGarage(); play("click"); return; }
+    if (inside(x, y, lay.button)) this.garageGo();
+  }
+  garageGo() { const i = this.garageFor; this.levelIndex = i; this.mapSel = i; this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
+
   initMonster() {   // Locura de Monstruos: a stadium full of dirt mounds, junk cars and 8 monster trucks to squash
     const len = 5400, rnd = seeded(23);
     const mounds = [[640, 360, 90], [1380, 260, 60], [2150, 440, 125], [2950, 300, 70], [3700, 400, 115], [4500, 280, 65]].map(([x, w, h]) => ({ x, w, h }));
@@ -7657,7 +8651,12 @@ class Game {
     const p = this.player, lvl = this.level;
     this.levelTimer++; this.runFrames++;
     if (this.rk) { this.updateRocket(); return; }
-    if (this.tv) { if (this.tv.kind === "monster") this.updateMonster(); else this.updateTerrain(); return; }
+    if (this.tv) {
+      const k = this.tv.kind;
+      if (k === "monster") this.updateMonster(); else if (k === "stunt") this.updateStunt(); else if (k === "derby") this.updateDerby();
+      else if (k === "police" || k === "fire") this.updateRoad(); else if (k === "toy") this.updateToy(); else this.updateTerrain();
+      return;
+    }
     if (this.cl) { this.updateClimb(); return; }
     if (this.sk) { this.updateSki(); return; }
     if (this.caught) { this.updateCaught(); return; }
@@ -7952,6 +8951,19 @@ class Game {
       this.burst(p.x + p.w / 2, 480, [rgb(255, 200, 60), rgb(255, 110, 30), rgb(120, 40, 20)], 24, 6); play("hurt");
       this.popup(p.x + p.w / 2, 420, "¡Quema, quema!", HEART); say("jolin", true); this.loseLife(); return;
     }
+    for (const k of [...lvl.carups]) if (collide(p.rect(), { x: k.x - 22, y: k.y - 20, w: 44, h: 40 })) {   // the golden car: turn into an armoured car!
+      lvl.carups.splice(lvl.carups.indexOf(k), 1); p.carT = 540; play("nitro"); say("coche", true); this.shake = 6;
+      this.popup(k.x, k.y - 30, "¡COCHE BLINDADO! ¡Arrolla a los malos!", GOLD); this.burst(k.x, k.y, [GOLD, WHITE], 20, 5);
+    }
+    if (p.carT > 0) {
+      p.carT--;
+      if (p.carT === 0) { this.popup(p.x + p.w / 2, p.y - 20, "¡Se acabó el coche!", WHITE); play("pop"); this.burst(p.x + p.w / 2, p.y + p.h / 2, [ARMOR, GOLD], 14, 4); }
+      else if (Math.abs(p.vx) > 3 && this.t % 3 === 0) this.dust(p.x + p.w / 2 - p.facing * 20, p.y + p.h);
+      for (const e of lvl.enemies) if (e.alive && e.hittable() && collide(inflate(p.rect(), 6, 0), e.rect())) {   // run them over!
+        if (e.boss || e.hp > 6) { if (!e.carCd || this.t - e.carCd > 30) { e.carCd = this.t; this.strike(e, p.facing, new Set(), 2); } }
+        else this.strike(e, p.facing, new Set(), 99);
+      }
+    }
     for (const k of [...lvl.lifeups]) if (collide(p.rect(), { x: k.x - 20, y: k.y - 20, w: 40, h: 40 })) {   // an extra life
       lvl.lifeups.splice(lvl.lifeups.indexOf(k), 1); this.lives++; this.lifeTaken.add(this.levelIndex + ":" + k.x); play("oneup"); say("vida", true);
       this.popup(k.x, k.y - 24, "¡Vida extra!", GOLD); this.burst(k.x, k.y, [GOLD, HEART, WHITE], 24, 5);
@@ -8035,6 +9047,7 @@ class Game {
     if (this.state === "credits") { drawCredits(this); return; }
     if (this.state === "map") { drawMap(this); return; }
     if (this.state === "custom") { drawCustom(this); return; }
+    if (this.state === "garage") { drawGarage(this); return; }
     if (this.state === "shop") {
       if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
       drawShop(this);
@@ -8044,7 +9057,11 @@ class Game {
     const cam = Math.floor(this.camX), lvl = this.level, theme = lvl.theme, tiles = this.tiles(), p = this.player;
     if (this.shake) ctx.translate(randInt(-this.shake, this.shake), randInt(-this.shake, this.shake));
     if (this.rk) drawRocketWorld(this);
-    else if (this.tv) { if (this.tv.kind === "monster") drawMonsterWorld(this); else drawTerrainWorld(this); }
+    else if (this.tv) {
+      const k = this.tv.kind;
+      if (k === "monster") drawMonsterWorld(this); else if (k === "stunt") drawStuntWorld(this); else if (k === "derby") drawDerbyWorld(this);
+      else if (k === "police" || k === "fire") drawRoadWorld(this); else if (k === "toy") drawToyWorld(this); else drawTerrainWorld(this);
+    }
     else if (this.cl) drawClimbWorld(this);
     else if (this.sk) drawSkiWorld(this);
     else {
@@ -8110,6 +9127,7 @@ class Game {
       if (theme.dark && this.mineLights && !(lvl.cover && !lvl.passage)) this.mineLights.push([d.x + d.w / 2 - cam, d.y + 30]);
     }
     for (const k of lvl.lifeups) drawOneUp(k.x - cam, k.y, this.t);
+    for (const k of lvl.carups) drawCarUp(k.x - cam, k.y, this.t);
     for (const o of lvl.oils) if (o.x > cam - 80 && o.x < cam + W) { E(rgb(20, 20, 26), o.x - cam, o.y, o.w, o.h); ctx.globalAlpha = 0.5; E(rgb(120, 80, 200), o.x - cam + 10, o.y + 2, 20, 4); E(rgb(80, 200, 160), o.x - cam + 26, o.y + 3, 16, 4); ctx.globalAlpha = 1; }
     for (const b of lvl.boosts) if (b.x > cam - 60 && b.x < cam + W) { R(rgb(40, 40, 46), b.x - cam, b.y, b.w, b.h, 2); for (let k = 0; k < 3; k++) T("›", 18, b.x - cam + 8 + k * 11, b.y + 2, Math.floor(this.t / 6) % 3 === k ? GOLD : rgb(255, 160, 40)); }
     for (const c of lvl.clocks) { const by = c.y + Math.sin(this.t * 0.1 + c.x) * 4; C(WHITE, c.x - cam, by, 15); CS(rgb(60, 60, 70), c.x - cam, by, 15, 3); L(BLACK, c.x - cam, by, c.x - cam, by - 9, 2); L(BLACK, c.x - cam, by, c.x - cam + 6, by + 2, 2); T("+4", 14, c.x - cam, by - 24, GOLD); }
@@ -8278,6 +9296,7 @@ class Game {
         if (this.storm && this.storm.still > 20) { const k = Math.min(1, this.storm.still / 125); T("⚡", 16, 16, 142, GOLD, "left", "top"); R(HEART_EMPTY, 40, 144, 100, 12, 3); R(k > 0.6 ? HEART : GOLD, 40, 144, 100 * k, 12, 3); }
       }
       if (this.keys > 0) T("🔑 x" + this.keys, 18, 16, 118, GOLD, "left", "top");
+      drawKindHud(this);
       if (this.tv && this.tv.kind === "monster") {   // squash count and the clock
         const TV = this.tv, secs = Math.max(0, TV.timeLeft) / 60, low = secs < 15;
         T(`⏱ ${Math.ceil(secs)}`, 34, W / 2, 46, low && Math.floor(this.t / 10) % 2 ? HEART : GOLD, "center", "top");
@@ -8420,6 +9439,21 @@ const touch = { left: false, right: false, jump: false };
 const KEYMAP = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "jump", ArrowUp: "jump", KeyW: "jump" };
 window.addEventListener("keydown", e => {
   unlock();
+  if (game.state === "garage") {   // keyboard garage
+    const n = GARAGE_ROWS.length;
+    if (e.code === "ArrowUp" || e.code === "KeyW") game.gaSel = (game.gaSel + n) % (n + 1);
+    else if (e.code === "ArrowDown" || e.code === "KeyS") game.gaSel = (game.gaSel + 1) % (n + 1);
+    else if ((e.code === "ArrowLeft" || e.code === "KeyA") && game.gaSel < n) game.gaChange(game.gaSel, -1);
+    else if ((e.code === "ArrowRight" || e.code === "KeyD") && game.gaSel < n) game.gaChange(game.gaSel, 1);
+    else if (e.code === "KeyB" && !e.repeat) play("horn_" + GARAGE.horn);
+    else if (e.code === "KeyN" && !e.repeat) { GARAGE.num = GARAGE.num % 99 + 1; saveGarage(); play("click"); }
+    else if (["Space", "KeyX", "KeyJ"].includes(e.code) && !e.repeat) { if (game.gaSel < n) game.gaChange(game.gaSel, 1); else game.garageGo(); }
+    else if (["Enter", "NumpadEnter"].includes(e.code) && !e.repeat) game.garageGo();
+    else if ((e.code === "Escape" || e.code === "KeyQ") && !e.repeat) game.openMap(game.garageFor);
+    if (e.code === "KeyM") toggleSound();
+    e.preventDefault();
+    return;
+  }
   if (game.state === "custom") {   // keyboard dressing room
     const n = LOOK_ROWS.length;
     if (e.code === "ArrowUp" || e.code === "KeyW") game.cuSel = (game.cuSel + n) % (n + 1);
@@ -8463,6 +9497,7 @@ canvas.addEventListener("pointerdown", e => {
   const r = canvas.getBoundingClientRect(), tx = (e.clientX - r.left) / r.width * W, ty = (e.clientY - r.top) / r.height * H;
   if (game.state === "shop") game.shopTap(tx, ty);
   else if (game.state === "custom") game.cuTap(tx, ty);
+  else if (game.state === "garage") game.gaTap(tx, ty);
   else if (game.state === "title" && inside(tx, ty, RESET_BTN)) game.titleReset();
   else if (game.state === "map") game.mapTap(tx, ty);
   else if (game.paused && inside(tx, ty, QUIT_BTN)) game.quitToMap();
