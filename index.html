@@ -96,7 +96,7 @@ const LEVELS = [
       "####################..###################....##########################....##########################....#########################",
       "####################..###################....##########################....##########################....#########################"
     ] },
-  { name: "El Bosque", theme: "forest", speed: 1.1, door: 30, hint: "¡Ojo con las serpientes taipán!",
+  { name: "El Bosque", theme: "forest", speed: 1.1, door: 31, hint: "¡Ojo con las serpientes taipán!",
     map: [
       "......................................................................................................................................................",
       "......................................................................................................................................................",
@@ -144,7 +144,7 @@ const LEVELS = [
       "##############################.......###############.........###############............################........##############..............##################.........#####################################",
       "##############################.......###############.........###############............################........##############..............##################.........#####################################"
     ] },
-  { name: "La Mina", theme: "mine", speed: 1.15, door: 31, hint: "¡Cuidado con los topos!",
+  { name: "La Mina", theme: "mine", speed: 1.15, door: 32, hint: "¡Cuidado con los topos!",
     map: [
       "#########################################################################################################################################################################",
       "#########################################################################################################################################################################",
@@ -272,7 +272,7 @@ const LEVELS = [
       "########################",
       "########################"
     ] },
-  { name: "La Escalada de Hielo", theme: "snow", speed: 1.15, mode: "climb", hint: "SALTA: escalar · ◀ ▶ moverte · 🪓 romper el hielo que cae",
+  { name: "La Escalada de Hielo", theme: "snow", speed: 1.15, mode: "climb", hint: "SALTA: escalar · ◀ ▶ moverte · 🪓 picar · ¡Huye del Yeti y escóndete de las avalanchas!",
     map: [
       "........................",
       "........................",
@@ -287,6 +287,22 @@ const LEVELS = [
       "............P...........",
       "########################",
       "########################"
+    ] },
+  { name: "La Guerra de Nieve", theme: "snow", speed: 1.05, mode: "snowball", hint: "🪓: lanzar una bola de nieve · ¡Rompe sus fuertes y dales cuando asomen!",
+    map: [
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................................................................................................................................................",
+      "............................................................................U...................................................................................o...o...o...o...o...o...o...o...............",
+      "....................ooooo.............¿......................¿............ooooo............................¿.............¿........oooo................¿.....................................................",
+      "....................=====...........====......ooo.........=====...........=====.............ooo.........=====.........=====.......====......ooo.....====....................................................",
+      "..........oooo................................===.................oooo......................===.................oooo........................===.............................................................",
+      "..P.............¿.............¿.............¡.........¿...............¿.............¿...¡...........¿.............¡.............¿.......¿........¡............[...................¢...............]....F....",
+      "##############################################...###########################################...#############################################...#############################################################",
+      "##############################################...###########################################...#############################################...#############################################################",
     ] },
   { name: "El Descenso", theme: "snow", speed: 1.15, mode: "ski", hint: "◀ ▶ girar · ¡pasa entre las banderas! · SALTA saltar · 🪓 agacharte",
     map: [
@@ -400,7 +416,7 @@ const LEVELS = [
       "########################################.#############################################.############################################.##################################################",
       "########################################.#############################################.############################################.##################################################"
     ] },
-  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 32, hint: "¡Salta de pared en pared y lanza shuriken!",
+  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 33, hint: "¡Salta de pared en pared y lanza shuriken!",
     map: [
       "................................................................................................................................................................................",
       "................................................................................................................................................................................",
@@ -496,7 +512,7 @@ const LEVELS = [
       "########################################################################",
       "########################################################################"
     ] },
-  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 33, hint: "¡No te caigas al agua!",
+  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 34, hint: "¡No te caigas al agua!",
     map: [
       "............................................................................................................................................................................",
       "............................................................................................................................................................................",
@@ -659,10 +675,10 @@ const SOLID = "#=CHQxl|";   // ground, platforms, crates, hidden blocks, cracked
 const MAIN_LEVELS = LEVELS.filter(l => !l.secret).length;   // the secret levels come after these
 const WORLDS = [
   { name: "LA TIERRA", lv: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
-  { name: "EL HIELO", lv: [11, 12, 13] },
-  { name: "EL CIELO Y EL ESPACIO", lv: [14, 15, 16, 17, 18] },
-  { name: "EL REINO", lv: [19, 20, 21, 22, 23, 24, 25] },
-  { name: "LOS MARES", lv: [26, 27, 28, 29] },
+  { name: "EL HIELO", lv: [11, 12, 13, 14] },
+  { name: "EL CIELO Y EL ESPACIO", lv: [15, 16, 17, 18, 19] },
+  { name: "EL REINO", lv: [20, 21, 22, 23, 24, 25, 26] },
+  { name: "LOS MARES", lv: [27, 28, 29, 30] },
 ];
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
@@ -736,6 +752,7 @@ const ACE_PLANE = [rgb(200, 30, 40), rgb(140, 16, 24), WHITE];
 const ENEMY_PLANES = [[rgb(96, 96, 104), rgb(64, 64, 72), rgb(210, 44, 44)], [rgb(130, 40, 40), rgb(86, 24, 24), rgb(250, 200, 40)],
                       [rgb(74, 96, 62), rgb(48, 64, 42), rgb(240, 240, 240)]];
 const ENEMY_COLORS = {
+  "¿": [WHITE, rgb(30, 30, 40), rgb(250, 160, 40)], "¡": [WHITE, rgb(200, 220, 240), rgb(240, 130, 40)], "¢": [WHITE, rgb(200, 220, 240), rgb(30, 30, 40)],
   "<": [rgb(200, 40, 40), rgb(40, 36, 44), rgb(255, 170, 60)], "»": [rgb(40, 40, 50), rgb(200, 40, 40), rgb(255, 200, 60)],   // pickup trucks
   h: [rgb(18, 16, 26), rgb(150, 20, 40), WHITE],                    // shadow ninja
   a: [rgb(60, 96, 52), rgb(110, 76, 40), WHITE],                    // archer
@@ -897,6 +914,7 @@ function seeded(a) {   // small repeatable random number generator
 
 // ------------------------------------------------------------------ sound (generated, no files needed)
 const VOICE_LINES = {
+  avalancha: "¡Avalancha! ¡Escóndete!", yeti: "¡Un yeti! ¡Corre, sube!", guerra_nieve: "¡Guerra de bolas de nieve!", muneco: "¡El Muñeco de Nieve Gigante!", fuerte: "¡Fuerte roto!",
   monstruos: "¡Locura de monstruos! ¡Aplástalos a todos!", crunch: "¡Crunch!", aplastados: "¡Todos aplastados!",
   rock_nivel: "¡Rock and roll! ¡Cuidado con las camionetas!", monstruo: "¡El Monstruo del Rock!", camioneta: "¡Adiós, rockero!",
   vamos: "¡Vamos, caballero!", toma: "¡Toma!", adios: "¡Adiós, canguro!", rey: "¡Fuera de combate!",
@@ -1233,12 +1251,13 @@ class Player {
     this.hitIds = new Set(); this.dead = false; this.justJumped = false; this.justSwung = false;
     this.bike = false; this.rideHits = new Set();
     this.tank = false; this.recoil = 0; this.justFired = false; this.fireCd = upg.quick ? 18 : 26;
-    this.assist = true; this.mode = null; this.shuriken = 0; this.wallT = 0; this.wallDir = 1; this.wallLock = 0;
+    this.assist = true; this.mode = null; this.snowball = false; this.shuriken = 0; this.wallT = 0; this.wallDir = 1; this.wallLock = 0;
     this.gunT = 0; this.gunCd = upg.quick ? 6 : 9; this.justRocket = false;
   }
   setMode(m, upg) {   // special levels: ninja, biplane, warhorse or broadsword
     const cx = this.x + this.w / 2, bottom = this.y + this.h;
     this.mode = m;
+    if (m === "snowball") this.snowball = true;   // the snowball fight: 🪓 throws snowballs instead of chopping
     if (m === "ninja") { this.ninja = true; this.shuriken = 12; this.reach = upg.long ? 0.95 : 0.78; }
     if (m === "sword") { this.sword = true; this.atkTotal = upg.quick ? 12 : 16; this.atkCooldown = upg.quick ? 2 : 4; this.reach = upg.long ? 1.2 : 0.95; }
     if (m === "horse") { this.horse = true; this.w = HORSE_W; this.h = HORSE_H; }
@@ -1318,6 +1337,7 @@ class Player {
       const r = this.rect(), w = Math.round(32 + this.lanceLen() - (r.w - 8));
       return { x: this.facing > 0 ? r.x + r.w - 8 : r.x + 8 - w, y: r.y + 6, w, h: r.h - 6 };
     }
+    if (this.snowball) return null;   // (the snowball fight: no chopping, only throwing)
     if (!this.swingActive()) return null;
     if (spearMode(this)) {   // the spear: a long, low stab straight ahead, as far as the point reaches
       const r = this.rect(), w = Math.round(40 + 102 * this.reach), cx = r.x + Math.floor(r.w / 2);
@@ -2776,6 +2796,80 @@ class MonsterTruck extends Pickup {   // El Monstruo del Rock: a monster truck w
     this.title = "EL MONSTRUO DEL ROCK"; this.voice = "monstruo"; this.intro = "¡El Monstruo del Rock!";
   }
 }
+function lobAt(game, x, y, tx, ty, speed, kind = "esnow", g = 0.25, extra = {}) {   // throw something in an arc that lands on (tx, ty)
+  const dx = tx - x, t = Math.max(26, Math.abs(dx) / speed), dy = ty - y;
+  game.shots.push(Object.assign({ kind, enemy: true, x, y, vx: dx / t, vy: (dy - 0.5 * g * t * t) / t, sgrav: g, t: 0, col: WHITE, dark: rgb(180, 210, 240), life: Math.round(t + 90) }, extra));
+}
+class PenguinFort extends Enemy {   // a penguin in a woolly hat behind a snow fort: pops up, lobs a snowball, ducks. Break the fort and it can't hide!
+  constructor(tx, ty, mul = 1) {
+    super(); this.init("¿", 36, 54, 1, 250);
+    this.x = tx + 2; this.y = ty + TILE - this.h; this.mul = mul; this.fort = 3; this.up = 0; this.phase = "down"; this.pt = randInt(30, 120); this.dir = -1;
+    this.hat = pick([rgb(220, 40, 50), rgb(40, 110, 220), rgb(60, 170, 80), rgb(240, 170, 30)]);
+  }
+  blocks() {   // a snowball that hits while it's ducked down knocks a chunk off the fort
+    if (this.up > 0.55 || this.fort <= 0) return false;
+    this.fort--; this.blockText = this.fort ? "¡Plof! ¡Al fuerte!" : "¡Fuerte roto!";
+    if (!this.fort) { game.burst(this.x + this.w / 2, this.y + 30, [WHITE, rgb(200, 225, 245)], 20, 5); say("fuerte"); }
+    return true;
+  }
+  hit(fromDir, dmg = 1) { this.hp -= dmg; this.flash = 8; if (this.hp <= 0) { this.alive = false; return true; } return false; }
+  harmful() { return false; }
+  update(level, player, game) {
+    this.t++; if (this.flash) this.flash--;
+    const cx = this.x + this.w / 2, dx = player.x + player.w / 2 - cx; this.dir = dx > 0 ? 1 : -1;
+    const near = Math.abs(dx) < 520 && !player.dead;
+    if (this.phase === "down") { this.up = Math.max(this.fort ? 0 : 0.6, this.up - 0.12); if (--this.pt <= 0 && near) this.phase = "rise"; }
+    else if (this.phase === "rise") { this.up = Math.min(1, this.up + 0.1); if (this.up >= 1) { this.phase = "aim"; this.pt = 24; } }
+    else if (this.phase === "aim") { if (--this.pt <= 0) { lobAt(game, cx + this.dir * 12, this.y + 10, player.x + player.w / 2 + player.vx * 14 + randInt(-30, 30), player.y + 24, 4.2 * this.mul); game.sound("swing"); this.phase = "hold"; this.pt = 30; } }
+    else if (--this.pt <= 0) { this.phase = "down"; this.pt = Math.round(randInt(70, 140) / this.mul); }
+  }
+  draw(cam) { drawPenguinFort(this, cam); }
+}
+class SnowmanThrower extends Enemy {   // a grumpy snowman in a top hat: throws two or three snowballs at once
+  constructor(tx, ty, mul = 1) { super(); this.init("¡", 44, 78, 3, 400); this.x = tx - 2; this.y = ty + TILE - this.h; this.mul = mul; this.throwT = randInt(60, 120); this.arm = 0; }
+  hit(fromDir, dmg = 1) { this.hp -= dmg; this.flash = 8; if (this.hp <= 0) { this.alive = false; return true; } return false; }
+  update(level, player, game) {
+    this.t++; if (this.flash) this.flash--; if (this.arm > 0) this.arm--;
+    const cx = this.x + this.w / 2, dx = player.x + player.w / 2 - cx; this.dir = dx > 0 ? 1 : -1;
+    if (Math.abs(dx) < 640 && !player.dead && --this.throwT <= 0) {
+      this.throwT = Math.round(randInt(110, 160) / this.mul); this.arm = 16; game.sound("swing");
+      for (const o of [-130, 0, 130]) if (o === 0 || Math.random() < 0.6) lobAt(game, cx, this.y + 20, player.x + player.w / 2 + o, player.y + 30, 4.2 * this.mul);
+    }
+  }
+  draw(cam) { drawSnowThrower(this, cam); }
+}
+class GiantSnowman extends Enemy {   // El Muñeco de Nieve Gigante: volleys of snowballs, giant rolling snowballs, and a temper
+  constructor(tx, ty, level, mul = 1) {
+    super(); this.init("¢", 120, 188, 30, 6000);
+    this.x = tx + TILE / 2 - this.w / 2; this.y = ty + TILE - this.h; this.mul = mul; this.boss = true; this.awake = false; this.dir = -1;
+    this.mode = "wait"; this.modeT = 60; this.arm = 0; this.volleys = 0;
+    this.title = "EL MUÑECO DE NIEVE GIGANTE"; this.voice = "muneco"; this.intro = "¡El Muñeco de Nieve Gigante!";
+  }
+  hit(fromDir, dmg = 1) { this.hp -= dmg; this.flash = 8; if (this.hp <= 0) { this.alive = false; return true; } return false; }
+  update(level, player, game) {
+    this.t++; if (this.flash) this.flash--; if (this.arm > 0) this.arm--;
+    const cx = this.x + this.w / 2, dx = player.x + player.w / 2 - cx; this.dir = dx > 0 ? 1 : -1;
+    if (this.awake === false) { if (Math.abs(dx) < 520) this.awake = true; else return; }
+    const angry = this.hp <= this.maxHp / 2;
+    if (--this.modeT > 0) return;
+    if (this.mode === "wait" || this.mode === "roll") {   // a volley of snowballs
+      this.mode = "volley"; this.volleys = angry ? 3 : 2; this.modeT = 10;
+    } else if (this.mode === "volley") {
+      if (this.volleys-- > 0) {
+        this.arm = 18; game.sound("swing");
+        for (const o of angry ? [-220, -75, 75, 220] : [-160, 0, 160]) lobAt(game, cx + this.dir * 30, this.y + 70, player.x + player.w / 2 + o, player.y + 30, 4.2 * this.mul);
+        this.modeT = 46;
+      } else {   // then a giant snowball rolls along the ground: jump over it!
+        this.mode = "roll"; this.arm = 24; game.sound("boom"); game.shake = Math.max(game.shake, 6);
+        const gy = this.y + this.h - 24;
+        for (let k = 0; k < (angry ? 2 : 1); k++) game.shots.push({ kind: "rollball", enemy: true, nochop: true, x: cx + this.dir * 70, y: gy, vx: this.dir * (4 + k * 1.6) * this.mul, vy: 0, t: 0, col: WHITE, dark: rgb(180, 210, 240), life: 320 });
+        game.popup(cx, this.y - 20, "¡Bola gigante! ¡Salta!", HEART);
+        this.modeT = angry ? 110 : 140;
+      }
+    }
+  }
+  draw(cam) { drawGiantSnowman(this, cam); }
+}
 class PirateGunner extends Enemy {   // a pirate with a flintlock pistol: takes aim (watch for the "!") and fires
   constructor(tx, ty, mul = 1) {
     super();
@@ -3266,6 +3360,9 @@ class Level {
       else if (ch === "6") this.enemies.push(new Dragonling(x, y, mul));
       else if (ch === "7") this.enemies.push(new Drake("7", x, y, mul));
       else if (ch === "9") this.enemies.push(new PirateGunner(x, y, mul));
+      else if (ch === "¿") this.enemies.push(new PenguinFort(x, y, mul));
+      else if (ch === "¡") this.enemies.push(new SnowmanThrower(x, y, mul));
+      else if (ch === "¢") later.push(["¢", x, y]);
       else if (ch === "<") { this.enemies.push(new Pickup(x, y, mul)); this.rock = true; }
       else if (ch === "»") { later.push(["»", x, y]); this.rock = true; }
       else if (ch === "!") this.enemies.push(new Cannon(x, y, mul));
@@ -3320,7 +3417,7 @@ class Level {
     for (const [k, x, y] of later) {   // these need the finished map
       if (k === "s") this.enemies.push(new Shark(x, y, this, mul));
       else {
-        this.boss = k === "»" ? new MonsterTruck(x, y, this, mul) : k === "X" ? new BlackKnight(x, y, this, mul) : k === "Z" ? new Airship(x, y, this, mul) : k === "R" ? new TRex(x, y, this, mul) : k === "0" ? new PlantMother(x, y, this, mul) : k === "%" ? new IronSpider(x, y, this, mul) : k === "&" ? new RedDragon(x, y, this, mul) :
+        this.boss = k === "¢" ? new GiantSnowman(x, y, this, mul) : k === "»" ? new MonsterTruck(x, y, this, mul) : k === "X" ? new BlackKnight(x, y, this, mul) : k === "Z" ? new Airship(x, y, this, mul) : k === "R" ? new TRex(x, y, this, mul) : k === "0" ? new PlantMother(x, y, this, mul) : k === "%" ? new IronSpider(x, y, this, mul) : k === "&" ? new RedDragon(x, y, this, mul) :
           k === "$" ? new PirateCaptain(x, y, this, mul) : k === "@" ? new GiantHeli(x, y, this, mul) : k === "{" ? new SwordLord(x, y, this, mul) : k === "}" ? new Mothership(x, y, this, mul) : k === "*" ? new MamaBear(x, y, this, mul) : new Boss(x, y, this, mul);
         this.enemies.push(this.boss);
       }
@@ -3738,6 +3835,52 @@ function drawMonsterWorld(g) {   // the monster truck stadium
   // little arrows pointing at trucks off screen
   for (const e of TV.foes) if (!e.flat && (e.x < cam - 40 || e.x > cam + W + 40)) { const left = e.x < cam, ax = left ? 26 : W - 26; T(left ? "◀" : "▶", 22, ax, 200, e.col); }
 }
+function drawPenguinFort(e, cam) {   // the snow fort, and the penguin popping up from behind it
+  const x = Math.round(e.x + e.w / 2) - cam, y = Math.round(e.y + e.h), up = e.up;   // (the hit box is 54 tall: penguin plus fort)
+  if (!(e.flash && Math.floor(e.flash / 2) % 2)) {
+    ctx.save(); ctx.beginPath(); ctx.rect(x - 60, y - 200, 120, 200); ctx.clip(); ctx.translate(x, y + 24 - up * 24); if (e.dir < 0) ctx.scale(-1, 1);
+    drawPenguin(0, 0, e.t * (e.phase === "aim" ? 0 : 1), false);
+    R(e.hat, -10, -46, 20, 8, 3); C(e.hat, 0, -48, 7); C(WHITE, 0, -56, 4);                 // woolly hat with a bobble
+    R(rgb(220, 40, 50), -10, -27, 20, 4, 2);                                                   // scarf
+    if (e.phase === "aim" || e.phase === "hold") { C(WHITE, 14, -30 - (e.phase === "aim" ? 8 : 0), 6); }   // a snowball in its flipper
+    ctx.restore();
+  }
+  if (e.fort > 0) {   // the fort: blocks of packed snow, crumbling as it's hit
+    const h = 14 + e.fort * 6;
+    R(rgb(214, 230, 246), x - 26, y - h, 52, h, 4); R(WHITE, x - 26, y - h, 52, 5, 3);
+    for (let k = 0; k < 3; k++) R(WHITE, x - 26 + k * 19, y - h - 7, 14, 9, 3);
+    L(rgb(180, 205, 230), x - 26, y - h / 2, x + 26, y - h / 2, 1.5); L(rgb(180, 205, 230), x - 4, y - h, x - 4, y - h / 2, 1.5); L(rgb(180, 205, 230), x + 12, y - h / 2, x + 12, y, 1.5);
+  } else { E(rgb(214, 230, 246), x - 28, y - 8, 56, 10); }
+}
+function drawSnowThrower(e, cam) {   // a grumpy snowman in a top hat, winding up a throw
+  const x = Math.round(e.x + e.w / 2) - cam, y = Math.round(e.y + e.h), fl = e.flash && Math.floor(e.flash / 2) % 2;
+  ctx.save(); ctx.translate(x, y); ctx.scale(1.25, 1.25);
+  drawSnowman(0, 0, e.t);
+  L(BLACK, -7, -64, -2, -62, 2); L(BLACK, 7, -64, 2, -62, 2);                                   // grumpy brows
+  R(rgb(30, 30, 36), -9, -82, 18, 16, 2); R(rgb(30, 30, 36), -13, -68, 26, 4, 1); R(HEART, -9, -71, 18, 3);   // top hat
+  if (e.arm > 0) C(WHITE, e.dir * 26, -58, 6);
+  ctx.restore();
+  if (fl) { ctx.globalAlpha = 0.5; C(WHITE, x, y - 50, 40); ctx.globalAlpha = 1; }
+}
+function drawGiantSnowman(e, cam) {   // El Muñeco de Nieve Gigante
+  const x = Math.round(e.x + e.w / 2) - cam, y = Math.round(e.y + e.h), fl = e.flash && Math.floor(e.flash / 2) % 2, angry = e.hp <= e.maxHp / 2;
+  const sw = Math.sin(e.t * 0.05) * 3;
+  E("rgba(60,90,140,0.25)", x - 70, y - 8, 140, 16);
+  C(fl ? rgb(255, 220, 220) : rgb(242, 247, 255), x, y - 50, 56); C(rgb(214, 228, 244), x + 14, y - 38, 36);
+  C(fl ? rgb(255, 220, 220) : rgb(246, 250, 255), x + sw * 0.3, y - 128, 40);
+  C(fl ? rgb(255, 220, 220) : rgb(250, 252, 255), x + sw * 0.6, y - 186, 30);
+  for (const by of [-112, -132, -150]) C(rgb(30, 30, 36), x + sw * 0.3, y + by + 40 - 20, 4.5);  // coal buttons
+  const hx = x + sw * 0.6, hy = y - 186;
+  C(angry ? HEART : BLACK, hx - 11, hy - 6, 4.5); C(angry ? HEART : BLACK, hx + 11, hy - 6, 4.5);
+  L(BLACK, hx - 18, hy - 16, hx - 5, hy - 10, 3); L(BLACK, hx + 18, hy - 16, hx + 5, hy - 10, 3);  // angry eyebrows
+  P(rgb(240, 130, 40), [[hx, hy], [hx + e.dir * 30, hy + 4], [hx, hy + 7]]);                       // carrot nose
+  for (let k = -2; k <= 2; k++) C(BLACK, hx + k * 6, hy + 16 + Math.abs(k) * -1.5, 2.2);          // coal mouth
+  R(rgb(30, 30, 36), hx - 22, hy - 64, 44, 36, 3); R(rgb(30, 30, 36), hx - 32, hy - 30, 64, 7, 2); R(HEART, hx - 22, hy - 38, 44, 6);   // top hat
+  P(rgb(200, 40, 50), [[hx - 30, hy + 24], [hx + 30, hy + 24], [hx + 26, hy + 34], [hx - 26, hy + 34]]); R(rgb(200, 40, 50), hx + e.dir * 18 - 6, hy + 30, 12, 34, 3);   // scarf
+  const ay = e.arm > 0 ? -60 : 0;
+  for (const s of [-1, 1]) { L(rgb(110, 76, 40), x + s * 34, y - 130, x + s * 84, y - 150 + (s === e.dir ? ay : 0), 6); L(rgb(110, 76, 40), x + s * 70, y - 145 + (s === e.dir ? ay * 0.8 : 0), x + s * 80, y - 170 + (s === e.dir ? ay : 0), 4); }
+  if (e.arm > 0) C(WHITE, x + e.dir * 86, y - 156 + ay, 12);
+}
 function drawMiniAxe(x, y, angle, gold) {   // the spinning flying axe
   ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.scale(0.62, 0.62);
   drawAxe([0, 26], [0, -1], 0.55, gold);
@@ -3855,6 +3998,7 @@ function drawKnight(p, cam, upg, t) {
 
   const ad = p.attackTimer ? d : [Math.sin(0.2), -Math.cos(0.2)];
   if (p.sword) drawSword(hand, ad, k, upg.sharp);   // the broadsword in the final duel
+  else if (p.snowball) { C(rgb(170, 200, 230), hand[0] + ad[0] * 7 + 1, hand[1] + ad[1] * 7 + 1, 8); C(rgb(250, 252, 255), hand[0] + ad[0] * 7, hand[1] + ad[1] * 7, 7.5); }   // a snowball ready in his hand
   else if (!game.flyingAxe) drawWeapon(hand, ad, k, upg.sharp);   // the chosen weapon, then the arm gripping it
   L(SKIN_DARK, sh[0], sh[1], hand[0], hand[1], 12); L(SKIN, sh[0], sh[1], hand[0], hand[1], 9);
   const bi = [lerp(sh[0], hand[0], 0.4), lerp(sh[1], hand[1], 0.4)];
@@ -4770,6 +4914,11 @@ function drawClimbWorld(g) {   // the frozen cliff, scrolling down as the knight
       for (let ix = a + 8; ix < b - 6; ix += 16) P(rgb(200, 230, 250), [[ix, y + 2], [ix + 4, y + 16 + ((ix * 7) % 10)], [ix + 8, y + 2]]);   // icicles
     }
   }
+  for (const cv of CL.caves) {   // ice caves in the cliff
+    const y = sy(cv.alt); if (y < -80 || y > H + 80) continue;
+    E(rgb(60, 110, 170), cv.x - 44, y - 78, 88, 86); E(rgb(30, 70, 130), cv.x - 36, y - 70, 72, 74);
+    for (let ix = -36; ix < 36; ix += 12) P(rgb(200, 232, 252), [[cv.x + ix, y - 70 + Math.abs(ix) * 0.3], [cv.x + ix + 6, y - 54 + Math.abs(ix) * 0.3], [cv.x + ix + 12, y - 70 + Math.abs(ix + 12) * 0.3]]);
+  }
   for (const c of CL.coins) if (!c.dead) { const y = sy(c.alt); if (y > -20 && y < H + 20) drawCoin({ t: c.t, rect: () => ({ x: c.x - 9, y: y - 9 }) }, 0); }
   for (const h of CL.hearts) if (!h.dead) { const y = sy(h.alt); if (y > -20 && y < H + 20) { ctx.save(); ctx.translate(h.x, y); ctx.scale(1.4, 1.4); drawHeart(-9, -9, true); ctx.restore(); } }
   for (const c of CL.ice) {
@@ -4780,6 +4929,25 @@ function drawClimbWorld(g) {   // the frozen cliff, scrolling down as the knight
   }
   for (const b of CL.flying) { const e = { x: b.x - 22, y: sy(b.alt) - 10, w: 44, h: 20, t: b.t, dir: b.vx > 0 ? 1 : -1, flash: 0, kind: "v", mode: "patrol", colors: () => [rgb(120, 90, 60), rgb(80, 56, 36), rgb(250, 220, 120)], rect() { return { x: this.x, y: this.y, w: this.w, h: this.h }; } }; drawBird(e, 0); }
   if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0) && !p.dead) drawClimber(CL.x, sy(CL.y), CL.climbT, inp.jumpHeld && g.state === "play", CL.chopT > 6, p.facing);
+  for (const b of CL.up) { const y = sy(b.alt); C(rgb(240, 246, 255), b.x, y, 13); C(rgb(200, 220, 240), b.x + 4, y + 4, 6); }
+  const Y = CL.yeti;
+  if (Y.on) {
+    const yy = sy(Y.alt);
+    if (yy < H + 120) drawYeti(Y.x, yy, Y.t, Y.roar > 0, Y.fall > 0);
+    else { R("rgba(0,0,0,0.45)", W / 2 - 92, H - 44, 184, 32, 10); T(`👣 Yeti: ${Math.round((CL.y - Y.alt) / 10)} m`, 18, W / 2, H - 28, Y.alt > CL.y - 300 ? HEART : WHITE); }
+  }
+  const AV = CL.aval;
+  if (AV.warn > 0) {   // the rumble: snow trickling down and a warning
+    ctx.globalAlpha = 0.6; for (let i = 0; i < 14; i++) C(WHITE, (i * 71 + g.t * 3) % W, (i * 37 + g.t * 6) % 140, 3); ctx.globalAlpha = 1;
+    if (Math.floor(AV.warn / 10) % 2) T("¡AVALANCHA!", 40, W / 2, 60, HEART);
+    if (CL.safe) T("✓ ¡A cubierto!", 22, CL.x, sy(CL.y) - 100, GRASS_LIGHT); else T("¡Escóndete!", 22, CL.x, sy(CL.y) - 100, WHITE);
+  }
+  if (AV.fall > 0) {   // the avalanche pours down the cliff
+    const f = 1 - AV.fall / 90, front = -200 + f * (H + 400);
+    const gr = ctx.createLinearGradient(0, front - 300, 0, front); gr.addColorStop(0, "rgba(255,255,255,0.95)"); gr.addColorStop(1, "rgba(235,245,255,0.85)");
+    ctx.fillStyle = gr; ctx.fillRect(0, front - 300, W, 300);
+    for (let i = 0; i < 24; i++) C(WHITE, (i * 43) % W, front + Math.sin(i * 1.7 + g.t * 0.3) * 14, 18 + (i % 4) * 6);
+  }
   for (const q of g.particles) { const kk = q.life / q.maxLife; ctx.globalAlpha = Math.min(1, 0.35 + kk); ctx.fillStyle = q.color; ctx.beginPath(); ctx.arc(q.x, q.y, Math.max(1, q.size * kk + 1) * 0.62, 0, Math.PI * 2); ctx.fill(); }
   ctx.globalAlpha = 1;
   if (SHADE) { drawMotes("snow", CL.cam * 0, g.t); drawGrade(g.level.theme); drawVignette(); }
@@ -4788,6 +4956,24 @@ function drawClimbWorld(g) {   // the frozen cliff, scrolling down as the knight
   T(`${Math.round(CL.y / 10)} m`, 16, W - 40, 432, WHITE, "right", "top");
 }
 
+function drawYeti(x, y, t, roar, falling) {   // the Yeti climbing the ice: huge, shaggy, blue-faced, with claws; (x, y) = its feet
+  ctx.save(); ctx.translate(x, y); if (falling) ctx.rotate(Math.sin(t * 0.4) * 0.4);
+  const cl = Math.sin(t * 0.15) * 8;
+  for (const s of [-1, 1]) {   // arms reaching up into the ice
+    const ay = -70 - (s > 0 ? cl : -cl);
+    L(rgb(226, 232, 240), s * 22, -60, s * 34, ay, 14); for (let k = -1; k <= 1; k++) L(rgb(80, 90, 110), s * 34 + k * 4, ay, s * 34 + k * 5, ay - 9, 2.5);
+  }
+  for (const s of [-1, 1]) { L(rgb(226, 232, 240), s * 14, -24, s * 20, 0 + (s > 0 ? cl : -cl) * 0.4, 13); R(rgb(110, 120, 140), s * 20 - 7, -4 + (s > 0 ? cl : -cl) * 0.4, 14, 6, 3); }   // legs
+  E(rgb(236, 240, 246), -34, -92, 68, 74);                                                          // big shaggy body
+  for (let i = 0; i < 9; i++) { const a = i * 0.7; P(rgb(214, 222, 234), [[Math.cos(a) * 30, -56 + Math.sin(a) * 30], [Math.cos(a) * 38, -50 + Math.sin(a) * 36], [Math.cos(a + 0.3) * 30, -52 + Math.sin(a + 0.3) * 30]]); }
+  C(rgb(236, 240, 246), 0, -100, 24);                                                               // head
+  E(rgb(110, 150, 200), -15, -110, 30, 26);                                                         // blue face
+  C(roar ? HEART : rgb(30, 30, 40), -7, -102, 3.5); C(roar ? HEART : rgb(30, 30, 40), 7, -102, 3.5); L(rgb(40, 50, 80), -12, -110, -3, -106, 2); L(rgb(40, 50, 80), 12, -110, 3, -106, 2);
+  if (roar) { E(rgb(90, 20, 30), -9, -96, 18, 14); P(WHITE, [[-7, -96], [-4, -90], [-1, -96]]); P(WHITE, [[1, -96], [4, -90], [7, -96]]); }
+  else L(rgb(40, 50, 80), -6, -91, 6, -91, 2);
+  for (const s of [-1, 1]) P(rgb(200, 190, 170), [[s * 16, -118], [s * 26, -134], [s * 22, -114]]);   // horns
+  ctx.restore();
+}
 function drawSkier(x, y, t, vx, air, tuck) {   // the knight on skis, seen from above
   const a = Math.max(-0.6, Math.min(0.6, vx * 0.12)), s = air ? 1.25 : 1;
   ctx.save(); ctx.translate(x, y);
@@ -5449,6 +5635,8 @@ function drawShot(s, cam) {
     P(s.col, [[-14, -6], [-4, -14], [10, -10], [14, 2], [6, 12], [-10, 10]]); PS(s.dark, [[-14, -6], [-4, -14], [10, -10], [14, 2], [6, 12], [-10, 10]], 2);
     ctx.restore();
   } else if (s.kind === "bullet") { const k = Math.hypot(s.vx, s.vy) || 1, ux = s.vx / k, uy = s.vy / k; L(rgb(255, 210, 90), x - ux * 10, y - uy * 10, x + ux * 4, y + uy * 4, 3); L(WHITE, x - ux * 2, y - uy * 2, x + ux * 4, y + uy * 4, 1.5); }
+  else if (s.kind === "snowball" || s.kind === "esnow") { C(rgb(170, 200, 230), x + 1.5, y + 1.5, 7.5); C(rgb(250, 252, 255), x, y, 7); C(rgb(205, 225, 245), x + 2.5, y + 2.5, 3); }
+  else if (s.kind === "rollball") { ctx.save(); ctx.translate(x, y); ctx.rotate(s.t * 0.15 * Math.sign(s.vx || 1)); C(rgb(250, 252, 255), 0, 0, 24); L(rgb(200, 220, 240), -14, -8, 14, 8, 3); L(rgb(200, 220, 240), -6, 14, 8, -14, 2); ctx.restore(); }
   else if (s.kind === "ebullet") { C(rgb(255, 110, 50), x, y, 4.5); C(rgb(255, 230, 120), x, y, 2); }
   else if (s.kind === "note") { ctx.globalAlpha = 0.35; C(s.col, x, y, 13); ctx.globalAlpha = 1; T(Math.floor(s.t / 8) % 2 ? "♪" : "♫", 26, x, y, s.col); }
   else if (s.kind === "shuriken") drawShuriken(x, y, s.t * 0.6, rgb(206, 212, 226), 9);
@@ -6326,7 +6514,7 @@ LEVELS.forEach((L, i) => {   // each secret level sits on a little side path nex
   const p = MAP_NODES[i], up = p.y > 260;
   MAP_NODES[L.door] = { x: p.x + 8, y: up ? p.y - 120 : p.y + 116, world: p.world, secret: true, parent: i };
 });
-LEVELS.forEach((L, i) => { const n = MAP_NODES[i]; if (n) n.boss = L.map.some(r => /[BXZR0%&$*@{}»]/.test(r)); });
+LEVELS.forEach((L, i) => { const n = MAP_NODES[i]; if (n) n.boss = L.map.some(r => /[BXZR0%&$*@{}»¢]/.test(r)); });
 const WORLD_COLS = { "LA TIERRA": [rgb(70, 140, 60), rgb(110, 190, 90)], "EL HIELO": [rgb(70, 140, 190), rgb(170, 220, 250)], "EL CIELO Y EL ESPACIO": [rgb(60, 90, 170), rgb(120, 160, 230)], "EL REINO": [rgb(120, 60, 120), rgb(180, 110, 170)], "LOS MARES": [rgb(30, 110, 160), rgb(80, 170, 220)] };
 
 function mapTree(x, y, s, dark) {   // a round leafy tree with a soft shadow
@@ -6489,7 +6677,7 @@ class Game {
   }
   startLine() {
     const th = LEVELS[this.levelIndex].theme;
-    return th === "rock" ? "rock_nivel" : th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "jungle" ? "lianas" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { monster: "monstruos", buggy: "dunas", skidoo: "motonieve", climb: "escalada", ski: "descenso", ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
+    return th === "rock" ? "rock_nivel" : th === "dino" ? "dinos" : th === "bears" ? "osos" : th === "moon" ? "luna_nivel" : th === "mars" ? "marte" : th === "dragon" ? "dragones" : th === "pirate" ? "piratas" : th === "river" ? "acorazado" : th === "swords" ? "espadas_nivel" : th === "galaxy" ? "estelar" : th === "temple" ? "templo" : th === "jungle" ? "lianas" : th === "storm" ? "tormenta" : th === "deep" ? "submarino" : th === "ancient" ? "bosque_antiguo" : { snowball: "guerra_nieve", monster: "monstruos", buggy: "dunas", skidoo: "motonieve", climb: "escalada", ski: "descenso", ninja: "ninja", plane: "avion", horse: "caballo", sword: "espada", ufo: "ovni", car: "carrera", rocket: "cohete" }[this.level.mode] || "vamos";
   }
   levelLabel(i = this.levelIndex) { const n = MAP_NODES[i]; return LEVELS[i].secret ? "NIVEL SECRETO" : `NIVEL ${n.world + 1}-${n.num}`; }
   loadProgress() {   // which levels are beaten and which secrets are found, remembered between visits
@@ -6933,7 +7121,10 @@ class Game {
     }
     for (let a = 300; a < goal - 200; a += 420) { const x = randInt(90, W - 90); for (let k = 0; k < 4; k++) coins.push({ x, alt: a + k * 40, t: k * 9 }); }
     for (let a = 1400; a < goal - 300; a += randInt(700, 1000)) birds.push({ alt: a, out: false });
-    return { goal, x: W / 2, y: 0, cam: 0, ledges, coins, birds, flying: [], ice: [], spawnT: 120, chopT: 0, climbT: 0, hearts: [{ x: W / 2, alt: Math.round(goal * 0.5) }], told: 0 };
+    const caves = []; for (let a = 1250; a < goal - 300; a += randInt(280, 360)) caves.push({ x: randInt(150, W - 150), alt: a });   // ice caves: hide in one when an avalanche comes
+    return { goal, x: W / 2, y: 0, cam: 0, ledges, coins, birds, caves, flying: [], ice: [], up: [], spawnT: 120, chopT: 0, climbT: 0, told: 0,
+      hearts: [{ x: W / 2 - 160, alt: Math.round(goal * 0.33) }, { x: W / 2 + 160, alt: Math.round(goal * 0.68) }],
+      yeti: { on: false, alt: -600, x: W / 2, t: 0, fall: 0, throwT: 200, roar: 0 }, aval: { t: 1100, warn: 0, fall: 0 }, wind: { t: 700, dir: 0, left: 0 } };
   }
   updateClimb() {
     const p = this.player, CL = this.cl, mul = LEVELS[this.levelIndex].speed;
@@ -6975,6 +7166,50 @@ class Game {
       this.popup(CL.x, 470 - (CL.y - CL.cam) - 70, text, HEART);
       if (p.hearts <= 0) this.loseLife();
     };
+    const sheltered = () => CL.caves.some(cv => Math.abs(cv.x - CL.x) < 46 && CL.y > cv.alt - 20 && CL.y < cv.alt + 40)
+      || CL.ledges.some(L => L.alt > CL.y + 58 && L.alt < CL.y + 330 && !L.gaps.some(gp => CL.x + 14 > gp.x0 && CL.x - 14 < gp.x1));
+    CL.safe = sheltered();
+    const WD = CL.wind;   // gusts of wind blow you sideways
+    if (CL.y > 900 && CL.y < CL.goal - 150) {
+      if (WD.left > 0) {
+        WD.left--; CL.x = Math.max(86, Math.min(W - 86, CL.x + WD.dir * 1.5 * mul));
+        if (this.t % 2 === 0) this.particles.push({ x: WD.dir > 0 ? -10 : W + 10, y: randInt(20, H - 20), vx: WD.dir * randInt(10, 16), vy: 0.5, color: WHITE, life: 80, maxLife: 80, size: 2 });
+        if (WD.left === 0) WD.t = randInt(480, 760);
+      } else if (--WD.t <= 0) { WD.dir = pick([-1, 1]); WD.left = 200; play("swing"); this.popup(W / 2, 130, WD.dir > 0 ? "¡Viento! ➜" : "⬅ ¡Viento!", WHITE); }
+    }
+    const AV = CL.aval;   // avalanches: hide under a ledge or in an ice cave!
+    if (CL.y > 1300 && CL.y < CL.goal - 350) {
+      if (AV.warn > 0) { AV.warn--; this.shake = Math.max(this.shake, 2); if (AV.warn % 40 === 0) play("thunder"); if (AV.warn === 0) AV.fall = 90; }
+      else if (AV.fall > 0) {
+        AV.fall--;
+        if (AV.fall === 45) {
+          if (CL.safe) { this.score += 300; this.popup(CL.x, 470 - (CL.y - CL.cam) - 90, "¡A salvo! +300", GOLD); }
+          else { hurt("¡Avalancha!"); CL.y = Math.max(0, CL.y - 170); this.shake = 18; }
+        }
+      } else if (--AV.t <= 0) { AV.warn = 200; AV.t = randInt(1250, 1650); say("avalancha", true); this.popup(W / 2, 170, "¡AVALANCHA! ¡Escóndete en una cueva o bajo una cornisa!", HEART); }
+    }
+    const Y = CL.yeti;   // the Yeti climbs after you!
+    if (!Y.on && CL.y > 650) { Y.on = true; Y.alt = CL.y - 560; Y.x = CL.x; Y.roar = 60; play("roar"); say("yeti", true); this.popup(W / 2, 150, "¡Un Yeti te persigue! ¡Sube rápido!", HEART); }
+    if (Y.on && this.state === "play") {
+      Y.t++; if (Y.roar > 0) Y.roar--;
+      if (Y.fall > 0) { Y.fall--; Y.alt -= 6; }
+      else {
+        const gap = CL.y - Y.alt, sp = gap > 560 ? 2.4 : gap > 260 ? 1.5 : 1.2;
+        Y.alt += sp * mul * (CL.y > CL.goal - 250 ? 0.4 : 1); Y.x += Math.sign(CL.x - Y.x) * Math.min(1.7, Math.abs(CL.x - Y.x));
+        if (--Y.throwT <= 0 && gap < 520) { Y.throwT = randInt(140, 220); Y.roar = 30; CL.up.push({ x: Y.x, alt: Y.alt + 90, vy: 7.5 + Math.random(), vx: (CL.x - Y.x) / 70 }); play("swing"); }
+        const yr = { x: Y.x - 36, y: Y.alt, w: 72, h: 96 };
+        if (chop && over(chop, yr)) { Y.fall = 55; Y.roar = 40; this.score += 300; play("hit"); this.popup(Y.x, 470 - (Y.alt - CL.cam) - 110, "¡Abajo, Yeti! +300", GOLD); this.burst(Y.x, 470 - (Y.alt - CL.cam) - 60, [WHITE, rgb(200, 220, 240)], 16, 5); }
+        else if (over(box, yr)) { hurt("¡Zarpazo del Yeti!"); Y.fall = 45; Y.roar = 40; play("roar"); }
+      }
+    }
+    for (const b of CL.up) {   // the Yeti's snowballs fly up at you
+      b.vy -= 0.12; b.alt += b.vy; b.x += b.vx;
+      const r = { x: b.x - 14, y: b.alt - 14, w: 28, h: 28 };
+      if (chop && over(chop, r)) { b.dead = true; this.score += 50; play("crate"); this.burst(b.x, 470 - (b.alt - CL.cam), [WHITE], 10, 3); }
+      else if (over(box, r)) { b.dead = true; this.burst(b.x, 470 - (b.alt - CL.cam), [WHITE], 10, 3); hurt("¡Bola del Yeti!"); }
+      if (b.vy < -2 && b.alt < CL.cam - 60) b.dead = true;
+    }
+    CL.up = CL.up.filter(b => !b.dead);
     for (const c of CL.ice) {
       if (c.warn > 0) { c.warn--; c.alt = CL.cam + H + 30; continue; }
       c.vy = Math.min(c.vy + 0.25, c.big ? 5 : 6.5) ; c.alt -= c.vy; c.spin += 0.2;
@@ -7514,6 +7749,9 @@ class Game {
       play("swing");
       if (this.upg.boomerang && !this.flyingAxe)
         this.flyingAxe = new FlyingAxe(p.x + p.w / 2 + p.facing * 30, p.y + 14, p.facing);
+      if (p.snowball) {   // throw a snowball in an arc
+        this.shots.push({ kind: "snowball", x: p.x + p.w / 2 + p.facing * 18, y: p.y + 14, vx: p.facing * 10 + p.vx * 0.3, vy: -2.5, sgrav: 0.2, life: 110, t: 0, hit: new Set() });
+      }
       if (p.ninja && p.shuriken > 0) {   // the ninja throws a shuriken with every slash
         p.shuriken--; play("shing");
         this.shots.push({ kind: "shuriken", x: p.x + p.w / 2 + p.facing * 16, y: p.y + 24, vx: p.facing * 12, vy: 0, t: 0, hit: new Set() });
@@ -7664,6 +7902,7 @@ class Game {
         if (s.t % 12 === 0) play("swing");
       }
       if (s.kind === "fire" && s.fall) s.vy += 0.12;
+      if (s.sgrav) s.vy += s.sgrav;
       if (s.kind === "bomb") { s.vy += 0.22; if (s.y > WATER_Y + 6) { s.dead = true; this.splashAt(s.x); this.burst(s.x, WATER_Y, [rgb(255, 200, 80), WHITE], 10, 4); play("splash"); } }
       if (s.kind === "erocket" && s.t % 3 === 0) this.particles.push({ x: s.x, y: s.y, vx: 0, vy: -0.3, color: rgb(200, 200, 200), life: 20, maxLife: 20, size: 4 });
       if (s.kind === "grenade") {   // grenades bounce along the ground until the fuse runs out
@@ -7672,7 +7911,7 @@ class Game {
         if (lvl.solidAt(Math.floor((s.x + Math.sign(s.vx) * 7) / TILE), Math.floor(s.y / TILE))) s.vx = -s.vx * 0.5;
       }
       const boomy = s.kind === "shell" || s.kind === "paella" || s.kind === "grenade" || s.kind === "torpedo";
-      const sr = s.kind === "wave" ? { x: s.x - 14, y: s.y - 12, w: 28, h: 28 } : s.kind === "bsword" ? { x: s.x - 18, y: s.y - 18, w: 36, h: 36 } : { x: s.x - 9, y: s.y - 9, w: 18, h: 18 };
+      const sr = s.kind === "rollball" ? { x: s.x - 22, y: s.y - 22, w: 44, h: 44 } : s.kind === "wave" ? { x: s.x - 14, y: s.y - 12, w: 28, h: 28 } : s.kind === "bsword" ? { x: s.x - 18, y: s.y - 18, w: 36, h: 36 } : { x: s.x - 9, y: s.y - 9, w: 18, h: 18 };
       if (s.enemy) {
         if (box && !s.nochop && collide(box, sr)) {   // chop a fan right out of the air
           s.dead = true; this.burst(s.x, s.y, [s.col, WHITE], 10, 3); this.popup(s.x, s.y - 10, "¡Zas!", WHITE); play("hit");
@@ -7707,6 +7946,7 @@ class Game {
         for (const e of lvl.enemies) if (e.alive && e.hittable() && Math.hypot(e.x + e.w / 2 - s.x, e.y + e.h / 2 - s.y) < rad) this.strike(e, Math.sign(s.vx) || 1, s.hit, dmg);
       }
     }
+    for (const s of this.shots) if (s.dead && !s.poof && (s.kind === "snowball" || s.kind === "esnow" || s.kind === "rollball")) { s.poof = true; this.burst(s.x, s.y, [WHITE, rgb(200, 225, 245)], s.kind === "rollball" ? 20 : 8, 3); }
     this.shots = this.shots.filter(s => !s.dead);
     if (lvl.theme.lava && p.y + p.h > 486) {   // fell in the lava
       this.burst(p.x + p.w / 2, 480, [rgb(255, 200, 60), rgb(255, 110, 30), rgb(120, 40, 20)], 24, 6); play("hurt");
@@ -7763,7 +8003,7 @@ class Game {
     if (e.kind === "E") this.burst(ex, ey, [rgb(90, 90, 90), rgb(150, 150, 150), rgb(255, 160, 60)], 18, 4);
     if (boss) {
       this.popup(ex, er.y - 20, `¡Victoria! +${e.score}`); this.shake = 24;
-      play(e.kind === "X" ? "clang" : e.kind === "Z" || e.kind === "»" || e.kind === "%" || e.kind === "@" || e.kind === "}" ? "boom" : e.kind === "{" ? "clang" : e.kind === "R" || e.kind === "&" || e.kind === "*" ? "roar" : "boing_big"); say("victoria", true);
+      play(e.kind === "X" ? "clang" : e.kind === "Z" || e.kind === "»" || e.kind === "¢" || e.kind === "%" || e.kind === "@" || e.kind === "}" ? "boom" : e.kind === "{" ? "clang" : e.kind === "R" || e.kind === "&" || e.kind === "*" ? "roar" : "boing_big"); say("victoria", true);
       if (e.kind === "Z") for (let k = 0; k < 6; k++) this.burst(e.x + randInt(20, e.w - 20), e.y + randInt(10, 90), [rgb(255, 200, 80), rgb(255, 120, 40), rgb(90, 90, 90)], 20, 7);
       const f = this.level.flag; if (f) this.burst(f.x, f.y + 40, [GOLD, WHITE, ARMOR_LIGHT], 40, 6);
       return;
