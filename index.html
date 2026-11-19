@@ -891,6 +891,7 @@ let LOOK = { helmet: "plume", armor: "blue", cape: "red", weapon: "axe" };
 try { const sv = JSON.parse(localStorage.getItem("caballero_look") || "null"); if (sv) for (const [k, , list] of LOOK_ROWS) if (list.some(o => o.id === sv[k])) LOOK[k] = sv[k]; } catch (e) {}
 const lookOf = k => LOOK_ROWS.find(r => r[0] === k)[2].find(o => o.id === LOOK[k]);
 const weaponNow = () => lookOf("weapon");
+let lookSwapped = false;   // true while player 2's look is borrowed for a moment (so it isn't saved as player 1's)
 function applyLook() {   // repaint the knight's colours from the chosen look
   const a = lookOf("armor").c, c = lookOf("cape").c;
   [ARMOR, ARMOR_MID, ARMOR_LIGHT, ARMOR_DARK] = a.map(v => rgb(...v));
@@ -901,7 +902,7 @@ function applyLook() {   // repaint the knight's colours from the chosen look
     CAPE = gr;
   } catch (e) {}   // (the canvas isn't ready on the very first call; it's called again once it is)
   try { PLAYER_PLANE[0] = ARMOR; PLAYER_PLANE[1] = ARMOR_LIGHT; } catch (e) {}   // (not defined yet on the very first call)
-  try { localStorage.setItem("caballero_look", JSON.stringify(LOOK)); } catch (e) {}
+  if (!lookSwapped) try { localStorage.setItem("caballero_look", JSON.stringify(LOOK)); } catch (e) {}
 }
 applyLook();
 const SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82), MOUSTACHE = rgb(84, 46, 20);
@@ -7259,7 +7260,8 @@ function drawCustom(g) {   // the dressing room: pick a wild helmet, armour, cap
   ctx.fillStyle = bg; ctx.fillRect(-20, -20, W + 40, H + 40);
   for (let i = 0; i < 6; i++) { const x = 40 + i * 180; R(rgb(60, 50, 104), x, 0, 26, H); R(rgb(80, 68, 130), x + 4, 0, 4, H); }   // stone pillars
   for (const [x, y] of [[60, 110], [W - 60, 110]]) { ctx.globalAlpha = 0.25 + 0.1 * Math.sin(g.t * 0.1 + x); C(rgb(255, 160, 60), x, y, 40); ctx.globalAlpha = 1; C(rgb(255, 200, 90), x, y, 7); }   // torches
-  T("¡PREPARA A TU CABALLERO!", 40, W / 2, 44, GOLD);
+  T(g.cuFor === 2 ? "JUGADOR 2: ¡PREPARA TU CABALLERO!" : "¡PREPARA A TU CABALLERO!", g.cuFor === 2 ? 30 : 40, W / 2, 44, g.cuFor === 2 ? rgb(140, 230, 160) : GOLD);
+  if (g.cuFor === 2 && NET.role === "host") T("J2 en el otro aparato: ◀ ▶ cambiar · SALTA siguiente · 🪓 ¡listo!", 16, W / 2, 470, rgb(140, 230, 160));
   // the knight on a pedestal, three times bigger
   R(rgb(90, 80, 120), 110, 352, 240, 22, 6); R(rgb(120, 108, 156), 110, 352, 240, 6, 6); R(rgb(70, 60, 98), 130, 374, 200, 20, 4);
   ctx.globalAlpha = 0.35; E(BLACK, 150, 344, 160, 14); ctx.globalAlpha = 1;
@@ -7285,7 +7287,7 @@ function drawCustom(g) {   // the dressing room: pick a wild helmet, armour, cap
   const d = lay.dice; R(rgb(74, 62, 120), d.x, d.y, d.w, d.h, 12); RS(rgb(150, 130, 220), d.x, d.y, d.w, d.h, 2, 12); T("🎲 Al azar", 17, d.x + d.w / 2, d.y + d.h / 2 + 1, WHITE, "center", "middle");
   const b = lay.button, bsel = g.cuSel === LOOK_ROWS.length;
   R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14); RS(bsel ? GOLD : rgb(130, 200, 110), b.x, b.y, b.w, b.h, bsel ? 4 : 2, 14);
-  T("¡A la aventura! ▶", 28, W / 2, b.y + b.h / 2 + 1, WHITE, "center", "middle");
+  T(g.cuFor === 2 ? "¡Listo, jugador 2! ▶" : g.twoP ? "Ahora el jugador 2 ▶" : "¡A la aventura! ▶", 28, W / 2, b.y + b.h / 2 + 1, WHITE, "center", "middle");
   T(isTouch ? "Toca ◀ ▶ para cambiar" : "↑ ↓ elegir     ← → cambiar     R al azar     ENTER ¡a la aventura!", 17, W / 2, 494, rgb(200, 190, 230));
   for (const q of g.particles) R(q.color, q.x - 2, q.y - 2, 4, 4);
 }
@@ -7714,6 +7716,7 @@ function drawMap(g) {   // the world map: five lands side by side, the road betw
   C(GOLD, 96, H - 29, 9); C(rgb(255, 236, 140), 94, H - 31, 5); T(`${g.coins}`, 18, 112, H - 29, WHITE, "left", "middle");
   T(`⚑ ${beaten}/${MAIN_LEVELS}`, 18, 180, H - 29, WHITE, "left", "middle");
   R("rgba(0,0,0,0.35)", 262, H - 34, 96, 10, 5); R(GOLD, 262, H - 34, 96 * beaten / MAIN_LEVELS, 10, 5);
+  if (g.twoP) T(g.twoP === "net" ? "J2: 🪓 = cambiar su caballero" : "J2: F = cambiar su caballero · 2 = un jugador", 14, W / 2, H - 16, rgb(140, 230, 160));
   // the five lands, as little coloured gems; the one you're in glows
   const wx = Math.max(0, Math.min(WORLDS.length - 1, Math.floor(kx / W)));
   for (let k = 0; k < WORLDS.length; k++) {
@@ -8778,7 +8781,9 @@ class Game {
     if (inside(x, y, lay.dice)) { this.cuRandom(); return; }
     if (inside(x, y, lay.button)) this.beginGame();
   }
-  beginGame() {   // fresh lives, coins and upgrades, then the map (beaten levels and found secrets are remembered)
+  beginGame(fromP2) {   // fresh lives, coins and upgrades, then the map (beaten levels and found secrets are remembered)
+    if (this.cuFor === 2) { this.cuDone2(); return; }
+    if (this.twoP && !fromP2) { this.openCustomP2("begin"); return; }
     this.upg = {}; this.owned = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.lifeTaken = new Set(); this.lives = START_LIVES; this.score = 0;
     this.loadProgress(); play("anvil");
     const first = Array.from({ length: MAIN_LEVELS }, (_, i) => i).find(i => !this.done.has(LEVELS[i].name)) ?? 0;
@@ -8796,6 +8801,7 @@ class Game {
   }
   updateMap() {
     this.stateTimer++;
+    if (this.twoP && inp2.attack && this.stateTimer > 12) { this.openCustomP2("map"); return; }   // player 2 wants to change their knight
     const K = this.mapK, r = this.mapRoute();
     if (!K.path.length) {
       const k = r.indexOf(this.mapSel);
@@ -8885,6 +8891,7 @@ class Game {
     this.shark = this.player.sub ? { x: this.player.x - 560, y: this.player.y - 20, w: 200, h: 84, t: 0, pause: 0, vy: 0, jaw: 0 } : null;
     this.caught = null;
     this.p2 = this.p2Allowed && this.p2Allowed() ? this.makeP2() : null;
+    this.copilot = !!this.twoP && !this.p2;
   }
   initRocket() {   // lay out the whole flight: monkeys, coins and a heart, higher and higher
     const p = this.player, goal = 15000, plan = [];
@@ -10438,10 +10445,13 @@ class Game {
     } else if (this.state === "shop") {
       if (this.shopMsgT > 0) this.shopMsgT--;
     } else if (this.state === "custom") {   // the knight in the dressing room shows off his weapon now and then
-      if (!this.cuP) this.cuP = this.cuKnight();
-      const p = this.cuP; this.cuT++; p.anim += 0.05;
-      if (this.cuSwing || this.cuT % 110 === 60) { this.cuSwing = 0; p.attackTimer = p.atkTotal; p.hitIds.clear(); }
-      if (p.attackTimer > 0) p.attackTimer--;
+      if (this.cuFor === 2) this.cuP2Input();
+      if (this.state === "custom") {
+        if (!this.cuP) this.cuP = this.cuKnight();
+        const p = this.cuP; this.cuT++; p.anim += 0.05;
+        if (this.cuSwing || this.cuT % 110 === 60) { this.cuSwing = 0; p.attackTimer = p.atkTotal; p.hitIds.clear(); }
+        if (p.attackTimer > 0) p.attackTimer--;
+      }
     }
     for (const c of this.level.coins) c.t++;
     for (const q of this.particles) { if (q.drag) { q.vx *= q.drag; q.vy *= q.drag; } q.vy += q.grav ?? 0.25; q.x += q.vx; q.y += q.vy; q.life--; }
@@ -10486,6 +10496,7 @@ class Game {
   updatePlay() {
     const p = this.player, lvl = this.level;
     this.levelTimer++; this.runFrames++;
+    if (this.copilot) this.copilotMerge();
     if (this.xm) { XM[this.xm.kind].update(this, this.xm); return; }
     if (this.rk) { this.updateRocket(); return; }
     if (this.tv) {
@@ -11239,7 +11250,7 @@ class Game {
       const tp = this.twoP === "net" ? "🌐 ¡2 jugadores en línea conectados!" : this.twoP ? "👥 2 JUGADORES · J1: ← → ↑ y K / L · J2: A D W y F / G · (2 = quitar)" : isTouch ? "🌐 (arriba): jugar en línea con otro aparato" : "Pulsa 2: dos jugadores en el mismo teclado · 🌐 (arriba): en línea";
       T(tp, 16, W / 2, 352, rgb(140, 230, 160));
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 28 · 2 jugadores", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 29 · 2 jugadores", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
@@ -11316,13 +11327,21 @@ const touch = { left: false, right: false, jump: false };
 const inp2 = { left: false, right: false, jumpHeld: false, jumpPressed: false, attack: false };
 const keys2 = { left: false, right: false, jump: false };
 const net2 = { left: false, right: false, jump: false };
-const LOOK2 = { helmet: "viking", armor: "green", cape: "gold" };
+const LOOK2 = { helmet: "viking", armor: "green", cape: "gold", weapon: "axe" };
+try { const sv = JSON.parse(localStorage.getItem("caballero_look2") || "null"); if (sv) for (const [k, , list] of LOOK_ROWS) if (list.some(o => o.id === sv[k])) LOOK2[k] = sv[k]; } catch (_) {}
+function withLook2(fn, colours) {   // run something as player 2: their weapon (and, for drawing, their colours)
+  const save = { ...LOOK }; Object.assign(LOOK, LOOK2); if (colours) { lookSwapped = true; applyLook(); }
+  try { return fn(); } finally { Object.assign(LOOK, save); if (colours) { applyLook(); lookSwapped = false; } }
+}
+const P2_FULL = new Set([undefined, null, "", "ninja", "sword", "snowball", "plane", "ufo", "star", "horse", "storm"]);   // levels where player 2 gets a whole knight (or plane) of their own
+const P2_MERGE_ALL = new Set(["pinball", "concert"]);   // co-pilot levels where player 2 can press every button too
 const P2_KEYS = { KeyA: "left", KeyD: "right", KeyW: "jump", Space: "jump", KeyF: "attack", KeyG: "attack", KeyX: "attack", KeyZ: "attack", KeyC: "attack", ShiftLeft: "attack", ControlLeft: "attack" };
 const P1_ATTACK_2P = ["KeyJ", "KeyK", "KeyL", "ShiftRight", "ControlRight", "Period", "Slash", "Numpad0", "Comma"];
 try { game.twoP = localStorage.getItem("caballero_2p") === "1" ? "local" : false; } catch (_) { game.twoP = false; }
-Game.prototype.p2Allowed = function () { const L0 = LEVELS[this.levelIndex]; return !!this.twoP && !L0.mode && !this.rk && !this.tv && !this.cl && !this.sk && !this.xm; };
+Game.prototype.p2Allowed = function () { const L0 = LEVELS[this.levelIndex]; return !!this.twoP && P2_FULL.has(L0.mode) && !this.rk && !this.tv && !this.cl && !this.sk && !this.xm; };
 Game.prototype.makeP2 = function () {
-  const p = this.player, q = new Player(p.x - 44, p.y, {}); q.facing = 1; q.isP2 = true; return q;
+  const p = this.player, md = LEVELS[this.levelIndex].mode;
+  return withLook2(() => { const q = new Player(p.x - 44, p.y, {}); if (md) q.setMode(md, {}); if (q.plane) { q.x = p.x - 30; q.y = p.y + 70; } q.facing = 1; q.isP2 = true; return q; });
 };
 Game.prototype.p2Respawn = function () {
   const p = this.player, q = this.p2; q.x = p.x - 40 * p.facing; q.y = p.y - 30; q.vx = 0; q.vy = 0; q.hearts = q.maxHearts; q.invuln = 120; q.out = 0; q.dead = false;
@@ -11333,14 +11352,23 @@ Game.prototype.p2Down = function (msg) {
   const q = this.p2; q.out = 110; this.burst(q.x + q.w / 2, q.y + q.h / 2, [rgb(80, 200, 110), WHITE], 18, 5); play("hurt");
   this.popup(q.x + q.w / 2, Math.min(q.y, this.level.pxH - 60) - 20, msg || "¡El jugador 2 vuelve enseguida!", rgb(140, 230, 160));
 };
-Game.prototype.updateP2 = function () {
+Game.prototype.updateP2 = function () { withLook2(() => this.updateP2b()); };
+Game.prototype.updateP2b = function () {
   const q = this.p2, p = this.player, lvl = this.level;
   if (q.out > 0) { if (--q.out === 0) this.p2Respawn(); return; }
   if (p.dead) return;
   q.update(inp2, lvl);
-  if (q.justJumped) play("jump"); if (q.justSwung) play("swing");
+  if (q.justJumped) play("jump");
+  if (q.justSwung) {
+    play("swing");
+    if (q.snowball) this.shots.push({ kind: "snowball", x: q.x + q.w / 2 + q.facing * 18, y: q.y + 14, vx: q.facing * 10 + q.vx * 0.3, vy: -2.5, sgrav: 0.2, life: 90, t: 0, hit: new Set() });
+    if (q.ninja && q.shuriken > 0) { q.shuriken--; this.shots.push({ kind: "shuriken", x: q.x + q.w / 2 + q.facing * 16, y: q.y + 24, vx: q.facing * 12, vy: 0, t: 0, hit: new Set() }); }
+  }
+  if (q.plane && q.justFired) { this.shots.push({ kind: q.ufo || q.star ? "laser" : "bullet", x: q.x + q.w + 4, y: q.y + (q.star ? (q.burstN % 2 ? 2 : 32) : (q.ufo ? 20 : 18) + (q.burstN % 2 ? -2 : 2)), vx: 15 + q.vx, vy: q.vy * 0.3, t: 0, hit: new Set() }); play(q.star ? "pew" : q.ufo ? "zap" : "gun"); }
+  if (q.justRocket) this.shots.push({ kind: "shell", rocket: !q.ufo && !q.star, plasma: q.ufo || q.star, x: q.x + q.w, y: q.y + 24, vx: 10 + q.vx, vy: q.ufo || q.star ? 0 : 0.2, t: 0, hit: new Set() });
   const box = q.attackBox();
-  if (box) { for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, q.facing, q.hitIds, q.dmg || 1); this.breakCrates(box); }
+  if (box) { const ids = q.horse && !q.swingActive() ? q.rideHits : q.hitIds; for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, q.facing, ids, q.sword || q.horse ? 1 : q.dmg || 1); this.breakCrates(box); }
+  if (q.horse && this.t % 24 === 0) q.rideHits.clear();
   const pr = inflate(q.rect(), -6, -4);
   const ouch = sx => { if (!q.hurt(sx)) return false; play("hurt"); this.popup(q.x + q.w / 2, q.y - 10, "¡Ay!", HEART); if (q.hearts <= 0) this.p2Down(); return true; };
   for (const e of lvl.enemies) if (e.harmful() && collide(pr, e.rect())) { if ((e.kind === "<" || e.kind === "»") && pr.y + pr.h - Math.max(0, q.vy) <= e.y + 12) { q.y = e.y - pr.h - 1; q.vy = -11.5; continue; } ouch(e.x + e.w / 2); if (q.out) return; }
@@ -11350,6 +11378,7 @@ Game.prototype.updateP2 = function () {
   for (const c of [...lvl.coins]) if (collide(pr, c.rect())) { lvl.coins.splice(lvl.coins.indexOf(c), 1); this.coins++; this.score += 50; this.burst(c.x, c.y, [GOLD, WHITE], 6, 3); play("coin"); }
   if (q.y > lvl.pxH + 60) { this.p2Down("¡Al agujero! Vuelve enseguida"); return; }
   if (q.x + q.w < this.camX - 30 || q.x > this.camX + W + 30) { this.p2Respawn(); return; }   // left behind: pop back in next to player 1
+  if (q.plane && lvl.flagOpen && lvl.flagOpen() && lvl.flag && q.x + q.w > lvl.flag.x) { p.x = Math.max(p.x, lvl.flag.x - p.w + 2); }   // a plane through the finish takes player 1 with it
   if (lvl.flagOpen && lvl.flagOpen() && lvl.flag && collide(q.rect(), inflate(lvl.flag, 20, 0)) && !p.plane && !p.car && !p.sub && !p.ship) {   // player 2 reached the flag: the level is done for both
     p.x = q.x; p.y = q.y; p.vx = 0; this.startPole();
   }
@@ -11357,13 +11386,27 @@ Game.prototype.updateP2 = function () {
 Game.prototype.drawP2 = function (cam) {
   const q = this.p2; if (!q || q.out) return;
   if (q.invuln > 0 && Math.floor(q.invuln / 4) % 2 === 0) return;
-  const save = { ...LOOK }; Object.assign(LOOK, LOOK2); applyLook();
-  drawKnight(q, cam, {}, this.t);
-  Object.assign(LOOK, save); applyLook();
+  withLook2(() => {
+    if (q.star) drawStarfighter(q.x - cam, q.y + Math.sin(this.t * 0.1) * 1.5, this.t, q.vy * 0.05);
+    else if (q.ufo) drawUFO(q.x - cam, q.y + Math.sin(this.t * 0.1) * 2, this.t, q.vy * 0.04, false, false);
+    else if (q.plane) drawPlane(q.x - cam, q.y, 1, PLAYER_PLANE, true, this.t, q.vy * 0.06);
+    else if (q.horse) drawJoust(q, cam, {}, this.t);
+    else if (q.ninja) drawNinja(q, cam, {}, this.t);
+    else drawKnight(q, cam, {}, this.t);
+  }, true);
   T("J2", 13, q.x + q.w / 2 - cam, q.y - 58, rgb(140, 230, 160));
 };
 function drawP2Hud(g) {
-  if (!g.p2) { if (g.twoP && g.state === "play" && g.levelTimer < 240 && !g.p2Allowed()) T("Este nivel es para un jugador: el jugador 2 mira 👀", 15, W / 2, H - 46, rgb(140, 230, 160)); return; }
+  if (!g.p2) {
+    if (!g.copilot || g.state !== "play") return;
+    const q = g.copilotP || (g.copilotP = new Player(0, 0, {})); q.onGround = true; q.facing = -1; q.anim += 0.05;
+    if (g.copilotFlash > 0) { g.copilotFlash--; if (g.copilotFlash === 11) { q.attackTimer = q.atkTotal; } } if (q.attackTimer > 0) q.attackTimer--;
+    R("rgba(0,0,0,0.35)", W - 150, 92, 136, 70, 12); RS(rgb(140, 230, 160), W - 150, 92, 136, 70, 2, 12);
+    withLook2(() => { ctx.save(); ctx.translate(W - 120, 152); ctx.scale(0.55, 0.55); q.x = -q.w / 2; q.y = -q.h; drawKnight(q, 0, {}, g.t); ctx.restore(); }, true);
+    T("J2", 16, W - 80, 108, rgb(140, 230, 160), "left", "middle"); T("COPILOTO", 12, W - 80, 126, WHITE, "left", "middle");
+    T(P2_MERGE_ALL.has(LEVELS[g.levelIndex].mode) ? "¡todos los botones!" : "🪓 = ¡acción!", 11, W - 80, 144, GOLD, "left", "middle");
+    return;
+  }
   const q = g.p2; T("J2", 18, W - 132, 48, rgb(140, 230, 160), "left", "top");
   for (let i = 0; i < q.maxHearts; i++) drawHeart(W - 102 + i * 24, 48, i < q.hearts && !q.out);
 }
@@ -11388,7 +11431,7 @@ function netHost() {
       if (NET.conn) { conn.close(); return; }
       NET.conn = conn;
       conn.on("open", () => {
-        netStatus("✅ ¡Jugador 2 conectado!"); game.twoP = "net"; if (game.state === "play" && !game.p2 && game.p2Allowed()) game.p2 = game.makeP2();
+        netStatus("✅ ¡Jugador 2 conectado!"); game.twoP = "net"; if (game.state === "map") game.openCustomP2("map"); if (game.state === "play" && !game.p2 && game.p2Allowed()) game.p2 = game.makeP2();
         try {   // stream the screen (and the game's sound) to the other device
           const stream = canvas.captureStream(30);
           if (actx && master && actx.createMediaStreamDestination) { const dest = actx.createMediaStreamDestination(); master.connect(dest); const tr = dest.stream.getAudioTracks()[0]; if (tr) stream.addTrack(tr); }
@@ -11432,13 +11475,16 @@ function netShowVideo(stream) {
 function netToast(m) { const d = document.createElement("div"); d.textContent = m; d.style.cssText = "position:fixed;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:#fff;padding:8px 14px;border-radius:10px;z-index:9;font:600 15px system-ui"; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 function netGuestSend() {   // the guest sends its buttons to the host every frame they change
   if (NET.role !== "guest" || !NET.conn || !NET.conn.open) return;
-  const st = { l: +(keys.left || touch.left), r: +(keys.right || touch.right), j: +(keys.jump || touch.jump), jp: NET.lastJp, at: NET.lastAt };
+  const st = { l: +(keys.left || touch.left), r: +(keys.right || touch.right), j: +(keys.jump || touch.jump), jp: NET.lastJp, at: NET.lastAt, lp: NET.lastL || 0, rp: NET.lastR || 0 };
   const s = JSON.stringify(st); if (s !== NET.sent || game.t % 20 === 0) { NET.sent = s; try { NET.conn.send(st); } catch (_) {} }
 }
 function netHostRead() {   // the host turns the guest's buttons into player 2's input
   const d = NET.guestIn;
   net2.left = !!d.l; net2.right = !!d.r; net2.jump = !!d.j;
   if (d.jp !== NET.seenJp) { if (NET.seenJp !== undefined) inp2.jumpPressed = true; NET.seenJp = d.jp; }
+  inp2.leftTap = inp2.rightTap = false;
+  if (d.lp !== NET.seenL) { if (NET.seenL !== undefined) inp2.leftTap = true; NET.seenL = d.lp; }
+  if (d.rp !== NET.seenR) { if (NET.seenR !== undefined) inp2.rightTap = true; NET.seenR = d.rp; }
   if (d.at !== NET.seenAt) { if (NET.seenAt !== undefined) inp2.attack = true; NET.seenAt = d.at; }
 }
 function netOpen() {
@@ -11471,6 +11517,28 @@ function netClose() { if (NET.ui) NET.ui.style.display = "none"; }
   b.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); unlock(); netOpen(); });
   NET.btn = b;
 }
+
+Game.prototype.openCustomP2 = function (next) {   // player 2 dresses up their own knight in the same dressing room
+  if (this.cuFor === 2) return;
+  this.cuFor = 2; this.cuNext = next; this.cuSaved = { ...LOOK }; lookSwapped = true; Object.assign(LOOK, LOOK2); applyLook();
+  this.state = "custom"; this.cuSel = 0; this.cuT = 0; this.cuP = null; this.particles = []; play("click");
+};
+Game.prototype.cuDone2 = function () {
+  Object.assign(LOOK2, LOOK); try { localStorage.setItem("caballero_look2", JSON.stringify(LOOK2)); } catch (_) {}
+  Object.assign(LOOK, this.cuSaved); this.cuFor = 0; applyLook(); lookSwapped = false; play("anvil");
+  if (this.cuNext === "begin") this.beginGame(true); else this.openMap(this.mapSel);
+};
+Game.prototype.cuP2Input = function () {   // player 2 on the other device: ◀ ▶ change, SALTA next row, 🪓 done
+  const n = LOOK_ROWS.length, l = inp2.left, r = inp2.right;
+  if (this.cuSel < n) { if ((l && !this.cuL2) || inp2.leftTap) this.cuChange(this.cuSel, -1); else if ((r && !this.cuR2) || inp2.rightTap) this.cuChange(this.cuSel, 1); }
+  this.cuL2 = l; this.cuR2 = r;
+  if (inp2.jumpPressed) { this.cuSel = (this.cuSel + 1) % (n + 1); play("click"); }
+  if (inp2.attack) this.cuDone2();
+};
+Game.prototype.copilotMerge = function () {   // in a one-vehicle level, player 2's buttons work the action (or, in pinball and the concert, everything)
+  if (inp2.attack) { inp.attack = true; this.copilotFlash = 12; }
+  if (P2_MERGE_ALL.has(LEVELS[this.levelIndex].mode)) { inp.left = inp.left || inp2.left; inp.right = inp.right || inp2.right; inp.jumpHeld = inp.jumpHeld || inp2.jumpHeld; if (inp2.jumpPressed) inp.jumpPressed = true; }
+};
 
 const KEYMAP = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "jump", ArrowUp: "jump", KeyW: "jump" };
 window.addEventListener("keydown", e => {
@@ -11517,10 +11585,11 @@ window.addEventListener("keydown", e => {
     return;
   }
   if (NET.role === "guest" && NET.video) {   // playing on someone else's game: just send the buttons
-    const kk = KEYMAP[e.code]; if (kk) { keys[kk] = true; if (kk === "jump" && !e.repeat) NET.lastJp++; }
+    const kk = KEYMAP[e.code]; if (kk) { keys[kk] = true; if (kk === "jump" && !e.repeat) NET.lastJp++; if (kk === "left" && !e.repeat) NET.lastL = (NET.lastL || 0) + 1; if (kk === "right" && !e.repeat) NET.lastR = (NET.lastR || 0) + 1; }
     if (["KeyX", "KeyJ", "KeyZ", "KeyK", "KeyL", "KeyF", "ControlLeft", "ShiftRight"].includes(e.code) && !e.repeat) NET.lastAt++;
     e.preventDefault(); return;
   }
+  if (game.state === "map" && game.twoP && ["KeyF", "KeyG"].includes(e.code) && !e.repeat) { game.openCustomP2("map"); e.preventDefault(); return; }
   if (e.code === "Digit2" && !e.repeat && (game.state === "title" || game.state === "map") && game.twoP !== "net") {
     game.twoP = game.twoP ? false : "local"; try { localStorage.setItem("caballero_2p", game.twoP ? "1" : "0"); } catch (_) {} play("click");
   }
