@@ -160,7 +160,7 @@ const LEVELS = [
       "#############################...######################...######################....##########################...######################....###############################",
       "#############################...######################...######################....##########################...######################....###############################"
     ] },
-  { name: "Las Dunas", theme: "desert", speed: 1.15, mode: "buggy", hint: "▶ acelerar · ◀ frenar · SALTA brincar · 🪓 turbo (¡rompe obstáculos!)",
+  { name: "Las Dunas", theme: "desert", speed: 1.15, mode: "buggy", hint: "¡Tu bólido: el RAYO TURQUESA! ▶ acelerar · ◀ frenar · SALTA brincar · 🪓 turbo (¡rompe obstáculos!)",
     map: [
       "........................",
       "........................",
@@ -1371,8 +1371,9 @@ function pickVoice() {
   esVoice = vs.find(v => v.lang === "es-ES") || vs.find(v => (v.lang || "").toLowerCase().startsWith("es")) || null;
 }
 if (hasSpeech) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+let SAY_MUTE = false;
 function say(key, force = false) {   // Spanish voice, using the phone's own text-to-speech
-  if (!soundOn || !hasSpeech) return;
+  if (!soundOn || !hasSpeech || SAY_MUTE) return;
   if (speechSynthesis.speaking && !force) return;
   if (force) speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(VOICE_LINES[key]);
@@ -3684,7 +3685,7 @@ class Level {
 
 // ------------------------------------------------------------------ drawing helpers
 const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");   // "let": the split screen draws each player's half on its own canvas
 applyLook();
 // realistic shading: each solid colour gets a highlight and a shadow, so shapes look rounded and solid
 let SHADE = true;   // switched off automatically if a slow phone can't keep up
@@ -5660,17 +5661,26 @@ function drawDriver(t) {   // the knight sitting in a vehicle (origin at his sea
   L(ARMOR, 4, -18, 16, -14, 4); C(STEEL, 17, -14, 3);
 }
 
-function drawBuggy(x, y, ang, wheel, t, nitro) {   // the dune buggy: roll cage, fat tyres, the knight at the wheel; (x, y) is between the wheels on the ground
+function drawBuggy(x, y, ang, wheel, t, nitro) {   // the Turquoise Lightning: a racing car designed by our young engineer — white body, red wings, purple fins, a turquoise nose with orange stripes, twin engines and a bubble canopy; (x, y) is between the wheels on the ground
   ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
-  if (nitro) { ctx.globalAlpha = 0.8; P(rgb(255, 170, 60), [[-38, -20], [-58 - Math.random() * 14, -16], [-38, -12]]); ctx.globalAlpha = 1; }
-  P(rgb(214, 80, 40), [[-36, -14], [34, -14], [40, -22], [24, -28], [-30, -28]]); R(rgb(160, 50, 26), -36, -16, 72, 6, 2);   // the body
-  ctx.save(); ctx.translate(-2, -26); drawDriver(t); ctx.restore();
-  L(rgb(60, 60, 66), -24, -28, -16, -52, 3); L(rgb(60, 60, 66), 16, -28, 4, -52, 3); L(rgb(60, 60, 66), -16, -52, 4, -52, 3);   // roll cage
-  L(rgb(60, 60, 66), 30, -22, 22, -34, 2); C(rgb(255, 230, 140), 38, -21, 3);
-  for (const wx of [-24, 24]) {   // big knobbly wheels
-    C(rgb(30, 30, 34), wx, -10, 12); C(rgb(150, 150, 160), wx, -10, 5);
-    for (let k = 0; k < 4; k++) { const a = wheel + k * Math.PI / 2; L(rgb(90, 90, 100), wx, -10, wx + Math.cos(a) * 9, -10 + Math.sin(a) * 9, 2); }
+  if (nitro) { ctx.globalAlpha = 0.85; P(rgb(255, 170, 60), [[-46, -24], [-70 - Math.random() * 16, -20], [-46, -14]]); P(rgb(255, 240, 150), [[-46, -22], [-60 - Math.random() * 8, -19], [-46, -16]]); ctx.globalAlpha = 1; }
+  for (const wx of [-26, 28]) {   // wheels
+    C(rgb(26, 26, 30), wx, -11, 11); C(rgb(150, 150, 160), wx, -11, 4.5);
+    for (let k = 0; k < 3; k++) { const a = wheel + k * Math.PI * 2 / 3; L(rgb(80, 80, 90), wx, -11, wx + Math.cos(a) * 8, -11 + Math.sin(a) * 8, 2); }
   }
+  P(rgb(250, 210, 40), [[-42, -12], [40, -12], [46, -18], [-44, -18]]);   // yellow skirt
+  P(rgb(246, 246, 250), [[-44, -18], [46, -18], [50, -24], [24, -32], [-36, -32], [-46, -26]]);   // white body
+  P(rgb(40, 170, 225), [[20, -31], [50, -24], [54, -16], [30, -18]]); P(rgb(30, 100, 210), [[30, -18], [54, -16], [52, -12], [32, -12]]);   // turquoise and blue nose
+  L(rgb(250, 140, 40), 28, -28, 44, -16, 2.5); L(rgb(250, 140, 40), 34, -29, 50, -18, 2);   // orange stripes
+  P(rgb(214, 36, 40), [[-50, -22], [-42, -40], [-24, -38], [-26, -24]]); P(rgb(240, 70, 70), [[-46, -26], [-40, -36], [-30, -36]]);   // big red wing at the back
+  P(rgb(214, 36, 40), [[14, -30], [22, -42], [40, -36], [42, -26]]);   // red fender at the front
+  R(rgb(90, 190, 230), -50, -34, 8, 12, 2);   // light blue tail plate
+  L(rgb(30, 30, 34), -40, -38, -44, -52, 3); E(rgb(30, 30, 34), -52, -60, 14, 10); C(HEART, -45, -55, 2);   // the black spoiler
+  L(rgb(120, 60, 180), -14, -32, -4, -54, 4); L(rgb(120, 60, 180), 10, -32, 22, -52, 4); C(rgb(120, 60, 180), -14, -32, 3); C(rgb(120, 60, 180), 10, -32, 3);   // purple fins
+  R(rgb(140, 140, 150), -2, -42, 18, 10, 3); C(rgb(200, 210, 220), 3, -38, 3); C(rgb(200, 210, 220), 11, -38, 3);   // twin engines
+  ctx.save(); ctx.translate(-22, -30); ctx.scale(0.72, 0.72); drawDriver(t); ctx.restore();
+  ctx.fillStyle = "rgba(150,230,240,0.45)"; ctx.beginPath(); ctx.ellipse(-22, -32, 18, 22, 0, Math.PI, 0); ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 1.5; ctx.stroke();   // the bubble canopy
+  E("rgba(255,255,255,0.55)", -32, -50, 10, 5);
   ctx.restore();
 }
 
@@ -8340,12 +8350,14 @@ XM.robot = {
   hud(g, X) {
     const B = X.boss;
     if (X.m2) { T("J2", 18, W - 190, 48, rgb(140, 230, 160), "left", "top"); for (let i = 0; i < 6; i++) drawHeart(W - 160 + i * 24, 48, i < X.m2.hp && !X.m2.out); if (X.m2.out) T("J2 vuelve enseguida…", 15, W - 16, 80, rgb(140, 230, 160), "right", "top"); }
+    if (g.levelTimer > 30 && g.levelTimer < 300) T("¡Pilota tu propio robot: el TITÁN DE FUEGO!", 22, W / 2, 130, rgb(255, 150, 60));
     if (B.awake && !B.dead) { T("EL MONSTRUO GIGANTE", 18, W / 2, 52, GOLD); R(HEART_EMPTY, W / 2 - 170, 66, 340, 14, 5); R(rgb(130, 220, 90), W / 2 - 170, 66, 340 * Math.max(0, B.hp / B.max), 14, 5); }
     else if (g.levelTimer < 520) T("◀ ▶ andar · SALTA saltar · 🪓 puñetazo · en el aire 🪓 = ¡PISOTÓN! · rompe edificios", 15, W / 2, H - 22, WHITE);
     if (X.won > 20) T("¡MONSTRUO DERROTADO!", 46, W / 2, 200, GOLD);
   },
 };
 function drawMech(x, y, face, walk, punch, pound, t, flash, green) {   // the giant robot, with the knight in the glass cockpit in its chest
+  if (!green) return drawSonMech(x, y, face, walk, punch, pound, t, flash);
   ctx.save(); ctx.translate(x, y); ctx.scale(face, 1);
   const bob = Math.abs(Math.sin(walk)) * 4, ls = Math.sin(walk) * 16;
   const W1 = rgb(230, 236, 246), B1 = green ? rgb(50, 170, 90) : rgb(50, 100, 210), B2 = green ? rgb(30, 110, 60) : rgb(30, 60, 140), G1 = rgb(120, 130, 150);
@@ -8371,6 +8383,49 @@ const RB_FIELDS = ["x", "y", "vx", "vy", "face", "air", "punch", "punchCd", "pou
 function rbSwap(X) { const m = X.m2; for (const k of RB_FIELDS) { const v = X[k]; X[k] = m[k]; m[k] = v; } }
 function rbMechs(X) { return X.m2 && !X.m2.out ? [X, X.m2] : [X]; }
 function rbNear(X, x) { const ms = rbMechs(X); return ms.reduce((a, b) => Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a, ms[0]); }
+function drawSonMech(x, y, face, walk, punch, pound, t, flash) {   // the Fire Titan: a robot designed by our young engineer (dark blue helmet, green chest, a golden hook blade and a flame thruster)
+  ctx.save(); ctx.translate(x, y); ctx.scale(face, 1);
+  const bob = Math.abs(Math.sin(walk)) * 4, ls = Math.sin(walk) * 16;
+  const GR = rgb(150, 156, 166), GD = rgb(96, 100, 110), BRN = rgb(110, 70, 50), GRN = rgb(30, 110, 80), GLD = rgb(214, 168, 70), NAVY = rgb(40, 40, 110), RED = rgb(200, 40, 40);
+  for (const [sd, sw] of [[-1, -ls], [1, ls]]) {   // legs: grey struts, yellow and black knees, green feet with gold toes and white spikes
+    R(GR, sd * 24 - 10 + sw * 0.4, -92, 20, 40, 6); R(rgb(240, 180, 40), sd * 24 - 14 + sw * 0.6, -62, 28, 14, 5); R(rgb(30, 30, 34), sd * 24 - 10 + sw * 0.7, -50, 20, 18, 5);
+    R(GRN, sd * 24 - 22 + sw, -34, 44, 26, 6); R(GLD, sd * 24 - 22 + sw, -12, 44, 12, 4);
+    P(WHITE, [[sd * 24 + 22 + sw, -30], [sd * 24 + 34 + sw, -24], [sd * 24 + 22 + sw, -18]]); P(WHITE, [[sd * 24 - 22 + sw, -30], [sd * 24 - 32 + sw, -24], [sd * 24 - 22 + sw, -18]]);
+  }
+  ctx.translate(0, -bob);
+  // the back: a red and white pack with antennas, and the flame thruster arm
+  R(RED, -62, -228, 30, 40, 6); R(WHITE, -58, -222, 22, 12, 3); L(GD, -50, -228, -54, -258, 3); C(rgb(60, 60, 70), -54, -260, 4);
+  R(GD, -66, -200, 22, 50, 8); R(GR, -78, -160, 26, 20, 5);   // back arm holding the thruster
+  const fl = 1 + Math.sin(t * 0.6) * 0.25 + (punch > 0 ? 0.6 : 0);
+  ctx.save(); ctx.translate(-92, -150); ctx.rotate(-0.5);
+  R(RED, -10, -8, 22, 16, 4); P(rgb(255, 120, 30), [[-10, -8], [-10 - 34 * fl, -14], [-10 - 46 * fl, 0], [-10 - 34 * fl, 14], [-10, 8]]); P(rgb(255, 230, 90), [[-10, -4], [-10 - 24 * fl, -6], [-10 - 32 * fl, 0], [-10 - 24 * fl, 6], [-10, 4]]);
+  ctx.restore();
+  // hips with a golden belt, the green chest and a brown and grey frame
+  R(GD, -40, -110, 80, 22, 8); R(GLD, -24, -114, 48, 16, 5); for (let k = 0; k < 3; k++) C(rgb(240, 200, 100), -12 + k * 12, -106, 3);
+  R(BRN, -46, -196, 92, 88, 14); R(GRN, -36, -172, 72, 62, 10);
+  L(rgb(20, 70, 50), -20, -150, 20, -150, 2); L(rgb(20, 70, 50), -14, -136, 14, -128, 2);
+  R("rgba(80,150,240,0.8)", -26, -200, 52, 32, 8);   // the see-through blue chest piece, with the knight inside
+  C(ARMOR, 0, -184, 9); R(ARMOR_DARK, -7, -187, 14, 3); R(PLUME, -2, -197, 4, 7);
+  E("rgba(255,255,255,0.45)", -20, -198, 16, 7);
+  R(rgb(60, 200, 220), 30, -204, 14, 24, 4);   // turquoise trim
+  // the head: a dark blue helmet with a bright visor
+  R(NAVY, -32, -250, 64, 48, 14); R(rgb(70, 60, 140), -28, -250, 56, 14, 10);
+  R(rgb(30, 30, 40), -4, -232, 30, 16, 6); R(flash ? HEART : rgb(80, 220, 255), 0, -228, 24, 8, 4); C(rgb(60, 220, 230), 22, -214, 4);
+  // the front shoulder: red, white and grey, with a yellow curl and a black spike
+  R(RED, 24, -214, 40, 30, 8); R(GR, 28, -190, 34, 14, 5); E(rgb(250, 200, 40), 44, -224, 26, 22); P(BLACK, [[40, -226], [52, -246], [62, -224]]);
+  // the front arm: claws and the big golden hook blade (it slashes forward when punching)
+  const reach = punch > 8 ? Math.min(1, (20 - punch) / 5) * 100 : 0, swing = punch > 0 ? Math.min(1, (20 - punch) / 6) : 0;
+  R(GR, 40, -186, 24 + reach * 0.7, 20, 6);
+  ctx.save(); ctx.translate(64 + reach * 0.7, -176); ctx.rotate(0.35 - swing * 1.5);
+  for (let k = 0; k < 3; k++) L(rgb(250, 150, 40), 0, -4 + k * 5, 26, 10 + k * 6, 3);   // orange claws
+  ctx.strokeStyle = GLD; ctx.lineWidth = 12; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(4, 8); ctx.quadraticCurveTo(70, 30, 50, 100); ctx.lineTo(10, 120); ctx.stroke();
+  ctx.strokeStyle = rgb(240, 200, 110); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(8, 6); ctx.quadraticCurveTo(66, 26, 48, 96); ctx.stroke();
+  ctx.restore();
+  if (reach > 60) for (let k = 0; k < 3; k++) L("rgba(255,230,150,0.8)", 60 + reach - k * 20, -200 + k * 14, 30 + reach - k * 20, -200 + k * 14, 2);
+  L(GR, -44, -140, -58, -100, 2);   // a small sword at its side
+  if (pound) P(rgb(255, 200, 80), [[-30, 0], [0, 30], [30, 0]]);
+  ctx.restore();
+}
 
 // ---- El Jinete del Dragón: ride a dragon over the kingdom, breathe fire at archers, bats and catapults, then beat the Dragon King
 const DR_LEN = 7400, DR_FLOOR = 470;
@@ -8700,11 +8755,11 @@ XM.concert = {
     const p = g.player;
     if (g.levelTimer === 20) say("concierto", true);
     if (g.levelTimer < 90) return;
-    if (X.t0 === null) { X.band = soundOn ? cnSynth() : null; X.t0 = (actx ? actx.currentTime : 0) + 1.2; X.ft = 0; }
+    if (X.t0 === null) { X.band = soundOn ? cnSynth() : null; if (X.band && typeof SPLIT !== "undefined" && game === SPLIT.g2) X.band.quiet = true; X.t0 = (actx ? actx.currentTime : 0) + 1.2; X.ft = 0; }
     X.ft++;
     if (X.band && actx) { const real = actx.currentTime; if (X.lastReal && real - X.lastReal > 0.1) X.t0 += real - X.lastReal - 1 / 60; X.lastReal = real; }   // a pause doesn't run the song on without you
     const now = this.now(X);
-    if (X.band) {   // keep the band playing a little ahead of time
+    if (X.band && !X.band.quiet) {   // keep the band playing a little ahead of time
       while ((X.beatDone + 1) * CN_BEAT < now + 0.2 && X.beatDone < 136) {
         const b = ++X.beatDone, tt = X.t0 + b * CN_BEAT, root = CN_ROOTS[Math.floor(b / 4) % 4];
         if (b < 0) continue;
@@ -8969,7 +9024,7 @@ class Game {
     this.shark = this.player.sub ? { x: this.player.x - 560, y: this.player.y - 20, w: 200, h: 84, t: 0, pause: 0, vy: 0, jaw: 0 } : null;
     this.caught = null;
     this.p2 = this.p2Allowed && this.p2Allowed() ? this.makeP2() : null;
-    this.copilot = !!this.twoP && !this.p2 && !P2_NATIVE.has(this.level.mode);
+    this.copilot = !!this.twoP && !this.p2 && !P2_NATIVE.has(this.level.mode) && !splitKindOf(this);
   }
   initRocket() {   // lay out the whole flight: monkeys, coins and a heart, higher and higher
     const p = this.player, goal = 15000, plan = [];
@@ -11328,7 +11383,7 @@ class Game {
       const tp = this.twoP === "net" ? "🌐 ¡2 jugadores en línea conectados!" : this.twoP ? "👥 2 JUGADORES · J1: ← → ↑ y K / L · J2: A D W y F / G · (2 = quitar)" : isTouch ? "🌐 (arriba): jugar en línea con otro aparato" : "Pulsa 2: dos jugadores en el mismo teclado · 🌐 (arriba): en línea";
       T(tp, 16, W / 2, 352, rgb(140, 230, 160));
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 30 · 2 jugadores", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 31 · pantalla partida", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
@@ -11364,7 +11419,7 @@ class Game {
 }
 
 // ------------------------------------------------------------------ screen, input, loop
-const game = new Game();
+let game = new Game();   // "let": in split screen, player 2's copy of the level takes its turn as "game"
 window.__game = game;
 let scale = 1, dpr = 1;
 function resize() {
@@ -11403,7 +11458,7 @@ const keys = { left: false, right: false, jump: false };
 const touch = { left: false, right: false, jump: false };
 // ------------------------------------------------------------------ two players: a second knight, on the same keyboard or from another device over the internet
 const inp2 = { left: false, right: false, jumpHeld: false, jumpPressed: false, attack: false };
-const keys2 = { left: false, right: false, jump: false };
+const keys2 = { left: false, right: false, jump: false, attack: false };
 const net2 = { left: false, right: false, jump: false };
 const LOOK2 = { helmet: "viking", armor: "green", cape: "gold", weapon: "axe" };
 try { const sv = JSON.parse(localStorage.getItem("caballero_look2") || "null"); if (sv) for (const [k, , list] of LOOK_ROWS) if (list.some(o => o.id === sv[k])) LOOK2[k] = sv[k]; } catch (_) {}
@@ -11559,12 +11614,12 @@ function netShowVideo(stream) {
 function netToast(m) { const d = document.createElement("div"); d.textContent = m; d.style.cssText = "position:fixed;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:#fff;padding:8px 14px;border-radius:10px;z-index:9;font:600 15px system-ui"; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
 function netGuestSend() {   // the guest sends its buttons to the host every frame they change
   if (NET.role !== "guest" || !NET.conn || !NET.conn.open) return;
-  const st = { l: +(keys.left || touch.left), r: +(keys.right || touch.right), j: +(keys.jump || touch.jump), jp: NET.lastJp, at: NET.lastAt, lp: NET.lastL || 0, rp: NET.lastR || 0 };
+  const st = { ah: +(NET.ah || 0), l: +(keys.left || touch.left), r: +(keys.right || touch.right), j: +(keys.jump || touch.jump), jp: NET.lastJp, at: NET.lastAt, lp: NET.lastL || 0, rp: NET.lastR || 0 };
   const s = JSON.stringify(st); if (s !== NET.sent || game.t % 20 === 0) { NET.sent = s; try { NET.conn.send(st); } catch (_) {} }
 }
 function netHostRead() {   // the host turns the guest's buttons into player 2's input
   const d = NET.guestIn;
-  net2.left = !!d.l; net2.right = !!d.r; net2.jump = !!d.j;
+  net2.left = !!d.l; net2.right = !!d.r; net2.jump = !!d.j; net2.ah = !!d.ah;
   if (d.jp !== NET.seenJp) { if (NET.seenJp !== undefined) inp2.jumpPressed = true; NET.seenJp = d.jp; }
   inp2.leftTap = inp2.rightTap = false;
   if (d.lp !== NET.seenL) { if (NET.seenL !== undefined) inp2.leftTap = true; NET.seenL = d.lp; }
@@ -11624,6 +11679,83 @@ Game.prototype.copilotMerge = function () {   // in a one-vehicle level, player 
   if (P2_MERGE_ALL.has(LEVELS[this.levelIndex].mode)) { inp.left = inp.left || inp2.left; inp.right = inp.right || inp2.right; inp.jumpHeld = inp.jumpHeld || inp2.jumpHeld; if (inp2.jumpPressed) inp.jumpPressed = true; }
 };
 
+// ---- split screen: in the vehicle levels each player gets their own copy of the level, their own vehicle and their own half of the screen
+const SPLIT = { g2: null, on: false, li: -1, A: null, B: null };
+const SPLIT_COLS = new Set(["pinball", "concert", "derby", "rocket", "climb", "ski"]);   // tall or top-down levels: side by side; the rest one above the other
+const SPLIT_IN = new Set(["play", "dying", "pole", "door"]);
+function splitKindOf(g) {
+  if (!g.twoP) return null;
+  const md = LEVELS[g.levelIndex] && LEVELS[g.levelIndex].mode;
+  if (!md || P2_FULL.has(md) || P2_NATIVE.has(md)) return null;
+  return SPLIT_COLS.has(md) ? "cols" : "rows";
+}
+function asP2(fn) {   // run something as player 2: their game, their buttons, their colours, no doubled voices
+  const g1 = game, saveInp = { ...inp }, saveAxe = axeHeld, saveLook = { ...LOOK };
+  game = SPLIT.g2; SAY_MUTE = true;
+  inp.left = inp2.left; inp.right = inp2.right; inp.jumpHeld = inp2.jumpHeld; inp.jumpPressed = inp2.jumpPressed; inp.attack = inp2.attack; axeHeld = !!(keys2.attack || net2.ah);
+  lookSwapped = true; Object.assign(LOOK, LOOK2); applyLook();
+  try { return fn(); }
+  finally { game = g1; SAY_MUTE = false; Object.assign(inp, saveInp); axeHeld = saveAxe; Object.assign(LOOK, saveLook); applyLook(); lookSwapped = false; }
+}
+function splitStep() {
+  const g1 = game, kind = SPLIT_IN.has(g1.state) ? splitKindOf(g1) : null;
+  if (!kind) { SPLIT.on = false; return; }
+  if (!SPLIT.on || SPLIT.li !== g1.levelIndex) {   // player 2's own copy of this level
+    if (!SPLIT.g2) { SPLIT.g2 = new Game(); }
+    const g2 = SPLIT.g2;
+    asP2(() => { g2.twoP = false; g2.upg = {}; g2.owned = {}; g2.done = g1.done; g2.secrets = g1.secrets; g2.levelIndex = g1.levelIndex; g2.lives = 99; g2.coins = 0; g2.score = 0; g2.p2 = null; g2.copilot = false; g2.resetLevel(); g2.state = "play"; g2.stateTimer = 0; g2.levelTimer = g1.levelTimer; });
+    SPLIT.on = true; SPLIT.li = g1.levelIndex;
+  }
+  const g2 = SPLIT.g2;
+  asP2(() => g2.step());
+  inp2.jumpPressed = inp2.attack = false;
+  if (g2.coins) { g1.coins += g2.coins; g2.coins = 0; }
+  if (g2.score !== g2.lastScore) { if (g2.lastScore !== undefined && g2.score > g2.lastScore) g1.score += g2.score - g2.lastScore; g2.lastScore = g2.score; }
+  if (g2.lives < 50) g2.lives = 99;
+  if (g2.state === "gameover") asP2(() => { g2.lives = 99; g2.resetLevel(); g2.state = "play"; });
+  if (g2.state === "levelclear" || g2.state === "finale") {   // player 2 finished first: the level is done for both
+    SPLIT.on = false; g2.state = "map";
+    if (g1.state === "play") { g1.popup(g1.player.x + g1.player.w / 2, g1.player.y - 30, "¡El jugador 2 lo consiguió!", rgb(140, 230, 160)); g1.finishLevel(); }
+  }
+}
+function splitOff() { const c = document.createElement("canvas"); return { c, x: c.getContext("2d"), s: 0 }; }
+function splitFocus(g, axis) {   // where on the screen this player's vehicle is, so the half shows it
+  const T = g.tv, p = g.player;
+  if (axis === "y") { if (T && isFinite(T.y)) return T.y - (T.camY || 0) - 60; return isFinite(p.y) ? p.y - (g.camY || 0) : 300; }
+  const md = LEVELS[g.levelIndex].mode;
+  if (md === "pinball" || md === "concert") return 480;
+  if (md === "rocket") return p.x + p.w / 2;
+  if (T && isFinite(T.x) && isFinite(T.cam)) return T.x - T.cam;
+  return isFinite(p.x) ? p.x + p.w / 2 - g.camX : 480;
+}
+function splitDraw() {
+  const g1 = game, g2 = SPLIT.g2, kind = splitKindOf(g1), s = scale * dpr, main = ctx;
+  for (const k of ["A", "B"]) { const o = SPLIT[k] || (SPLIT[k] = splitOff()); if (o.s !== s) { o.s = s; o.c.width = Math.ceil(W * s); o.c.height = Math.ceil(H * s); } }
+  const A = SPLIT.A, B = SPLIT.B;
+  ctx = A.x; ctx.setTransform(s, 0, 0, s, 0, 0); g1.draw();
+  asP2(() => { ctx = B.x; ctx.setTransform(s, 0, 0, s, 0, 0); g2.draw(); });
+  ctx = main; ctx.setTransform(s, 0, 0, s, 0, 0);
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+  const hud = (o, dx, dy) => { ctx.globalAlpha = 0.95; ctx.drawImage(o.c, 0, 0, W * s, 110 * s, dx, dy, W / 2, 55); ctx.globalAlpha = 1; };
+  if (kind === "rows") {
+    const band = g => Math.max(0, Math.min(H / 2, splitFocus(g, "y") - 150));
+    const b1 = band(g1), b2 = band(g2);
+    ctx.drawImage(A.c, 0, b1 * s, W * s, (H / 2) * s, 0, 0, W, H / 2);
+    ctx.drawImage(B.c, 0, b2 * s, W * s, (H / 2) * s, 0, H / 2, W, H / 2);
+    if (b1 > 50) hud(A, 0, 0); if (b2 > 50) hud(B, 0, H / 2);
+    R(BLACK, 0, H / 2 - 2, W, 4);
+    T("J1", 20, W - 14, H / 2 - 18, ARMOR_LIGHT, "right", "middle"); T("J2", 20, W - 14, H - 18, rgb(140, 230, 160), "right", "middle");
+  } else {
+    const col = g => Math.max(0, Math.min(W / 2, splitFocus(g, "x") - W / 4));
+    const c1 = col(g1), c2 = col(g2);
+    ctx.drawImage(A.c, c1 * s, 0, (W / 2) * s, H * s, 0, 0, W / 2, H);
+    ctx.drawImage(B.c, c2 * s, 0, (W / 2) * s, H * s, W / 2, 0, W / 2, H);
+    hud(A, 0, 0); hud(B, W / 2, 0);
+    R(BLACK, W / 2 - 2, 0, 4, H);
+    T("J1", 20, 14, H - 18, ARMOR_LIGHT, "left", "middle"); T("J2", 20, W / 2 + 14, H - 18, rgb(140, 230, 160), "left", "middle");
+  }
+}
+
 const KEYMAP = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "jump", ArrowUp: "jump", KeyW: "jump" };
 window.addEventListener("keydown", e => {
   unlock();
@@ -11670,7 +11802,7 @@ window.addEventListener("keydown", e => {
   }
   if (NET.role === "guest" && NET.video) {   // playing on someone else's game: just send the buttons
     const kk = KEYMAP[e.code]; if (kk) { keys[kk] = true; if (kk === "jump" && !e.repeat) NET.lastJp++; if (kk === "left" && !e.repeat) NET.lastL = (NET.lastL || 0) + 1; if (kk === "right" && !e.repeat) NET.lastR = (NET.lastR || 0) + 1; }
-    if (["KeyX", "KeyJ", "KeyZ", "KeyK", "KeyL", "KeyF", "ControlLeft", "ShiftRight"].includes(e.code) && !e.repeat) NET.lastAt++;
+    if (["KeyX", "KeyJ", "KeyZ", "KeyK", "KeyL", "KeyF", "ControlLeft", "ShiftRight"].includes(e.code)) { NET.ah = true; if (!e.repeat) NET.lastAt++; }
     e.preventDefault(); return;
   }
   if (game.state === "map" && game.twoP && ["KeyF", "KeyG"].includes(e.code) && !e.repeat) { game.openCustomP2("map"); e.preventDefault(); return; }
@@ -11679,7 +11811,7 @@ window.addEventListener("keydown", e => {
   }
   if (game.twoP === "local" && game.state === "play" && !game.paused) {   // same keyboard: the left side of the keyboard is player 2
     const k2 = P2_KEYS[e.code];
-    if (k2) { e.preventDefault(); if (k2 === "attack") { if (!e.repeat) inp2.attack = true; } else { if (k2 === "jump" && !e.repeat) inp2.jumpPressed = true; keys2[k2] = true; } return; }
+    if (k2) { e.preventDefault(); if (k2 === "attack") { if (!e.repeat) inp2.attack = true; keys2.attack = true; } else { if (k2 === "jump" && !e.repeat) inp2.jumpPressed = true; keys2[k2] = true; } return; }
     if (P1_ATTACK_2P.includes(e.code)) { e.preventDefault(); if (!e.repeat) inp.attack = true; axeHeld = true; return; }
   }
   const k = KEYMAP[e.code];
@@ -11691,7 +11823,7 @@ window.addEventListener("keydown", e => {
   if (e.code === "KeyQ" && game.paused) game.quitToMap();
   if (e.code === "Enter" || e.code === "NumpadEnter") tapStart();
 });
-window.addEventListener("keyup", e => { const k2 = P2_KEYS[e.code]; if (k2 && k2 !== "attack") keys2[k2] = false; if (P1_ATTACK_2P.includes(e.code)) axeHeld = false; const k = KEYMAP[e.code]; if (k) keys[k] = false; if (["KeyX", "KeyJ", "KeyZ", "KeyK", "ControlLeft"].includes(e.code)) axeHeld = false; });
+window.addEventListener("keyup", e => { if (NET.role === "guest" && ["KeyX", "KeyJ", "KeyZ", "KeyK", "KeyL", "KeyF", "ControlLeft", "ShiftRight"].includes(e.code)) NET.ah = false; const k2 = P2_KEYS[e.code]; if (k2) keys2[k2] = false; if (P1_ATTACK_2P.includes(e.code)) axeHeld = false; const k = KEYMAP[e.code]; if (k) keys[k] = false; if (["KeyX", "KeyJ", "KeyZ", "KeyK", "ControlLeft"].includes(e.code)) axeHeld = false; });
 window.addEventListener("blur", () => { keys.left = keys.right = keys.jump = false; axeHeld = false; });
 window.addEventListener("contextmenu", e => e.preventDefault());
 canvas.addEventListener("pointerdown", e => {
@@ -11733,7 +11865,7 @@ function holdButton(el, down, up) {
   el.addEventListener("pointercancel", end);
 }
 holdButton(document.getElementById("bJump"), () => { if (NET.role === "guest" && NET.video) { NET.lastJp++; touch.jump = true; return; } if (!tapStart()) { inp.jumpPressed = true; touch.jump = true; } }, () => { touch.jump = false; });
-holdButton(document.getElementById("bAxe"), () => { if (NET.role === "guest" && NET.video) { NET.lastAt++; return; } if (!tapStart()) { inp.attack = true; axeHeld = true; } }, () => { axeHeld = false; });
+holdButton(document.getElementById("bAxe"), () => { if (NET.role === "guest" && NET.video) { NET.lastAt++; NET.ah = true; return; } if (!tapStart()) { inp.attack = true; axeHeld = true; } }, () => { axeHeld = false; NET.ah = false; });
 
 const bSound = document.getElementById("bSound");
 function toggleSound() {
@@ -11770,12 +11902,12 @@ function frame(now) {
     inp.jumpHeld = keys.jump || touch.jump;
     if (NET.role === "host") netHostRead();
     inp2.left = keys2.left || net2.left; inp2.right = keys2.right || net2.right; inp2.jumpHeld = keys2.jump || net2.jump;
-    game.step();
+    game.step(); splitStep();
     acc -= STEP_MS;
   }
   updateEngine(); updateRock();
   ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
-  game.draw();
+  if (SPLIT.on && SPLIT.g2) splitDraw(); else game.draw();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
