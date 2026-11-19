@@ -83,7 +83,7 @@ Math.random = function () { return SIM_RNG ? SIM_RNG() : NATIVE_RANDOM(); };
 //              d  flamenco dancer   K  the tank
 //              B  Rey Canguro (boss)   [ ]  edges of the boss arena
 const LEVELS = [
-  { name: "La Pradera", door: 43, theme: "meadow", speed: 1,
+  { name: "La Pradera", door: 44, theme: "meadow", speed: 1,
     map: [
       "..................................................................................................................................",
       "..................................................................................................................................",
@@ -99,7 +99,7 @@ const LEVELS = [
       "####################..###################....##########################....##########################....#########################",
       "####################..###################....##########################....##########################....#########################"
     ] },
-  { name: "El Bosque", theme: "forest", speed: 1.1, door: 38, hint: "¡Ojo con las serpientes taipán!",
+  { name: "El Bosque", theme: "forest", speed: 1.1, door: 39, hint: "¡Ojo con las serpientes taipán!",
     map: [
       "......................................................................................................................................................",
       "..............................................................####....................................................................................",
@@ -147,7 +147,7 @@ const LEVELS = [
       "##############################.......###############.........###############............################........##############..............##################.........#####################################",
       "##############################.......###############.........###############............################........##############..............##################.........#####################################"
     ] },
-  { name: "La Mina", theme: "mine", speed: 1.15, door: 39, hint: "¡Cuidado con los topos!",
+  { name: "La Mina", theme: "mine", speed: 1.15, door: 40, hint: "¡Cuidado con los topos!",
     map: [
       "#########################################################################################################################################################################",
       "#########################################################################################################################################################################",
@@ -179,7 +179,7 @@ const LEVELS = [
       "########################",
       "########################"
     ] },
-  { name: "La Ruta del Rock", door: 42, theme: "rock", speed: 1.1, hint: "¡Dale hachazos a las camionetas! Cuando hagan ¡BRUM BRUM!, salta por encima o súbete a una roca",
+  { name: "La Ruta del Rock", door: 43, theme: "rock", speed: 1.1, hint: "¡Dale hachazos a las camionetas! Cuando hagan ¡BRUM BRUM!, salta por encima o súbete a una roca",
     map: [
       "......................................................................................................................................................................................................................",
       "......................................................................................................................................................................................................................",
@@ -403,7 +403,7 @@ const LEVELS = [
       "########################",
       "########################"
     ] },
-  { name: "La Luna", door: 44, theme: "moon", speed: 1.2, grav: 0.45, hint: "¡En la Luna saltas muchísimo! Cuidado con los marcianos y sus rayos",
+  { name: "La Luna", door: 45, theme: "moon", speed: 1.2, grav: 0.45, hint: "¡En la Luna saltas muchísimo! Cuidado con los marcianos y sus rayos",
     map: [
       "......................................................................................................................................................................................................................................",
       "......................................................................................................................................................................................................................................",
@@ -499,7 +499,7 @@ const LEVELS = [
       "################..########..############..##########..########..############..#########..############..########..###########..##############################....",
       "################..########..############..##########..########..############..#########..############..########..###########..##############################....",
     ] },
-  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 40, hint: "¡Salta de pared en pared y lanza shuriken!",
+  { name: "La Senda Ninja", theme: "ninja", speed: 1.15, mode: "ninja", door: 41, hint: "¡Salta de pared en pared y lanza shuriken!",
     map: [
       "................................................................................................................................................................................",
       "................................................................................................................................................................................",
@@ -611,7 +611,7 @@ const LEVELS = [
       "########################################################################",
       "########################################################################"
     ] },
-  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 41, hint: "¡No te caigas al agua!",
+  { name: "La Costa de los Tiburones", theme: "sea", speed: 1.2, door: 42, hint: "¡No te caigas al agua!",
     map: [
       "............................................................................................................................................................................",
       "............................................................................................................................................................................",
@@ -628,6 +628,22 @@ const LEVELS = [
       "################....##############....############.....#############....##################....##########.....###############....############.....###########################"
     ] },
   { name: "La Carretera de la Costa", theme: "sea", speed: 1.05, mode: "cannon", hint: "◀ ▶ girar · 🪓 turbo · SALTA bocina · ¡Llega a cada control antes de que se acabe el tiempo!",
+    map: [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "............P...........",
+      "########################",
+      "########################"
+    ] },
+  { name: "El Paseo en Monopatín", theme: "sea", speed: 1.05, mode: "skate", hint: "▶ empujar · ◀ frenar · SALTA ollie · 🪓 en el aire: ¡acrobacias! · ¡Grinda las barandillas y salta la MEGA RAMPA!",
     map: [
       "........................",
       "........................",
@@ -848,7 +864,7 @@ const WORLDS = [
   { name: "EL HIELO", lv: [12, 13, 14, 15, 16, 17] },
   { name: "EL CIELO Y EL ESPACIO", lv: [18, 19, 20, 21, 22] },
   { name: "EL REINO", lv: [23, 24, 25, 26, 27, 28, 29, 30, 31, 32] },
-  { name: "LOS MARES", lv: [33, 34, 35, 36, 37] },
+  { name: "LOS MARES", lv: [33, 34, 35, 36, 37, 38] },
 ];
 
 const rgb = (r, g, b) => `rgb(${r},${g},${b})`;
@@ -1089,6 +1105,7 @@ function seeded(a) {   // small repeatable random number generator
 
 // ------------------------------------------------------------------ sound (generated, no files needed)
 const VOICE_LINES = {
+  skate: "¡Al paseo en monopatín! ¡Haz acrobacias en el aire!",
   kart: "¡Carrera de karts en las nubes! ¡Coge las cajas sorpresa!", carretera: "¡La carretera de la costa! ¡Corre, que se acaba el tiempo!", control: "¡Control! ¡Más tiempo!", meta: "¡Meta!",
   robot: "¡Al mando del robot gigante!", kaiju: "¡Un monstruo gigante!", jinete: "¡A volar en dragón!", rey_dragon: "¡El Rey Dragón!", pinball: "¡Pinball helado! ¡Que no se caiga la bola!",
   concierto: "¡Que empiece el concierto!", genial: "¡Genial!", multibola: "¡Muchas bolas!",
@@ -4483,29 +4500,42 @@ function drawRoadWorld(g) {
 }
 
 // ---------------------------------------------------------------- the toy room
-function drawToyCar(x, y, ang, wheel, t, face) {   // the Golden Hurricane: a brick-built racer designed by our young engineer — white and grey engine pods with air scoops, two yellow turbine fans, a black dome cockpit with a gold emblem, and a green and gold nose
+function drawToyCar(x, y, ang, wheel, t, face) {   // the Golden Hurricane: a mean, low brick-built racer designed by our young engineer — white shark-nosed engine pods with grey air scoops, big yellow turbine fans, a black armoured cockpit with gold emblems, and a long green-and-gold nose with spikes and fangs
   ctx.save(); ctx.translate(x, y); ctx.rotate(ang); if (face < 0) ctx.scale(-1, 1);
-  ctx.globalAlpha = 0.3; E(BLACK, -42, -4, 86, 7); ctx.globalAlpha = 1;
-  R(rgb(50, 50, 56), -40, -18, 80, 7, 2);   // the dark chassis
-  P(rgb(214, 196, 150), [[-12, -13], [32, -13], [38, -8], [-8, -8]]);   // tan side skid
-  P(rgb(236, 236, 240), [[-44, -18], [-44, -28], [-18, -32], [-6, -22], [-12, -18]]); P(rgb(200, 200, 208), [[-44, -22], [-14, -26], [-8, -20]]);   // white engine pod
-  R(rgb(150, 150, 160), -42, -34, 24, 6, 2); for (const sx of [-41, -33, -25]) { R(rgb(160, 160, 170), sx, -41, 7, 8, 2); R(rgb(60, 60, 66), sx + 1.5, -39, 4, 3); }   // grey air scoops
-  R(rgb(200, 40, 40), -30, -30, 8, 2);   // a red stripe
-  // a yellow turbine fan, spinning
-  C(rgb(250, 200, 40), -4, -30, 10); C(rgb(30, 30, 34), -4, -30, 7);
-  for (let k = 0; k < 6; k++) { const a = t * 0.7 + k * Math.PI / 3; L(rgb(220, 180, 60), -4, -30, -4 + Math.cos(a) * 6, -30 + Math.sin(a) * 6, 1.6); }
-  C(rgb(250, 200, 40), -4, -30, 2);
-  // the black dome cockpit with a glass window (and the knight inside) and a gold emblem
-  E(rgb(26, 26, 32), 4, -44, 26, 22);
-  R("rgba(120,210,235,0.85)", 9, -41, 13, 9, 3); ctx.save(); ctx.translate(15, -34); ctx.scale(0.4, 0.4); drawDriver(t); ctx.restore();
-  C(GOLD, 26, -36, 4.5); CS(rgb(60, 200, 210), 26, -36, 4.5, 1.5);
-  // the green and gold nose
-  P(rgb(40, 140, 80), [[16, -26], [42, -20], [44, -12], [18, -12]]); R(rgb(60, 200, 220), 20, -30, 10, 8, 2);
-  P(rgb(214, 168, 70), [[32, -22], [46, -18], [46, -14], [34, -16]]); L(rgb(250, 140, 40), 20, -15, 36, -14, 2);
-  P(WHITE, [[24, -24], [27, -20], [30, -24]]); P(WHITE, [[30, -23], [33, -19], [36, -22]]);   // white "teeth" on the green panel
-  // wheels: a big double tyre at the back, a gold-rimmed one at the front
-  C(rgb(24, 24, 28), -26, -11, 11); C(rgb(40, 40, 46), -26, -11, 8); C(rgb(160, 160, 170), -26, -11, 4); L(rgb(100, 100, 110), -26, -11, -26 + Math.cos(wheel) * 7, -11 + Math.sin(wheel) * 7, 1.5);
-  C(rgb(24, 24, 28), 28, -9, 9); C(GOLD, 28, -9, 4); L(rgb(150, 110, 20), 28, -9, 28 + Math.cos(wheel) * 4, -9 + Math.sin(wheel) * 4, 1.5);
+  const DK = rgb(34, 34, 40), GR = rgb(130, 132, 140), GL = rgb(176, 178, 186), WH = rgb(238, 238, 242), GN = rgb(28, 120, 70), GD = rgb(206, 160, 60), TQ = rgb(50, 200, 215), YL = rgb(250, 200, 30);
+  ctx.globalAlpha = 0.3; E(BLACK, -50, -4, 108, 8); ctx.globalAlpha = 1;
+  const fl = 0.7 + 0.3 * Math.sin(t * 0.9);   // exhaust flames
+  P(rgb(255, 120, 30), [[-48, -27], [-48 - 12 * fl, -24], [-48, -21]]); P(rgb(255, 230, 120), [[-48, -26], [-48 - 6 * fl, -24], [-48, -22]]);
+  // the far rear tyre (it's a double one)
+  C(rgb(18, 18, 22), -26, -14, 13);
+  // the low dark frame and the long tan blades sticking out at the front
+  P(DK, [[-46, -22], [44, -22], [48, -14], [-44, -12]]);
+  P(rgb(214, 190, 130), [[0, -13], [58, -9], [0, -9]]); P(rgb(170, 146, 96), [[6, -11], [52, -9], [6, -9]]);
+  // the white shark-nosed engine pod, with grey shading underneath
+  P(WH, [[-48, -22], [-46, -33], [-30, -40], [-8, -33], [6, -27], [-6, -22]]); P(GL, [[-46, -26], [-8, -28], [6, -27], [-6, -22], [-48, -22]]);
+  L(GR, -44, -30, -10, -32, 1.5); R(rgb(255, 50, 40), -42, -28, 9, 2.2, 1);   // a seam and a glowing red slit
+  // grey air scoops on top, mouths facing forward
+  for (const [sx, sy] of [[-42, -42], [-27, -45]]) { P(GR, [[sx, sy + 6], [sx + 2, sy], [sx + 12, sy - 2], [sx + 13, sy + 6]]); R(DK, sx + 9, sy + 0.5, 3.5, 4.5, 1); L(GL, sx + 2, sy + 1, sx + 11, sy - 1, 1.2); }
+  // a big yellow turbine fan, seen from the side, spinning
+  ctx.save(); ctx.translate(-4, -31);
+  E(DK, -7, -12, 14, 24); ctx.strokeStyle = YL; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(0, 0, 7, 12, 0, 0, Math.PI * 2); ctx.stroke();
+  for (let k = 0; k < 5; k++) { const a = t * 0.8 + k * Math.PI * 2 / 5, yy = Math.sin(a) * 9; L(rgb(70, 70, 78), 0, 0, Math.cos(a) * 3, yy, 1.5); }
+  C(GD, 0, 0, 2); ctx.restore();
+  // the black armoured cockpit: no window, just a glowing slit, and gold emblems
+  P(DK, [[4, -24], [9, -40], [20, -48], [31, -43], [37, -27]]); P(rgb(70, 70, 80), [[9, -40], [20, -48], [24, -46], [13, -38]]);
+  R(rgb(90, 230, 255), 22, -42, 9, 2, 1); ctx.globalAlpha = 0.35; R(rgb(90, 230, 255), 20, -44, 13, 6, 2); ctx.globalAlpha = 1;
+  C(GD, 20, -32, 5); CS(TQ, 20, -32, 5, 1.6); C(rgb(250, 220, 120), 20, -32, 1.6);
+  C(GD, 12, -45, 3); CS(TQ, 12, -45, 3, 1.2);
+  // the long green and gold nose, turquoise bars, white fangs and a red eye
+  P(GN, [[32, -27], [52, -20], [58, -14], [34, -13]]); P(GD, [[34, -29], [52, -22], [50, -19], [33, -24]]);
+  R(TQ, 34, -36, 3, 11, 1); R(TQ, 40, -33, 3, 9, 1); R(rgb(250, 140, 40), 30, -21, 6, 3, 1);
+  for (let k = 0; k < 4; k++) P(WH, [[40 + k * 4, -14], [42 + k * 4, -10], [44 + k * 4, -14]]);
+  ctx.globalAlpha = 0.4; C(rgb(255, 60, 40), 55, -18, 5); ctx.globalAlpha = 1; C(rgb(255, 80, 50), 55, -18, 2);
+  // the near tyres: a fat black one at the back with a grey hub, a gold-rimmed one at the front
+  C(rgb(26, 26, 30), -30, -13, 13); C(rgb(44, 44, 50), -30, -13, 9); C(GR, -30, -13, 4.5);
+  for (let k = 0; k < 6; k++) { const a = wheel + k * Math.PI / 3; L(rgb(14, 14, 18), -30 + Math.cos(a) * 10, -13 + Math.sin(a) * 10, -30 + Math.cos(a) * 13, -13 + Math.sin(a) * 13, 2.5); }   // chunky treads
+  C(rgb(26, 26, 30), 36, -10, 10); C(GD, 36, -10, 4.5); C(rgb(150, 110, 30), 36, -10, 1.8);
+  for (let k = 0; k < 5; k++) { const a = wheel + k * Math.PI * 2 / 5; L(rgb(14, 14, 18), 36 + Math.cos(a) * 7.5, -10 + Math.sin(a) * 7.5, 36 + Math.cos(a) * 10, -10 + Math.sin(a) * 10, 2); }
   ctx.restore();
 }
 function drawToyWorld(g) {
@@ -8868,6 +8898,183 @@ XM.concert = {
   },
 };
 
+// ---- El Paseo en Monopatín: skateboarding along the seafront — ollie the cones, grind the rails, fly off the kickers and do tricks in the air
+const SK_BASE = 400, SK_LEN = 14200, SK_TRICKS = [["¡KICKFLIP!", "flip"], ["¡360!", "spin"], ["¡HEELFLIP!", "flip"], ["¡SUPERMAN!", "super"], ["¡DOBLE KICKFLIP!", "flip2"]];
+function skBuild() {   // lay out the seafront skate course
+  const F = [], L = [], C = [];
+  let x = 700;
+  const add = o => { F.push(o); return o; };
+  const pattern = [
+    () => { add({ k: "cone", x }); x += 380; },
+    () => { add({ k: "kick", x0: x, x1: x + 150, h: 52 }); x += 520; },
+    () => { add({ k: "rail", x0: x, x1: x + 360, h: 58 }); for (let i = 0; i < 6; i++) C.push({ x: x + 30 + i * 55, y: SK_BASE - 100 }); x += 560; },
+    () => { add({ k: "bowl", x0: x, x1: x + 420, d: 90 }); x += 600; },
+    () => { add({ k: "bench", x, w: 170, h: 34 }); x += 430; },
+    () => { add({ k: "kick", x0: x, x1: x + 160, h: 62 }); add({ k: "gap", x0: x + 170, x1: x + 400 }); for (let i = 0; i < 4; i++) C.push({ x: x + 210 + i * 50, y: SK_BASE - 170 + Math.abs(i - 1.5) * 14 }); x += 640; },
+    () => { add({ k: "cone", x }); add({ k: "cone", x: x + 240 }); x += 620; },
+    () => { add({ k: "stairs", x0: x, x1: x + 300, drop: 70 }); add({ k: "rail", x0: x - 10, x1: x + 310, h: 54, stairs: true }); x += 520; add({ k: "rampup", x0: x, x1: x + 260, rise: 70 }); x += 520; },
+    () => { add({ k: "bin", x }); x += 400; },
+    () => { add({ k: "kick", x0: x, x1: x + 220, h: 110, mega: true }); add({ k: "gap", x0: x + 230, x1: x + 760 }); for (let i = 0; i < 7; i++) C.push({ x: x + 280 + i * 65, y: SK_BASE - 260 + Math.abs(i - 3) * 30 }); x += 1000; },   // the MEGA ramp: big air for a combo of stunts
+  ];
+  const order = [0, 1, 2, 4, 3, 5, 6, 7, 8, 9, 1, 2, 3, 5, 4, 0, 7, 6, 2, 5, 1, 8, 3, 9];
+  for (const i of order) { pattern[i](); if (x > SK_LEN - 900) break; }
+  // the letters S K A T E, up high where you need a jump or a rail to reach them
+  const spots = F.filter(f => f.k === "rail" || f.k === "kick" || f.k === "gap").slice(0, 10);
+  const pick5 = [0, 2, 4, 6, 8].map(i => spots[Math.min(i, spots.length - 1)]);
+  "SKATE".split("").forEach((ch, i) => { const f = pick5[i]; L.push({ ch, x: (f.x0 + f.x1) / 2 + (f.k === "kick" ? 160 : 0), y: SK_BASE - (f.k === "rail" ? 130 : 190), got: false }); });
+  for (let cx = 300; cx < SK_LEN - 300; cx += 260) if (!F.some(f => f.x0 !== undefined && cx > f.x0 - 40 && cx < f.x1 + 40) && !F.some(f => f.x !== undefined && Math.abs(cx - f.x) < 80)) C.push({ x: cx, y: SK_BASE - 30 });
+  return { F, L, C };
+}
+function skGround(X, x) {   // the height of the ground under x (9999 over a gap)
+  let y = SK_BASE;
+  for (const f of X.F) {
+    if (f.k === "gap" && x > f.x0 && x < f.x1) return 9999;
+    if (f.k === "stairs") { if (x >= f.x1) y += f.drop; else if (x > f.x0) y += f.drop * (x - f.x0) / (f.x1 - f.x0); }
+    if (f.k === "rampup") { if (x >= f.x1) y -= f.rise; else if (x > f.x0) y -= f.rise * (x - f.x0) / (f.x1 - f.x0); }
+    if (f.k === "kick" && x > f.x0 && x < f.x1) y -= f.h * (x - f.x0) / (f.x1 - f.x0);
+    if (f.k === "bowl" && x > f.x0 && x < f.x1) y += f.d * Math.sin(Math.PI * (x - f.x0) / (f.x1 - f.x0));
+  }
+  return y;
+}
+function skRailY(X, r, x) { return r.y0 + (r.y1 - r.y0) * (x - r.x0) / (r.x1 - r.x0); }
+XM.skate = {
+  init(g) {
+    const B = skBuild();
+    const X = { kind: "skate", F: B.F, letters: B.L, coins: B.C.map(c => ({ ...c, got: false })), fx: [], cam: 0, x: 160, y: SK_BASE, vx: 3, vy: 0, air: false, grind: null, trick: 0, tk: 0, spin: 0, pend: 0, combo: 0, bail: 0, score: 0, msg: "", msgT: 0, check: 160, done: 0, sparks: [], lastSlope: 0 };
+    for (const f of X.F) if (f.k === "rail" || f.k === "bench") {   // rails (and the tops of benches) to grind
+      const x0 = f.k === "bench" ? f.x : f.x0, x1 = f.k === "bench" ? f.x + f.w : f.x1, h = f.h;
+      f.rail = { x0, x1, y0: skGround(X, x0 + 1) - h, y1: skGround(X, x1 - 1) - h };
+    }
+    return X;
+  },
+  say(X, m, n = 70) { X.msg = m; X.msgT = n; },
+  hurt(g, X, why) {
+    const p = g.player; if (p.invuln > 0 || X.done) return;
+    p.hearts--; p.invuln = 70; X.bail = 45; X.vx *= 0.3; X.trick = 0; X.pend = 0; X.combo = 0; X.grind = null; g.shake = 8; play("hurt"); say("jolin", true); this.say(X, why || "¡Castañazo!");
+    if (p.hearts <= 0) g.loseLife();
+  },
+  update(g, X) {
+    const p = g.player;
+    if (g.levelTimer === 20) say("skate", true);
+    if (p.invuln > 0) p.invuln--; if (X.msgT > 0) X.msgT--;
+    const ready = g.levelTimer > 60 && !X.done;
+    if (X.done) { X.vx *= 0.96; X.x += X.vx; if (++X.done > 120) { play("clear"); g.finishLevel(); } this.sync(g, X); return; }
+    if (X.bail > 0) { X.bail--; X.vx *= 0.95; }
+    // pushing and braking
+    if (ready && X.bail === 0 && !X.air) { if (inp.right) X.vx = Math.min(9.5, X.vx + 0.14); else if (inp.left) X.vx = Math.max(0.6, X.vx - 0.25); else X.vx = Math.max(1.6, X.vx * 0.997); }
+    // jumping (an ollie), from the ground or off a rail
+    if (ready && inp.jumpPressed && X.bail === 0 && (!X.air || X.grind)) { X.vy = -10.5 + (!X.air && X.lastSlope < 0 ? X.lastSlope * X.vx : 0); X.air = true; X.grind = null; play("jump"); }   // an ollie right at the top of a ramp goes extra high
+    // tricks in the air
+    if (ready && inp.attack && X.air && !X.grind && X.trick === 0 && X.bail === 0) { X.tk = (X.tk + 1) % SK_TRICKS.length; X.trick = SK_TRICKS[X.tk][1] === "flip2" ? 34 : 26; play("swing"); }
+    if (X.trick > 0 && --X.trick === 0) { const pts = 150 * (X.combo + 1); X.pend += pts; X.combo++; this.say(X, `${SK_TRICKS[X.tk][0]} +${pts}`); play("coin"); }
+    if (X.grind) {   // grinding a rail
+      const r = X.grind; X.x += X.vx; X.y = skRailY(X, r, X.x); X.score += 3; g.score += 3;
+      if (g.t % 3 === 0) X.sparks.push({ x: X.x - 6, y: X.y, vx: -Math.random() * 3 - 1, vy: -Math.random() * 3, life: 18 });
+      if (g.t % 8 === 0) play("click");
+      if (X.x > r.x1) { X.grind = null; X.vy = (r.y1 - r.y0) / (r.x1 - r.x0) * X.vx - 2; X.combo++; this.say(X, `¡GRIND! ×${X.combo}`); }
+    } else if (X.air) {
+      const oy = X.y; X.vy += 0.45; X.x += X.vx; X.y += X.vy;
+      for (const f of X.F) if (f.rail && X.vy > 0 && X.x > f.rail.x0 && X.x < f.rail.x1) {   // landing on a rail starts a grind
+        const ry = skRailY(X, f.rail, X.x);
+        if (oy <= ry + 2 && X.y >= ry) { if (X.trick > 0) { this.hurt(g, X, "¡Te caíste del rail!"); X.y = skGround(X, X.x); X.air = false; break; } X.grind = f.rail; X.y = ry; X.vy = 0; play("crate"); this.say(X, "¡GRIND!"); break; }
+      }
+      const gy = skGround(X, X.x);
+      if (!X.grind && X.y >= gy && gy < 9000) {   // landing
+        X.y = gy; X.air = false; X.vy = 0;
+        if (X.trick > 0) this.hurt(g, X, "¡Aterrizaste a medio truco!");
+        else if (X.pend > 0) { X.score += X.pend; g.score += X.pend; this.say(X, `¡ATERRIZAJE LIMPIO! +${X.pend}`, 90); if (X.combo >= 3) { g.coins += 2; play("oneup"); } X.pend = 0; }
+        X.combo = 0;
+      }
+      if (X.y > H + 60) {   // fell into the canal
+        this.hurt(g, X, "¡Al agua!"); play("splash" in sfx ? "splash" : "hurt");
+        const gp = X.F.find(f => f.k === "gap" && X.x > f.x0 - 50 && X.x < f.x1 + 200);
+        X.x = gp ? gp.x0 - 420 : X.check; X.y = skGround(X, X.x); X.vx = 3; X.vy = 0; X.air = false; X.trick = 0;
+      }
+    } else {   // rolling along the ground, speeding up downhill
+      const nx = X.x + X.vx, ny = skGround(X, nx), slope = (ny - X.y) / Math.max(0.5, X.vx);
+      if (ny > 9000 || ny > X.y + 7) { X.air = true; X.vy = Math.min(0, X.lastSlope) * X.vx * 1.6; }   // off the end of a kicker or into a gap
+      else { X.x = nx; X.y = ny; X.vx = Math.max(0.4, Math.min(11, X.vx + slope * 0.18)); X.lastSlope = slope; }
+    }
+    // obstacles you have to jump
+    for (const f of X.F) if ((f.k === "cone" || f.k === "bin" || f.k === "bench") && !X.grind) {
+      const ox = f.x, ow = f.k === "bench" ? f.w : f.k === "bin" ? 34 : 24, oh = f.k === "bench" ? f.h : f.k === "bin" ? 44 : 30, top = skGround(X, ox) - oh;
+      if (X.x > ox - 6 && X.x < ox + ow + 6 && X.y > top + 6 && X.bail === 0) this.hurt(g, X, f.k === "cone" ? "¡Contra el cono!" : "¡Choque!");
+    }
+    for (const c of X.coins) if (!c.got && Math.abs(c.x - X.x) < 26 && Math.abs(c.y - (X.y - 30)) < 40) { c.got = true; g.coins++; g.score += 50; play("coin"); }
+    for (const l of X.letters) if (!l.got && Math.abs(l.x - X.x) < 34 && Math.abs(l.y - (X.y - 30)) < 46) { l.got = true; play("oneup"); g.score += 500; const n = X.letters.filter(q => q.got).length; this.say(X, n === 5 ? "¡S-K-A-T-E! ¡+3000!" : `¡Letra ${l.ch}!`, 90); if (n === 5) { g.score += 3000; g.coins += 10; say("genial", true); } }
+    if (!X.air && X.x > X.check + 600) X.check = X.x;
+    for (const s of X.sparks) { s.x += s.vx; s.y += s.vy; s.vy += 0.25; s.life--; } X.sparks = X.sparks.filter(s => s.life > 0);
+    if (X.x > SK_LEN - 260 && !X.done) { X.done = 1; this.say(X, "¡META!", 120); say("meta", true); }
+    X.cam += (Math.max(0, Math.min(SK_LEN - W, X.x - 300)) - X.cam) * 0.15;
+    this.sync(g, X);
+  },
+  sync(g, X) {   // keep the knight (for the camera, the split screen and the drawing) on the board
+    const p = g.player; p.x = X.x - p.w / 2; p.y = X.y - 9 - p.h; p.facing = 1; p.vx = 0; p.onGround = true; g.camX = X.cam;
+  },
+  draw(g, X) {
+    const cam = X.cam, t = g.t, p = g.player;
+    const gr = ctx.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "#5a7fd6"); gr.addColorStop(0.55, "#ffb28a"); gr.addColorStop(1, "#ffd9a0"); ctx.fillStyle = gr; ctx.fillRect(-20, -20, W + 40, H + 40);
+    drawSunGlow(760 - cam * 0.02, 230, 44, rgb(255, 220, 150));
+    for (let k = 0; k < 5; k++) drawCloud(((k * 240 - cam * 0.1) % (W + 300) + W + 300) % (W + 300) - 150, 60 + (k % 3) * 30, 0.9);
+    ctx.fillStyle = rgb(60, 130, 190); ctx.fillRect(0, 260, W, 120);   // the sea
+    for (let k = 0; k < 14; k++) { const wx = ((k * 90 - cam * 0.25 + t * 0.4) % (W + 90) + W + 90) % (W + 90) - 45; L("rgba(255,255,255,0.5)", wx, 280 + (k % 4) * 22, wx + 24, 280 + (k % 4) * 22, 2); }
+    for (let k = -1; k < 7; k++) {   // palms and graffiti walls behind the boardwalk
+      const wx = k * 200 - ((cam * 0.6) % 200);
+      if (k % 2) { R(rgb(110, 110, 130), wx, 300, 150, 90, 6); for (let q = 0; q < 3; q++) C([HEART, rgb(60, 200, 210), GOLD][(k + q + 9) % 3], wx + 30 + q * 45, 340, 18); T("SKATE", 22, wx + 75, 340, WHITE); }
+      else { ctx.strokeStyle = rgb(120, 86, 52); ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(wx + 40, 390); ctx.quadraticCurveTo(wx + 30, 330, wx + 50, 270); ctx.stroke(); for (const a of [-2.6, -2, -1.2, -0.5]) P(rgb(50, 140, 70), [[wx + 50, 270], [wx + 50 + Math.cos(a) * 46, 270 + Math.sin(a) * 18 + 16], [wx + 50 + Math.cos(a) * 22, 272]]); }
+    }
+    // the boardwalk itself
+    ctx.fillStyle = rgb(170, 160, 150); ctx.beginPath(); ctx.moveTo(-10, H + 10);
+    for (let sx = -10; sx <= W + 10; sx += 6) { const gy = skGround(X, sx + cam); ctx.lineTo(sx, gy > 9000 ? H + 40 : gy); }
+    ctx.lineTo(W + 10, H + 10); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = rgb(110, 100, 96); ctx.lineWidth = 4; ctx.beginPath(); let pen = false;
+    for (let sx = -10; sx <= W + 10; sx += 6) { const gy = skGround(X, sx + cam); if (gy > 9000) { pen = false; continue; } if (pen) ctx.lineTo(sx, gy); else { ctx.moveTo(sx, gy); pen = true; } }
+    ctx.stroke();
+    for (const f of X.F) {   // the features
+      const fx = (f.x0 ?? f.x) - cam; if (fx > W + 60 || (f.x1 ?? f.x + (f.w || 40)) - cam < -60) continue;
+      if (f.k === "gap") { R(rgb(40, 110, 180), f.x0 - cam, SK_BASE + 10, f.x1 - f.x0, H, 0); for (let k = 0; k < 4; k++) L("rgba(255,255,255,0.5)", f.x0 - cam + 20 + k * 50, SK_BASE + 40 + (k % 2) * 20, f.x0 - cam + 44 + k * 50, SK_BASE + 40 + (k % 2) * 20, 2); }
+      if (f.k === "kick") { if (f.mega) T("¡MEGA RAMPA!", 18, (f.x0 + f.x1) / 2 - cam, SK_BASE - f.h - 30, GOLD); P(rgb(200, 150, 90), [[f.x0 - cam, SK_BASE], [f.x1 - cam, SK_BASE - f.h], [f.x1 - cam, SK_BASE]]); for (let k = 1; k < 5; k++) L(rgb(160, 110, 60), f.x0 - cam + (f.x1 - f.x0) * k / 5, SK_BASE - f.h * k / 5, f.x0 - cam + (f.x1 - f.x0) * k / 5, SK_BASE, 2); }
+      if (f.k === "stairs") for (let k = 0; k < 6; k++) { const sx = f.x0 + (f.x1 - f.x0) * k / 6; R(rgb(150, 140, 132), sx - cam, SK_BASE + f.drop * k / 6, (f.x1 - f.x0) / 6 + 1, 8); }
+      if (f.rail) { const r = f.rail; if (f.k === "bench") { R(rgb(150, 100, 60), f.x - cam, r.y0, f.w, 10, 3); R(rgb(90, 70, 50), f.x - cam + 10, r.y0 + 10, 8, f.h - 10); R(rgb(90, 70, 50), f.x + f.w - cam - 18, r.y0 + 10, 8, f.h - 10); }
+        else { L(rgb(210, 214, 224), r.x0 - cam, r.y0, r.x1 - cam, r.y1, 5); L(rgb(120, 124, 136), r.x0 - cam, r.y0 + 2, r.x1 - cam, r.y1 + 2, 1.5); for (let k = 0; k <= 3; k++) { const px = r.x0 + (r.x1 - r.x0) * k / 3; L(rgb(110, 114, 126), px - cam, skRailY(X, r, px), px - cam, skGround(X, px), 3); } } }
+      if (f.k === "cone") { const gy = skGround(X, f.x); P(rgb(250, 120, 30), [[f.x - cam, gy], [f.x + 12 - cam, gy - 30], [f.x + 24 - cam, gy]]); R(WHITE, f.x + 6 - cam, gy - 16, 12, 4); }
+      if (f.k === "bin") { const gy = skGround(X, f.x); R(rgb(60, 130, 80), f.x - cam, gy - 44, 34, 44, 4); R(rgb(40, 100, 60), f.x - 3 - cam, gy - 48, 40, 7, 3); }
+    }
+    for (const c of X.coins) if (!c.got) { const cx = c.x - cam; if (cx < -20 || cx > W + 20) continue; const s = Math.abs(Math.cos(t * 0.1 + c.x)); E(GOLD, cx - 9 * s, c.y - 9, 18 * s, 18); }
+    for (const l of X.letters) if (!l.got) { const lx = l.x - cam; if (lx < -40 || lx > W + 40) continue; const by = Math.sin(t * 0.1 + l.x) * 5; C("rgba(0,0,0,0.3)", lx, l.y + by + 3, 22); C(rgb(250, 90, 160), lx, l.y + by, 22); T(l.ch, 28, lx, l.y + by + 1, WHITE); }
+    // the finish arch
+    const fa = SK_LEN - 260 - cam; if (fa < W + 100) { R(rgb(40, 40, 50), fa, 220, 8, 180); R(rgb(40, 40, 50), fa + 200, 220, 8, 180); for (let k = 0; k < 13; k++) R(k % 2 ? WHITE : BLACK, fa + k * 16, 220, 16, 22); T("META", 26, fa + 104, 262, WHITE); }
+    for (const s of X.sparks) { ctx.globalAlpha = s.life / 18; R(rgb(255, 220, 80), s.x - cam, s.y, 3, 3); } ctx.globalAlpha = 1;
+    // the knight on his skateboard
+    if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2)) {
+      const kind = X.trick > 0 ? SK_TRICKS[X.tk][1] : "", prog = X.trick > 0 ? 1 - X.trick / (kind === "flip2" ? 34 : 26) : 0;
+      const bx = X.x - cam, by = X.y, lean = X.grind ? Math.atan2(X.grind.y1 - X.grind.y0, X.grind.x1 - X.grind.x0) : X.air ? Math.max(-0.4, Math.min(0.4, X.vy * 0.03)) : Math.atan2(skGround(X, X.x + 8) - skGround(X, X.x - 8), 16);
+      ctx.save(); ctx.translate(bx, by); ctx.rotate(lean);
+      if (X.bail > 0) ctx.rotate(Math.sin(X.bail * 0.4) * 0.6);
+      if (kind === "spin") { ctx.translate(0, -30); ctx.rotate(prog * Math.PI * 2); ctx.translate(0, 30); }
+      // the board: it flips over in a kickflip
+      ctx.save(); ctx.translate(0, -5 - (kind.startsWith("flip") ? Math.sin(prog * Math.PI) * 10 : 0)); ctx.scale(1, kind.startsWith("flip") ? Math.cos(prog * Math.PI * (kind === "flip2" ? 4 : 2)) : 1);
+      R(rgb(230, 70, 40), -24, -3, 48, 5, 3); R(rgb(40, 40, 46), -22, -4, 44, 2, 1); P(rgb(230, 70, 40), [[-24, -3], [-30, -7], [-24, 2]]); P(rgb(230, 70, 40), [[24, -3], [30, -7], [24, 2]]);
+      C(GOLD, -15, 4, 3.5); C(GOLD, 15, 4, 3.5);
+      ctx.restore();
+      // the knight (lifted off the board in a Superman)
+      ctx.save(); if (kind === "super") { ctx.translate(-10, -26 - Math.sin(prog * Math.PI) * 14); ctx.rotate(-1.3 * Math.sin(prog * Math.PI)); ctx.translate(10, 26); }
+      const sx = p.x, sy = p.y; p.x = -p.w / 2; p.y = -9 - p.h; p.anim = X.air ? 0 : p.anim + X.vx * 0.02; drawKnight(p, 0, g.upg, t); p.x = sx; p.y = sy;
+      ctx.restore();
+      ctx.restore();
+    }
+    fpFxDraw(X);
+  },
+  hud(g, X) {
+    T(`TRUCOS ${X.score}`, 20, W - 16, 52, GOLD, "right", "top");
+    if (X.pend > 0) T(`+${X.pend}`, 18, W - 16, 78, WHITE, "right", "top");
+    X.letters.forEach((l, i) => { C(l.got ? rgb(250, 90, 160) : "rgba(0,0,0,0.35)", W - 150 + i * 28, 118, 12); T(l.ch, 16, W - 150 + i * 28, 119, l.got ? WHITE : "rgba(255,255,255,0.5)"); });
+    const k = Math.min(1, X.x / (SK_LEN - 260)); R("rgba(0,0,0,0.4)", W / 2 - 150, 70, 300, 10, 5); R(GOLD, W / 2 - 150, 70, 300 * k, 10, 5);
+    if (X.msgT > 0) T(X.msg, 30, W / 2, 170, X.msg.includes("¡Al agua") || X.msg.includes("Castañazo") || X.msg.includes("Choque") || X.msg.includes("cono") || X.msg.includes("medio") || X.msg.includes("caíste") ? HEART : GOLD);
+    if (g.levelTimer > 60 && g.levelTimer < 560) T("▶ empujar · ◀ frenar · SALTA ollie · 🪓 en el aire = ¡truco! (aterriza antes de que acabe) · cae en las barandillas para grindar", 14, W / 2, H - 16, WHITE);
+  },
+};
+
 
 class Game {
   constructor() {
@@ -11410,7 +11617,7 @@ class Game {
       const tp = this.twoP === "net" ? "🌐 ¡2 jugadores en línea conectados!" : this.twoP ? "👥 2 JUGADORES · J1: ← → ↑ y K / L · J2: A D W y F / G · (2 = quitar)" : isTouch ? "🌐 (arriba): jugar en línea con otro aparato" : "Pulsa 2: dos jugadores en el mismo teclado · 🌐 (arriba): en línea";
       T(tp, 16, W / 2, 352, rgb(140, 230, 160));
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 36 · huracán dorado", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 38 · monopatín", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
