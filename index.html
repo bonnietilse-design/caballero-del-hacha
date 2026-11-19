@@ -1444,6 +1444,11 @@ function ledgeAhead(ent, level) {   // is there no ground just in front of a wal
 }
 
 // ------------------------------------------------------------------ player
+function kU(k) {   // the shop upgrades that belong to this knight: player 2 has their own
+  if (!game) return {};
+  if (k.isP2) return game.upg2 || {};
+  return k === game.player || k === game.p2 ? game.upg || {} : {};
+}
 class Player {
   constructor(x, y, upg) {
     this.x = x; this.y = y; this.w = KNIGHT_W; this.h = KNIGHT_H; this.vx = 0; this.vy = 0; this.facing = 1;
@@ -1554,7 +1559,7 @@ class Player {
   }
   hurt(srcX) {
     if (this.invuln > 0 || this.dead || this.carT > 0) return false;   // (nothing hurts the armoured car)
-    if (game.upg && game.upg.bubble && this === game.player && !(this.bubbleCd > 0)) {   // ¡plop! the bubble takes the hit instead
+    if (kU(this).bubble && !(this.bubbleCd > 0)) {   // ¡plop! the bubble takes the hit instead
       this.bubbleCd = 1200; this.invuln = 60; play("pop");
       game.burst(this.x + this.w / 2, this.y + this.h / 2, [rgb(150, 220, 255), WHITE, rgb(220, 160, 255)], 18, 5);
       game.popup(this.x + this.w / 2, this.y - 20, "¡Plop! La burbuja te protegió", rgb(150, 220, 255));
@@ -1592,7 +1597,7 @@ class Player {
     if (this.spinT > 0) { this.spinT--; move = 0; }   // spinning out on oil
     if (this.wallLock > 0) { this.wallLock--; move = 0; }   // just kicked off a wall
     const bike = this.bike || this.car, horse = this.horse, ninja = this.ninja;   // vehicles and the ninja move differently
-    this.skates = !!(game.upg && game.upg.skates && this === game.player && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship));   // roller skates: faster, and you glide
+    this.skates = !!(kU(this).skates && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship));   // roller skates: faster, and you glide
     let accel = (this.onGround ? RUN_ACCEL : RUN_ACCEL * AIR_CONTROL) * (this.skates && !this.sneak ? 1.25 : 1) * (this.nitroT ? 1.2 : bike ? 0.65 : this.tank ? 0.4 : horse ? 0.6 : 1);
     if ((bike || horse) && this.onGround && move && Math.sign(this.vx) === -move) accel = 0.9;   // brakes
     const top = (this.car ? (this.nitroT ? 13.5 : 10) : bike ? 8.5 : this.tank ? 3.4 : horse ? 7.2 : ninja ? 5.6 : this.sneak ? 3.2 : this.carT > 0 ? MAX_RUN * 1.8 : this.skates ? MAX_RUN * 1.9 : MAX_RUN) * (!bike && !horse && this.attackTimer && this.onGround ? 0.6 : 1) * (this.umbrella ? 0.8 : 1);
@@ -1616,7 +1621,7 @@ class Player {
       this.wallLock = 7; this.wallT = 0; this.jumpBuffer = 0; this.justJumped = true;
     }
     let djNow = false;
-    const boots = game.upg && game.upg.boots && this === game.player && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship || this.umbrella || ninja || this.vine);
+    const boots = kU(this).boots && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship || this.umbrella || ninja || this.vine);
     if (this.onGround) this.dj = false;
     else if (boots && !this.dj && inp.jumpPressed && !this.justJumped && this.coyote === 0) {   // boing! a double jump off the spring boots
       this.vy = -JUMP_SPEED * 0.72; this.dj = true; djNow = true; this.jumpBuffer = 0; this.boing = false;
@@ -1624,7 +1629,7 @@ class Player {
     }
     if (this.vy >= 0) this.boing = false;
     if (!inp.jumpHeld && this.vy < -JUMP_CUT && !this.boing) this.vy = -JUMP_CUT;
-    const jet = game.upg && game.upg.jetpack && this === game.player && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship || this.umbrella);
+    const jet = kU(this).jetpack && !(bike || this.tank || horse || this.plane || this.rocket || this.sub || this.ship || this.umbrella);
     if (jet) {   // the jetpack: press SALTA again in the air and hold it to fly, while the fuel lasts
       if (this.fuel === undefined) this.fuel = JET_FUEL;
       if (this.onGround) { this.jetLatch = false; this.fuel = Math.min(JET_FUEL, this.fuel + 2.5); }
@@ -7358,7 +7363,8 @@ function drawShop(g) {
   C(rgb(255, 140, 40), 70, 470, 90); C(rgb(255, 140, 40), W - 70, 470, 90);
   ctx.globalAlpha = 1;
   T("TIENDA DEL HERRERO", 34, W / 2, 28, GOLD);
-  T(`Tus monedas: ${g.coins}     ·     ${g.shopBought ? "¡Ya has comprado en este nivel!" : "Puedes comprar 1 cosa"}`, 17, W / 2, 60, g.shopBought ? rgb(255, 190, 130) : WHITE);
+  if (g.twoP) T(`Monedas: ${g.coins}   ·   J1: ${g.shopBought ? "ya ha comprado" : "puede comprar 1"}   ·   J2: ${g.shopBought2 ? "ya ha comprado" : "puede comprar 1"}`, 17, W / 2, 60, WHITE);
+  else T(`Tus monedas: ${g.coins}     ·     ${g.shopBought ? "¡Ya has comprado en este nivel!" : "Puedes comprar 1 cosa"}`, 17, W / 2, 60, g.shopBought ? rgb(255, 190, 130) : WHITE);
   const selItem = SHOP[g.shopSel];   // what the selected item does
   if (selItem) T(`${selItem.icon} ${selItem.name}: ${selItem.desc.join(" ")}`, 15, W / 2, 84, rgb(255, 220, 150));
   const lay = shopLayout();
@@ -7372,12 +7378,18 @@ function drawShop(g) {
     if (!owned && g.shopBought) { ctx.globalAlpha = 0.4; R(rgb(30, 26, 22), c.x, c.y, c.w, c.h, 12); ctx.globalAlpha = 1; }   // sold out until the next level
     T(on ? "✓ PUESTO" : owned ? "QUITADO" : g.shopBought ? "Próximo nivel" : `${item.price} monedas`, g.shopBought && !owned ? 12 : 14, c.x + c.w / 2, c.y + 77,
       on ? GRASS_LIGHT : owned ? rgb(200, 190, 180) : g.shopBought ? rgb(190, 180, 170) : afford ? GOLD : rgb(240, 120, 110));
+    if (g.twoP) {   // player 2: their own cursor (green) and a badge for what they own
+      const o2 = g.owned2 && g.owned2[item.id], on2 = o2 && g.upg2 && g.upg2[item.id];
+      if (o2) { R(on2 ? rgb(60, 170, 90) : rgb(90, 90, 90), c.x + c.w - 34, c.y + 4, 30, 16, 6); T(on2 ? "J2✓" : "J2", 11, c.x + c.w - 19, c.y + 12, WHITE); }
+      if ((g.shopSel2 ?? 1) === i) { RS(rgb(120, 240, 150), c.x + 4, c.y + 4, c.w - 8, c.h - 8, 3, 9); R(rgb(60, 170, 90), c.x + 4, c.y + c.h - 18, 26, 14, 5); T("J2", 11, c.x + 17, c.y + c.h - 11, WHITE); }
+    }
   });
   const b = lay.button, bsel = g.shopSel === SHOP.length;
   R(bsel ? rgb(86, 160, 76) : rgb(64, 120, 58), b.x, b.y, b.w, b.h, 14);
   RS(bsel ? GOLD : rgb(40, 80, 36), b.x, b.y, b.w, b.h, 3, 14);
   T("¡Al mapa! ▶", 24, W / 2, b.y + b.h / 2, WHITE);
   if (g.shopMsg && g.shopMsgT > 0) T(g.shopMsg, 20, W / 2, 492, g.shopMsgCol);
+  else if (g.twoP) T(g.twoP === "local" ? "J1: flechas y ENTER   ·   J2 (cursor verde): A D mover · W bajar · F comprar" : "J1: flechas y ENTER   ·   J2 (cursor verde): ◀ ▶ mover · SALTA bajar · 🪓 comprar", 16, W / 2, 494, rgb(220, 200, 170));
   else T(isTouch ? "Toca una mejora para comprarla · toca lo tuyo para quitarlo o ponerlo" : "← → ↑ ↓ elegir     ENTER comprar · quitar · poner", 17, W / 2, 494, rgb(220, 200, 170));
 }
 
@@ -9145,7 +9157,7 @@ class Game {
   beginGame(fromP2) {   // fresh lives, coins and upgrades, then the map (beaten levels and found secrets are remembered)
     if (this.cuFor === 2) { this.cuDone2(); return; }
     if (this.twoP && !fromP2) { this.openCustomP2("begin"); return; }
-    this.upg = {}; this.owned = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.lifeTaken = new Set(); this.lives = START_LIVES; this.score = 0;
+    this.upg = {}; this.owned = {}; this.upg2 = {}; this.owned2 = {}; this.coins = 0; this.kills = 0; this.deaths = 0; this.runFrames = 0; this.lifeTaken = new Set(); this.lives = START_LIVES; this.score = 0;
     this.loadProgress(); play("anvil");
     const first = Array.from({ length: MAIN_LEVELS }, (_, i) => i).find(i => !this.done.has(LEVELS[i].name)) ?? 0;
     this.openMap(first);
@@ -9199,25 +9211,26 @@ class Game {
       play("secret"); say("secreto", true);
     }
   }
-  openShop() { this.state = "shop"; this.shopSel = 0; this.shopMsgT = 0; this.shopBought = false; say("tienda", true); }
+  openShop() { this.state = "shop"; this.shopSel = 0; this.shopSel2 = 1; this.shopMsgT = 0; this.shopBought = false; this.shopBought2 = false; say("tienda", true); }
   nextLevel() { this.levelIndex = this.afterLevel(); this.resetLevel(); this.state = "play"; say(this.startLine(), true); }
-  buy(i) {
-    const item = SHOP[i];
-    if (!this.owned) this.owned = {};
-    if (this.owned[item.id]) {   // already yours: take it off, or put it back on
-      this.upg[item.id] = !this.upg[item.id];
-      this.shopMessage(this.upg[item.id] ? `¡${item.name}: puesto!` : `${item.name}: quitado`, this.upg[item.id] ? GRASS_LIGHT : rgb(220, 200, 170));
-      play(this.upg[item.id] ? "clang" : "click"); return;
+  buy(i, who = 1) {
+    const item = SHOP[i], two = who === 2, J = this.twoP ? (two ? "J2: " : "J1: ") : "";
+    if (!this.owned) this.owned = {}; if (!this.owned2) this.owned2 = {}; if (!this.upg2) this.upg2 = {};
+    const owned = two ? this.owned2 : this.owned, upg = two ? this.upg2 : this.upg;
+    if (owned[item.id]) {   // already yours: take it off, or put it back on
+      upg[item.id] = !upg[item.id];
+      this.shopMessage(J + (upg[item.id] ? `¡${item.name}: puesto!` : `${item.name}: quitado`), upg[item.id] ? GRASS_LIGHT : rgb(220, 200, 170));
+      play(upg[item.id] ? "clang" : "click"); return;
     }
-    if (this.shopBought) {   // only one new thing per visit
+    if (two ? this.shopBought2 : this.shopBought) {   // only one new thing per visit (each)
       this.shopMessage("¡Solo una compra por nivel! Vuelve después del próximo.", rgb(255, 180, 120)); play("nope"); return;
     }
     if (this.coins < item.price) {
       this.shopMessage(`¡No tienes bastante oro! Te faltan ${item.price - this.coins} monedas.`, rgb(255, 140, 120));
       play("nope"); say("nooro", true); return;
     }
-    this.coins -= item.price; this.upg[item.id] = true; this.owned[item.id] = true; this.shopBought = true;
-    this.shopMessage(`¡${item.name} comprado!`, GRASS_LIGHT);
+    this.coins -= item.price; upg[item.id] = true; owned[item.id] = true; if (two) this.shopBought2 = true; else this.shopBought = true;
+    this.shopMessage(J + `¡${item.name} comprado!`, GRASS_LIGHT);
     const c = shopLayout().cards[i];
     this.burst(c.x + c.w / 2, c.y + 30, [GOLD, WHITE, rgb(255, 150, 60)], 26, 6);
     play("anvil"); say("gracias", true);
@@ -9238,7 +9251,7 @@ class Game {
     this.player.shield = this.level.shield; this.player.blockT = 0; this.keys = 0;
     this.particles = []; this.popups = []; this.camX = 0; this.shake = 0; this.levelTimer = 0;
     this.bossAnnounced = false; this.flyingAxe = null; this.shots = [];
-    this.bees = null; this.rings = []; this.mirrorCd = 0; this.mirrorGlow = 0; this.inCastle = false; this.castleFlag = 0;
+    this.bees = null; this.bees2 = null; this.dragon2 = null; this.owl2 = null; this.rings = []; this.mirrorCd = 0; this.mirrorGlow = 0; this.inCastle = false; this.castleFlag = 0;
     this.grenades = this.upg.grenade ? 4 : 0; this.noise = 0;
     this.raceT = (LEVELS[this.levelIndex].time || 0) * 60;
     if (this.level.theme.bg === "cave") this.player.sneak = true;
@@ -9329,19 +9342,19 @@ class Game {
     }
   }
   // ---------------------------------------------------------------- jungle vines
-  updateVines() {   // the vines sway on their own; the one the knight hangs from swings with him
-    const p = this.player;
+  updateVines() {   // the vines sway on their own; the one a knight hangs from swings with them
+    const p = this.player, q = this.p2;
     for (const v of this.level.vines) {
-      const held = v === p.vine, L = held ? p.grabL : v.len * 0.7;
+      const hq = q && v === q.vine && v !== p.vine, held = v === p.vine || hq, L = hq ? q.grabL : held ? p.grabL : v.len * 0.7;
       v.om += -0.65 / L * Math.sin(v.th); v.om *= held ? 0.998 : Math.abs(v.th) > 0.1 ? 0.96 : 0.99;   // idle vines settle into a small sway, so they're easy to catch
       if (!held && Math.abs(v.th) < 0.05 && Math.abs(v.om) < 0.008) v.om += 0.002 * (v.om >= 0 ? 1 : -1);   // a gentle push keeps it swaying
       v.th = Math.max(-1.3, Math.min(1.3, v.th + v.om));
     }
   }
-  updateVine() {   // jump into a vine to grab it, pump with ◀ ▶, let go with SALTA
-    const p = this.player, lvl = this.level;
+  updateVine(p = this.player, I = inp, sway = true) {   // jump into a vine to grab it, pump with ◀ ▶, let go with SALTA (either knight)
+    const lvl = this.level;
     if (!lvl.vines.length) return false;
-    this.updateVines();
+    if (sway) this.updateVines();
     if (p.vineCd > 0) p.vineCd--;
     if (!p.vine) {
       if (p.onGround || p.vineCd > 0 || p.dead) return false;
@@ -9356,13 +9369,13 @@ class Game {
       }
       if (!p.vine) return false;
     }
-    const v = p.vine, dir = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+    const v = p.vine, dir = (I.right ? 1 : 0) - (I.left ? 1 : 0);
     if (dir) v.om += dir * 0.0012;   // pump to swing higher
     const ux = Math.sin(v.th), uy = Math.cos(v.th);
     p.x = v.ax + ux * p.grabL - p.w / 2; p.y = v.ay + uy * p.grabL - 12;
     p.vx = uy * v.om * p.grabL; p.vy = -ux * v.om * p.grabL; p.onGround = false; p.facing = dir || (v.om >= 0 ? 1 : -1); p.attackTimer = 0;
     if (p.invuln > 0) p.invuln--;
-    if (inp.jumpPressed) {   // let go!
+    if (I.jumpPressed) {   // let go!
       p.vine = null; p.vineCd = 20; p.vx = Math.max(-9, Math.min(9, p.vx * 1.15)); p.vy = Math.min(p.vy, 0) - 6; p.boing = true; p.fling = true; play("jump");
     }
     return true;
@@ -10692,6 +10705,53 @@ class Game {
     const kp = this.paradeKnight; kp.x = wrap(kp.x + 1.4); kp.anim += 0.35;
     if (this.creditsT % 70 === 0) kp.attackTimer = kp.atkTotal; else if (kp.attackTimer > 0) kp.attackTimer--;
   }
+  swingExtras(p) {   // the shop weapons that fly off with a swing (knives, bow, laser, cannon, paella, guitar)
+    if (this.upg.knives && this.swings % 2 === 1)   // ninja throwing knife, every other swing
+      this.shots.push({ kind: "knife", x: p.x + p.w / 2 + p.facing * 18, y: p.y + 24, vx: p.facing * 11, vy: 0, t: 0, hit: new Set() });
+    if (this.upg.bow && this.swings % 2 === 0) {   // twang: an arrow flies off in a gentle arc
+      this.shots.push({ kind: "arrow", x: p.x + p.w / 2 + p.facing * 16, y: p.y + 20, vx: p.facing * 13 + p.vx * 0.3, vy: -1.8, t: 0, life: 70, hit: new Set() });
+      play("swing");
+    }
+    if (this.upg.laser && this.swings % 3 === 2) {   // pew! a laser bolt that goes right through everything in its way
+      this.shots.push({ kind: "laser", red: true, pierce: true, x: p.x + p.w / 2 + p.facing * 22, y: p.y + 24, vx: p.facing * 16, vy: 0, t: 0, life: 48, hit: new Set() });
+      play("pew");
+    }
+    if (this.upg.cannon && this.swings % 5 === 4) {   // BOOM: a cannonball that explodes on whatever it hits
+      const mx = p.x + p.w / 2 + p.facing * 26, my = p.y + 20;
+      this.shots.push({ kind: "shell", ball: true, x: mx, y: my, vx: p.facing * 9 + p.vx * 0.3, vy: -0.6, t: 0, life: 90, hit: new Set() });
+      this.burst(mx, my, [WHITE, rgb(190, 190, 190), rgb(255, 180, 80)], 10, 3); play("boom"); this.shake = Math.max(this.shake, 4); this.popup(mx, my - 26, "¡Bum!", GOLD);
+    }
+    this.swings++;
+    if (this.upg.paella && this.swings % 4 === 0) {   // lob a pan of exploding paella
+      this.shots.push({ kind: "paella", x: p.x + p.w / 2 + p.facing * 14, y: p.y + 8, vx: p.facing * 6.5 + p.vx * 0.5, vy: -7.5, t: 0, life: 140, hit: new Set() });
+      play("swing");
+    }
+    if (this.upg.guitar && this.swings % 8 === 0) {   // a thunderous flamenco chord: a ring that stuns everything nearby
+      this.rings.push({ x: p.x + p.w / 2, y: p.y + p.h / 2, r: 10, hit: new Set() }); play("chord"); this.shake = Math.max(this.shake, 6);
+      this.popup(p.x + p.w / 2, p.y - 30, "¡Olé!", GOLD);
+    }
+  }
+  withUpg2(fn) {   // run fn with player 2's own shop things
+    const sw = () => { [this.upg, this.upg2] = [this.upg2 || {}, this.upg]; [this.swings, this.swings2] = [this.swings2 || 0, this.swings]; };
+    sw(); try { return fn(); } finally { sw(); }
+  }
+  zapFrom(ids, p) {   // the lightning axe: one bolt per swing, to the nearest other enemy
+    const lvl = this.level;
+    if (!ids.zapped && ids.size) {   // one bolt per swing, to the nearest other enemy
+        const first = lvl.enemies.find(e => ids.has(e.id));
+        if (first) {
+          const fx = first.x + first.w / 2, fy = first.y + first.h / 2;
+          let best = null, bd = 230;
+          for (const e of lvl.enemies) { if (!e.alive || !e.hittable() || ids.has(e.id) || e.kind === "z") continue; const d = Math.hypot(e.x + e.w / 2 - fx, e.y + e.h / 2 - fy); if (d < bd) { bd = d; best = e; } }
+          ids.zapped = true;
+          if (best) { (this.bolts || (this.bolts = [])).push({ x1: fx, y1: fy, x2: best.x + best.w / 2, y2: best.y + best.h / 2, t: 14 }); play("zap"); this.strike(best, p.facing, new Set(), 0.5); }
+        }
+      }
+  }
+  asP2Knight(fn) {   // run the hero-only extras (pets, magnet, bees, bubble) for player 2, with player 2's own shop things
+    const sw = () => { [this.player, this.p2] = [this.p2, this.player]; [this.upg, this.upg2] = [this.upg2, this.upg]; [this.dragon, this.dragon2] = [this.dragon2, this.dragon]; [this.owl, this.owl2] = [this.owl2, this.owl]; [this.bees, this.bees2] = [this.bees2, this.bees]; };
+    sw(); try { fn(); } finally { sw(); }
+  }
   updatePets() {
     const p = this.player, lvl = this.level;
     if (p.bubbleCd > 0) { p.bubbleCd--; if (p.bubbleCd === 0 && this.upg.bubble) { play("shing"); this.popup(p.x + p.w / 2, p.y - 20, "¡Burbuja lista!", rgb(150, 220, 255)); } }
@@ -10811,6 +10871,14 @@ class Game {
           pick([[GOLD, WHITE], [HEART, WHITE], [ARMOR_LIGHT, WHITE], [GRASS_LIGHT, WHITE]]), 30, 6);
     } else if (this.state === "shop") {
       if (this.shopMsgT > 0) this.shopMsgT--;
+      if (this.twoP) {   // player 2 shops with their own cursor: ◀ ▶ move, SALTA next row, 🪓 buy (or take off / put on)
+        const n = SHOP.length, s2 = this.shopSel2 ?? 1, l = inp2.left, r = inp2.right;
+        if ((l && !this.shL2) || inp2.leftTap) this.shopSel2 = (s2 + n - 1) % n;
+        else if ((r && !this.shR2) || inp2.rightTap) this.shopSel2 = (s2 + 1) % n;
+        this.shL2 = l; this.shR2 = r;
+        if (inp2.jumpPressed) this.shopSel2 = ((this.shopSel2 ?? 1) + PER_ROW) % n;
+        if (inp2.attack) this.buy(this.shopSel2 ?? 1, 2);
+      }
     } else if (this.state === "custom") {   // the knight in the dressing room shows off his weapon now and then
       if (this.cuFor === 2) this.cuP2Input();
       if (this.state === "custom") {
@@ -10971,30 +11039,7 @@ class Game {
         p.shuriken--; play("shing");
         this.shots.push({ kind: "shuriken", x: p.x + p.w / 2 + p.facing * 16, y: p.y + 24, vx: p.facing * 12, vy: 0, t: 0, hit: new Set() });
       }
-      if (this.upg.knives && this.swings % 2 === 1)   // ninja throwing knife, every other swing
-        this.shots.push({ kind: "knife", x: p.x + p.w / 2 + p.facing * 18, y: p.y + 24, vx: p.facing * 11, vy: 0, t: 0, hit: new Set() });
-      if (this.upg.bow && this.swings % 2 === 0) {   // twang: an arrow flies off in a gentle arc
-        this.shots.push({ kind: "arrow", x: p.x + p.w / 2 + p.facing * 16, y: p.y + 20, vx: p.facing * 13 + p.vx * 0.3, vy: -1.8, t: 0, life: 70, hit: new Set() });
-        play("swing");
-      }
-      if (this.upg.laser && this.swings % 3 === 2) {   // pew! a laser bolt that goes right through everything in its way
-        this.shots.push({ kind: "laser", red: true, pierce: true, x: p.x + p.w / 2 + p.facing * 22, y: p.y + 24, vx: p.facing * 16, vy: 0, t: 0, life: 48, hit: new Set() });
-        play("pew");
-      }
-      if (this.upg.cannon && this.swings % 5 === 4) {   // BOOM: a cannonball that explodes on whatever it hits
-        const mx = p.x + p.w / 2 + p.facing * 26, my = p.y + 20;
-        this.shots.push({ kind: "shell", ball: true, x: mx, y: my, vx: p.facing * 9 + p.vx * 0.3, vy: -0.6, t: 0, life: 90, hit: new Set() });
-        this.burst(mx, my, [WHITE, rgb(190, 190, 190), rgb(255, 180, 80)], 10, 3); play("boom"); this.shake = Math.max(this.shake, 4); this.popup(mx, my - 26, "¡Bum!", GOLD);
-      }
-      this.swings++;
-      if (this.upg.paella && this.swings % 4 === 0) {   // lob a pan of exploding paella
-        this.shots.push({ kind: "paella", x: p.x + p.w / 2 + p.facing * 14, y: p.y + 8, vx: p.facing * 6.5 + p.vx * 0.5, vy: -7.5, t: 0, life: 140, hit: new Set() });
-        play("swing");
-      }
-      if (this.upg.guitar && this.swings % 8 === 0) {   // a thunderous flamenco chord: a ring that stuns everything nearby
-        this.rings.push({ x: p.x + p.w / 2, y: p.y + p.h / 2, r: 10, hit: new Set() }); play("chord"); this.shake = Math.max(this.shake, 6);
-        this.popup(p.x + p.w / 2, p.y - 30, "¡Olé!", GOLD);
-      }
+      this.swingExtras(p);
     }
     if (p.plane && p.justFired) {   // rat-a-tat: each press of the attack button fires a burst
       this.shots.push({ kind: p.ufo || p.star ? "laser" : "bullet", x: p.x + p.w + 4, y: p.y + (p.star ? (p.burstN % 2 ? 2 : 32) : (p.ufo ? 20 : 18) + (p.burstN % 2 ? -2 : 2)), vx: 15 + p.vx, vy: p.vy * 0.3, t: 0, hit: new Set() });
@@ -11014,16 +11059,7 @@ class Game {
     if (box) {
       const ids = p.horse && !p.swingActive() ? p.rideHits : p.hitIds;
       for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, p.facing, ids, p.sword || p.horse ? 1 : p.dmg || 1);
-      if (this.upg.zap && !ids.zapped && ids.size) {   // one bolt per swing, to the nearest other enemy
-        const first = lvl.enemies.find(e => ids.has(e.id));
-        if (first) {
-          const fx = first.x + first.w / 2, fy = first.y + first.h / 2;
-          let best = null, bd = 230;
-          for (const e of lvl.enemies) { if (!e.alive || !e.hittable() || ids.has(e.id) || e.kind === "z") continue; const d = Math.hypot(e.x + e.w / 2 - fx, e.y + e.h / 2 - fy); if (d < bd) { bd = d; best = e; } }
-          ids.zapped = true;
-          if (best) { (this.bolts || (this.bolts = [])).push({ x1: fx, y1: fy, x2: best.x + best.w / 2, y2: best.y + best.h / 2, t: 14 }); play("zap"); this.strike(best, p.facing, new Set(), 0.5); }
-        }
-      }
+      if (this.upg.zap) this.zapFrom(ids, p);
       this.breakCrates(box);
     }
     const fa = this.flyingAxe;   // the flying axe too
@@ -11039,6 +11075,7 @@ class Game {
     for (const e of lvl.enemies) e.update(lvl, p, this);
     this.updateBees(); this.updatePets();
     if (this.p2) this.updateP2();
+    if (this.p2 && !this.p2.out && this.upg2) this.asP2Knight(() => { this.updateBees(); this.updatePets(); });
     if (LEVELS[this.levelIndex].mode === "train") this.updateTrain();
     if (this.bolts) { for (const bl of this.bolts) bl.t--; this.bolts = this.bolts.filter(bl => bl.t > 0); }
     if (!p.plane) this.revealBlocks();
@@ -11460,10 +11497,14 @@ class Game {
     if (this.caught) this.caught.plant.draw(cam, true);   // the jaws close over the knight
     if (this.mirrorGlow) { ctx.globalAlpha = this.mirrorGlow / 30; CS(ARMOR_LIGHT, p.x + p.w / 2 - cam, p.y + p.h / 2, Math.max(p.w, p.h) * 0.75, 4); ctx.globalAlpha = 1; }
     if (this.bees && this.state === "play") for (const b of this.bees) drawBee(b.x - cam, b.y, this.t, b.dir);
+    if (this.bees2 && this.p2 && this.state === "play") for (const b of this.bees2) drawBee(b.x - cam, b.y, this.t, b.dir);
     if (this.upg.bubble && !(p.bubbleCd > 0) && this.state === "play" && !p.dead && !this.tv && !this.cl && !this.sk) {   // the bubble shield, shimmering round the knight while it's ready
       const bx = p.x + p.w / 2 - cam, by = p.y + p.h / 2; ctx.globalAlpha = 0.18 + 0.06 * Math.sin(this.t * 0.1); C(rgb(150, 220, 255), bx, by, 44); ctx.globalAlpha = 0.6;
       ctx.strokeStyle = rgb(200, 240, 255); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(bx, by, 44, 0, Math.PI * 2); ctx.stroke(); C(WHITE, bx - 18, by - 22, 5); ctx.globalAlpha = 1;
     }
+    if (this.owl2 && this.p2 && this.state === "play") drawPetOwl(this.owl2.x - cam, this.owl2.y, this.t, this.owl2.dir, this.owl2.q);
+    if (this.dragon2 && this.p2 && this.state === "play") drawPetDragon(this.dragon2.x - cam, this.dragon2.y, this.t, this.dragon2.dir, this.dragon2.mouth > 0);
+    { const q = this.p2; if (q && this.upg2 && this.upg2.bubble && !(q.bubbleCd > 0) && this.state === "play" && !q.out && !q.dead) { const bx = q.x + q.w / 2 - cam, by = q.y + q.h / 2; ctx.globalAlpha = 0.18 + 0.06 * Math.sin(this.t * 0.1); C(rgb(150, 220, 255), bx, by, 44); ctx.globalAlpha = 0.6; ctx.strokeStyle = rgb(200, 240, 255); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(bx, by, 44, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; } }
     if (this.owl && this.state === "play") drawPetOwl(this.owl.x - cam, this.owl.y, this.t, this.owl.dir, this.owl.q);
     if (this.dragon && this.state === "play") drawPetDragon(this.dragon.x - cam, this.dragon.y, this.t, this.dragon.dir, this.dragon.mouth > 0);
     for (const bl of this.bolts || []) { ctx.globalAlpha = bl.t / 14; const pts = [[bl.x1 - cam, bl.y1]]; for (let k = 1; k < 6; k++) pts.push([bl.x1 + (bl.x2 - bl.x1) * k / 6 - cam + randInt(-8, 8), bl.y1 + (bl.y2 - bl.y1) * k / 6 + randInt(-10, 10)]); pts.push([bl.x2 - cam, bl.y2]);
@@ -11617,7 +11658,7 @@ class Game {
       const tp = this.twoP === "net" ? "🌐 ¡2 jugadores en línea conectados!" : this.twoP ? "👥 2 JUGADORES · J1: ← → ↑ y K / L · J2: A D W y F / G · (2 = quitar)" : isTouch ? "🌐 (arriba): jugar en línea con otro aparato" : "Pulsa 2: dos jugadores en el mismo teclado · 🌐 (arriba): en línea";
       T(tp, 16, W / 2, 352, rgb(140, 230, 160));
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 38 · monopatín", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 40 · grúa a dos pantallas", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
@@ -11709,10 +11750,10 @@ try { game.twoP = localStorage.getItem("caballero_2p") === "1" ? "local" : false
 Game.prototype.p2Allowed = function () { const L0 = LEVELS[this.levelIndex]; return !!this.twoP && P2_FULL.has(L0.mode) && !this.rk && !this.tv && !this.cl && !this.sk && !this.xm; };
 Game.prototype.makeP2 = function () {
   const p = this.player, md = LEVELS[this.levelIndex].mode;
-  return withLook2(() => { const q = new Player(p.x - 44, p.y, {}); if (md) q.setMode(md, {}); if (q.plane) { q.x = p.x - 30; q.y = p.y + 70; } if (q.sub) { q.x = p.x - 150; q.y = p.y + 40; } if (q.ship) q.x = p.x - 260; q.facing = 1; q.isP2 = true; return q; });
+  return withLook2(() => { const U2 = this.upg2 || {}; const q = new Player(p.x - 44, p.y, U2); if (md) q.setMode(md, U2); if (q.plane) { q.x = p.x - 30; q.y = p.y + 70; } if (q.sub) { q.x = p.x - 150; q.y = p.y + 40; } if (q.ship) q.x = p.x - 260; q.facing = 1; q.isP2 = true; return q; });
 };
 Game.prototype.p2Respawn = function () {
-  const p = this.player, q = this.p2; q.x = p.x - 40 * p.facing; q.y = p.y - 30; q.vx = 0; q.vy = 0; q.hearts = q.maxHearts; q.invuln = 120; q.out = 0; q.dead = false;
+  const p = this.player, q = this.p2; q.x = p.x - 40 * p.facing; q.y = p.y - 30; q.vx = 0; q.vy = 0; q.vine = null; q.vineCd = 20; q.hearts = q.maxHearts; q.invuln = 120; q.out = 0; q.dead = false;
   if (blockedAt(q, this.level, q.x, q.y)) { q.x = p.x; q.y = p.y; }
   this.burst(q.x + q.w / 2, q.y + q.h / 2, [GOLD, WHITE, rgb(80, 200, 110)], 16, 4); play("pop");
 };
@@ -11725,10 +11766,11 @@ Game.prototype.updateP2b = function () {
   const q = this.p2, p = this.player, lvl = this.level;
   if (q.out > 0) { if (--q.out === 0) this.p2Respawn(); return; }
   if (p.dead) return;
-  q.update(inp2, lvl);
+  if (!this.updateVine(q, inp2, false)) q.update(inp2, lvl);
   if (q.justJumped) play("jump");
   if (q.justSwung) {
     play("swing");
+    if (!q.plane && !q.sub && !q.ship) this.withUpg2(() => this.swingExtras(q));
     if (q.snowball) this.shots.push({ kind: "snowball", x: q.x + q.w / 2 + q.facing * 18, y: q.y + 14, vx: q.facing * 10 + q.vx * 0.3, vy: -2.5, sgrav: 0.2, life: 90, t: 0, hit: new Set() });
     if (q.ninja && q.shuriken > 0) { q.shuriken--; this.shots.push({ kind: "shuriken", x: q.x + q.w / 2 + q.facing * 16, y: q.y + 24, vx: q.facing * 12, vy: 0, t: 0, hit: new Set() }); }
   }
@@ -11738,7 +11780,9 @@ Game.prototype.updateP2b = function () {
   if (q.ship && q.justMG) this.shots.push({ kind: "bullet", dmg: 0.25, x: q.x + 128, y: q.y + 28, vx: 13 + q.vx * 0.5, vy: -2.5, t: 0, life: 70, hit: new Set() });
   if (q.justRocket) this.shots.push({ kind: "shell", rocket: !q.ufo && !q.star, plasma: q.ufo || q.star, x: q.x + q.w, y: q.y + 24, vx: 10 + q.vx, vy: q.ufo || q.star ? 0 : 0.2, t: 0, hit: new Set() });
   const box = q.attackBox();
-  if (box) { const ids = q.horse && !q.swingActive() ? q.rideHits : q.hitIds; for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, q.facing, ids, q.sword || q.horse ? 1 : q.dmg || 1); this.breakCrates(box); }
+  if (box) this.withUpg2(() => { { const ids = q.horse && !q.swingActive() ? q.rideHits : q.hitIds; for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, q.facing, ids, q.sword || q.horse ? 1 : q.dmg || 1); this.breakCrates(box); } });
+  if (box && this.upg2 && this.upg2.zap) this.withUpg2(() => this.zapFrom(q.horse && !q.swingActive() ? q.rideHits : q.hitIds, q));
+  if (this.upg2 && this.upg2.paint && Math.abs(q.vx) > 2 && this.t % 2 === 0) this.particles.push({ x: q.x + q.w / 2 - q.facing * 10, y: q.y + q.h - 18 + randInt(-12, 12), vx: -q.facing * 0.5, vy: -0.2, color: `hsl(${(this.t * 6) % 360}, 90%, 60%)`, life: 30, size: 5 });
   if (q.horse && this.t % 24 === 0) q.rideHits.clear();
   const pr = inflate(q.rect(), -6, -4);
   const ouch = sx => { if (!q.hurt(sx)) return false; play("hurt"); this.popup(q.x + q.w / 2, q.y - 10, "¡Ay!", HEART); if (q.hearts <= 0) this.coDie(q); return true; };
@@ -11748,6 +11792,7 @@ Game.prototype.updateP2b = function () {
   for (const s of this.shots) if (s.enemy && !s.dead && collide(pr, { x: s.x - 8, y: s.y - 8, w: 16, h: 16 })) { if (box && !s.nochop && collide(box, { x: s.x - 8, y: s.y - 8, w: 16, h: 16 })) { s.dead = true; play("hit"); continue; } ouch(s.x); if (s.kind !== "bsword") s.dead = true; if (q.out) return; }
   for (const c of [...lvl.coins]) if (collide(pr, c.rect())) { lvl.coins.splice(lvl.coins.indexOf(c), 1); this.coins++; this.score += 50; this.burst(c.x, c.y, [GOLD, WHITE], 6, 3); play("coin"); }
   if (q.y > lvl.pxH + 60) { this.coDie(q); return; }
+  if (lvl.theme.pungi && q.y + q.h > 482 && !q.vine) { this.popup(q.x + q.w / 2, 430, "¡Ay, las estacas!", HEART); play("hurt"); q.vine = null; this.coDie(q); return; }
   if (q.x < this.camX + 2 && !q.plane) { q.x = this.camX + 2; if (blockedAt(q, lvl, q.x, q.y)) this.p2Respawn(); }   // the screen edge pushes whoever is behind
   if (q.x + q.w < this.camX - 30 || q.x > this.camX + W + 30) { this.p2Respawn(); return; }
   if (q.plane && lvl.flagOpen && lvl.flagOpen() && lvl.flag && q.x + q.w > lvl.flag.x) { p.x = Math.max(p.x, lvl.flag.x - p.w + 2); }   // a plane through the finish takes player 1 with it
@@ -11766,7 +11811,7 @@ Game.prototype.drawP2 = function (cam) {
     else if (q.ship) drawShip(q.x - cam, q.y, this.t, q.aim ?? -0.4, q.recoil, q.vx);
     else if (q.horse) drawJoust(q, cam, {}, this.t);
     else if (q.ninja) drawNinja(q, cam, {}, this.t);
-    else drawKnight(q, cam, {}, this.t);
+    else drawKnight(q, cam, this.upg2 || {}, this.t);
   }, true);
   T(this.swapped ? "J1" : "J2", 13, q.x + q.w / 2 - cam, q.y - 58, this.swapped ? ARMOR_LIGHT : rgb(140, 230, 160));
 };
@@ -12040,7 +12085,7 @@ window.addEventListener("keyup", e => {
 
 // ---- split screen: in the vehicle levels each player gets their own copy of the level, their own vehicle and their own half of the screen
 const SPLIT = { g2: null, on: false, li: -1, A: null, B: null };
-const SPLIT_COLS = new Set(["pinball", "concert", "derby", "rocket", "climb", "ski"]);   // tall or top-down levels: side by side; the rest one above the other
+const SPLIT_COLS = new Set(["pinball", "concert", "derby", "rocket", "climb", "ski", "junk"]);   // tall or top-down levels: side by side; the rest one above the other
 const SPLIT_IN = new Set(["play", "dying", "pole", "door"]);
 function splitKindOf(g) {
   if (!g.twoP) return null;
@@ -12062,7 +12107,7 @@ function splitStep() {
   if (!SPLIT.on || SPLIT.li !== g1.levelIndex) {   // player 2's own copy of this level
     if (!SPLIT.g2) { SPLIT.g2 = new Game(); }
     const g2 = SPLIT.g2;
-    asP2(() => { g2.twoP = false; g2.upg = {}; g2.owned = {}; g2.done = g1.done; g2.secrets = g1.secrets; g2.levelIndex = g1.levelIndex; g2.lives = 99; g2.coins = 0; g2.score = 0; g2.p2 = null; g2.copilot = false; g2.resetLevel(); g2.state = "play"; g2.stateTimer = 0; g2.levelTimer = g1.levelTimer; });
+    asP2(() => { g2.twoP = false; g2.upg = g1.upg2 || {}; g2.owned = g1.owned2 || {}; g2.done = g1.done; g2.secrets = g1.secrets; g2.levelIndex = g1.levelIndex; g2.lives = 99; g2.coins = 0; g2.score = 0; g2.p2 = null; g2.copilot = false; g2.resetLevel(); g2.state = "play"; g2.stateTimer = 0; g2.levelTimer = g1.levelTimer; });
     SPLIT.on = true; SPLIT.li = g1.levelIndex; SPLIT.d1 = g1.deaths; SPLIT.d2 = g2.deaths;
   }
   const g2 = SPLIT.g2;
@@ -12146,6 +12191,10 @@ window.addEventListener("keydown", e => {
     if (e.code === "KeyM") toggleSound();
     e.preventDefault();
     return;
+  }
+  if (game.state === "shop" && game.twoP === "local" && P2_KEYS[e.code] && !e.repeat) {   // same keyboard: A D move player 2's cursor, W next row, F G buy
+    const k2 = P2_KEYS[e.code]; if (k2 === "left") inp2.leftTap = true; else if (k2 === "right") inp2.rightTap = true; else if (k2 === "jump") inp2.jumpPressed = true; else inp2.attack = true;
+    e.preventDefault(); return;
   }
   if (game.state === "shop") {   // keyboard shopping
     const n = SHOP.length;
@@ -12287,7 +12336,7 @@ function frame(now) {
     inp2.left = keys2.left || net2.left; inp2.right = keys2.right || net2.right; inp2.jumpHeld = keys2.jump || net2.jump;
     if (game.swapped) for (const k of ["left", "right", "jumpHeld", "jumpPressed", "attack"]) { const v = inp[k]; inp[k] = inp2[k]; inp2[k] = v; }
     game.step(); splitStep();
-    inp2.jumpPressed = inp2.attack = false;   // player 2's taps last until both halves have had their turn
+    inp2.jumpPressed = inp2.attack = inp2.leftTap = inp2.rightTap = false;   // player 2's taps last until both halves have had their turn
     acc -= STEP_MS;
   }
   updateEngine(); updateRock();
