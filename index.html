@@ -8152,13 +8152,13 @@ XM.robot = {
     if (m === X) return this.hurt(g, X, src);
     if (m.inv > 0 || X.won || m.out) return;
     m.hp--; m.inv = 80; m.hitFlash = 12; g.shake = 8; play("hurt"); m.vx = (m.x < src ? -1 : 1) * 6; m.vy = -6; m.air = true;
-    if (m.hp <= 0) { m.out = 180; fpBurst(X, m.x - X.cam, m.y - 100, [rgb(80, 200, 110), WHITE, rgb(255, 200, 80)], 24, 6); play("boom"); }
+    if (m.hp <= 0) { fpBurst(X, m.x - X.cam, m.y - 100, [rgb(80, 200, 110), WHITE, rgb(255, 200, 80)], 24, 6); play("boom"); if (X.out1 > 0 || g.lives <= 1) g.loseLife(); else { g.lives--; m.out = 180; } }
   },
   hurt(g, X, src) {
-    const p = g.player; if (p.invuln > 0 || X.won) return;
+    const p = g.player; if (p.invuln > 0 || X.won || X.out1 > 0) return;
     p.hearts--; p.invuln = 80; X.hitFlash = 12; g.shake = 10; play("hurt"); say("jolin", true);
     X.vx = (X.x < src ? -1 : 1) * 6; X.vy = -6; X.air = true;
-    if (p.hearts <= 0) g.loseLife();
+    if (p.hearts <= 0) { if (X.m2 && !X.m2.out && g.lives > 1) { g.lives--; X.out1 = 180; fpBurst(X, X.x - X.cam, X.y - 100, [rgb(90, 150, 255), WHITE, rgb(255, 200, 80)], 24, 6); play("boom"); } else g.loseLife(); }
   },
   mechStep(g, X, I) {   // walking, jumping, punching and the ground-pound, for whichever mech is in X just now
     const B = X.boss;
@@ -8209,9 +8209,10 @@ XM.robot = {
     const p = g.player, B = X.boss;
     if (g.levelTimer === 20) say("robot", true);
     if (p.invuln > 0) p.invuln--; if (X.hitFlash > 0) X.hitFlash--;
-    this.mechStep(g, X, inp);
+    if (X.out1 > 0) { if (--X.out1 === 0) { const m = X.m2; X.x = m.x - 120 * m.face; X.y = RB_GROUND - 200; X.vy = 0; X.air = true; g.player.hearts = g.player.maxHearts; g.player.invuln = 120; play("pop"); } }
+    else this.mechStep(g, X, inp);
     if (X.m2 && !X.m2.out) { rbSwap(X); try { this.mechStep(g, X, inp2); } finally { rbSwap(X); } }
-    if (X.m2) { const m = X.m2; if (m.inv > 0) m.inv--; if (m.hitFlash > 0) m.hitFlash--; if (m.out > 0 && --m.out === 0) { m.x = X.x - 120 * X.face; m.y = RB_GROUND - 200; m.vy = 0; m.air = true; m.hp = 6; m.inv = 120; play("pop"); } }
+    if (X.m2) { const m = X.m2; if (m.inv > 0) m.inv--; if (m.hitFlash > 0) m.hitFlash--; if (m.out > 0 && --m.out === 0) { m.x = X.out1 > 0 ? X.x : X.x - 120 * X.face; m.y = RB_GROUND - 200; m.vy = 0; m.air = true; m.hp = 6; m.inv = 120; play("pop"); } }
     for (const w of X.waves) {   // the ground-pound shockwave
       w.r += 12; if (w.r > 240) w.dead = true;
       for (const f of X.foes) if (f.hp > 0 && f.kind === "tank" && !w.hit.has(f) && Math.abs(f.x - w.x) < w.r) { w.hit.add(f); XM.robot.hitFoe(g, X, f, 2); }
@@ -8243,7 +8244,7 @@ XM.robot = {
     X.coins = X.coins.filter(c => !c.got && c.t < 900);
     this.updateBoss(g, X);
     // camera
-    const mid = X.m2 && !X.m2.out ? (X.x + X.m2.x) / 2 + 150 : X.x;
+    const mid = X.out1 > 0 && X.m2 ? X.m2.x : X.m2 && !X.m2.out ? (X.x + X.m2.x) / 2 + 150 : X.x;
     const want2 = B.awake ? RB_ARENA : Math.max(0, Math.min(RB_LEN - W, mid - 330));
     X.cam += (want2 - X.cam) * 0.1;
     if (X.m2 && !X.m2.out) { const lo = X.cam + 60, hi = X.cam + W - 60; X.x = Math.max(lo, Math.min(hi, X.x)); X.m2.x = Math.max(lo, Math.min(hi, X.m2.x)); }
@@ -8321,7 +8322,7 @@ XM.robot = {
     for (const s of X.shots) { const sx = s.x - cam; if (s.kind === "fire") { C(rgb(255, 140, 40), sx, s.y, 14); C(rgb(255, 230, 120), sx, s.y, 7); } else if (s.kind === "bomb") { C(rgb(40, 40, 50), sx, s.y, 8); C(HEART, sx, s.y - 6, 2); } else { C(rgb(60, 60, 60), sx, s.y, 6); } }
     for (const w of X.waves) { ctx.globalAlpha = 1 - w.r / 240; ES(rgb(220, 220, 255), w.x - cam - w.r, RB_GROUND - 24, w.r * 2, 40, 5); ctx.globalAlpha = 1; }
     const m2 = X.m2; if (m2 && !m2.out && !(m2.inv > 0 && Math.floor(m2.inv / 4) % 2 === 0)) { withLook2(() => drawMech(m2.x - cam, m2.y, m2.face, m2.walk, m2.punch, m2.pound, t, m2.hitFlash, true), true); T("J2", 16, m2.x - cam, m2.y - 270, rgb(140, 230, 160)); }
-    const p = g.player; if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawMech(X.x - cam, X.y, X.face, X.walk, X.punch, X.pound, t, X.hitFlash);
+    const p = g.player; if (!(X.out1 > 0) && !(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawMech(X.x - cam, X.y, X.face, X.walk, X.punch, X.pound, t, X.hitFlash);
     if (m2) T("J1", 16, X.x - cam, X.y - 270, ARMOR_LIGHT);
     fpFxDraw(X);
   },
@@ -8381,7 +8382,7 @@ function drawMech(x, y, face, walk, punch, pound, t, flash, green) {   // the gi
 
 const RB_FIELDS = ["x", "y", "vx", "vy", "face", "air", "punch", "punchCd", "pound", "stepT", "walk", "hitFlash", "hitIds"];
 function rbSwap(X) { const m = X.m2; for (const k of RB_FIELDS) { const v = X[k]; X[k] = m[k]; m[k] = v; } }
-function rbMechs(X) { return X.m2 && !X.m2.out ? [X, X.m2] : [X]; }
+function rbMechs(X) { const a = []; if (!(X.out1 > 0)) a.push(X); if (X.m2 && !X.m2.out) a.push(X.m2); return a.length ? a : [X]; }
 function rbNear(X, x) { const ms = rbMechs(X); return ms.reduce((a, b) => Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a, ms[0]); }
 function drawSonMech(x, y, face, walk, punch, pound, t, flash) {   // the Fire Titan: a robot designed by our young engineer (dark blue helmet, green chest, a golden hook blade and a flame thruster)
   ctx.save(); ctx.translate(x, y); ctx.scale(face, 1);
@@ -8442,9 +8443,9 @@ XM.dragonride = {
     return X;
   },
   hurt(g, X, msg) {
-    const p = g.player; if (p.invuln > 0 || X.won) return;
+    const p = g.player; if (p.invuln > 0 || X.won || X.out1 > 0) return;
     p.hearts--; p.invuln = 80; g.shake = 10; play("hurt"); say("jolin", true);
-    if (p.hearts <= 0) g.loseLife();
+    if (p.hearts <= 0) { if (X.d2 && !X.d2.out && g.lives > 1) { g.lives--; X.out1 = 180; fpBurst(X, X.x - X.cam, X.y, [rgb(255, 120, 60), WHITE], 20, 5); } else g.loseLife(); }
   },
   rider2(g, X, ready, arena) {   // player 2's green dragon: the same flying, fire and dangers
     const D = X.d2, B = X.boss;
@@ -8457,7 +8458,7 @@ XM.dragonride = {
     if (D.y < 50) { D.y = 50; D.vy = 0; } if (D.y > DR_FLOOR - 40) { D.y = DR_FLOOR - 40; D.vy = Math.min(0, D.vy); }
     if (ready && inp2.attack && D.fireCd === 0) { D.fireCd = 13; X.fires.push({ x: D.x + 70, y: D.y + 6, vx: 10, t: 0 }); play("swing"); }
     if (D.fireCd > 0) D.fireCd--;
-    const hurt = () => { if (D.inv > 0 || X.won) return; D.hp--; D.inv = 80; play("hurt"); g.shake = 6; if (D.hp <= 0) { D.out = 180; fpBurst(X, D.x - X.cam, D.y, [rgb(80, 200, 110), WHITE], 20, 5); } };
+    const hurt = () => { if (D.inv > 0 || X.won) return; D.hp--; D.inv = 80; play("hurt"); g.shake = 6; if (D.hp <= 0) { fpBurst(X, D.x - X.cam, D.y, [rgb(80, 200, 110), WHITE], 20, 5); if (X.out1 > 0 || g.lives <= 1) g.loseLife(); else { g.lives--; D.out = 180; } } };
     const m = { x: D.x - 50, y: D.y - 26, w: 110, h: 50 };
     for (const tw of X.towers) if (m.x < tw.x + tw.w && m.x + m.w > tw.x && m.y + m.h > DR_FLOOR - tw.h) { hurt(); D.vy = -5; }
     for (const b of X.bats) if (b.alive && Math.abs(b.x - D.x) < 50 && Math.abs(b.y - D.y) < 34) { b.alive = false; hurt(); }
@@ -8472,13 +8473,14 @@ XM.dragonride = {
     const ready = g.levelTimer > 60 && !X.won;
     const arena = B.awake;
     if (ready && !arena) X.cam = Math.min(DR_LEN, X.cam + 2.6);
+    if (X.out1 > 0 && X.d2) { X.x = X.d2.x - 60; X.y = Math.max(60, X.d2.y - 70); X.vy = 0; if (--X.out1 === 0) { p.hearts = p.maxHearts; p.invuln = 120; play("pop"); } }
     // flying: hold jump to climb, let go to glide down; left/right to slow down or speed up
     if (ready && inp.jumpHeld) { X.vy -= 0.55; X.flap += 0.35; if (g.t % 18 === 0) play("swing"); } else { X.vy += 0.32; X.flap += 0.12; }
     X.vy = Math.max(-6, Math.min(6, X.vy)); X.y += X.vy;
     const want = ready ? (inp.right ? 1 : 0) - (inp.left ? 1 : 0) : 0; X.vx += (want * 4 - X.vx) * 0.15;
     X.x = Math.max(X.cam + 60, Math.min(X.cam + W - 160, X.x + X.vx + (ready && !arena ? 2.6 : 0)));
     if (X.y < 50) { X.y = 50; X.vy = 0; } if (X.y > DR_FLOOR - 40) { X.y = DR_FLOOR - 40; X.vy = Math.min(0, X.vy); }
-    if (ready && inp.attack && X.fireCd === 0) { X.fireCd = 13; X.fires.push({ x: X.x + 70, y: X.y + 6, vx: 10, t: 0 }); play("swing"); }
+    if (ready && inp.attack && X.fireCd === 0 && !(X.out1 > 0)) { X.fireCd = 13; X.fires.push({ x: X.x + 70, y: X.y + 6, vx: 10, t: 0 }); play("swing"); }
     if (X.fireCd > 0) X.fireCd--;
     if (X.d2) this.rider2(g, X, ready, arena);
     const mech = { x: X.x - 50, y: X.y - 26, w: 110, h: 50 };
@@ -8551,7 +8553,7 @@ XM.dragonride = {
     const B = X.boss;
     if (B.awake) { if (B.mode === "warn" && Math.floor(t / 6) % 2) T("¡CUIDADO!", 28, W - 140, B.sy - 50, HEART); drawRideDragon(B.x - cam, B.y, t, -1, 1.9, true, B.flash, B.dead); }
     const D = X.d2; if (D && !D.out && !(D.inv > 0 && Math.floor(D.inv / 4) % 2 === 0)) { withLook2(() => drawRideDragon(D.x - cam, D.y, D.flap, 1, 1, false, 0, 0, true), true); T("J2", 15, D.x - cam, D.y - 80, rgb(140, 230, 160)); }
-    const p = g.player; if (!(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawRideDragon(X.x - cam, X.y, X.flap, 1, 1, false, 0, 0);
+    const p = g.player; if (!(X.out1 > 0) && !(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) drawRideDragon(X.x - cam, X.y, X.flap, 1, 1, false, 0, 0);
     if (D) T("J1", 15, X.x - cam, X.y - 80, ARMOR_LIGHT);
     if (inp.attack || X.fireCd > 8) { ctx.globalAlpha = 0.6; C(rgb(255, 180, 60), X.x - cam + 70, X.y + 6, 10); ctx.globalAlpha = 1; }
     fpFxDraw(X);
@@ -9002,6 +9004,7 @@ class Game {
     else if (inside(x, y, lay.button)) this.openMap(this.levelIndex, true);
   }
   resetLevel() {
+    if (this.unswap) this.unswap();
     this.level = new Level(LEVELS[this.levelIndex]);
     this.level.lifeups = this.level.lifeups.filter(k => !this.lifeTaken.has(this.levelIndex + ":" + k.x));   // each extra life can only be taken once
     this.player = new Player(...this.level.start, this.upg);
@@ -10335,10 +10338,11 @@ class Game {
   }
   castleX() { return Math.min(this.level.flag.x + 56, this.level.pxW - 86); }
   followCam() {
-    const p = this.player, lvl = this.level;
+    const lvl = this.level, q2 = this.p2, p = q2 && !q2.out && !q2.dead && !this.player.dead && q2.x > this.player.x ? q2 : this.player;
     const target = p.x + p.w / 2 - W * (p.plane ? 0.3 : 0.42) + (p.bike || p.horse || p.car ? p.vx * (p.car ? 22 : 18) : 0);   // look further ahead at speed
     this.camX += (target - this.camX) * 0.12;
     this.camX = Math.max(0, Math.min(this.camX, lvl.pxW - W));
+    const p1 = this.player; if (q2 && !p1.dead && !p1.plane && p1.x < this.camX + 2) { p1.x = this.camX + 2; if (blockedAt(p1, lvl, p1.x, p1.y)) { p1.x = q2.x; p1.y = q2.y - 10; } }   // the screen edge pushes whoever is behind
   }
   startPole() {   // grab the flagpole like Mario: the higher you grab it, the more points
     const p = this.player, lvl = this.level, fl = lvl.flag, base = fl.y + fl.h;
@@ -10527,6 +10531,10 @@ class Game {
     }
   }
   loseLife() {
+    const q2 = this.p2;
+    if (q2 && !q2.out && !q2.dead && this.state === "play" && this.lives > 1) {   // two knights: the one still standing keeps going, the fallen one comes back next to them
+      this.coSwap(); this.coDie(this.p2); return;
+    }
     this.lives--; this.deaths++; this.state = "dying"; this.stateTimer = 110; this.flyingAxe = null;
     const p = this.player; p.dead = true; p.vy = -11; p.attackTimer = 0; p.invuln = 0;
     play("die"); if (this.lives > 0) say("desastre", true);
@@ -10592,7 +10600,7 @@ class Game {
     for (const q of this.popups) { q.y -= 0.8; q.life--; }
     this.popups = this.popups.filter(q => q.life > 0);
     if (this.shake > 0) this.shake--;
-    inp.jumpPressed = inp.attack = false; inp2.jumpPressed = inp2.attack = false;
+    inp.jumpPressed = inp.attack = false;
   }
 
   strike(e, fromDir, hitIds, base = 1) {   // an axe, knife or cannonball hits an enemy
@@ -11221,7 +11229,7 @@ class Game {
       else if (p.ninja) drawNinja(p, cam, this.upg, this.t);
       else { drawKnight(p, cam, this.upg, this.t); if (p.shield) drawKnightShield(p, cam); }
     }
-    if (this.p2) { this.drawP2(cam); if (!p.dead) T("J1", 13, p.x + p.w / 2 - cam, p.y - 58, ARMOR_LIGHT); }
+    if (this.p2) { this.drawP2(cam); if (!p.dead) T(this.swapped ? "J2" : "J1", 13, p.x + p.w / 2 - cam, p.y - 58, this.swapped ? rgb(140, 230, 160) : ARMOR_LIGHT); }
     if (p.storm && p.umbrella && !p.eaten && !this.inCastle && !inDoor) drawUmbrella(p, cam, this.storm ? this.storm.wind : 0);
     if (this.caught) this.caught.plant.draw(cam, true);   // the jaws close over the knight
     if (this.mirrorGlow) { ctx.globalAlpha = this.mirrorGlow / 30; CS(ARMOR_LIGHT, p.x + p.w / 2 - cam, p.y + p.h / 2, Math.max(p.w, p.h) * 0.75, 4); ctx.globalAlpha = 1; }
@@ -11383,7 +11391,7 @@ class Game {
       const tp = this.twoP === "net" ? "🌐 ¡2 jugadores en línea conectados!" : this.twoP ? "👥 2 JUGADORES · J1: ← → ↑ y K / L · J2: A D W y F / G · (2 = quitar)" : isTouch ? "🌐 (arriba): jugar en línea con otro aparato" : "Pulsa 2: dos jugadores en el mismo teclado · 🌐 (arriba): en línea";
       T(tp, 16, W / 2, 352, rgb(140, 230, 160));
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 31 · pantalla partida", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 34 · seguir jugando", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
@@ -11507,14 +11515,15 @@ Game.prototype.updateP2b = function () {
   if (box) { const ids = q.horse && !q.swingActive() ? q.rideHits : q.hitIds; for (const e of lvl.enemies) if (collide(box, e.rect())) this.strike(e, q.facing, ids, q.sword || q.horse ? 1 : q.dmg || 1); this.breakCrates(box); }
   if (q.horse && this.t % 24 === 0) q.rideHits.clear();
   const pr = inflate(q.rect(), -6, -4);
-  const ouch = sx => { if (!q.hurt(sx)) return false; play("hurt"); this.popup(q.x + q.w / 2, q.y - 10, "¡Ay!", HEART); if (q.hearts <= 0) this.p2Down(); return true; };
+  const ouch = sx => { if (!q.hurt(sx)) return false; play("hurt"); this.popup(q.x + q.w / 2, q.y - 10, "¡Ay!", HEART); if (q.hearts <= 0) this.coDie(q); return true; };
   for (const e of lvl.enemies) if (e.harmful() && collide(pr, e.rect())) { if ((e.kind === "<" || e.kind === "»") && pr.y + pr.h - Math.max(0, q.vy) <= e.y + 12) { q.y = e.y - pr.h - 1; q.vy = -11.5; continue; } ouch(e.x + e.w / 2); if (q.out) return; }
   for (const e of lvl.enemies) if (e.slashBox && collide(pr, e.slashBox)) { ouch(e.x + e.w / 2); if (q.out) return; }
   for (const s of lvl.spikes) if (collide(pr, { x: s.x + 4, y: s.y + 20, w: TILE - 8, h: 20 }) && ouch(s.x + TILE / 2)) { q.vy = -10; if (q.out) return; }
   for (const s of this.shots) if (s.enemy && !s.dead && collide(pr, { x: s.x - 8, y: s.y - 8, w: 16, h: 16 })) { if (box && !s.nochop && collide(box, { x: s.x - 8, y: s.y - 8, w: 16, h: 16 })) { s.dead = true; play("hit"); continue; } ouch(s.x); if (s.kind !== "bsword") s.dead = true; if (q.out) return; }
   for (const c of [...lvl.coins]) if (collide(pr, c.rect())) { lvl.coins.splice(lvl.coins.indexOf(c), 1); this.coins++; this.score += 50; this.burst(c.x, c.y, [GOLD, WHITE], 6, 3); play("coin"); }
-  if (q.y > lvl.pxH + 60) { this.p2Down("¡Al agujero! Vuelve enseguida"); return; }
-  if (q.x + q.w < this.camX - 30 || q.x > this.camX + W + 30) { this.p2Respawn(); return; }   // left behind: pop back in next to player 1
+  if (q.y > lvl.pxH + 60) { this.coDie(q); return; }
+  if (q.x < this.camX + 2 && !q.plane) { q.x = this.camX + 2; if (blockedAt(q, lvl, q.x, q.y)) this.p2Respawn(); }   // the screen edge pushes whoever is behind
+  if (q.x + q.w < this.camX - 30 || q.x > this.camX + W + 30) { this.p2Respawn(); return; }
   if (q.plane && lvl.flagOpen && lvl.flagOpen() && lvl.flag && q.x + q.w > lvl.flag.x) { p.x = Math.max(p.x, lvl.flag.x - p.w + 2); }   // a plane through the finish takes player 1 with it
   if (lvl.flagOpen && lvl.flagOpen() && lvl.flag && collide(q.rect(), inflate(lvl.flag, 20, 0)) && !p.plane && !p.car && !p.sub && !p.ship) {   // player 2 reached the flag: the level is done for both
     p.x = q.x; p.y = q.y; p.vx = 0; this.startPole();
@@ -11533,7 +11542,7 @@ Game.prototype.drawP2 = function (cam) {
     else if (q.ninja) drawNinja(q, cam, {}, this.t);
     else drawKnight(q, cam, {}, this.t);
   }, true);
-  T("J2", 13, q.x + q.w / 2 - cam, q.y - 58, rgb(140, 230, 160));
+  T(this.swapped ? "J1" : "J2", 13, q.x + q.w / 2 - cam, q.y - 58, this.swapped ? ARMOR_LIGHT : rgb(140, 230, 160));
 };
 function drawP2Hud(g) {
   if (!g.p2) {
@@ -11546,7 +11555,7 @@ function drawP2Hud(g) {
     T(P2_MERGE_ALL.has(LEVELS[g.levelIndex].mode) ? "¡todos los botones!" : "🪓 = ¡acción!", 11, W - 80, 144, GOLD, "left", "middle");
     return;
   }
-  const q = g.p2; T("J2", 18, W - 132, 48, rgb(140, 230, 160), "left", "top");
+  const q = g.p2; T(g.swapped ? "J1" : "J2", 18, W - 132, 48, g.swapped ? ARMOR_LIGHT : rgb(140, 230, 160), "left", "top");
   for (let i = 0; i < q.maxHearts; i++) drawHeart(W - 102 + i * 24, 48, i < q.hearts && !q.out);
 }
 
@@ -11572,14 +11581,18 @@ function netHost() {
       conn.on("open", () => {
         netStatus("✅ ¡Jugador 2 conectado!"); game.twoP = "net"; if (game.state === "map") game.openCustomP2("map"); if (game.state === "play" && !game.p2 && game.p2Allowed()) game.p2 = game.makeP2();
         try {   // stream the screen (and the game's sound) to the other device
-          const stream = canvas.captureStream(30);
+          const sc = document.createElement("canvas"); sc.width = 960; sc.height = 520; const sx = sc.getContext("2d");   // a smaller copy of the screen is much quicker to send
+          NET.streamCopy = () => { try { sx.drawImage(canvas, 0, 0, sc.width, sc.height); } catch (_) {} };
+          const stream = sc.captureStream(30);
+          for (const tr of stream.getVideoTracks()) try { tr.contentHint = "motion"; } catch (_) {}
           if (actx && master && actx.createMediaStreamDestination) { const dest = actx.createMediaStreamDestination(); master.connect(dest); const tr = dest.stream.getAudioTracks()[0]; if (tr) stream.addTrack(tr); }
           NET.call = peer.call(conn.peer, stream);
+          setTimeout(() => { try { for (const snd of NET.call.peerConnection.getSenders()) if (snd.track && snd.track.kind === "video") { const pr = snd.getParameters(); pr.degradationPreference = "maintain-framerate"; if (!pr.encodings || !pr.encodings.length) pr.encodings = [{}]; pr.encodings[0].maxBitrate = 2500000; pr.encodings[0].maxFramerate = 30; snd.setParameters(pr).catch(() => {}); } } catch (_) {} }, 1500);
         } catch (e) { netStatus("❌ Este navegador no puede emitir la pantalla"); }
         setTimeout(netClose, 2500);
       });
       conn.on("data", d => { if (d && typeof d === "object") NET.guestIn = d; });
-      conn.on("close", () => { NET.conn = null; game.twoP = false; game.p2 = null; netStatus("El jugador 2 se ha desconectado"); netOpen(); });
+      conn.on("close", () => { NET.conn = null; NET.streamCopy = null; game.twoP = false; game.p2 = null; netStatus("El jugador 2 se ha desconectado"); netOpen(); });
     });
   });
 }
@@ -11594,7 +11607,7 @@ function netJoin(code) {
       conn.on("open", () => netStatus("✅ Conectado. Esperando la imagen…"));
       conn.on("close", () => { netStatus("❌ Se perdió la conexión"); netShowVideo(null); NET.role = null; netOpen(); });
     });
-    peer.on("call", call => { NET.call = call; call.answer(); call.on("stream", st => { netShowVideo(st); netClose(); }); });
+    peer.on("call", call => { NET.call = call; call.answer(); call.on("stream", st => { netShowVideo(st); netClose(); try { for (const r of call.peerConnection.getReceivers()) { r.playoutDelayHint = 0; if ("jitterBufferTarget" in r) r.jitterBufferTarget = 0; } } catch (_) {} }); });
     peer.on("error", err => netStatus(err.type === "peer-unavailable" ? "❌ No hay ninguna partida con ese código" : "❌ " + (err.type || err)));
   });
 }
@@ -11679,6 +11692,18 @@ Game.prototype.copilotMerge = function () {   // in a one-vehicle level, player 
   if (P2_MERGE_ALL.has(LEVELS[this.levelIndex].mode)) { inp.left = inp.left || inp2.left; inp.right = inp.right || inp2.right; inp.jumpHeld = inp.jumpHeld || inp2.jumpHeld; if (inp2.jumpPressed) inp.jumpPressed = true; }
 };
 
+Game.prototype.coDie = function (q) {   // player-2's knight fell: they lose a life and come back next to the other knight, who keeps going
+  if (this.state !== "play") return;
+  if (this.lives <= 1) { this.loseLife(); return; }
+  this.lives--; this.deaths++; play("die");
+  this.p2Down(this.swapped ? "¡El jugador 1 vuelve enseguida!" : "¡El jugador 2 vuelve enseguida!");
+};
+Game.prototype.coSwap = function () {   // player 1 fell but player 2 is fine: the knights swap places in the game's bookkeeping, so player 2 carries on as the main knight
+  const a = this.player; this.player = this.p2; this.p2 = a;
+  const l1 = { ...LOOK }; Object.assign(LOOK, LOOK2); Object.assign(LOOK2, l1); this.swapped = !this.swapped; lookSwapped = this.swapped; applyLook();
+};
+Game.prototype.unswap = function () { if (!this.swapped) return; const l1 = { ...LOOK }; Object.assign(LOOK, LOOK2); Object.assign(LOOK2, l1); this.swapped = false; lookSwapped = false; applyLook(); };
+
 // ---- split screen: in the vehicle levels each player gets their own copy of the level, their own vehicle and their own half of the screen
 const SPLIT = { g2: null, on: false, li: -1, A: null, B: null };
 const SPLIT_COLS = new Set(["pinball", "concert", "derby", "rocket", "climb", "ski"]);   // tall or top-down levels: side by side; the rest one above the other
@@ -11704,10 +11729,11 @@ function splitStep() {
     if (!SPLIT.g2) { SPLIT.g2 = new Game(); }
     const g2 = SPLIT.g2;
     asP2(() => { g2.twoP = false; g2.upg = {}; g2.owned = {}; g2.done = g1.done; g2.secrets = g1.secrets; g2.levelIndex = g1.levelIndex; g2.lives = 99; g2.coins = 0; g2.score = 0; g2.p2 = null; g2.copilot = false; g2.resetLevel(); g2.state = "play"; g2.stateTimer = 0; g2.levelTimer = g1.levelTimer; });
-    SPLIT.on = true; SPLIT.li = g1.levelIndex;
+    SPLIT.on = true; SPLIT.li = g1.levelIndex; SPLIT.d1 = g1.deaths; SPLIT.d2 = g2.deaths;
   }
   const g2 = SPLIT.g2;
   asP2(() => g2.step());
+  if (g2.deaths !== SPLIT.d2) { SPLIT.d2 = g2.deaths; g2.lives = 99; if (g1.lives <= 1 && g1.state === "play") g1.loseLife(); else g1.lives = Math.max(0, g1.lives - 1); }   // player 2 fell: a shared life, and only their half starts again
   inp2.jumpPressed = inp2.attack = false;
   if (g2.coins) { g1.coins += g2.coins; g2.coins = 0; }
   if (g2.score !== g2.lastScore) { if (g2.lastScore !== undefined && g2.score > g2.lastScore) g1.score += g2.score - g2.lastScore; g2.lastScore = g2.score; }
@@ -11729,12 +11755,12 @@ function splitFocus(g, axis) {   // where on the screen this player's vehicle is
   return isFinite(p.x) ? p.x + p.w / 2 - g.camX : 480;
 }
 function splitDraw() {
-  const g1 = game, g2 = SPLIT.g2, kind = splitKindOf(g1), s = scale * dpr, main = ctx;
+  const g1 = game, g2 = SPLIT.g2, kind = splitKindOf(g1), s0 = scale * dpr, s = Math.min(s0, 1.25), main = ctx;
   for (const k of ["A", "B"]) { const o = SPLIT[k] || (SPLIT[k] = splitOff()); if (o.s !== s) { o.s = s; o.c.width = Math.ceil(W * s); o.c.height = Math.ceil(H * s); } }
   const A = SPLIT.A, B = SPLIT.B;
   ctx = A.x; ctx.setTransform(s, 0, 0, s, 0, 0); g1.draw();
   asP2(() => { ctx = B.x; ctx.setTransform(s, 0, 0, s, 0, 0); g2.draw(); });
-  ctx = main; ctx.setTransform(s, 0, 0, s, 0, 0);
+  ctx = main; ctx.setTransform(s0, 0, 0, s0, 0, 0);
   ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
   const hud = (o, dx, dy) => { ctx.globalAlpha = 0.95; ctx.drawImage(o.c, 0, 0, W * s, 110 * s, dx, dy, W / 2, 55); ctx.globalAlpha = 1; };
   if (kind === "rows") {
@@ -11902,12 +11928,15 @@ function frame(now) {
     inp.jumpHeld = keys.jump || touch.jump;
     if (NET.role === "host") netHostRead();
     inp2.left = keys2.left || net2.left; inp2.right = keys2.right || net2.right; inp2.jumpHeld = keys2.jump || net2.jump;
+    if (game.swapped) for (const k of ["left", "right", "jumpHeld", "jumpPressed", "attack"]) { const v = inp[k]; inp[k] = inp2[k]; inp2[k] = v; }
     game.step(); splitStep();
+    inp2.jumpPressed = inp2.attack = false;   // player 2's taps last until both halves have had their turn
     acc -= STEP_MS;
   }
   updateEngine(); updateRock();
   ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
   if (SPLIT.on && SPLIT.g2) splitDraw(); else game.draw();
+  if (NET.streamCopy) NET.streamCopy();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
