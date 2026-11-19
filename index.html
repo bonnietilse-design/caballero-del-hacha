@@ -5111,7 +5111,7 @@ function drawUFO(x, y, t, tilt, alien, flash) {   // flying saucer 70 x 34: the 
   ctx.restore();
 }
 
-function drawDoor(x, y, open, t) {   // a secret door: arched wooden door in a stone frame, with a twinkling star above
+function drawDoor(x, y, open, t, hidden) {   // a secret door: arched wooden door in a stone frame, with a twinkling star above
   R(STONE_DARK, x - 6, y - 4, 44, 68, 18); R(rgb(20, 10, 30), x, y + 2, 32, 62, 15);
   if (open > 0) { ctx.globalAlpha = open * 0.85; R(rgb(255, 240, 180), x + 4, y + 8, 24, 56, 12); ctx.globalAlpha = 1; }
   const w = 32 * (1 - open);
@@ -5119,7 +5119,7 @@ function drawDoor(x, y, open, t) {   // a secret door: arched wooden door in a s
     R(WOOD, x, y + 2, w, 62, 15 * (1 - open)); for (const yy of [18, 42]) R(WOOD_DARK, x, y + yy, w, 5);
     L(WOOD_DARK, x + w / 2, y + 8, x + w / 2, y + 62, 2); C(GOLD, x + w - 6, y + 36, 2.5);
   }
-  ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * 0.1); T("✦", 20, x + 16, y - 16, GOLD); ctx.globalAlpha = 1;
+  if (!hidden) { ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * 0.1); T("✦", 20, x + 16, y - 16, GOLD); ctx.globalAlpha = 1; }
 }
 
 function drawOneUp(x, y, t) {   // an extra life
@@ -7410,58 +7410,234 @@ function drawMapWorld(w, x0, t) {   // the scenery of each world
     for (const [mx, top, h] of [[-12, 102, 32], [-12, 64, 30], [30, 90, 30], [30, 54, 24]]) R(rgb(240, 230, 210), sx + mx - 22, sy - top, 44, h, 3);
     R(BLACK, sx - 12, sy - 122, 18, 11); C(WHITE, sx - 3, sy - 117, 2.4);
   }
+  drawMapLife(nm, x0, t);
   ctx.restore();
 }
 
-function drawMapNode(i, x, y, sel, done, t) {   // a level on the map: a round stone with its number; a flag once it's beaten
-  const n = MAP_NODES[i], [c0, c1] = n.secret ? [rgb(150, 110, 30), GOLD] : WORLD_COLS[WORLDS[n.world].name];
-  E("rgba(0,0,0,0.3)", x - 26, y + 14, 52, 16);
-  if (sel) { ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 0.15); C(WHITE, x, y, 33); ctx.globalAlpha = 1; }
-  C(done ? GOLD : rgb(60, 50, 40), x, y, 27); C(c0, x, y, 23); C(c1, x - 3, y - 4, 16);
-  T(n.secret ? "★" : n.boss ? "♛" : String(n.num), n.secret || n.boss ? 24 : 22, x, y + 1, WHITE);
-  if (n.boss && !n.secret) T(String(n.num), 12, x + 17, y + 18, WHITE);
-  if (done) { L(rgb(90, 70, 50), x + 18, y - 8, x + 18, y - 38, 2.5); P(HEART, [[x + 18, y - 38], [x + 36, y - 32], [x + 18, y - 26]]); }
+function drawMapLife(nm, x0, t) {   // the little moving things that make each land feel alive
+  const bird = (bx, by, s, col, k) => { const f = (3 + 3 * Math.sin(t * 0.3 + k)) * s; ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(bx - 7 * s, by - f); ctx.quadraticCurveTo(bx - 3 * s, by - f * 0.2, bx, by); ctx.quadraticCurveTo(bx + 3 * s, by - f * 0.2, bx + 7 * s, by - f); ctx.stroke(); };
+  if (nm === "LA TIERRA") {
+    // a river from the mountains down through the meadow
+    ctx.lineCap = "round"; const river = () => { ctx.beginPath(); ctx.moveTo(x0 + 218, 236); ctx.bezierCurveTo(x0 + 200, 330, x0 + 120, 380, x0 + 70, 520); };
+    ctx.strokeStyle = rgb(60, 120, 170); ctx.lineWidth = 16; river(); ctx.stroke();
+    ctx.strokeStyle = rgb(110, 180, 230); ctx.lineWidth = 10; river(); ctx.stroke();
+    ctx.setLineDash([6, 14]); ctx.lineDashOffset = -t * 0.6; ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 2; river(); ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0;
+    // flowers dotted over the meadow
+    for (let i = 0; i < 46; i++) { const fx = x0 + 20 + (i * 83.7) % 430, fy = 340 + (i * 47.3) % 170; C([rgb(255, 240, 120), rgb(255, 150, 180), WHITE, rgb(200, 150, 255)][i % 4], fx, fy, 2.2); }
+    // a windmill turning on the hill
+    const mx = x0 + 30, my = 420; P(rgb(236, 226, 206), [[mx - 12, my], [mx - 8, my - 46], [mx + 8, my - 46], [mx + 12, my]]); R(rgb(150, 70, 60), mx - 4, my - 16, 8, 16, 3); P(rgb(170, 70, 60), [[mx - 11, my - 46], [mx, my - 58], [mx + 11, my - 46]]);
+    ctx.save(); ctx.translate(mx, my - 46); ctx.rotate(t * 0.03); for (let k = 0; k < 4; k++) { ctx.rotate(Math.PI / 2); R(rgb(250, 246, 236), -2, 0, 4, 26); R("rgba(160,120,80,0.6)", 2, 6, 7, 20); } ctx.restore(); C(rgb(90, 60, 40), mx, my - 46, 3);
+    // a flock of birds crossing the sky
+    for (let k = 0; k < 5; k++) bird(x0 + ((t * 0.7 + k * 40) % (W + 200)) - 100 + k * 18, 150 + Math.sin(t * 0.02 + k) * 6 + (k % 2) * 12, 1, "rgba(40,50,70,0.75)", k);
+    // a tumbleweed rolling across the desert
+    const tw = x0 + 520 + ((t * 1.4) % 480), ty = 470 - Math.abs(Math.sin(t * 0.08)) * 14; ctx.save(); ctx.translate(tw, ty); ctx.rotate(t * 0.1); CS(rgb(160, 120, 70), 0, 0, 9, 2); L(rgb(160, 120, 70), -7, -4, 7, 4, 1.5); L(rgb(160, 120, 70), -4, 7, 4, -7, 1.5); ctx.restore();
+  } else if (nm === "EL HIELO") {
+    // the northern lights
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    for (let k = 0; k < 3; k++) { ctx.strokeStyle = [`rgba(90,255,170,0.16)`, `rgba(140,120,255,0.13)`, `rgba(90,220,255,0.12)`][k]; ctx.lineWidth = 34 - k * 6; ctx.beginPath(); for (let x = -20; x <= W + 20; x += 20) { const y = 46 + k * 22 + Math.sin(x * 0.012 + t * 0.012 + k * 1.7) * 18; x === -20 ? ctx.moveTo(x0 + x, y) : ctx.lineTo(x0 + x, y); } ctx.stroke(); }
+    ctx.restore();
+    // an igloo with a glowing doorway
+    const ix = x0 + 560, iy = 350; ctx.fillStyle = rgb(244, 250, 255); ctx.beginPath(); ctx.arc(ix, iy, 34, Math.PI, 0); ctx.fill(); ctx.strokeStyle = rgb(190, 214, 236); ctx.lineWidth = 1.5;
+    for (const yy of [10, 21]) L(rgb(190, 214, 236), ix - Math.sqrt(34 * 34 - yy * yy), iy - yy, ix + Math.sqrt(34 * 34 - yy * yy), iy - yy, 1.5);
+    ctx.fillStyle = rgb(60, 70, 90); ctx.beginPath(); ctx.arc(ix + 14, iy, 10, Math.PI, 0); ctx.fill(); ctx.globalAlpha = 0.4 + 0.2 * Math.sin(t * 0.1); C(rgb(255, 200, 120), ix + 14, iy - 3, 6); ctx.globalAlpha = 1;
+    // twinkles on the frozen lake
+    for (let i = 0; i < 8; i++) { const a = Math.max(0, Math.sin(t * 0.06 + i * 2.1)); if (a > 0.6) { const sx = x0 + 260 + (i * 61) % 240, sy = 404 + (i * 23) % 36; ctx.globalAlpha = a; L(WHITE, sx - 5, sy, sx + 5, sy, 1.5); L(WHITE, sx, sy - 5, sx, sy + 5, 1.5); ctx.globalAlpha = 1; } }
+    // falling snow
+    for (let i = 0; i < 70; i++) { const sp = 0.5 + (i % 3) * 0.35, sx = x0 + ((i * 97.3 + Math.sin(t * 0.015 + i) * 24) % W + W) % W, sy = (i * 53.7 + t * sp) % (H + 10) - 5; ctx.globalAlpha = 0.6 + (i % 3) * 0.13; C(WHITE, sx, sy, 1.3 + (i % 3) * 0.7); }
+    ctx.globalAlpha = 1;
+  } else if (nm === "EL CIELO Y EL ESPACIO") {
+    // a hot-air balloon drifting in the blue part of the sky
+    const bx = x0 + 120, by = 200 + Math.sin(t * 0.02) * 10;
+    for (let k = 0; k < 5; k++) { ctx.fillStyle = [HEART, GOLD, HEART, GOLD, HEART][k]; ctx.beginPath(); ctx.ellipse(bx, by, 26 - Math.abs(k - 2) * 9 + 4, 30, 0, 0, Math.PI * 2); ctx.fill(); }
+    L(rgb(110, 80, 50), bx - 10, by + 26, bx - 6, by + 44, 1.5); L(rgb(110, 80, 50), bx + 10, by + 26, bx + 6, by + 44, 1.5); R(rgb(150, 100, 60), bx - 8, by + 44, 16, 11, 2);
+    // shooting stars
+    for (let k = 0; k < 2; k++) { const ph = (t + k * 170) % 340; if (ph < 46) { const sx = x0 + 420 + k * 220 + ph * 7, sy = 30 + k * 60 + ph * 2.6; ctx.globalAlpha = 1 - ph / 46; L(WHITE, sx, sy, sx - 40, sy - 15, 2.5); C(WHITE, sx, sy, 2.5); ctx.globalAlpha = 1; } }
+    // a little UFO with blinking lights and a tractor beam
+    const ux = x0 + 600 + Math.sin(t * 0.011) * 70, uy = 300 + Math.sin(t * 0.04) * 8;
+    ctx.globalAlpha = 0.18 + 0.08 * Math.sin(t * 0.2); P(rgb(160, 255, 200), [[ux - 10, uy + 6], [ux + 10, uy + 6], [ux + 28, uy + 70], [ux - 28, uy + 70]]); ctx.globalAlpha = 1;
+    E(rgb(150, 230, 255), ux - 12, uy - 16, 24, 20); E(rgb(170, 176, 190), ux - 30, uy - 6, 60, 16); for (let k = 0; k < 4; k++) C(Math.floor(t / 8 + k) % 4 === 0 ? GOLD : rgb(255, 120, 120), ux - 18 + k * 12, uy + 2, 2.5);
+    // a satellite with a blinking light
+    const sx = x0 + 820, sy = 260 + Math.sin(t * 0.015) * 6; R(rgb(80, 110, 190), sx - 26, sy - 5, 18, 10); R(rgb(80, 110, 190), sx + 8, sy - 5, 18, 10); R(rgb(200, 200, 210), sx - 8, sy - 8, 16, 16, 3); C(t % 40 < 8 ? HEART : rgb(120, 40, 40), sx, sy - 12, 2.5);
+  } else if (nm === "EL REINO") {
+    // a dragon circling the volcano
+    const a = t * 0.014, dx = x0 + 820 + Math.cos(a) * 110, dy = 170 + Math.sin(a) * 34, dir = -Math.sin(a) >= 0 ? 1 : -1, fl = Math.sin(t * 0.25) * 12;
+    ctx.save(); ctx.translate(dx, dy); ctx.scale(dir, 1); const dc = rgb(50, 24, 46);
+    P(dc, [[-6, 0], [-18, -16 - fl], [8, -2]]); E(dc, -20, -6, 34, 12); P(dc, [[-18, 0], [-38, 4], [-18, 4]]); P(dc, [[12, -4], [22, -10], [24, -3], [14, 2]]); P(dc, [[0, -2], [12, -20 + fl], [14, -2]]);
+    if (Math.floor(t / 90) % 3 === 0) { ctx.globalAlpha = 0.85; P(rgb(255, 150, 40), [[24, -6], [44, -10 + Math.sin(t) * 3], [44, 0], [24, -2]]); ctx.globalAlpha = 1; }
+    ctx.restore();
+    // fireflies drifting over the town
+    for (let i = 0; i < 26; i++) { const fx = x0 + 20 + (i * 71.3) % 700 + Math.sin(t * 0.02 + i) * 16, fy = 330 + (i * 37.1) % 170 + Math.cos(t * 0.025 + i * 1.3) * 10, a = 0.3 + 0.7 * Math.max(0, Math.sin(t * 0.07 + i * 1.9)); ctx.globalAlpha = a * 0.35; C(rgb(255, 240, 120), fx, fy, 6); ctx.globalAlpha = a; C(rgb(255, 250, 190), fx, fy, 1.8); }
+    ctx.globalAlpha = 1;
+    for (let i = 0; i < 30; i++) { const a = 0.4 + 0.6 * Math.abs(Math.sin(t * 0.03 + i)); ctx.globalAlpha = a; R(WHITE, x0 + (i * 131.7) % W, (i * 41.3) % 140, 2, 2); }   // the first stars of the evening
+    ctx.globalAlpha = 1;
+  } else {   // Los Mares
+    // sparkles on the water
+    for (let i = 0; i < 26; i++) { const a = Math.max(0, Math.sin(t * 0.05 + i * 2.7)); if (a > 0.5) { const sx = x0 + (i * 113.3) % W, sy = 220 + (i * 71.9) % 290; ctx.globalAlpha = (a - 0.5) * 2; L(WHITE, sx - 6, sy, sx + 6, sy, 1.5); L(WHITE, sx, sy - 4, sx, sy + 4, 1.5); } }
+    ctx.globalAlpha = 1;
+    // a whale coming up to spout
+    const wx = x0 + 230, wy = 360, up = Math.max(0, Math.sin(t * 0.012));
+    if (up > 0.05) {   // the whale's back rises out of the water, then it blows a spout
+      const hump = up * 22;
+      ctx.save(); ctx.beginPath(); ctx.rect(wx - 60, wy - 60, 140, 60); ctx.clip();
+      E(rgb(52, 84, 124), wx - 46, wy - hump, 92, hump * 2); ctx.globalAlpha = 0.35; E(WHITE, wx - 30, wy - hump + 3, 40, 6); ctx.globalAlpha = 1;
+      if (hump > 12) { C(WHITE, wx + 28, wy - hump * 0.45, 3); C(BLACK, wx + 29, wy - hump * 0.45, 1.6); }
+      ctx.restore();
+      ES("rgba(255,255,255,0.5)", wx - 56, wy - 4, 112, 10, 2);
+      if (up > 0.8) for (let k = 0; k < 9; k++) { const ph = (t * 2 + k * 9) % 40; ctx.globalAlpha = 1 - ph / 40; C(rgb(210, 240, 255), wx + 6 + Math.sin(k * 1.9) * ph * 0.6, wy - hump - ph * 1.3 + ph * ph * 0.012, 3); }
+      ctx.globalAlpha = 1;
+    }
+    // seagulls
+    for (let k = 0; k < 4; k++) bird(x0 + ((t * 0.9 + k * 230) % (W + 160)) - 80, 120 + Math.sin(t * 0.03 + k * 2) * 10 + (k % 2) * 30, 1.2, WHITE, k);
+    // a shark fin circling
+    const fa = t * 0.02, fx = x0 + 600 + Math.cos(fa) * 60, fy = 300 + Math.sin(fa) * 16; P(rgb(90, 110, 130), [[fx - 10, fy], [fx + (Math.sin(fa) > 0 ? -4 : 4), fy - 18], [fx + 10, fy]]); L("rgba(255,255,255,0.6)", fx - 16, fy + 1, fx + 16, fy + 1, 2);
+  }
 }
 
-function drawMap(g) {   // the world map: four lands side by side, the road between the levels, and the knight walking along it
-  const cam = Math.round(g.mapCam), t = g.t, K = g.mapK, route = g.mapRoute();
+const MAP_BADGE = { buggy: "🏎️", derby: "💥", fire: "🚒", horse: "🐴", junk: "🧲", monster: "🛻", mrace: "🏁", patrol: "🚓", police: "🚓", plane: "✈️", rocket: "🚀", ship: "⛵", skidoo: "🛷", ski: "⛷️", stunt: "🤸", sub: "🐙", train: "🚂", ufo: "🛸", snowball: "❄️", climb: "🧗", ninja: "🥷", storm: "⛈️", toy: "🧸", sword: "⚔️", leap: "🦘", star: "⭐" };
+const crPt = (a, b, c, d, u) => { const u2 = u * u, u3 = u2 * u; return { x: 0.5 * (2 * b.x + (c.x - a.x) * u + (2 * a.x - 5 * b.x + 4 * c.x - d.x) * u2 + (3 * b.x - a.x - 3 * c.x + d.x) * u3), y: 0.5 * (2 * b.y + (c.y - a.y) * u + (2 * a.y - 5 * b.y + 4 * c.y - d.y) * u2 + (3 * b.y - a.y - 3 * c.y + d.y) * u3) }; };
+function mapRoadPt(s, u) {   // a point on the smooth main road, between level s and level s + 1
+  const N = MAP_NODES, a = N[Math.max(0, s - 1)], b = N[s], c = N[s + 1], d = N[Math.min(MAIN_LEVELS - 1, s + 2)];
+  return crPt(a, b, c, d, u);
+}
+const MAP_ROAD = [];   // the main road, sampled every few pixels: {x, y, s (segment), world}
+for (let s = 0; s < MAIN_LEVELS - 1; s++) { const n = Math.ceil(Math.hypot(MAP_NODES[s + 1].x - MAP_NODES[s].x, MAP_NODES[s + 1].y - MAP_NODES[s].y) / 4); for (let k = 0; k < n; k++) { const q = mapRoadPt(s, k / n); q.s = s; MAP_ROAD.push(q); } }
+{ const q = { ...MAP_NODES[MAIN_LEVELS - 1], s: MAIN_LEVELS - 2 }; MAP_ROAD.push(q); }
+MAP_ROAD.forEach(q => q.world = Math.max(0, Math.min(WORLDS.length - 1, Math.floor(q.x / W))));
+
+function drawMapRoad(g, cam, t) {   // the road: a cobbled track on land, a wooden bridge over the sea, an icy path in the snow and a road of light in space
+  const vis = MAP_ROAD.filter(q => q.x - cam > -60 && q.x - cam < W + 60);
+  if (!vis.length) return;
+  const runs = []; for (const q of vis) { const r = runs[runs.length - 1]; if (r && r.world === q.world) r.pts.push(q); else { if (r) r.pts.push(q); runs.push({ world: q.world, pts: r ? [r.pts[r.pts.length - 2] || q, q] : [q] }); } }
+  const stroke = (pts, col, lw, dash) => { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.lineJoin = "round"; if (dash) ctx.setLineDash(dash); ctx.beginPath(); pts.forEach((q, k) => k ? ctx.lineTo(q.x - cam, q.y) : ctx.moveTo(q.x - cam, q.y)); ctx.stroke(); ctx.setLineDash([]); };
+  for (const r of runs) {
+    const nm = WORLDS[r.world].name, pts = r.pts;
+    if (nm === "LOS MARES") {   // a plank bridge with rope rails
+      stroke(pts, "rgba(10,40,70,0.35)", 26); stroke(pts, rgb(92, 60, 34), 20); stroke(pts, rgb(168, 118, 70), 15);
+      for (let k = 2; k < pts.length - 1; k += 3) { const a = pts[k - 1], b = pts[k + 1], dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1, nx = -dy / l * 8, ny = dx / l * 8; L(rgb(110, 74, 42), pts[k].x - cam - nx, pts[k].y - ny, pts[k].x - cam + nx, pts[k].y + ny, 1.6); }
+      for (let k = 0; k < pts.length; k += 10) C(rgb(80, 52, 30), pts[k].x - cam, pts[k].y - 9, 2.5);
+    } else if (nm === "EL CIELO Y EL ESPACIO") {   // a glowing road of light, with stars along it
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; stroke(pts, "rgba(120,160,255,0.25)", 30); stroke(pts, "rgba(255,240,200,0.35)", 16); ctx.restore();
+      stroke(pts, "rgba(255,250,230,0.85)", 8);
+      for (let k = 0; k < pts.length; k += 6) { const a = 0.5 + 0.5 * Math.sin(t * 0.1 - k * 0.3); ctx.globalAlpha = a; C(GOLD, pts[k].x - cam, pts[k].y, 2.4); } ctx.globalAlpha = 1;
+    } else if (nm === "EL HIELO") {   // packed snow with blue edges and icy glints
+      stroke(pts, "rgba(60,90,130,0.35)", 24); stroke(pts, rgb(160, 196, 230), 19); stroke(pts, rgb(236, 246, 255), 13);
+      for (let k = 0; k < pts.length; k += 5) C(k % 2 ? rgb(200, 226, 250) : WHITE, pts[k].x - cam + Math.sin(k) * 3, pts[k].y + Math.cos(k * 1.3) * 3, 2);
+    } else {   // a dirt road with cobblestones
+      const dusk = nm === "EL REINO";
+      stroke(pts, "rgba(40,26,14,0.45)", 24); stroke(pts, dusk ? rgb(120, 92, 80) : rgb(176, 136, 84), 19); stroke(pts, dusk ? rgb(170, 140, 120) : rgb(232, 206, 150), 14);
+      for (let k = 1; k < pts.length; k += 4) { const q = pts[k], o = Math.sin(k * 2.3) * 4; E(dusk ? rgb(140, 116, 104) : rgb(198, 168, 116), q.x - cam - 4 + o, q.y - 3 + Math.cos(k) * 3, 8, 6); }
+    }
+  }
+  // footprints along the part of the road already travelled
+  for (let k = 0; k < vis.length; k += 7) { const q = vis[k]; if (!g.done.has(LEVELS[q.s].name)) continue; const side = (k / 7) % 2 ? 3 : -3; ctx.globalAlpha = 0.35; E(rgb(90, 60, 30), q.x - cam - 2, q.y + side - 2, 5, 4); ctx.globalAlpha = 1; }
+}
+
+function drawMapNode(i, x, y, sel, done, t, next) {   // a level on the map: a stone medallion on a little pedestal, with its number, a badge for vehicle levels and a flag once it's beaten
+  const n = MAP_NODES[i], L0 = LEVELS[i], [c0, c1] = n.secret ? [rgb(150, 110, 30), GOLD] : WORLD_COLS[WORLDS[n.world].name];
+  E("rgba(0,0,0,0.32)", x - 30, y + 12, 60, 18);
+  if (sel) {   // a turning ring of light around the chosen level
+    ctx.save(); ctx.translate(x, y); ctx.rotate(t * 0.03); ctx.setLineDash([10, 8]); ctx.strokeStyle = `rgba(255,255,255,${0.6 + 0.3 * Math.sin(t * 0.15)})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  }
+  C(rgb(40, 30, 24), x, y + 6, 27);   // the pedestal's side
+  C(done ? GOLD : rgb(96, 84, 70), x, y, 27);   // the rim: gold once beaten
+  if (done) CS(rgb(255, 250, 200), x, y, 27, 1.5);
+  const gr = ctx.createRadialGradient(x - 7, y - 9, 3, x, y, 23); gr.addColorStop(0, c1); gr.addColorStop(1, c0);
+  ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 0.35; E(WHITE, x - 14, y - 19, 26, 11); ctx.globalAlpha = 1;   // a glossy shine
+  T(n.secret ? "★" : n.boss ? "♛" : String(n.num), n.secret || n.boss ? 24 : 22, x, y + 1, WHITE);
+  if (n.boss && !n.secret) { C(rgb(40, 30, 24), x + 18, y + 18, 9); T(String(n.num), 12, x + 18, y + 18, WHITE); }
+  const bd = MAP_BADGE[L0.mode];
+  if (bd) { C(WHITE, x - 21, y - 20, 11); CS(c0, x - 21, y - 20, 11, 2); emoji(bd, 14, x - 21, y - 19); }
+  if (done) {   // a little waving flag
+    const w = Math.sin(t * 0.12 + i) * 3;
+    L(rgb(90, 70, 50), x + 20, y - 6, x + 20, y - 40, 2.5);
+    ctx.fillStyle = HEART; ctx.beginPath(); ctx.moveTo(x + 20, y - 40); ctx.quadraticCurveTo(x + 30, y - 40 + w, x + 39, y - 34 + w * 0.5); ctx.quadraticCurveTo(x + 30, y - 29 - w, x + 20, y - 28); ctx.fill();
+  }
+  if (next) {   // the next level to beat: a bouncing arrow
+    const by = y - 46 - Math.abs(Math.sin(t * 0.09)) * 9;
+    P(rgb(120, 70, 10), [[x - 11, by - 3], [x + 11, by - 3], [x, by + 11]]); P(GOLD, [[x - 9, by - 4], [x + 9, by - 4], [x, by + 8]]);
+  }
+}
+
+function drawMapScroll(x, y, w, h) {   // a parchment scroll with rolled-up ends
+  R("rgba(0,0,0,0.25)", x + 4, y + 6, w, h, 8);
+  R(rgb(246, 230, 192), x, y, w, h, 6);
+  const gr = ctx.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, "rgba(255,255,255,0.35)"); gr.addColorStop(1, "rgba(160,110,50,0.18)"); ctx.fillStyle = gr; ctx.fillRect(x, y, w, h);
+  RS(rgb(170, 128, 70), x, y, w, h, 2, 6);
+  for (const ex of [x - 14, x + w - 6]) { R(rgb(150, 104, 56), ex, y - 6, 20, h + 12, 10); R(rgb(214, 178, 120), ex + 4, y - 4, 7, h + 8, 4); R(rgb(110, 74, 40), ex + 6, y - 10, 8, 6, 2); R(rgb(110, 74, 40), ex + 6, y + h + 4, 8, 6, 2); }
+}
+
+function drawMap(g) {   // the world map: five lands side by side, the road between the levels, and the knight walking along it
+  const cam = Math.round(g.mapCam), t = g.t, K = g.mapK;
   for (let w = 0; w < WORLDS.length; w++) { const x0 = w * W - cam; if (x0 < W && x0 + W > 0) drawMapWorld(w, x0, t); }
-  ctx.lineCap = "round"; ctx.lineJoin = "round";
-  const road = (pts, dashed) => {
-    for (const [lw, col] of [[18, "rgba(50,34,20,0.5)"], [12, rgb(232, 210, 156)]]) { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); pts.forEach((q, k) => k ? ctx.lineTo(q.x - cam, q.y) : ctx.moveTo(q.x - cam, q.y)); ctx.stroke(); }
-    ctx.setLineDash(dashed ? [3, 9] : [8, 10]); ctx.strokeStyle = "rgba(150,110,60,0.7)"; ctx.lineWidth = 2.5; ctx.beginPath(); pts.forEach((q, k) => k ? ctx.lineTo(q.x - cam, q.y) : ctx.moveTo(q.x - cam, q.y)); ctx.stroke(); ctx.setLineDash([]);
-  };
-  road(Array.from({ length: MAIN_LEVELS }, (_, i) => MAP_NODES[i]), false);
-  LEVELS.forEach((L, i) => { if (L.door != null && g.secrets.has(L.door)) road([MAP_NODES[i], MAP_NODES[L.door]], true); });
+  for (let w = 1; w < WORLDS.length; w++) {   // a bank of cloud softens the border between two lands
+    const bx = w * W - cam; if (bx < -150 || bx > W + 150) continue;
+    const gr = ctx.createLinearGradient(bx - 90, 0, bx + 90, 0); gr.addColorStop(0, "rgba(255,255,255,0)"); gr.addColorStop(0.5, "rgba(240,246,255,0.4)"); gr.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gr; ctx.fillRect(bx - 90, 0, 180, H);
+    ctx.globalAlpha = 0.8; for (let k = 0; k < 7; k++) drawCloud(bx - 36 + Math.sin(k * 2.1 + t * 0.008) * 10, 30 + k * 76, 0.6 + (k % 3) * 0.1); ctx.globalAlpha = 1;
+  }
+  drawMapRoad(g, cam, t);
+  LEVELS.forEach((L, i) => {   // the side paths to the secret levels already found: a trail of little golden stars
+    if (L.door == null || !g.secrets.has(L.door)) return;
+    const a = MAP_NODES[i], b = MAP_NODES[L.door], n = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 14);
+    for (let k = 1; k < n; k++) { const u = k / n, x = a.x + (b.x - a.x) * u - cam, y = a.y + (b.y - a.y) * u + Math.sin(u * Math.PI) * 8; ctx.globalAlpha = 0.6 + 0.4 * Math.sin(t * 0.12 - k); T("✦", 13, x, y, GOLD); }
+    ctx.globalAlpha = 1;
+  });
+  let next = -1; for (let i = 0; i < MAIN_LEVELS; i++) if (!g.done.has(LEVELS[i].name)) { next = i; break; }
   LEVELS.forEach((L, i) => {
     const n = MAP_NODES[i]; if (!n || n.x - cam < -60 || n.x - cam > W + 60) return;
     if (n.secret && !g.secrets.has(i)) {   // a secret not found yet: a locked "?" with no road to it, until you find its door in the game
-      const x = n.x - cam, y = n.y;
-      ctx.globalAlpha = 0.5 + 0.15 * Math.sin(t * 0.05 + i);
+      const x = n.x - cam, y = n.y + Math.sin(t * 0.04 + i) * 3;
+      ctx.globalAlpha = 0.55 + 0.15 * Math.sin(t * 0.05 + i);
       C("rgba(0,0,0,0.35)", x, y + 4, 20); C(rgb(52, 40, 30), x, y, 20); CS(rgb(150, 120, 70), x, y, 20, 2);
       T("?", 26, x, y + 1, GOLD, "center", "middle");
       ctx.globalAlpha = 1;
       R(rgb(150, 120, 60), x + 9, y + 9, 13, 10, 2); CS(rgb(150, 120, 60), x + 15.5, y + 9, 4, 2); C(rgb(60, 44, 20), x + 15.5, y + 14, 1.5);   // a little padlock
       return;
     }
-    drawMapNode(i, n.x - cam, n.y, i === g.mapSel && !K.moving, g.done.has(L.name), t);
+    drawMapNode(i, n.x - cam, n.y, i === g.mapSel && !K.moving, g.done.has(L.name), t, i === next && !(i === g.mapSel && !K.moving));
   });
-  const p = g.mapPlayer;   // the knight
-  p.x = K.x - p.w / 2; p.y = K.y + 6 - p.h - (K.moving ? Math.abs(Math.sin(t * 0.3)) * 5 : 0); p.facing = K.face; p.vx = K.moving ? 3 : 0; p.onGround = true; p.anim += 0.25; p.attackTimer = 0;
-  E("rgba(0,0,0,0.3)", K.x - cam - 16, K.y + 2, 32, 8);
+  // the knight follows the curve of the road between two neighbouring levels
+  let kx = K.x, ky = K.y;
+  const to = K.path[0], from = g.mapSel;
+  if (K.moving && to != null && from < MAIN_LEVELS && to < MAIN_LEVELS && Math.abs(to - from) === 1) {
+    const A = MAP_NODES[from], B = MAP_NODES[to], tot = Math.hypot(B.x - A.x, B.y - A.y) || 1, u = Math.max(0, Math.min(1, 1 - Math.hypot(B.x - K.x, B.y - K.y) / tot));
+    const q = mapRoadPt(Math.min(from, to), from < to ? u : 1 - u); kx = q.x; ky = q.y;
+  }
+  const p = g.mapPlayer;
+  p.x = kx - p.w / 2; p.y = ky + 6 - p.h - (K.moving ? Math.abs(Math.sin(t * 0.3)) * 5 : 0); p.facing = K.face; p.vx = K.moving ? 3 : 0; p.onGround = true; p.anim += 0.25; p.attackTimer = 0;
+  E("rgba(0,0,0,0.3)", kx - cam - 16, ky + 2, 32, 8);
   drawKnight(p, cam, g.upg, t);
-  // the information panel
-  const L0 = LEVELS[g.mapSel], n0 = MAP_NODES[g.mapSel], wd = WORLDS[n0.world];
-  R("rgba(20,14,30,0.72)", 170, 8, 620, 96, 16); RS(GOLD, 170, 8, 620, 96, 2, 16);
-  T(`MUNDO ${n0.world + 1} · ${wd.name}`, 16, W / 2, 26, GOLD);
-  T((L0.secret ? "NIVEL SECRETO · " : `NIVEL ${n0.world + 1}-${n0.num} · `) + L0.name, 28, W / 2, 56, WHITE);
+  // a soft dark vignette around the edges
+  const vg = ctx.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, W * 0.72); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(10,6,20,0.38)");
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  // the information scroll
+  const L0 = LEVELS[g.mapSel], n0 = MAP_NODES[g.mapSel], wd = WORLDS[n0.world], [wc0, wc1] = WORLD_COLS[wd.name];
+  drawMapScroll(190, 14, 580, 90);
+  R(rgb(60, 40, 24), W / 2 - 162, 2, 324, 26, 7); R(wc0, W / 2 - 160, 4, 320, 22, 6); R(wc1, W / 2 - 160, 4, 320, 6, 4);
+  T(`MUNDO ${n0.world + 1} · ${wd.name}`, 15, W / 2, 16, WHITE);
+  const title = (L0.secret ? "NIVEL SECRETO · " : `NIVEL ${n0.world + 1}-${n0.num} · `) + L0.name;
+  ctx.font = `bold 26px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.fillText(title, W / 2 + 1, 52); ctx.fillStyle = rgb(74, 42, 20); ctx.fillText(title, W / 2, 50);
+  const bd = MAP_BADGE[L0.mode]; if (bd) { const tw = ctx.measureText(title).width; emoji(bd, 22, W / 2 - tw / 2 - 20, 50); }
   const done = g.done.has(L0.name);
-  if (Math.floor(t / 30) % 2 === 0 || isTouch) T(done ? "✓ ¡Superado!   ·   " + (isTouch ? "SALTA o 🪓: jugar otra vez" : "ENTER: jugar otra vez") : (isTouch ? "SALTA o 🪓: ¡a jugar!   ·   ◀ ▶ o toca un nivel" : "ENTER: ¡a jugar!   ·   ← → caminar"), 17, W / 2, 86, done ? GRASS_LIGHT : rgb(255, 230, 170));
-  // the bottom bar
-  R("rgba(20,14,30,0.6)", 10, H - 44, 340, 34, 10);
-  T(`VIDAS ${g.lives}   MONEDAS ${g.coins}   ⚑ ${[...g.done].filter(nm => LEVELS.some((L, i) => i < MAIN_LEVELS && L.name === nm)).length}/${MAIN_LEVELS}`, 18, 24, H - 27, WHITE, "left", "middle");
-  const wx = Math.floor((K.x) / W);
-  for (let k = 0; k < WORLDS.length; k++) { C(k === wx ? GOLD : "rgba(255,255,255,0.4)", W - 90 + k * 20, H - 26, 6); }
+  if (Math.floor(t / 30) % 2 === 0 || isTouch) {
+    ctx.font = `bold 16px ${FONT}`; ctx.fillStyle = done ? rgb(40, 120, 40) : rgb(150, 70, 20);
+    ctx.fillText(done ? "✔ ¡Superado!   ·   " + (isTouch ? "SALTA o 🪓: jugar otra vez" : "ENTER: jugar otra vez") : (isTouch ? "SALTA o 🪓: ¡a jugar!   ·   ◀ ▶ o toca un nivel" : "ENTER: ¡a jugar!   ·   ← → caminar"), W / 2, 84);
+  }
+  // the bottom bar: a wooden plank with lives, coins and progress
+  R("rgba(0,0,0,0.3)", 12, H - 44, 360, 36, 10); R(rgb(120, 80, 44), 10, H - 47, 360, 36, 10); R(rgb(150, 104, 60), 10, H - 47, 360, 10, 8); RS(rgb(80, 50, 26), 10, H - 47, 360, 36, 2, 10);
+  const beaten = [...g.done].filter(nm => LEVELS.some((L, i) => i < MAIN_LEVELS && L.name === nm)).length;
+  drawHeart(22, H - 38, true); T(`${g.lives}`, 18, 50, H - 29, WHITE, "left", "middle");
+  C(GOLD, 96, H - 29, 9); C(rgb(255, 236, 140), 94, H - 31, 5); T(`${g.coins}`, 18, 112, H - 29, WHITE, "left", "middle");
+  T(`⚑ ${beaten}/${MAIN_LEVELS}`, 18, 180, H - 29, WHITE, "left", "middle");
+  R("rgba(0,0,0,0.35)", 262, H - 34, 96, 10, 5); R(GOLD, 262, H - 34, 96 * beaten / MAIN_LEVELS, 10, 5);
+  // the five lands, as little coloured gems; the one you're in glows
+  const wx = Math.max(0, Math.min(WORLDS.length - 1, Math.floor(kx / W)));
+  for (let k = 0; k < WORLDS.length; k++) {
+    const cx = W - 116 + k * 24, cy = H - 28, [a, b] = WORLD_COLS[WORLDS[k].name];
+    if (k === wx) { ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 0.1); C(GOLD, cx, cy, 12); ctx.globalAlpha = 1; }
+    P(a, [[cx, cy - 9], [cx + 8, cy], [cx, cy + 9], [cx - 8, cy]]); P(b, [[cx, cy - 9], [cx + 8, cy], [cx, cy - 1], [cx - 8, cy]]);
+  }
 }
 
 class Game {
@@ -9692,7 +9868,8 @@ class Game {
         if (found) { RS(GOLD, cx * TILE - cam + 1, cy * TILE + 1, TILE - 2, TILE - 2, 2, 4); T("?", 20, cx * TILE - cam + 20, cy * TILE + 21, GOLD); }
         continue;
       }
-      const buried = lvl.solidAt(cx, cy - 1), vr = (cx * 7 + cy * 13 + ((cx * cy) >> 2)) >>> 0;
+      const cvr = lvl.cover, inCover = (x, y) => cvr && x * TILE >= cvr.x0 && x * TILE <= cvr.x1 && y * TILE >= cvr.y0 && y * TILE <= cvr.y1;
+      const buried = lvl.solidAt(cx, cy - 1) || inCover(cx, cy - 1), vr = (cx * 7 + cy * 13 + ((cx * cy) >> 2)) >>> 0;
       const img = ch === "#" || ch === "Q" ? (buried ? tiles.dirtV[vr % 4] : tiles.grassV[vr % 3]) : tiles[ch];
       ctx.drawImage(img, cx * TILE - cam, cy * TILE - (img.height - TILE));
       if (SHADE && (ch === "=" || ch === "C") && !lvl.solidAt(cx, cy + 1)) drawPlatShadow(cx * TILE - cam, cy * TILE + TILE);
@@ -9726,7 +9903,7 @@ class Game {
     }
     if (lvl.door) {
       const d = lvl.door;
-      if (d.x + d.w > cam - 40 && d.x < cam + W + 40) drawDoor(d.x - cam, d.y, this.state === "door" ? Math.min(1, this.stateTimer / 14) : 0, this.t);
+      if (d.x + d.w > cam - 40 && d.x < cam + W + 40) drawDoor(d.x - cam, d.y, this.state === "door" ? Math.min(1, this.stateTimer / 14) : 0, this.t, lvl.cover && !lvl.passage);
       if (theme.dark && this.mineLights && !(lvl.cover && !lvl.passage)) this.mineLights.push([d.x + d.w / 2 - cam, d.y + 30]);
     }
     for (const k of lvl.lifeups) drawOneUp(k.x - cam, k.y, this.t);
@@ -9800,7 +9977,11 @@ class Game {
     }
     for (const e of lvl.enemies) if (e.x + e.w > cam - 60 && e.x < cam + W + 60) e.draw(cam);
     const cv = lvl.cover;
-    if (cv && !lvl.passage) for (let x = cv.x0; x <= cv.x1; x += TILE) for (let y = cv.y0; y <= cv.y1; y += TILE) ctx.drawImage(tiles.dirt, x - cam, y);   // the secret room hides behind fake rock
+    if (cv && !lvl.passage) for (let x = cv.x0; x <= cv.x1; x += TILE) for (let y = cv.y0; y <= cv.y1; y += TILE) {   // the same grass and earth tiles as the real rock around it, so nothing gives it away
+      const cx = x / TILE, cy = y / TILE, vr = (cx * 7 + cy * 13 + ((cx * cy) >> 2)) >>> 0, top = y === cv.y0 && !lvl.solidAt(cx, cy - 1), img = top ? tiles.grassV[vr % 3] : tiles.dirtV[vr % 4];
+      ctx.drawImage(img, x - cam, y - (img.height - TILE));
+      if (!top && SHADE) { const depth = lvl.solidAt(cx, cy - 2) || cy - 2 >= cv.y0 / TILE ? (lvl.solidAt(cx, cy - 3) || cy - 3 >= cv.y0 / TILE ? 0.34 : 0.24) : 0.12; ctx.fillStyle = `rgba(0,0,0,${depth})`; ctx.fillRect(x - cam, y, TILE, TILE); }
+    }   // the secret room hides behind fake rock
     const inDoor = this.state === "door" && this.stateTimer > 16;
     if (!this.inCastle && !inDoor && !p.eaten && !(p.invuln > 0 && Math.floor(p.invuln / 4) % 2 === 0)) {
       if (p.car) {
@@ -9975,7 +10156,7 @@ class Game {
       T("¡Ojo! Saltar sobre los enemigos duele.", 22, W / 2, 292, WHITE);
       T("Gasta tus monedas en la tienda del herrero.", 22, W / 2, 324, WHITE);
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 25 · secretos", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 27 · mapa nuevo", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
