@@ -69,6 +69,9 @@
 <button class="top" id="bPause" aria-label="Pausa">&#10074;&#10074;</button>
 <div id="rotate">↻ Gira el móvil para verlo más grande</div>
 <script>
+// online games run the same game on two devices: while the game itself is stepping, "random" comes from a shared seeded dice so both agree
+const NATIVE_RANDOM = Math.random; let SIM_RNG = null; var NET_GUEST = false, NET_SNAP = null;
+Math.random = function () { return SIM_RNG ? SIM_RNG() : NATIVE_RANDOM(); };
 "use strict";
 // El Caballero del Hacha - a small Mario-style platformer. Chop your way through three levels!
 
@@ -768,7 +771,7 @@ const LEVELS = [
       "########################",
       "########################"
     ] },
-  { name: "El Cuarto de los Juguetes", theme: "meadow", speed: 1.05, mode: "toy", secret: true, hint: "◀ ▶ conducir · SALTA saltar · 🪓 turbo · ¡Despacio junto al perro!",
+  { name: "El Cuarto de los Juguetes", theme: "meadow", speed: 1.05, mode: "toy", secret: true, hint: "¡Tu bólido de piezas: el HURACÁN DORADO! ◀ ▶ conducir · SALTA saltar · 🪓 turbo · ¡Despacio junto al perro!",
     map: [
       "........................",
       "........................",
@@ -902,7 +905,7 @@ function applyLook() {   // repaint the knight's colours from the chosen look
     CAPE = gr;
   } catch (e) {}   // (the canvas isn't ready on the very first call; it's called again once it is)
   try { PLAYER_PLANE[0] = ARMOR; PLAYER_PLANE[1] = ARMOR_LIGHT; } catch (e) {}   // (not defined yet on the very first call)
-  if (!lookSwapped) try { localStorage.setItem("caballero_look", JSON.stringify(LOOK)); } catch (e) {}
+  if (!lookSwapped && !NET_GUEST) try { localStorage.setItem("caballero_look", JSON.stringify(LOOK)); } catch (e) {}
 }
 applyLook();
 const SKIN = rgb(236, 182, 140), SKIN_LIGHT = rgb(252, 214, 182), SKIN_DARK = rgb(176, 116, 82), MOUSTACHE = rgb(84, 46, 20);
@@ -4156,7 +4159,7 @@ const CAR_HORNS = [{ id: "clasica", name: "¡Mec mec!" }, { id: "pato", name: "P
 const GARAGE_ROWS = [["body", "CARROCERÍA", CAR_BODIES], ["color", "COLOR", CAR_COLS], ["wheels", "RUEDAS", CAR_WHEELS], ["deco", "ADORNOS", CAR_DECOS], ["horn", "BOCINA", CAR_HORNS]];
 let GARAGE = { body: "clasico", color: "rojo", wheels: "gordas", deco: "llamas", horn: "clasica", num: 7 };
 try { const sv = JSON.parse(localStorage.getItem("caballero_coche") || "null"); if (sv) { for (const [k, , list] of GARAGE_ROWS) if (list.some(o => o.id === sv[k])) GARAGE[k] = sv[k]; if (sv.num > 0 && sv.num < 100) GARAGE.num = sv.num; } } catch (e) {}
-function saveGarage() { try { localStorage.setItem("caballero_coche", JSON.stringify(GARAGE)); } catch (e) {} }
+function saveGarage() { if (NET_GUEST) return; try { localStorage.setItem("caballero_coche", JSON.stringify(GARAGE)); } catch (e) {} }
 function garageStats() {
   const b = CAR_BODIES.find(o => o.id === GARAGE.body), w = CAR_WHEELS.find(o => o.id === GARAGE.wheels);
   return { hp: Math.round(100 * b.hp + w.hp), mass: b.mass + (w.id === "monstruo" ? 0.15 : 0), speed: b.speed + w.speed, grip: 0.18 + w.grip };
@@ -4480,14 +4483,29 @@ function drawRoadWorld(g) {
 }
 
 // ---------------------------------------------------------------- the toy room
-function drawToyCar(x, y, ang, wheel, t, face) {   // a little red wind-up racing car with the (shrunk!) knight at the wheel
+function drawToyCar(x, y, ang, wheel, t, face) {   // the Golden Hurricane: a brick-built racer designed by our young engineer — white and grey engine pods with air scoops, two yellow turbine fans, a black dome cockpit with a gold emblem, and a green and gold nose
   ctx.save(); ctx.translate(x, y); ctx.rotate(ang); if (face < 0) ctx.scale(-1, 1);
-  ctx.globalAlpha = 0.3; E(BLACK, -34, -4, 68, 7); ctx.globalAlpha = 1;
-  P(rgb(220, 30, 40), [[-34, -10], [-34, -24], [-12, -26], [-4, -36], [14, -36], [22, -26], [36, -22], [36, -10]]);
-  R(WHITE, -34, -20, 70, 3); T("7", 10, -18, -16, WHITE);
-  ctx.save(); ctx.translate(4, -30); ctx.scale(0.5, 0.5); drawDriver(t); ctx.restore();
-  ctx.save(); ctx.translate(-36, -24); ctx.rotate(t * 0.15); R(GOLD, -2, -9, 4, 18, 2); R(GOLD, -7, -9, 14, 4, 2); R(GOLD, -7, 5, 14, 4, 2); ctx.restore();   // wind-up key
-  for (const wx of [-20, 22]) { C(rgb(24, 24, 28), wx, -9, 9); C(GOLD, wx, -9, 4); L(rgb(150, 110, 20), wx, -9, wx + Math.cos(wheel) * 4, -9 + Math.sin(wheel) * 4, 1.5); }
+  ctx.globalAlpha = 0.3; E(BLACK, -42, -4, 86, 7); ctx.globalAlpha = 1;
+  R(rgb(50, 50, 56), -40, -18, 80, 7, 2);   // the dark chassis
+  P(rgb(214, 196, 150), [[-12, -13], [32, -13], [38, -8], [-8, -8]]);   // tan side skid
+  P(rgb(236, 236, 240), [[-44, -18], [-44, -28], [-18, -32], [-6, -22], [-12, -18]]); P(rgb(200, 200, 208), [[-44, -22], [-14, -26], [-8, -20]]);   // white engine pod
+  R(rgb(150, 150, 160), -42, -34, 24, 6, 2); for (const sx of [-41, -33, -25]) { R(rgb(160, 160, 170), sx, -41, 7, 8, 2); R(rgb(60, 60, 66), sx + 1.5, -39, 4, 3); }   // grey air scoops
+  R(rgb(200, 40, 40), -30, -30, 8, 2);   // a red stripe
+  // a yellow turbine fan, spinning
+  C(rgb(250, 200, 40), -4, -30, 10); C(rgb(30, 30, 34), -4, -30, 7);
+  for (let k = 0; k < 6; k++) { const a = t * 0.7 + k * Math.PI / 3; L(rgb(220, 180, 60), -4, -30, -4 + Math.cos(a) * 6, -30 + Math.sin(a) * 6, 1.6); }
+  C(rgb(250, 200, 40), -4, -30, 2);
+  // the black dome cockpit with a glass window (and the knight inside) and a gold emblem
+  E(rgb(26, 26, 32), 4, -44, 26, 22);
+  R("rgba(120,210,235,0.85)", 9, -41, 13, 9, 3); ctx.save(); ctx.translate(15, -34); ctx.scale(0.4, 0.4); drawDriver(t); ctx.restore();
+  C(GOLD, 26, -36, 4.5); CS(rgb(60, 200, 210), 26, -36, 4.5, 1.5);
+  // the green and gold nose
+  P(rgb(40, 140, 80), [[16, -26], [42, -20], [44, -12], [18, -12]]); R(rgb(60, 200, 220), 20, -30, 10, 8, 2);
+  P(rgb(214, 168, 70), [[32, -22], [46, -18], [46, -14], [34, -16]]); L(rgb(250, 140, 40), 20, -15, 36, -14, 2);
+  P(WHITE, [[24, -24], [27, -20], [30, -24]]); P(WHITE, [[30, -23], [33, -19], [36, -22]]);   // white "teeth" on the green panel
+  // wheels: a big double tyre at the back, a gold-rimmed one at the front
+  C(rgb(24, 24, 28), -26, -11, 11); C(rgb(40, 40, 46), -26, -11, 8); C(rgb(160, 160, 170), -26, -11, 4); L(rgb(100, 100, 110), -26, -11, -26 + Math.cos(wheel) * 7, -11 + Math.sin(wheel) * 7, 1.5);
+  C(rgb(24, 24, 28), 28, -9, 9); C(GOLD, 28, -9, 4); L(rgb(150, 110, 20), 28, -9, 28 + Math.cos(wheel) * 4, -9 + Math.sin(wheel) * 4, 1.5);
   ctx.restore();
 }
 function drawToyWorld(g) {
@@ -8717,7 +8735,7 @@ const CN_ROOTS = [82.41, 65.41, 98.0, 73.42];   // E, C, G, D: one chord per bar
 let cnNoise = null;
 function cnSynth() {   // a tiny live band built from the game's own audio context
   if (!actx || !master) return null;
-  if (!cnNoise) { cnNoise = actx.createBuffer(1, actx.sampleRate, actx.sampleRate); const d = cnNoise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  if (!cnNoise) { cnNoise = actx.createBuffer(1, actx.sampleRate, actx.sampleRate); const d = cnNoise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = NATIVE_RANDOM() * 2 - 1; }
   const out = actx.createGain(); out.gain.value = 0.9; out.connect(master);
   const env = (node, t, a, d, peak) => { const gn = actx.createGain(); gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(peak, t + a); gn.gain.exponentialRampToValueAtTime(0.0001, t + a + d); node.connect(gn); gn.connect(out); return gn; };
   const noise = (t, hp, d, peak) => { const s = actx.createBufferSource(); s.buffer = cnNoise; const f = actx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = hp; s.connect(f); env(f, t, 0.002, d, peak); s.start(t); s.stop(t + d + 0.05); };
@@ -8730,7 +8748,7 @@ function cnSynth() {   // a tiny live band built from the game's own audio conte
     bass(t, f, d) { const o = actx.createOscillator(); o.type = "sawtooth"; o.frequency.value = f; const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 420; o.connect(lp); env(lp, t, 0.01, d, 0.32); o.start(t); o.stop(t + d + 0.05); },
     chord(t, f, d = 0.45, vol = 0.16) {   // a distorted power chord
       const ws = actx.createWaveShaper(); ws.curve = curve; const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2600; ws.connect(lp); env(lp, t, 0.005, d, vol);
-      for (const m of [1, 1.4983, 2]) { const o = actx.createOscillator(); o.type = "sawtooth"; o.frequency.value = f * m; o.detune.value = (Math.random() - 0.5) * 12; o.connect(ws); o.start(t); o.stop(t + d + 0.05); }
+      for (const m of [1, 1.4983, 2]) { const o = actx.createOscillator(); o.type = "sawtooth"; o.frequency.value = f * m; o.detune.value = (NATIVE_RANDOM() - 0.5) * 12; o.connect(ws); o.start(t); o.stop(t + d + 0.05); }
     },
     clunk(t) { const o = actx.createOscillator(); o.type = "square"; o.frequency.value = 70; env(o, t, 0.003, 0.12, 0.15); o.start(t); o.stop(t + 0.15); },
     stop() { try { out.gain.setTargetAtTime(0, actx.currentTime, 0.05); setTimeout(() => out.disconnect(), 400); } catch (_) {} },
@@ -8752,7 +8770,7 @@ XM.concert = {
     const p = g.player; p.x = 140; p.y = 330 - p.h; p.facing = 1; p.onGround = true;
     return { kind: "concert", notes, meter: 60, combo: 0, best: 0, hits: 0, perfect: 0, missed: 0, t0: null, ft: 0, beatDone: -1, fx: [], judge: "", judgeT: 0, end: 0, laneFlash: [0, 0, 0, 0], band: null, crowd: Array.from({ length: 22 }, (_, i) => ({ x: 40 + i * 42 + (i % 2) * 12, y: 470 + (i % 3) * 14, j: 0, ph: i * 0.7 })) };
   },
-  now(X) { return X.band && actx ? actx.currentTime - X.t0 : X.ft / 60 - 1.2; },
+  now(X) { return X.band && actx && !NET.lock ? actx.currentTime - X.t0 : X.ft / 60 - 1.2; },
   update(g, X) {
     const p = g.player;
     if (g.levelTimer === 20) say("concierto", true);
@@ -8881,9 +8899,10 @@ class Game {
   }
   levelLabel(i = this.levelIndex) { const n = MAP_NODES[i]; return LEVELS[i].secret ? "NIVEL SECRETO" : `NIVEL ${n.world + 1}-${n.num}`; }
   loadProgress() {   // which levels are beaten and which secrets are found, remembered between visits
+    if (NET_SNAP) { this.done = new Set(NET_SNAP.done); this.secrets = new Set(NET_SNAP.secrets); return; }   // online: both devices use the host's progress
     try { const d = JSON.parse(localStorage.getItem("caballero_mapa") || "{}"); this.done = new Set((d.done || []).filter(nm => !LEVELS.some(L => L.secret && L.name === nm))); this.secrets = new Set(); for (const nm of d.secretos || []) { const i = LEVELS.findIndex(L => L.name === nm); if (i >= 0) this.secrets.add(i); } } catch (_) {}
   }
-  saveProgress() { try { localStorage.setItem("caballero_mapa", JSON.stringify({ done: [...this.done], secretos: [...this.secrets].map(i => LEVELS[i].name) })); } catch (_) {} }
+  saveProgress() { if (NET_SNAP) { NET_SNAP.done = [...this.done]; NET_SNAP.secrets = [...this.secrets]; } if (NET_GUEST) return; try { localStorage.setItem("caballero_mapa", JSON.stringify({ done: [...this.done], secretos: [...this.secrets].map(i => LEVELS[i].name) })); } catch (_) {} }
   mapRoute() {   // the order the knight walks along the map: every level, with each secret found right after the level its door is in
     const r = [];
     for (let i = 0; i < MAIN_LEVELS; i++) { r.push(i); const d = LEVELS[i].door; if (d != null && this.secrets.has(d)) r.push(d); }
@@ -11391,7 +11410,7 @@ class Game {
       const tp = this.twoP === "net" ? "🌐 ¡2 jugadores en línea conectados!" : this.twoP ? "👥 2 JUGADORES · J1: ← → ↑ y K / L · J2: A D W y F / G · (2 = quitar)" : isTouch ? "🌐 (arriba): jugar en línea con otro aparato" : "Pulsa 2: dos jugadores en el mismo teclado · 🌐 (arriba): en línea";
       T(tp, 16, W / 2, 352, rgb(140, 230, 160));
       tap("Toca la pantalla para empezar", "Pulsa ENTER para empezar", 384);
-      T("versión 34 · seguir jugando", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
+      T("versión 36 · huracán dorado", 13, W - 12, H - 14, "rgba(255,255,255,0.75)", "right", "middle");
       const rb = RESET_BTN, ask = this.resetAsk > 0;   // wipe the map: beaten levels and found secrets
       R(ask ? rgb(150, 40, 40) : "rgba(255,255,255,0.12)", rb.x, rb.y, rb.w, rb.h, 10); RS(ask ? HEART : "rgba(255,255,255,0.35)", rb.x, rb.y, rb.w, rb.h, 2, 10);
       T(ask ? (isTouch ? "¿Seguro? Toca otra vez para borrar" : "¿Seguro? Pulsa B otra vez") : this.resetDone > 0 ? "¡Mapa borrado!" : (isTouch ? "🗑 Borrar el mapa y empezar de cero" : "🗑 B: borrar el mapa y empezar de cero"), 16, W / 2, rb.y + rb.h / 2 + 1, WHITE, "center", "middle");
@@ -11579,20 +11598,14 @@ function netHost() {
       if (NET.conn) { conn.close(); return; }
       NET.conn = conn;
       conn.on("open", () => {
-        netStatus("✅ ¡Jugador 2 conectado!"); game.twoP = "net"; if (game.state === "map") game.openCustomP2("map"); if (game.state === "play" && !game.p2 && game.p2Allowed()) game.p2 = game.makeP2();
-        try {   // stream the screen (and the game's sound) to the other device
-          const sc = document.createElement("canvas"); sc.width = 960; sc.height = 520; const sx = sc.getContext("2d");   // a smaller copy of the screen is much quicker to send
-          NET.streamCopy = () => { try { sx.drawImage(canvas, 0, 0, sc.width, sc.height); } catch (_) {} };
-          const stream = sc.captureStream(30);
-          for (const tr of stream.getVideoTracks()) try { tr.contentHint = "motion"; } catch (_) {}
-          if (actx && master && actx.createMediaStreamDestination) { const dest = actx.createMediaStreamDestination(); master.connect(dest); const tr = dest.stream.getAudioTracks()[0]; if (tr) stream.addTrack(tr); }
-          NET.call = peer.call(conn.peer, stream);
-          setTimeout(() => { try { for (const snd of NET.call.peerConnection.getSenders()) if (snd.track && snd.track.kind === "video") { const pr = snd.getParameters(); pr.degradationPreference = "maintain-framerate"; if (!pr.encodings || !pr.encodings.length) pr.encodings = [{}]; pr.encodings[0].maxBitrate = 2500000; pr.encodings[0].maxFramerate = 30; snd.setParameters(pr).catch(() => {}); } } catch (_) {} }, 1500);
-        } catch (e) { netStatus("❌ Este navegador no puede emitir la pantalla"); }
+        netStatus("✅ ¡Jugador 2 conectado! Empezáis los dos desde el principio");
+        const seed = Math.floor(NATIVE_RANDOM() * 1e9), snap = { done: [...game.done], secrets: [...game.secrets], look: { ...LOOK }, look2: { ...LOOK2 }, garage: { ...GARAGE } };
+        try { conn.send({ hello: 1, seed, snap }); } catch (_) {}
+        netLockStart(seed, snap);
         setTimeout(netClose, 2500);
       });
-      conn.on("data", d => { if (d && typeof d === "object") NET.guestIn = d; });
-      conn.on("close", () => { NET.conn = null; NET.streamCopy = null; game.twoP = false; game.p2 = null; netStatus("El jugador 2 se ha desconectado"); netOpen(); });
+      conn.on("data", netData);
+      conn.on("close", () => { NET.lock = false; NET_SNAP = null; NET.conn = null; NET.streamCopy = null; game.twoP = false; game.p2 = null; netStatus("El jugador 2 se ha desconectado"); netOpen(); });
     });
   });
 }
@@ -11603,9 +11616,10 @@ function netJoin(code) {
   netLoad(() => {
     const peer = new Peer(); NET.peer = peer; NET.role = "guest";
     peer.on("open", () => {
-      const conn = peer.connect(NET_PREFIX + code, { reliable: false }); NET.conn = conn;
-      conn.on("open", () => netStatus("✅ Conectado. Esperando la imagen…"));
-      conn.on("close", () => { netStatus("❌ Se perdió la conexión"); netShowVideo(null); NET.role = null; netOpen(); });
+      const conn = peer.connect(NET_PREFIX + code, { reliable: true }); NET.conn = conn; NET_GUEST = true;
+      conn.on("open", () => netStatus("✅ Conectado. Preparando la partida…"));
+      conn.on("data", netData);
+      conn.on("close", () => { netStatus("❌ Se perdió la conexión"); netShowVideo(null); NET.lock = false; NET.role = null; netOpen(); setTimeout(() => location.reload(), 2500); });
     });
     peer.on("call", call => { NET.call = call; call.answer(); call.on("stream", st => { netShowVideo(st); netClose(); try { for (const r of call.peerConnection.getReceivers()) { r.playoutDelayHint = 0; if ("jitterBufferTarget" in r) r.jitterBufferTarget = 0; } } catch (_) {} }); });
     peer.on("error", err => netStatus(err.type === "peer-unavailable" ? "❌ No hay ninguna partida con ese código" : "❌ " + (err.type || err)));
@@ -11676,7 +11690,7 @@ Game.prototype.openCustomP2 = function (next) {   // player 2 dresses up their o
   this.state = "custom"; this.cuSel = 0; this.cuT = 0; this.cuP = null; this.particles = []; play("click");
 };
 Game.prototype.cuDone2 = function () {
-  Object.assign(LOOK2, LOOK); try { localStorage.setItem("caballero_look2", JSON.stringify(LOOK2)); } catch (_) {}
+  Object.assign(LOOK2, LOOK); if (!NET_GUEST) try { localStorage.setItem("caballero_look2", JSON.stringify(LOOK2)); } catch (_) {}
   Object.assign(LOOK, this.cuSaved); this.cuFor = 0; applyLook(); lookSwapped = false; play("anvil");
   if (this.cuNext === "begin") this.beginGame(true); else this.openMap(this.mapSel);
 };
@@ -11703,6 +11717,119 @@ Game.prototype.coSwap = function () {   // player 1 fell but player 2 is fine: t
   const l1 = { ...LOOK }; Object.assign(LOOK, LOOK2); Object.assign(LOOK2, l1); this.swapped = !this.swapped; lookSwapped = this.swapped; applyLook();
 };
 Game.prototype.unswap = function () { if (!this.swapped) return; const l1 = { ...LOOK }; Object.assign(LOOK, LOOK2); Object.assign(LOOK2, l1); this.swapped = false; lookSwapped = false; applyLook(); };
+
+// ---- lockstep: both devices run the same game, and only the buttons travel between them (no video, so no picture lag)
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+NET.lock = false; NET.evq = []; NET.D = 4;
+function netStartVideo() {   // the old way, kept as a safety net: stream the host's screen to the other device
+  const conn = NET.conn, peer = NET.peer;
+        try {   // stream the screen (and the game's sound) to the other device
+          const sc = document.createElement("canvas"); sc.width = 960; sc.height = 520; const sx = sc.getContext("2d");   // a smaller copy of the screen is much quicker to send
+          NET.streamCopy = () => { try { sx.drawImage(canvas, 0, 0, sc.width, sc.height); } catch (_) {} };
+          const stream = sc.captureStream(30);
+          for (const tr of stream.getVideoTracks()) try { tr.contentHint = "motion"; } catch (_) {}
+          if (actx && master && actx.createMediaStreamDestination) { const dest = actx.createMediaStreamDestination(); master.connect(dest); const tr = dest.stream.getAudioTracks()[0]; if (tr) stream.addTrack(tr); }
+          NET.call = peer.call(conn.peer, stream);
+          setTimeout(() => { try { for (const snd of NET.call.peerConnection.getSenders()) if (snd.track && snd.track.kind === "video") { const pr = snd.getParameters(); pr.degradationPreference = "maintain-framerate"; if (!pr.encodings || !pr.encodings.length) pr.encodings = [{}]; pr.encodings[0].maxBitrate = 2500000; pr.encodings[0].maxFramerate = 30; snd.setParameters(pr).catch(() => {}); } } catch (_) {} }, 1500);
+        } catch (e) { netStatus("❌ Este navegador no puede emitir la pantalla"); }
+}
+function netLockStart(seed, snap) {
+  NET.lock = true; NET.rng = mulberry32(seed); NET.evq = []; NET_SNAP = { done: [...snap.done], secrets: [...snap.secrets] };
+  SPLIT.on = false; SPLIT.g2 = null; SPLIT.li = -1;
+  SIM_RNG = NET.rng; try { game = new Game(); } finally { SIM_RNG = null; }
+  game.done = new Set(snap.done); game.secrets = new Set(snap.secrets);
+  Object.assign(LOOK, snap.look); Object.assign(LOOK2, snap.look2); Object.assign(GARAGE, snap.garage); lookSwapped = false; applyLook();
+  game.twoP = "net"; game.state = "title";
+  NET.frame = 0; NET.nextIn = NET.D; NET.mine = new Map(); NET.theirs = new Map(); NET.myHash = new Map(); NET.theirHash = new Map();
+  for (let f = 0; f < NET.D; f++) { NET.mine.set(f, {}); NET.theirs.set(f, {}); }
+  NET.sk = { left: false, right: false, jump: false }; NET.st = { left: false, right: false, jump: false }; NET.sa = false;
+  NET.gJp = NET.gAt = false; NET.ah = false;
+  for (const k in keys2) keys2[k] = false;
+  bPause.innerHTML = "&#10074;&#10074;";
+  setTimeout(netClose, 1500);
+}
+function netData(d) {
+  if (!d || typeof d !== "object") return;
+  if (d.f !== undefined) { NET.theirs.set(d.f, d.i); return; }
+  if (d.cs !== undefined) { NET.theirHash.set(d.cs, d.h); netCompare(d.cs); return; }
+  if (d.hello) { netLockStart(d.seed, d.snap); return; }
+  if (d.desync) { netDesync(true); return; }
+  NET.guestIn = d;   // video mode: the guest's buttons
+}
+function netCapture() {   // this device's own buttons for one frame
+  if (NET.role === "host") { const ev = NET.evq.splice(0); return { ev, tl: +touch.left, tr: +touch.right }; }
+  const i = { l: +(keys.left || touch.left), r: +(keys.right || touch.right), j: +(keys.jump || touch.jump), jp: +NET.gJp, at: +NET.gAt, ah: +NET.ah, lt: +!!NET.gL, rt: +!!NET.gR };
+  NET.gJp = NET.gAt = NET.gL = NET.gR = false; return i;
+}
+function netReplay(ev) {   // the host's key presses and taps happen at exactly the same moment on both devices
+  if (ev.t === "kd" || ev.t === "ku") window.dispatchEvent(new KeyboardEvent(ev.t === "kd" ? "keydown" : "keyup", { code: ev.c, key: ev.k, repeat: !!ev.r }));
+  else if (ev.t === "cv") canvasTap(ev.x, ev.y);
+  else if (ev.t === "bj") (ev.d ? jumpBtnDown : jumpBtnUp)();
+  else if (ev.t === "ba") (ev.d ? axeBtnDown : axeBtnUp)();
+  else if (ev.t === "pz") setPaused(!game.paused);
+}
+function netSim(hi, gi) {
+  const sv = { keys: { ...keys }, touch: { ...touch }, axe: axeHeld };
+  Object.assign(keys, NET.sk); Object.assign(touch, NET.st); touch.left = !!hi.tl; touch.right = !!hi.tr; axeHeld = NET.sa;
+  SIM_RNG = NET.rng; NET.replaying = true;
+  try {
+    for (const ev of hi.ev || []) netReplay(ev);
+    inp.left = keys.left || touch.left; inp.right = keys.right || touch.right; inp.jumpHeld = keys.jump || touch.jump;
+    inp2.left = !!gi.l; inp2.right = !!gi.r; inp2.jumpHeld = !!gi.j; if (gi.jp) inp2.jumpPressed = true; if (gi.at) inp2.attack = true; net2.ah = !!gi.ah; inp2.leftTap = !!gi.lt; inp2.rightTap = !!gi.rt;
+    if (!game.paused) { game.step(); splitStep(); } else { inp.jumpPressed = inp.attack = false; }
+    inp2.jumpPressed = inp2.attack = inp2.leftTap = inp2.rightTap = false;
+  } finally {
+    NET.replaying = false; SIM_RNG = null;
+    NET.sk = { ...keys }; NET.st = { ...touch }; NET.sa = axeHeld;
+    Object.assign(keys, sv.keys); Object.assign(touch, sv.touch); axeHeld = sv.axe;
+  }
+}
+function netHash() {   // a fingerprint of the game, to check both devices still agree
+  const g = game, p = g.player, n = v => Math.round((+v || 0) * 10);
+  let h = g.t * 7 + g.levelIndex * 131 + g.lives * 977 + g.coins * 17 + g.score;
+  if (!g.xm) h += n(p.x) * 3 + n(p.y) * 5;
+  if (g.p2) h += n(g.p2.x) * 11 + n(g.p2.y) * 13;
+  if (g.tv) h += n(g.tv.x) * 19 + n(g.tv.y) * 23;
+  if (g.xm) { const X = g.xm; h += n(X.x) * 29 + n(X.y) * 31 + n(X.z) * 37 + (X.rs ? X.rs.reduce((a, r) => a + n(r.z) + n(r.px), 0) : 0) + (X.hits || 0) * 41; }
+  if (SPLIT.on && SPLIT.g2) { const q = SPLIT.g2; h += q.t * 43 + n(q.player.x) * 47 + (q.tv ? n(q.tv.x) * 53 : 0); }
+  return g.state + ":" + (h % 1000000007);
+}
+function netCompare(f) { const a = NET.myHash.get(f), b = NET.theirHash.get(f); if (a === undefined || b === undefined) return; NET.myHash.delete(f); NET.theirHash.delete(f); if (a !== b) netDesync(false); }
+function netDesync(remote) {   // the two games drifted apart: fall back to streaming the host's screen
+  if (!NET.lock) return;
+  NET.lock = false; NET_SNAP = null; if (!remote) try { NET.conn.send({ desync: 1 }); } catch (_) {}
+  netToast("Cambiando a modo vídeo…");
+  if (NET.role === "host") { game.twoP = "net"; netStartVideo(); }
+}
+function netLockFrame(now) {
+  acc += Math.min(100, now - last); last = now;
+  while (acc >= STEP_MS) {
+    acc -= STEP_MS;
+    if (NET.nextIn < NET.frame + NET.D + 4) { const f = NET.nextIn++, i = netCapture(); NET.mine.set(f, i); try { NET.conn.send({ f, i }); } catch (_) {} }
+  }
+  let n = 0;
+  while (n < 6 && NET.mine.has(NET.frame) && NET.theirs.has(NET.frame)) {
+    const a = NET.mine.get(NET.frame), b = NET.theirs.get(NET.frame); NET.mine.delete(NET.frame); NET.theirs.delete(NET.frame);
+    if (NET.role === "host") netSim(a, b); else netSim(b, a);
+    if (NET.frame % 30 === 0) { const h = netHash(); NET.myHash.set(NET.frame, h); try { NET.conn.send({ cs: NET.frame, h }); } catch (_) {} netCompare(NET.frame); }
+    NET.frame++; n++;
+    if (!NET.lock) break;
+  }
+  NET.waiting = NET.mine.has(NET.frame) && !NET.theirs.has(NET.frame) ? (NET.waiting || 0) + 1 : 0;
+}
+// during an online game, keys don't act straight away: the host's go into the shared timeline, the guest's become player 2's buttons
+window.addEventListener("keydown", e => {
+  if (!NET.lock || NET.replaying || (e.target && e.target.tagName === "INPUT")) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (NET.role === "host") NET.evq.push({ t: "kd", c: e.code, k: e.key, r: e.repeat ? 1 : 0 });
+  else { const kk = KEYMAP[e.code]; if (kk) { keys[kk] = true; if (!e.repeat) { if (kk === "jump") NET.gJp = true; if (kk === "left") NET.gL = true; if (kk === "right") NET.gR = true; } } if (["KeyX", "KeyJ", "KeyZ", "KeyK", "KeyL", "KeyF", "ControlLeft", "ShiftRight", "Enter"].includes(e.code)) { NET.ah = true; if (!e.repeat) NET.gAt = true; } }
+}, true);
+window.addEventListener("keyup", e => {
+  if (!NET.lock || NET.replaying || (e.target && e.target.tagName === "INPUT")) return;
+  e.stopImmediatePropagation();
+  if (NET.role === "host") NET.evq.push({ t: "ku", c: e.code, k: e.key });
+  else { const kk = KEYMAP[e.code]; if (kk) keys[kk] = false; if (["KeyX", "KeyJ", "KeyZ", "KeyK", "KeyL", "KeyF", "ControlLeft", "ShiftRight", "Enter"].includes(e.code)) NET.ah = false; }
+}, true);
 
 // ---- split screen: in the vehicle levels each player gets their own copy of the level, their own vehicle and their own half of the screen
 const SPLIT = { g2: null, on: false, li: -1, A: null, B: null };
@@ -11855,6 +11982,10 @@ window.addEventListener("contextmenu", e => e.preventDefault());
 canvas.addEventListener("pointerdown", e => {
   e.preventDefault(); unlock();
   const r = canvas.getBoundingClientRect(), tx = (e.clientX - r.left) / r.width * W, ty = (e.clientY - r.top) / r.height * H;
+  if (NET.lock) { if (NET.role === "host") NET.evq.push({ t: "cv", x: tx, y: ty }); return; }   // online: the tap happens on both devices at the same moment
+  canvasTap(tx, ty);
+});
+function canvasTap(tx, ty) {
   if (game.state === "shop") game.shopTap(tx, ty);
   else if (game.state === "custom") game.cuTap(tx, ty);
   else if (game.state === "garage") game.gaTap(tx, ty);
@@ -11862,7 +11993,7 @@ canvas.addEventListener("pointerdown", e => {
   else if (game.state === "map") game.mapTap(tx, ty);
   else if (game.paused && inside(tx, ty, QUIT_BTN)) game.quitToMap();
   else tapStart();
-});
+}
 
 const dpad = document.getElementById("dpad");
 let dpadId = null;
@@ -11890,8 +12021,20 @@ function holdButton(el, down, up) {
   el.addEventListener("pointerup", end);
   el.addEventListener("pointercancel", end);
 }
-holdButton(document.getElementById("bJump"), () => { if (NET.role === "guest" && NET.video) { NET.lastJp++; touch.jump = true; return; } if (!tapStart()) { inp.jumpPressed = true; touch.jump = true; } }, () => { touch.jump = false; });
-holdButton(document.getElementById("bAxe"), () => { if (NET.role === "guest" && NET.video) { NET.lastAt++; NET.ah = true; return; } if (!tapStart()) { inp.attack = true; axeHeld = true; } }, () => { axeHeld = false; NET.ah = false; });
+function jumpBtnDown() { if (!tapStart()) { inp.jumpPressed = true; touch.jump = true; } }
+function jumpBtnUp() { touch.jump = false; }
+function axeBtnDown() { if (!tapStart()) { inp.attack = true; axeHeld = true; } }
+function axeBtnUp() { axeHeld = false; }
+holdButton(document.getElementById("bJump"), () => {
+  if (NET.role === "guest" && (NET.video || NET.lock)) { NET.lastJp++; NET.gJp = true; touch.jump = true; return; }
+  if (NET.lock) { NET.evq.push({ t: "bj", d: 1 }); return; }
+  jumpBtnDown();
+}, () => { if (NET.lock && NET.role === "host") { NET.evq.push({ t: "bj", d: 0 }); return; } jumpBtnUp(); });
+holdButton(document.getElementById("bAxe"), () => {
+  if (NET.role === "guest" && (NET.video || NET.lock)) { NET.lastAt++; NET.gAt = true; NET.ah = true; return; }
+  if (NET.lock) { NET.evq.push({ t: "ba", d: 1 }); return; }
+  axeBtnDown();
+}, () => { NET.ah = false; if (NET.lock && NET.role === "host") { NET.evq.push({ t: "ba", d: 0 }); return; } axeBtnUp(); });
 
 const bSound = document.getElementById("bSound");
 function toggleSound() {
@@ -11910,7 +12053,7 @@ function setPaused(on) {
   if (on && hasSpeech) speechSynthesis.cancel();
   if (actx) { if (on) actx.suspend(); else actx.resume(); }
 }
-bPause.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); unlock(); setPaused(!game.paused); });
+bPause.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); unlock(); if (NET.lock) { if (NET.role === "host") NET.evq.push({ t: "pz" }); return; } setPaused(!game.paused); });
 document.addEventListener("visibilitychange", () => { if (document.hidden) setPaused(true); });
 
 let last = performance.now(), acc = 0;
@@ -11918,6 +12061,13 @@ let slowFrames = 0;
 function frame(now) {
   if (NET.btn) NET.btn.style.display = game.state === "title" || game.state === "map" || NET.role ? "" : "none";
   if (NET.role === "guest" && NET.video) { netGuestSend(); last = now; requestAnimationFrame(frame); return; }   // this device only shows the host's game
+  if (NET.lock) {   // online: both devices step the same game together
+    netLockFrame(now); updateEngine(); updateRock();
+    ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+    if (SPLIT.on && SPLIT.g2) splitDraw(); else game.draw();
+    if (NET.waiting > 40) { ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(W / 2 - 170, H / 2 - 24, 340, 48); T("Esperando al otro aparato…", 20, W / 2, H / 2, WHITE); }
+    requestAnimationFrame(frame); return;
+  }
   const dt = now - last;
   if (SHADE && game.state === "play" && !game.paused) { slowFrames = dt > 26 ? slowFrames + 1 : Math.max(0, slowFrames - 2); if (slowFrames > 150) SHADE = false; }
   acc += Math.min(100, now - last); last = now;
